@@ -7,7 +7,8 @@ file still matches the checksum recorded in MANIFEST.sha256.
     python3 tools/check.py            # check references + checksums
     python3 tools/check.py --write    # rewrite MANIFEST.sha256 from the current tree
 
-Exit status is non-zero on any missing file or checksum mismatch.
+Exit status is non-zero on any missing file, unmanifested content file, or
+checksum mismatch.
 """
 import hashlib
 import json
@@ -110,8 +111,10 @@ def main() -> int:
             elif sha256(path) != digest:
                 print(f"CHANGED  {rel}")
                 problems += 1
-        for rel in sorted(current - recorded.keys()):
+        new_files = sorted(current - recorded.keys())
+        for rel in new_files:
             print(f"NEW      {rel}  (run --write after review)")
+        problems += len(new_files)
         print(f"checksums: {len(recorded)} recorded")
     else:
         print("no MANIFEST.sha256 yet (run --write)")
