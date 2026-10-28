@@ -21,9 +21,10 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 | Review studio | Line-by-line verification, decisions, new-version photo inbox, **Release tab (v2, 2026-10-27)**; saves to the page's database | artifact `MVognnZQrtRQ6QCMaF7341`; `review/`, `review_build/` |
 | Font fill-in sheet | 2-page template (Letter/A4) + `ingest_fillin.py`; trial builds go to `font/fillin/test/out/` | `font/fillin/` |
 | Business-model research | Report comparing all monetization routes (2026-10-27) | research report in the chat of that date |
+| Repository | Private `4444J99/journal-handwritten-web` (working name), seeded 2026-10-27 from both artifacts: `site/` (merged piece, deployable), `studio/`, `tools/check.py`, checksums, CI + manual Pages workflow. Source of record from here on | github.com/4444J99/journal-handwritten-web |
 | Earlier prototypes | Reader (`9hrwYckEYpMQFqkbBT4eX4`), canvas test (`1ppNwGfhEi1qMmUWhpKPXA`), research report (`EzChFp1LM3f5jp4ZitWFFF`) | superseded by the merged piece |
 
-Note (2026-10-27): the build folders above (`archive/`, `app_build/`, `review_build/`, `font/`, `release/`) lived in earlier cloud sessions. Their current location on the author's machine is not yet confirmed; the two artifacts hold the published data.
+Note (2026-10-27): the repository now holds the published outputs. The build folders above (`archive/`, `app_build/`, `review_build/`, `font/`, `release/`) lived in earlier cloud sessions. Their current location on the author's machine is not yet confirmed; the two artifacts hold the published data.
 
 ## Standing rules (author)
 - No AI-written creative or interpretive text visible in any presentation; creative writing is his. Technical writing may be AI-generated.
@@ -74,6 +75,8 @@ Database shape: `release/{pieceKey}` = {pool, order, num, prep{}, exposures[], s
 - Name candidates (then handle/domain availability checks).
 - Fill in and photograph the font sheet.
 - Real-iPhone test of the merged piece.
+- Decide whether the site goes public (Pages sites are public even from a private repo; putting all poems online conflicts with the Reserve).
+- Check why Actions won't start runners on the private repo (billing/minutes setting).
 - Confirm where the local build folders live (or connect that folder) so the rebuild scripts can run.
 
 ## New handwritten versions (technical)
