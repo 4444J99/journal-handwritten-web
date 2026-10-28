@@ -1,0 +1,1661 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Journal Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+:root{
+  --bg:#f5f3ed; --surface:#fffdf8; --ink:#1d2129; --muted:#666b74; --faint:#8d9199;
+  --rule:#d5dde7; --rule-2:#e6ebf1; --margin:#c0503a; --margin-soft:rgba(192,80,58,.10);
+  --ok:#2f6a4a; --ok-soft:rgba(47,106,74,.10); --warn:#9a5d12; --warn-soft:rgba(154,93,18,.11);
+  --btn:#1d2129; --btn-ink:#fffdf8; --scan:#fff; --shade:rgba(20,22,26,.55);
+  --serif:"Source Serif 4","Iowan Old Style","Georgia",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --gut:max(16px, env(safe-area-inset-left,0px));
+  --gut-r:max(16px, env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141619; --surface:#1b1e22; --ink:#e6e2d8; --muted:#a2a5ab; --faint:#7d8087;
+    --rule:#2c333d; --rule-2:#23292f; --margin:#d9735e; --margin-soft:rgba(217,115,94,.14);
+    --ok:#86bd99; --ok-soft:rgba(134,189,153,.13); --warn:#e0ac62; --warn-soft:rgba(224,172,98,.14);
+    --btn:#e6e2d8; --btn-ink:#141619; --scan:#d9d6cf; --shade:rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141619; --surface:#1b1e22; --ink:#e6e2d8; --muted:#a2a5ab; --faint:#7d8087;
+  --rule:#2c333d; --rule-2:#23292f; --margin:#d9735e; --margin-soft:rgba(217,115,94,.14);
+  --ok:#86bd99; --ok-soft:rgba(134,189,153,.13); --warn:#e0ac62; --warn-soft:rgba(224,172,98,.14);
+  --btn:#e6e2d8; --btn-ink:#141619; --scan:#d9d6cf; --shade:rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);overflow-x:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:3px double var(--rule);
+  padding:calc(env(safe-area-inset-top,0px) + 8px) var(--gut-r) 0 var(--gut)}
+.top-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;max-width:1040px;margin:0 auto;min-height:32px}
+.brand{white-space:nowrap;font:600 13px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;margin:0;color:var(--muted)}
+.prog{font:12px/1.2 var(--mono);color:var(--muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog b{color:var(--ink);font-weight:600}
+.save{margin-left:auto;border:1px solid var(--rule);background:var(--surface);border-radius:999px;padding:4px 10px;font:12px/1.2 var(--mono);color:var(--muted);white-space:nowrap}
+.save[data-k="err"]{color:var(--margin);border-color:var(--margin)}
+.save[data-k="ro"]{cursor:default}
+.tabs{display:flex;gap:2px;max-width:1040px;margin:6px auto 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:none;padding:10px 12px 9px;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;min-height:42px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--margin)}
+
+main{max-width:1040px;margin:0 auto;padding:0 var(--gut-r) calc(96px + env(safe-area-inset-bottom,0px)) var(--gut)}
+.view{padding-top:14px}
+h2.sub{font:600 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:26px 0 10px}
+
+/* piece head */
+.piece-head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.ph-nav{display:flex;gap:6px}
+.btn{border:1px solid var(--rule);background:var(--surface);border-radius:8px;min-height:44px;min-width:44px;padding:0 14px;font-size:14px}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.btn.small{min-height:36px;padding:0 10px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.arm{border-color:var(--margin);color:var(--margin)}
+.ph-title{min-width:0}
+.ph-first{font:600 20px/1.25 var(--serif);margin:2px 0 4px;overflow-wrap:anywhere}
+.ph-first.none{color:var(--muted);font-weight:400;font-style:italic}
+.ph-meta{font:12px/1.4 var(--mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.ph-meta .pg{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;background:none;border:0;padding:0;font:inherit;cursor:pointer}
+.ph-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;grid-column:1/-1}
+.meter{height:3px;background:var(--rule-2);border-radius:2px;overflow:hidden;grid-column:1/-1}
+.meter i{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
+
+/* version / page section */
+.ver{margin-top:22px}
+.ver-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font:12px/1.3 var(--mono);color:var(--muted);margin-bottom:8px}
+.ver-head b{color:var(--ink);font-weight:600;font-size:13px}
+.ver-head button{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font:inherit;padding:6px 0;cursor:pointer}
+details.unc{border-left:2px solid var(--warn);background:var(--warn-soft);padding:6px 10px;margin:6px 0 10px;border-radius:0 6px 6px 0;font-size:13.5px}
+details.unc summary{cursor:pointer;font:12px/1.6 var(--mono);color:var(--warn)}
+details.unc ul{margin:6px 0 2px;padding-left:18px}
+details.unc li{margin:3px 0}
+details.tn{font-size:13px;color:var(--muted);margin:0 0 10px}
+details.tn summary{cursor:pointer;font:12px/1.6 var(--mono)}
+details.tn ul{margin:4px 0;padding-left:18px}
+.blk-label{font:11px/1 var(--mono);color:var(--faint);margin:14px 0 4px;letter-spacing:.04em}
+.blkpage{margin:4px 0 8px}
+
+/* line cards */
+.line{position:relative;display:grid;grid-template-columns:1fr;gap:6px;padding:12px 0 12px 14px;border-bottom:1px solid var(--rule-2);scroll-margin-top:120px;scroll-margin-bottom:110px;outline:none}
+.line::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:2px;background:transparent;border-radius:2px}
+.line.active::before{background:var(--margin)}
+.line.active{background:linear-gradient(90deg,var(--margin-soft),transparent 60%)}
+.crop{position:relative;overflow:hidden;background:var(--scan);border-radius:4px;border:1px solid var(--rule);cursor:zoom-in;min-height:28px}
+.crop img{position:absolute;left:0;top:0;max-width:none;user-select:none;-webkit-user-drag:none}
+.crop.page{cursor:zoom-in;height:auto;display:flex;justify-content:center;background:var(--scan)}
+.crop.page img{position:static;max-height:360px;width:auto;max-width:100%;display:block}
+.crop .zoomhint{position:absolute;right:6px;bottom:4px;font:10px/1 var(--mono);color:#555;background:rgba(255,255,255,.8);padding:3px 5px;border-radius:3px}
+.tx-row{display:flex;gap:10px;align-items:baseline}
+.ln{font:11px/1 var(--mono);color:var(--faint);min-width:20px;text-align:right}
+.tx{font:19px/1.5 var(--serif);flex:1;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.tx.empty{color:var(--faint);font-style:italic;font-size:15px}
+.st{font:11px/1 var(--mono);white-space:nowrap;padding:4px 6px;border-radius:4px}
+.st.c{color:var(--ok);background:var(--ok-soft)}
+.st.x{color:var(--warn);background:var(--warn-soft)}
+.was{font-size:13.5px;color:var(--muted);padding-left:30px}
+.was .tx{font-size:14.5px;color:var(--muted)}
+.acts{display:flex;gap:8px;padding-left:30px;flex-wrap:wrap}
+.acts .btn{min-width:96px}
+.acts .lnk{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:0 6px;min-height:44px;font-size:13px}
+.line.done .acts .btn.confirm{opacity:.55}
+@media (min-width:820px){
+  .line{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);column-gap:22px;align-items:start}
+  .line > .crop,.line > .crop.page{grid-column:1;grid-row:1 / span 4}
+  .line > :not(.crop){grid-column:2}
+  .was,.acts{padding-left:30px}
+}
+
+/* markup */
+.mk-s{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--muted)}
+.mk-i{font-size:.66em;vertical-align:.62em;line-height:0;padding:0 .12em;color:var(--ink);border-bottom:1px solid var(--rule)}
+.mk-ill{display:inline-block;min-width:2.2em;border-bottom:2px dotted var(--faint);height:.9em;vertical-align:-.05em;margin:0 .1em}
+.mk-u{text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:.2em;text-decoration-color:var(--warn)}
+.mk-q{font:13px/1.45 var(--mono);color:var(--muted);border:1px dashed var(--rule);border-radius:4px;padding:2px 6px;display:inline-block}
+
+/* editor */
+.editor{padding-left:30px;display:grid;gap:8px}
+.editor textarea{width:100%;min-height:64px;padding:10px 12px;border:1px solid var(--faint);border-radius:8px;background:var(--surface);font:16px/1.45 var(--mono);resize:vertical}
+.editor textarea:focus{outline:2px solid var(--margin);outline-offset:1px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.tools .btn{min-height:38px;font-size:13px;padding:0 10px}
+.help{font:12px/1.5 var(--mono);color:var(--muted)}
+.preview{font:18px/1.5 var(--serif);padding:6px 0;border-top:1px dashed var(--rule)}
+.err{color:var(--margin);font-size:13px}
+
+/* bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:grid;grid-template-columns:56px 1fr auto 56px;gap:8px;
+  padding:8px var(--gut-r) calc(8px + env(safe-area-inset-bottom,0px)) var(--gut);background:var(--bg);border-top:1px solid var(--rule)}
+.bar button{min-height:52px;border-radius:10px;border:1px solid var(--rule);background:var(--surface);font-size:16px}
+.bar .b-main{background:var(--btn);color:var(--btn-ink);border-color:var(--btn);font-weight:600}
+.bar .b-sec{padding:0 18px}
+.bar button[disabled]{opacity:.4;cursor:default}
+@media (min-width:820px){.bar{left:50%;transform:translateX(-50%);max-width:640px;border:1px solid var(--rule);border-bottom:0;border-radius:12px 12px 0 0}}
+
+/* drawer */
+.drawer{position:fixed;inset:0;z-index:40;background:var(--shade);display:flex;justify-content:flex-end}
+.drawer-in{background:var(--bg);width:min(560px,100%);height:100%;display:flex;flex-direction:column}
+.drawer-head{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 10px) var(--gut-r) 10px var(--gut);border-bottom:3px double var(--rule)}
+.drawer-head h2{margin:0;font:600 13px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;flex:1}
+.chk{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center;min-height:44px}
+.chk input{width:18px;height:18px}
+.x{border:1px solid var(--rule);background:var(--surface);border-radius:8px;min-height:40px;padding:0 12px}
+.drawer-body{overflow-y:auto;padding:0 var(--gut-r) calc(24px + env(safe-area-inset-bottom,0px)) var(--gut);-webkit-overflow-scrolling:touch}
+.qg{font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 6px;display:flex;justify-content:space-between}
+.qi{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule-2);padding:10px 4px;min-height:52px}
+.qi .f{font:16px/1.3 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qi .m{font:11px/1.3 var(--mono);color:var(--muted);grid-column:1}
+.qi .n{font:12px/1 var(--mono);color:var(--muted);grid-row:1 / span 2;grid-column:2;align-self:center}
+.qi.done .f{color:var(--muted)}
+.qi.done .n{color:var(--ok)}
+.qi.cur{background:var(--margin-soft)}
+
+/* viewer */
+.viewer{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.viewer-bar{display:flex;gap:6px;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 8px) var(--gut-r) 8px var(--gut);border-bottom:1px solid var(--rule);font:12px/1 var(--mono);color:var(--muted)}
+.viewer-bar button{border:1px solid var(--rule);background:var(--surface);border-radius:8px;min-height:40px;min-width:44px;padding:0 10px;font-size:13px}
+.viewer-bar button[aria-pressed="true"]{border-color:var(--ink)}
+.grow{flex:1}
+.viewer-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--scan)}
+.viewer-wrap{position:relative;margin:0 auto}
+.viewer-wrap img{display:block;width:100%;height:auto}
+.hl{position:absolute;border:2px solid var(--margin);background:rgba(192,80,58,.08);border-radius:3px;pointer-events:none}
+
+/* decisions */
+.dcard{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px;margin:0 0 14px}
+.dcard h3{font:600 15px/1.35 var(--sans);margin:0 0 6px}
+.dctx{font:12px/1.5 var(--mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;margin-bottom:10px}
+.dctx button{background:none;border:0;padding:4px 0;color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;font:inherit;cursor:pointer}
+.dlines{font:17px/1.5 var(--serif);border-left:2px solid var(--rule);padding:2px 0 2px 12px;margin:0 0 10px}
+.choices{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.choice{border:1px solid var(--rule);background:var(--bg);border-radius:8px;min-height:44px;padding:6px 12px;text-align:left;font-size:14px;max-width:100%}
+.choice small{display:block;font:12px/1.35 var(--serif);color:var(--muted);overflow-wrap:anywhere}
+.choice[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.choice[aria-pressed="true"] small{color:var(--bg);opacity:.8}
+.dnote{display:flex;gap:8px;align-items:flex-start;margin-top:8px}
+.dnote textarea{flex:1;min-height:44px;padding:9px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);font:15px/1.4 var(--sans);resize:vertical}
+.dmeta{font:11px/1.4 var(--mono);color:var(--faint);margin-top:6px}
+.subd{border-top:1px solid var(--rule-2);padding-top:10px;margin-top:10px}
+.subd:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.vis{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--rule-2)}
+.vis img{width:64px;border-radius:3px;border:1px solid var(--rule);background:var(--scan);cursor:zoom-in}
+.vis .choices{margin:4px 0}
+.dsec{font:600 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 0 10px}
+
+/* versions */
+.up{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px}
+.up-row{display:flex;gap:8px;flex-wrap:wrap}
+.staged{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--rule-2)}
+.staged img{width:96px;border-radius:4px;border:1px solid var(--rule)}
+.field{display:grid;gap:4px;margin-bottom:8px;position:relative}
+.field label{font:11px/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.field input,.field textarea{width:100%;padding:9px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);font-size:16px}
+.picks{border:1px solid var(--rule);border-radius:8px;background:var(--surface);max-height:220px;overflow:auto}
+.picks button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--rule-2);background:none;padding:10px;min-height:44px;font:15px/1.3 var(--serif)}
+.picks button small{font:11px/1 var(--mono);color:var(--muted);margin-left:6px}
+.attached{font:15px/1.3 var(--serif)}
+.attached small{font:11px/1 var(--mono);color:var(--muted)}
+.vthumb{background:var(--surface);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.vthumb .im{aspect-ratio:3/4;background:var(--scan);display:flex;align-items:center;justify-content:center;cursor:zoom-in}
+.vthumb img{width:100%;height:100%;object-fit:cover;display:block}
+.vthumb .miss{font:11px/1.3 var(--mono);color:#666;padding:8px;text-align:center}
+.vthumb .cap{padding:8px;font-size:13px}
+.vthumb .cap b{font:500 14px/1.3 var(--serif);display:block;overflow-wrap:anywhere}
+.vthumb .cap span{font:11px/1.4 var(--mono);color:var(--muted)}
+.pv-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 2px;margin-top:10px}
+.pv-strip img{height:84px;border-radius:4px;border:1px solid var(--rule);cursor:zoom-in}
+.note{font-size:13px;color:var(--muted)}
+
+/* search */
+.search-bar{position:sticky;top:var(--hdr,96px);z-index:5;background:var(--bg);padding:2px 0 10px}
+.search-bar input{width:100%;padding:12px 14px;border:1px solid var(--rule);border-radius:10px;background:var(--surface);font-size:16px}
+.res{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule-2);padding:10px 2px;min-height:48px}
+.res .tx{font-size:17px}
+.res .m{font:11px/1.4 var(--mono);color:var(--muted)}
+.res mark{background:var(--warn-soft);color:inherit;border-radius:2px}
+.pagegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.pagegrid button{border:1px solid var(--rule);background:var(--surface);border-radius:6px;padding:4px;display:grid;gap:3px;font:11px/1 var(--mono);color:var(--muted)}
+.pagegrid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:3px;background:var(--scan)}
+.pagegrid .pd{color:var(--ok)}
+.empty-note{color:var(--muted);font-size:14px;padding:12px 0}
+
+
+/* release */
+.rsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.rstat{background:var(--surface);padding:10px 12px;display:grid;gap:4px}
+.rstat span{font:11px/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.rstat b{font:600 22px/1 var(--serif);font-variant-numeric:tabular-nums}
+.rstat small{font:11px/1 var(--mono);color:var(--muted);font-weight:400}
+.rnav{display:flex;gap:6px;overflow-x:auto;margin:14px 0 4px;scrollbar-width:none}
+.rnav button{border:1px solid var(--rule);background:none;border-radius:999px;padding:0 14px;min-height:38px;font-size:13px;color:var(--muted);white-space:nowrap}
+.rnav button[aria-selected="true"]{border-color:var(--ink);color:var(--ink);background:var(--surface)}
+.rbody{padding-top:6px}
+.rbody .dsec small{font-weight:400;color:var(--faint)}
+.rrow{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--rule-2)}
+.rrow.slim{padding:8px 0}
+.rrow.cal{grid-template-columns:72px 1fr auto}
+.rrow.posted .rt{color:var(--muted)}
+.rmain{min-width:0}
+.rside{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center}
+.rside.col{flex-direction:column;align-items:flex-end}
+.ud{display:flex;gap:4px}
+.rt{background:none;border:0;padding:0;text-align:left;font:16px/1.3 var(--serif);color:var(--ink);cursor:pointer;overflow-wrap:anywhere}
+.rt:hover{text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.rmeta{font:11.5px/1.45 var(--mono);color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.okt{color:var(--ok)}
+.rj{font-weight:600}
+.rlink{color:var(--ink)}
+.rnum{display:grid;gap:4px;font:11px/1.2 var(--mono);color:var(--muted)}
+.rnum b{font:600 22px/1 var(--serif);color:var(--ink);font-variant-numeric:tabular-nums}
+.rnum b small{font:11px/1 var(--mono);color:var(--faint);font-weight:400}
+.rgates{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rchip{font:11px/1 var(--mono);padding:4px 7px;border-radius:4px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
+.rchip.ok{color:var(--ok);background:var(--ok-soft);border-color:transparent}
+.rchip.warn{color:var(--warn);background:var(--warn-soft);border-color:transparent}
+.choices.tight{margin:0}
+.choices.tight .choice{min-height:36px;padding:4px 10px;font-size:13px}
+.rdetail{margin-top:10px;display:grid;gap:8px}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:0 12px}
+.rdetail .up-row input{flex:1 1 180px;min-width:0;padding:9px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);font-size:16px}
+.rbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:4px 0 8px}
+.rbar label{font:11px/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.rbar input{padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--surface);font-size:16px}
+.rform{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 10px;align-items:end;margin-top:12px;border-top:1px solid var(--rule-2);padding-top:10px}
+.rform .btn{margin-bottom:8px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 10px}
+.field select{width:100%;padding:9px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);font-size:16px;min-height:42px}
+.cmd{display:flex;gap:8px;align-items:center;margin-top:12px;background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:8px 10px}
+.cmd code{font:12px/1.4 var(--mono);flex:1;min-width:0;overflow-x:auto;white-space:nowrap}
+.dcard h3 .rchip{vertical-align:2px}
+@media (max-width:640px){
+  .rrow{grid-template-columns:1fr}
+  .rrow.cal{grid-template-columns:64px 1fr}
+  .rrow.cal .rside{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start}
+  .rside{justify-content:flex-start}
+}
+@media (max-width:640px){
+  .prog{order:3;flex-basis:100%;padding-bottom:2px}
+}
+.dnote{flex-wrap:wrap}
+.dnote textarea{flex:1 1 180px;min-width:0}
+.dnote .btn{flex:0 0 auto}
+.vis > div{min-width:0}
+</style>
+<header class="top">
+  <div class="top-row">
+    <h1 class="brand">Journal Review</h1>
+    <div class="prog" id="prog" aria-live="polite"></div>
+    <button class="save" id="save" type="button" hidden></button>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-view="review" aria-selected="true">Review</button>
+    <button role="tab" data-view="decisions" aria-selected="false">Decisions</button>
+    <button role="tab" data-view="versions" aria-selected="false">New versions</button>
+    <button role="tab" data-view="release" aria-selected="false">Release</button>
+    <button role="tab" data-view="search" aria-selected="false">Search</button>
+  </nav>
+</header>
+
+<main id="main">
+  <section id="v-review" class="view">
+    <div class="piece-head" id="piece-head"></div>
+    <div id="piece-body"></div>
+  </section>
+  <section id="v-decisions" class="view" hidden></section>
+  <section id="v-versions" class="view" hidden></section>
+  <section id="v-release" class="view" hidden></section>
+  <section id="v-search" class="view" hidden>
+    <div class="search-bar">
+      <input id="q" type="search" placeholder="Search all lines" autocomplete="off" spellcheck="false" aria-label="Search all lines">
+    </div>
+    <div id="results"></div>
+    <h2 class="sub">Pages</h2>
+    <div class="pagegrid" id="pagegrid"></div>
+  </section>
+</main>
+
+<div class="bar" id="bar">
+  <button type="button" class="b-nav" id="b-prev" aria-label="Previous line">&#8593;</button>
+  <button type="button" class="b-main" id="b-confirm">Confirm</button>
+  <button type="button" class="b-sec" id="b-edit">Edit</button>
+  <button type="button" class="b-nav" id="b-next" aria-label="Next line">&#8595;</button>
+</div>
+
+<div class="drawer" id="queue" hidden>
+  <div class="drawer-in" role="dialog" aria-label="Queue">
+    <div class="drawer-head">
+      <h2>Queue</h2>
+      <label class="chk"><input type="checkbox" id="hide-done"> Hide done</label>
+      <button type="button" class="x" data-close>Close</button>
+    </div>
+    <div id="queue-list" class="drawer-body"></div>
+  </div>
+</div>
+
+<div class="viewer" id="viewer" hidden>
+  <div class="viewer-bar">
+    <span id="viewer-label"></span>
+    <span class="grow"></span>
+    <button type="button" data-z="fit">Fit</button>
+    <button type="button" data-z="2">2&times;</button>
+    <button type="button" data-z="3">3&times;</button>
+    <button type="button" class="x" data-close>Close</button>
+  </div>
+  <div class="viewer-scroll" id="viewer-scroll"><div class="viewer-wrap" id="viewer-wrap"></div></div>
+</div>
+<script>
+(() => {
+'use strict';
+
+/* ------------------------------------------------------------ utils */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  if (attrs) for (const k in attrs) {
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'style') el.style.cssText = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return el;
+}
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('jr.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('jr.' + k, JSON.stringify(v)); } catch (e) { /* ignore */ } },
+};
+const nowISO = () => new Date().toISOString();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fmtDate = s => { try { const d = new Date(s); return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }); } catch (e) { return s || ''; } };
+
+/* ------------------------------------------------------------ markup */
+function parse(s) {
+  let i = 0;
+  function rec(stop) {
+    const out = []; let buf = '';
+    while (i < s.length) {
+      if (s.startsWith('[[', i)) { if (buf) { out.push(buf); buf = ''; } i += 2; out.push({ k: rec(true) }); continue; }
+      if (stop && s.startsWith(']]', i)) { if (buf) out.push(buf); i += 2; return out; }
+      buf += s[i++];
+    }
+    if (buf) out.push(buf);
+    return out;
+  }
+  return rec(false);
+}
+function balanced(s) {
+  let d = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s.startsWith('[[', i)) { d++; i++; }
+    else if (s.startsWith(']]', i)) { d--; i++; if (d < 0) return false; }
+  }
+  return d === 0;
+}
+function renderNodes(nodes, parent) {
+  for (const n of nodes) {
+    if (typeof n === 'string') { parent.append(n); continue; }
+    renderTag(n.k, parent);
+  }
+}
+function renderTag(nodes, parent) {
+  const head = typeof nodes[0] === 'string' ? nodes[0] : '';
+  const rest = typeof nodes[0] === 'string' ? nodes.slice(1) : nodes;
+  const inner = (prefix) => { const b = head.slice(prefix.length).replace(/^\s+/, ''); return (b ? [b] : []).concat(rest); };
+  const mk = (cls, title, kids) => { const e = h('span', { class: cls, title }); if (kids.length === 1 && typeof kids[0] === 'string' && kids[0].trim() === '?') e.append(h('span', { class: 'mk-ill', title: 'illegible' })); else renderNodes(kids, e); parent.append(e); };
+  if (head.startsWith('struck:')) return mk('mk-s', 'struck through', inner('struck:'));
+  if (head.startsWith('ins:')) return mk('mk-i', 'inserted', inner('ins:'));
+  if (head.startsWith('quoted passage:')) {
+    const t = (head.slice(15) + rest.map(x => typeof x === 'string' ? x : '').join('')).trim();
+    const m = t.match(/^(.*);\s*begins\s+'(.*)'\s*$/s);
+    parent.append(h('span', { class: 'mk-q' }, m ? `Quoted passage · ${m[1].trim()} · begins '${m[2].trim()}…'` : `Quoted passage · ${t}`));
+    return;
+  }
+  if (head.trim() === '?' && !rest.length) { parent.append(h('span', { class: 'mk-ill', title: 'illegible' })); return; }
+  if (head.startsWith('?')) return mk('mk-u', 'uncertain reading', inner('?'));
+  parent.append('[['); renderNodes(nodes, parent); parent.append(']]');
+}
+function renderMarkup(s, cls) {
+  const el = h('div', { class: cls || 'tx' });
+  if (!s || !s.trim()) { el.classList.add('empty'); el.textContent = '(empty line)'; return el; }
+  renderNodes(parse(s), el);
+  return el;
+}
+function plain(s) { // searchable text (keeps struck words, drops markup)
+  return s.replace(/\[\[quoted passage:/g, ' ').replace(/\[\[(struck:|ins:|\?)\s*/g, ' ').replace(/\[\[|\]\]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+const isQuote = tx => /\[\[quoted passage:/.test(tx);
+
+/* ------------------------------------------------------------ state */
+const S = {
+  data: null, lines: new Map(), pages: new Map(), items: [], itemOf: new Map(),
+  server: { reviews: new Map(), decisions: new Map(), versions: new Map(), release: new Map(), batches: new Map(), rconfig: new Map() },
+  pending: { reviews: new Map(), decisions: new Map(), versions: new Map(), release: new Map(), batches: new Map(), rconfig: new Map() },
+  db: null, assets: null, user: null, readOnly: true, dbState: 'connecting',
+  view: 'review', idx: 0, active: null, editing: null,
+  inflight: 0, failed: [], retrying: 0, lastSaved: 0, saveMsg: '',
+};
+const ALL_LINE_IDS = [];
+
+function rv(id) { // effective review doc for a line
+  const p = S.pending.reviews.get(id);
+  if (p) return p.data;
+  return S.server.reviews.get(id) || null;
+}
+function dv(key) { const p = S.pending.decisions.get(key); if (p) return p.data; return S.server.decisions.get(key) || null; }
+function versionsList() {
+  const m = new Map(S.server.versions);
+  for (const [k, p] of S.pending.versions) if (p.data) m.set(k, p.data); else m.delete(k);
+  return Array.from(m, ([id, d]) => ({ id, ...d })).sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+}
+function itemLineIds(it) {
+  const out = [];
+  for (const v of it.versions) { const p = S.pages.get(v.page); for (const b of v.blocks) for (const l of p.blocks[b].lines) out.push(l.id); }
+  return out;
+}
+function itemProgress(it) {
+  const ids = it._ids || (it._ids = itemLineIds(it));
+  let n = 0; for (const id of ids) if (rv(id)) n++;
+  return [n, ids.length];
+}
+
+/* ------------------------------------------------------------ boot */
+async function boot() {
+  let data;
+  try { const r = await fetch('data/review.json'); data = await r.json(); }
+  catch (e) { $('#piece-head').append(h('p', { class: 'err' }, 'Could not load data/review.json')); return; }
+  S.data = data;
+  for (const p of data.pages) {
+    S.pages.set(p.id, p);
+    p.blocks.forEach((b, bi) => b.lines.forEach((l, li) => { S.lines.set(l.id, { l, p, bi, li, b }); ALL_LINE_IDS.push(l.id); }));
+  }
+  S.items = data.items;
+  S.items.forEach((it, i) => { for (const v of it.versions) for (const b of v.blocks) { const k = v.page + '-' + b; if (!S.itemOf.has(k)) S.itemOf.set(k, i); } });
+  const savedId = LS.get('item', null);
+  const si = S.items.findIndex(it => it.id === savedId);
+  S.idx = si >= 0 ? si : 0;
+  S.active = LS.get('active', null);
+  wire();
+  renderPiece();
+  renderProgress();
+  renderSave();
+  connect();
+}
+
+async function connect() {
+  const c = window.claude;
+  if (!c || typeof c.use !== 'function') { S.dbState = 'none'; renderSave(); refreshAll(); return; }
+  let db = null, user = null, assets = null;
+  try { [db, user, assets] = await Promise.all([c.use('db').catch(() => null), c.use('user').catch(() => null), c.use('assets').catch(() => null)]); }
+  catch (e) { db = null; }
+  S.user = user; S.assets = assets;
+  if (!db) { S.dbState = 'none'; renderSave(); refreshAll(); return; }
+  S.db = db;
+  let can = null;
+  try { can = user ? await user.can('data.write') : null; } catch (e) { can = null; }
+  S.readOnly = can === false;
+  S.dbState = S.readOnly ? 'ro' : 'ok';
+  subscribe('reviews'); subscribe('decisions'); subscribe('versions'); subscribe('release'); subscribe('batches'); subscribe('rconfig');
+  renderSave(); refreshAll();
+}
+
+function subscribe(name, attempt = 0) {
+  let ref;
+  try { ref = S.db.collection(name); } catch (e) { return; }
+  ref.onSnapshot(snap => {
+    const m = new Map();
+    for (const d of snap.docs) { if (d.exists) { const v = d.data(); if (v && typeof v === 'object') m.set(d.id, v); } }
+    S.server[name] = m;
+    for (const [k, p] of S.pending[name]) if (p.done) S.pending[name].delete(k);
+    scheduleRefresh();
+  }, err => {
+    const code = err && err.code;
+    if (code === 'unavailable' && attempt < 3) { setTimeout(() => subscribe(name, attempt + 1), 1500 + Math.random() * 1500); return; }
+    if (code === 'revoked' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed') { S.readOnly = true; S.dbState = 'ro'; }
+    S.saveMsg = 'Sync stopped'; renderSave();
+  });
+}
+
+let refreshQueued = false;
+function scheduleRefresh() { if (refreshQueued) return; refreshQueued = true; requestAnimationFrame(() => { refreshQueued = false; refreshAll(); }); }
+function refreshAll() {
+  renderProgress();
+  updateCards();
+  updatePieceHead();
+  updateBar();
+  if (!$('#queue').hidden) renderQueue();
+  if (S.view === 'decisions') updateDecisions();
+  if (S.view === 'versions') renderVersionsList();
+  if (S.view === 'search') updatePageGrid();
+  if (S.view === 'release') updateRelease();
+}
+
+/* ------------------------------------------------------------ writes */
+const chains = new Map();
+let slots = 3; const waiters = [];
+async function slot() { if (slots > 0) { slots--; return; } await new Promise(r => waiters.push(r)); }
+function release() { const w = waiters.shift(); if (w) w(); else slots++; }
+
+function canWrite() { return !!S.db && !S.readOnly; }
+
+function write(coll, id, data) {
+  if (!canWrite()) return Promise.resolve(false);
+  const entry = { data, done: false, seq: Math.random() };
+  S.pending[coll].set(id, entry);
+  S.inflight++; renderSave(); scheduleRefresh();
+  const path = coll + '/' + id;
+  const prev = chains.get(path) || Promise.resolve();
+  const run = prev.then(() => doWrite(coll, id, data, entry));
+  chains.set(path, run.catch(() => {}));
+  return run;
+}
+async function doWrite(coll, id, data, entry) {
+  await slot();
+  let ok = false, attempt = 0;
+  try {
+    for (;;) {
+      try {
+        const ref = S.db.collection(coll).doc(id);
+        if (data) await ref.set(data); else await ref.delete();
+        ok = true; break;
+      } catch (e) {
+        const code = (e && e.code) || 'unavailable';
+        if ((code === 'unavailable' && attempt < 2) || (code === 'resource_exhausted' && attempt < 4)) {
+          attempt++; S.retrying++; renderSave();
+          await sleep((code === 'resource_exhausted' ? 1200 * 2 ** attempt : 500) + Math.random() * 700);
+          S.retrying--; continue;
+        }
+        if (code === 'invalid_argument' || code === 'revoked' || code === 'not_granted' || code === 'capability_disabled' || code === 'capability_removed') {
+          S.readOnly = true; S.dbState = 'ro';
+        }
+        S.saveMsg = code === 'quota_exceeded' ? 'Storage full' : '';
+        break;
+      }
+    }
+  } finally { release(); }
+  S.inflight--;
+  if (ok) {
+    entry.done = true; S.lastSaved = Date.now();
+    const sv = data ? S.server[coll].get(id) : undefined;
+    if (S.pending[coll].get(id) === entry && (data ? sv && JSON.stringify(sv) === JSON.stringify(data) : !S.server[coll].has(id))) S.pending[coll].delete(id);
+  } else {
+    if (S.pending[coll].get(id) === entry) S.pending[coll].delete(id);
+    if (canWrite()) S.failed.push({ coll, id, data });
+  }
+  renderSave(); scheduleRefresh();
+  return ok;
+}
+function retryFailed() {
+  const f = S.failed.splice(0); S.saveMsg = '';
+  for (const x of f) write(x.coll, x.id, x.data);
+  renderSave();
+}
+
+function renderSave() {
+  const b = $('#save'); b.hidden = false; b.onclick = null; b.dataset.k = '';
+  if (S.dbState === 'connecting') { b.textContent = 'Connecting…'; b.dataset.k = 'ro'; return; }
+  if (S.dbState === 'none') { b.textContent = 'Read-only · not saving'; b.dataset.k = 'ro'; b.title = 'Browsing works; decisions and reviews are not saved in this view.'; return; }
+  if (S.dbState === 'ro' || S.readOnly) { b.textContent = 'Read-only'; b.dataset.k = 'ro'; return; }
+  if (S.failed.length) { b.textContent = `${S.failed.length} not saved · Retry`; b.dataset.k = 'err'; b.onclick = retryFailed; return; }
+  if (S.saveMsg) { b.textContent = S.saveMsg; b.dataset.k = 'err'; return; }
+  if (S.retrying) { b.textContent = 'Retrying…'; return; }
+  if (S.inflight) { b.textContent = S.inflight > 1 ? `Saving ${S.inflight}…` : 'Saving…'; return; }
+  b.textContent = S.lastSaved ? 'Saved' : 'Synced';
+}
+
+/* ------------------------------------------------------------ progress */
+function renderProgress() {
+  let n = 0, c = 0;
+  for (const id of ALL_LINE_IDS) { const r = rv(id); if (r) { n++; if (r.status === 'corrected') c++; } }
+  let done = 0; for (const it of S.items) { const [a, t] = itemProgress(it); if (t && a === t) done++; }
+  const el = $('#prog'); el.textContent = '';
+  el.append(h('b', null, String(n)), ` / ${ALL_LINE_IDS.length} lines`, c ? ` · ${c} corrected` : '', ` · ${done}/${S.items.length} items`);
+}
+
+/* ------------------------------------------------------------ review view */
+const GROUPS = { 1: 'Complete poems and songs', 2: 'Drafts and fragments', 3: 'Prose, letters, notes', 4: 'Other lines on pages' };
+const KIND = { 'poem': 'poem', 'song lyric': 'song', 'prose': 'prose', 'letter': 'letter', 'notes': 'notes', 'other': 'other lines' };
+function itemTitle(it) { return it.g === 4 ? '' : it.first; }
+function itemPages(it) { return Array.from(new Set(it.versions.map(v => v.page))); }
+
+function cur() { return S.items[S.idx]; }
+function setItem(i, opts = {}) {
+  if (i < 0 || i >= S.items.length) return;
+  S.idx = i; S.editing = null;
+  LS.set('item', S.items[i].id);
+  S.active = opts.line || null;
+  renderPiece();
+  if (opts.line) { const el = card(opts.line); if (el) el.scrollIntoView({ block: 'center' }); }
+  else if (opts.page) { const el = $(`.ver[data-page="${opts.page}"]`); if (el) el.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0); }
+  else window.scrollTo(0, 0);
+}
+
+function renderPiece() {
+  const it = cur();
+  const head = $('#piece-head'); head.textContent = '';
+  const body = $('#piece-body'); body.textContent = '';
+  const ids = it._ids || (it._ids = itemLineIds(it));
+  if (!S.active || !ids.includes(S.active)) S.active = ids.find(id => !rv(id)) || ids[0] || null;
+
+  head.append(
+    h('div', { class: 'ph-nav' }, h('button', { class: 'btn', type: 'button', 'aria-label': 'Previous item', onclick: () => setItem(S.idx - 1), disabled: S.idx === 0 }, '‹')),
+    h('div', { class: 'ph-title' },
+      it.g === 4 ? h('p', { class: 'ph-first none' }, 'Lines outside the pieces') : h('p', { class: 'ph-first' }, it.first),
+      h('div', { class: 'ph-meta' },
+        h('span', null, `${S.idx + 1}/${S.items.length}`),
+        h('span', null, KIND[it.kind] + (it.status ? ' · ' + it.status : '')),
+        ...itemPages(it).map(pg => h('button', { class: 'pg', type: 'button', onclick: () => openViewer(pg) }, pg)),
+        h('span', { id: 'ph-count' }))),
+    h('div', { class: 'ph-nav' }, h('button', { class: 'btn', type: 'button', 'aria-label': 'Next item', onclick: () => setItem(S.idx + 1), disabled: S.idx === S.items.length - 1 }, '›')),
+    h('div', { class: 'meter' }, h('i', { id: 'ph-meter' })),
+    h('div', { class: 'ph-actions' },
+      h('button', { class: 'btn small', type: 'button', onclick: openQueue }, 'Queue'),
+      h('button', { class: 'btn small', type: 'button', id: 'confirm-rest', onclick: confirmRest }, 'Confirm all remaining')),
+  );
+
+  // new versions attached to this piece
+  const vs = versionsList().filter(v => v.pieceId === it.id);
+  if (vs.length) {
+    body.append(h('div', { class: 'pv-strip', 'aria-label': 'New versions' }, vs.map(v => vImg(v, 'pv'))));
+  }
+
+  const seenPages = new Set();
+  for (const v of it.versions) {
+    const p = S.pages.get(v.page);
+    const sec = h('section', { class: 'ver', 'data-page': p.id });
+    sec.append(h('div', { class: 'ver-head' }, h('b', null, p.id), h('span', null, v.blocks.length > 1 ? `blocks ${v.blocks.join(', ')}` : `block ${v.blocks[0]}`),
+      h('button', { type: 'button', onclick: () => openViewer(p.id) }, 'Whole page')));
+    if (!seenPages.has(p.id)) {
+      seenPages.add(p.id);
+      if (p.uncertain.length) {
+        const d = h('details', { class: 'unc', open: true }, h('summary', null, `Uncertain readings on ${p.id} (${p.uncertain.length})`));
+        d.append(h('ul', null, p.uncertain.map(u => h('li', null, renderMarkup(u, 'unc-t')))));
+        sec.append(d);
+      }
+      const notes = v.blocks.map(b => [b, p.blocks[b].note]).filter(x => x[1]);
+      if (notes.length) sec.append(h('details', { class: 'tn' }, h('summary', null, `Transcriber notes (${notes.length})`), h('ul', null, notes.map(([b, n]) => h('li', null, `b${b}: ${n}`)))));
+    }
+    let n = 0;
+    for (const bi of v.blocks) {
+      const blk = p.blocks[bi];
+      if (!blk.lines.length) continue;
+      sec.append(h('div', { class: 'blk-label' }, `b${bi}${blk.t !== 'text' ? ' · ' + blk.t : ''}${blk.spread ? ' · from 2015 spread' : ''}`));
+      const allNoBox = blk.lines.every(l => !l.box);
+      if (allNoBox) sec.append(pageCrop(p, blk.spread, `${p.id} b${bi}`));
+      for (const l of blk.lines) { n++; sec.append(lineCard(l.id, n, !allNoBox)); }
+    }
+    body.append(sec);
+  }
+  if (!ids.length) body.append(h('p', { class: 'empty-note' }, 'No transcribed lines in this item.'));
+  body.append(h('div', { class: 'ph-actions', style: 'margin-top:22px' },
+    h('button', { class: 'btn', type: 'button', onclick: () => setItem(S.idx - 1), disabled: S.idx === 0 }, '‹ Previous'),
+    h('button', { class: 'btn primary', type: 'button', onclick: () => setItem(S.idx + 1), disabled: S.idx === S.items.length - 1 }, 'Next item ›')));
+  updatePieceHead(); updateBar(); markActive(false);
+  requestAnimationFrame(layoutCrops);
+}
+
+function vImg(v, cls) {
+  const src = v.assetId ? '/_blob/' + v.assetId : '';
+  const img = h('img', { src, alt: v.note ? 'New version: ' + v.note : 'New version', loading: 'lazy', class: cls });
+  img.addEventListener('error', () => { img.replaceWith(h('span', { class: 'miss' }, 'image unavailable')); }, { once: true });
+  img.addEventListener('click', () => openViewerSrc(src, v.note || 'New version'));
+  return img;
+}
+
+function card(id) { return document.querySelector(`.line[data-id="${CSS.escape(id)}"]`); }
+
+function pageCrop(p, spread, label) {
+  const src = spread && p.spread ? p.spread.img : p.img;
+  const el = h('div', { class: 'crop page blkpage', role: 'button', tabindex: '0', 'aria-label': 'Open ' + label },
+    h('img', { src, alt: label, loading: 'lazy' }), h('span', { class: 'zoomhint' }, 'no line position · tap to zoom'));
+  el.addEventListener('click', () => openViewer(p.id, null, spread));
+  return el;
+}
+
+function lineCard(id, n, wantCrop) {
+  const { l, p, b } = S.lines.get(id);
+  const el = h('article', { class: 'line', 'data-id': id, tabindex: '-1' });
+  if (wantCrop) {
+    if (l.box) {
+      const c = h('div', { class: 'crop', role: 'button', tabindex: '0', 'aria-label': 'Scan of line, open page' });
+      c.dataset.box = l.box.join(','); c.dataset.page = p.id;
+      c.append(h('img', { src: p.img, alt: '', loading: 'lazy', draggable: 'false' }));
+      c.addEventListener('click', ev => { ev.stopPropagation(); openViewer(p.id, l.box); });
+      el.append(c);
+    } else {
+      el.append(pageCrop(p, b.spread, `${p.id} line`));
+    }
+  }
+  el.append(h('div', { class: 'tx-row' }, h('span', { class: 'ln' }, String(n)), h('div', { class: 'txslot' }), h('span', { class: 'stslot' })));
+  el.append(h('div', { class: 'wasslot' }), h('div', { class: 'acts' }), h('div', { class: 'edslot' }));
+  el.addEventListener('click', ev => { if (ev.target.closest('button,textarea,input,.crop')) return; setActive(id); });
+  fillCard(el);
+  return el;
+}
+
+function fillCard(el) {
+  const id = el.dataset.id; const { l, b } = S.lines.get(id);
+  const r = rv(id);
+  const shown = r && r.status === 'corrected' && typeof r.text === 'string' ? r.text : l.tx;
+  const tx = el.querySelector('.txslot'); tx.textContent = ''; tx.append(renderMarkup(shown));
+  tx.firstChild.style.flex = '1';
+  tx.style.cssText = 'flex:1;min-width:0;display:flex';
+  const st = el.querySelector('.stslot'); st.textContent = '';
+  if (r) st.append(h('span', { class: 'st ' + (r.status === 'corrected' ? 'x' : 'c') }, r.status === 'corrected' ? 'corrected' : '✓ confirmed'));
+  const was = el.querySelector('.wasslot'); was.textContent = '';
+  if (r && r.status === 'corrected') {
+    was.className = 'wasslot was';
+    was.append('Machine reading: ', renderMarkup(l.tx, 'tx'));
+    was.lastChild.style.display = 'inline';
+    if (r.original && r.original !== l.tx && r.text !== l.tx) was.append(h('div', { class: 'note' }, 'The transcript changed after this review.'));
+  } else was.className = 'wasslot';
+  el.classList.toggle('done', !!r);
+  const acts = el.querySelector('.acts'); acts.textContent = '';
+  const quote = isQuote(l.tx) || b.t === 'quotation';
+  if (S.editing !== id) {
+    const dis = !canWrite();
+    acts.append(h('button', { class: 'btn confirm' + (r ? '' : ' primary'), type: 'button', disabled: dis || !!r, onclick: () => confirmLine(id) }, r ? (r.status === 'corrected' ? 'Corrected' : 'Confirmed') : 'Confirm'));
+    if (!quote) acts.append(h('button', { class: 'btn', type: 'button', disabled: dis, onclick: () => startEdit(id) }, 'Edit'));
+    else acts.append(h('span', { class: 'note', style: 'align-self:center' }, 'placeholder · confirm only'));
+    if (r) acts.append(h('button', { class: 'lnk', type: 'button', disabled: dis, onclick: () => resetLine(id) }, 'Undo'));
+    el.querySelector('.edslot').textContent = '';
+  }
+}
+
+function updateCards() { for (const el of $$('#piece-body .line')) if (S.editing !== el.dataset.id) fillCard(el); }
+
+function updatePieceHead() {
+  const it = cur(); if (!it) return;
+  const [a, t] = itemProgress(it);
+  const c = $('#ph-count'); if (c) c.textContent = `${a}/${t} lines`;
+  const m = $('#ph-meter'); if (m) m.style.width = (t ? (100 * a / t) : 0) + '%';
+  const b = $('#confirm-rest');
+  if (b && !b.classList.contains('arm')) { b.textContent = t - a ? `Confirm all remaining (${t - a})` : 'All lines reviewed'; b.disabled = !canWrite() || !(t - a); }
+}
+
+function layoutCrops() {
+  for (const c of $$('#piece-body .crop[data-box]')) {
+    const p = S.pages.get(c.dataset.page);
+    const [x0, y0, x1, y1] = c.dataset.box.split(',').map(Number);
+    const lh = y1 - y0;
+    const px = 0.018, py = Math.max(0.01, lh * 0.32);
+    const X0 = Math.max(0, x0 - px), X1 = Math.min(1, x1 + px), Y0 = Math.max(0, y0 - py), Y1 = Math.min(1, y1 + py);
+    const W = c.clientWidth || 300;
+    const bw = (X1 - X0) * p.w, bh = (Y1 - Y0) * p.h;
+    const scale = Math.min(W / bw, 1.35);
+    const H = Math.round(bh * scale);
+    const img = c.firstChild;
+    const off = (W - bw * scale) / 2;
+    c.style.height = H + 'px';
+    img.style.width = (p.w * scale) + 'px';
+    img.style.transform = `translate(${(-X0 * p.w * scale + off).toFixed(1)}px, ${(-Y0 * p.h * scale).toFixed(1)}px)`;
+  }
+}
+
+/* active line + bar */
+function setActive(id, scroll) {
+  S.active = id; LS.set('active', id); markActive(scroll); updateBar();
+}
+function markActive(scroll) {
+  for (const el of $$('#piece-body .line.active')) el.classList.remove('active');
+  const el = S.active && card(S.active);
+  if (el) { el.classList.add('active'); if (scroll) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+}
+function moveActive(d) {
+  const ids = cur()._ids; if (!ids.length) return;
+  let i = ids.indexOf(S.active); i = Math.max(0, Math.min(ids.length - 1, (i < 0 ? 0 : i + d)));
+  setActive(ids[i], true);
+}
+function updateBar() {
+  const ids = cur() ? cur()._ids || [] : [];
+  const r = S.active ? rv(S.active) : null;
+  const ln = S.active && S.lines.get(S.active);
+  const quote = ln && (ln.b.t === 'quotation' || isQuote(ln.l.tx));
+  const dis = !canWrite();
+  const allDone = ids.length && ids.every(id => rv(id));
+  const bc = $('#b-confirm');
+  if (allDone && S.view === 'review' && !S.editing) { bc.textContent = 'Next item ›'; bc.disabled = S.idx === S.items.length - 1; bc.dataset.mode = 'next'; }
+  else { bc.textContent = r ? (r.status === 'corrected' ? 'Corrected' : 'Confirmed') : 'Confirm'; bc.disabled = dis || !S.active || !!r || !!S.editing; bc.dataset.mode = 'confirm'; }
+  $('#b-edit').disabled = dis || !S.active || quote || !!S.editing;
+  $('#b-prev').disabled = !ids.length; $('#b-next').disabled = !ids.length;
+  $('#bar').hidden = S.view !== 'review';
+}
+
+/* actions */
+function confirmLine(id) {
+  if (!canWrite() || rv(id)) return;
+  const { l } = S.lines.get(id);
+  write('reviews', id, { status: 'confirmed', original: l.tx, at: nowISO() });
+  advanceFrom(id);
+}
+function advanceFrom(id) { // move to the next unreviewed line in this item
+  const ids = cur()._ids; const i = ids.indexOf(id);
+  const next = ids.slice(i + 1).find(x => !rv(x)) || ids.find(x => !rv(x) && x !== id);
+  if (next) setActive(next, true); else setActive(id, false);
+}
+function resetLine(id) { if (!canWrite()) return; write('reviews', id, null); setActive(id, false); }
+
+let armTimer = 0;
+function confirmRest() {
+  const b = $('#confirm-rest');
+  const ids = cur()._ids.filter(id => !rv(id));
+  if (!ids.length || !canWrite()) return;
+  if (!b.classList.contains('arm')) {
+    b.classList.add('arm'); b.textContent = `Tap again to confirm ${ids.length} lines`;
+    clearTimeout(armTimer); armTimer = setTimeout(() => { b.classList.remove('arm'); updatePieceHead(); }, 4000);
+    return;
+  }
+  clearTimeout(armTimer); b.classList.remove('arm');
+  const at = nowISO();
+  for (const id of ids) write('reviews', id, { status: 'confirmed', original: S.lines.get(id).l.tx, at });
+  updatePieceHead();
+}
+
+function startEdit(id) {
+  if (!canWrite()) return;
+  if (S.editing && S.editing !== id) cancelEdit();
+  S.editing = id; setActive(id, false);
+  const el = card(id); if (!el) return;
+  const { l } = S.lines.get(id);
+  const r = rv(id);
+  const start = r && r.status === 'corrected' ? r.text : l.tx;
+  el.querySelector('.acts').textContent = '';
+  const ta = h('textarea', { 'aria-label': 'Line markup', spellcheck: 'false', autocapitalize: 'off', autocorrect: 'off', rows: '2' });
+  ta.value = start;
+  const prev = h('div', { class: 'preview' });
+  const msg = h('div', { class: 'err', role: 'status' });
+  const upd = () => { prev.textContent = ''; prev.append(renderMarkup(ta.value)); msg.textContent = balanced(ta.value) ? '' : 'Unbalanced [[ ]]'; };
+  ta.addEventListener('input', upd);
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); save(); }
+    else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+  });
+  const wrap = (kind) => {
+    const s = ta.selectionStart, e = ta.selectionEnd, sel = ta.value.slice(s, e);
+    let ins;
+    if (kind === 'ill') ins = '[[?]]';
+    else ins = `[[${kind === 'unc' ? '? ' : kind + ': '}${sel}]]`;
+    ta.setRangeText(ins, s, e, 'end');
+    if (!sel && kind !== 'ill') { const pos = s + ins.length - 2; ta.setSelectionRange(pos, pos); }
+    ta.focus(); upd();
+  };
+  const save = () => {
+    const v = ta.value.replace(/\s*\n\s*/g, ' ');
+    if (!balanced(v)) { msg.textContent = 'Unbalanced [[ ]] — not saved'; return; }
+    if (/\[\[quoted passage:/.test(v) !== /\[\[quoted passage:/.test(l.tx)) { msg.textContent = 'Quotation placeholders cannot be added or removed here'; return; }
+    S.editing = null;
+    if (v.trim() === l.tx.trim()) write('reviews', id, { status: 'confirmed', original: l.tx, at: nowISO() });
+    else write('reviews', id, { status: 'corrected', text: v, original: l.tx, at: nowISO() });
+    const ed2 = el.querySelector('.edslot'); ed2.className = 'edslot'; ed2.textContent = '';
+    fillCard(el); advanceFrom(id); updateBar();
+  };
+  const ed = el.querySelector('.edslot'); ed.textContent = '';
+  ed.className = 'edslot editor';
+  ed.append(
+    ta,
+    h('div', { class: 'tools' },
+      h('button', { class: 'btn', type: 'button', onmousedown: e => e.preventDefault(), onclick: () => wrap('struck') }, h('span', { class: 'mk-s' }, 'Struck')),
+      h('button', { class: 'btn', type: 'button', onmousedown: e => e.preventDefault(), onclick: () => wrap('ins') }, 'Insertion'),
+      h('button', { class: 'btn', type: 'button', onmousedown: e => e.preventDefault(), onclick: () => wrap('ill') }, 'Illegible'),
+      h('button', { class: 'btn', type: 'button', onmousedown: e => e.preventDefault(), onclick: () => wrap('unc') }, h('span', { class: 'mk-u' }, 'Uncertain'))),
+    h('div', { class: 'help' }, '[[struck: x]] · [[ins: x]] · [[?]] illegible · [[? x]] uncertain. Select text, then a button wraps it.'),
+    prev, msg,
+    h('div', { class: 'tools' },
+      h('button', { class: 'btn primary', type: 'button', onclick: save }, 'Save'),
+      h('button', { class: 'btn', type: 'button', onclick: cancelEdit }, 'Cancel'),
+      ta.value !== l.tx ? h('button', { class: 'btn', type: 'button', onclick: () => { ta.value = l.tx; upd(); ta.focus(); } }, 'Machine reading') : null),
+  );
+  upd(); updateBar();
+  ta.focus({ preventScroll: true });
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+  el.scrollIntoView({ block: 'nearest' });
+}
+function cancelEdit() {
+  const id = S.editing; S.editing = null;
+  const el = id && card(id);
+  if (el) { const ed = el.querySelector('.edslot'); ed.className = 'edslot'; ed.textContent = ''; fillCard(el); }
+  updateBar();
+}
+
+/* ------------------------------------------------------------ queue */
+function openQueue() { $('#hide-done').checked = LS.get('hideDone', false); renderQueue(); $('#queue').hidden = false; const c = $('#queue-list .qi.cur'); if (c) c.scrollIntoView({ block: 'center' }); }
+function renderQueue() {
+  const box = $('#queue-list'); const st = box.scrollTop; box.textContent = '';
+  const hide = $('#hide-done').checked;
+  let g = 0;
+  S.items.forEach((it, i) => {
+    const [a, t] = itemProgress(it); const done = t > 0 && a === t;
+    if (it.g !== g) {
+      g = it.g;
+      const inG = S.items.filter(x => x.g === g); const dn = inG.filter(x => { const [p, q] = itemProgress(x); return q && p === q; }).length;
+      box.append(h('div', { class: 'qg' }, h('span', null, GROUPS[g]), h('span', null, `${dn}/${inG.length}`)));
+    }
+    if (hide && done && i !== S.idx) return;
+    box.append(h('button', { type: 'button', class: 'qi' + (done ? ' done' : '') + (i === S.idx ? ' cur' : ''), onclick: () => { $('#queue').hidden = true; setItem(i); } },
+      h('span', { class: 'f' }, it.g === 4 ? itemPages(it).join(', ') : it.first),
+      h('span', { class: 'm' }, `${KIND[it.kind]}${it.status ? ' · ' + it.status : ''} · ${itemPages(it).join(', ')}`),
+      h('span', { class: 'n' }, done ? `✓ ${t}` : `${a}/${t}`)));
+  });
+  box.scrollTop = st;
+}
+
+/* ------------------------------------------------------------ viewer */
+let vState = null;
+function openViewer(pageId, box, spread) {
+  const p = S.pages.get(pageId);
+  const useSpread = spread && p.spread;
+  vState = { src: useSpread ? p.spread.img : p.img, w: useSpread ? p.spread.w : p.w, h: useSpread ? p.spread.h : p.h, box: useSpread ? null : box, label: pageId + (useSpread ? ' · 2015 spread' : '') };
+  showViewer(box ? 2 : 'fit');
+}
+function openViewerSrc(src, label) { vState = { src, w: 0, h: 0, box: null, label }; showViewer('fit'); }
+function showViewer(z) {
+  const v = $('#viewer'); v.hidden = false;
+  $('#viewer-label').textContent = vState.label;
+  const wrap = $('#viewer-wrap'); wrap.textContent = '';
+  wrap.append(h('img', { src: vState.src, alt: vState.label }));
+  if (vState.box) { const [x0, y0, x1, y1] = vState.box; wrap.append(h('div', { class: 'hl', style: `left:${x0 * 100}%;top:${y0 * 100}%;width:${(x1 - x0) * 100}%;height:${(y1 - y0) * 100}%` })); }
+  zoom(z);
+  document.body.style.overflow = 'hidden';
+}
+function zoom(z) {
+  const sc = $('#viewer-scroll'), wrap = $('#viewer-wrap');
+  const W = sc.clientWidth, H = sc.clientHeight;
+  let w;
+  if (z === 'fit') {
+    const ar = vState.w && vState.h ? vState.w / vState.h : 0.7;
+    w = Math.min(W, H * ar);
+  } else w = W * Number(z);
+  wrap.style.width = Math.round(w) + 'px';
+  for (const b of $$('#viewer [data-z]')) b.setAttribute('aria-pressed', String(b.dataset.z === String(z)));
+  if (vState.box) {
+    const [x0, y0, x1, y1] = vState.box;
+    const ar = vState.h / vState.w;
+    const cx = (x0 + x1) / 2 * w, cy = (y0 + y1) / 2 * w * ar;
+    requestAnimationFrame(() => { sc.scrollLeft = cx - W / 2; sc.scrollTop = cy - H / 2; });
+  }
+}
+function closeViewer() { $('#viewer').hidden = true; document.body.style.overflow = ''; vState = null; }
+
+/* ------------------------------------------------------------ decisions */
+const ECHO = [
+  { key: 'echo-diary37', page: 'diary37', blocks: [2] },
+  { key: 'echo-diary53a', page: 'diary53a', blocks: [4] },
+  { key: 'echo-diary60a', page: 'diary60a', blocks: [3] },
+  { key: 'echo-diary59', page: 'diary59', blocks: [4] },
+];
+const ECHO_CHOICES = [['mine', 'Mine'], ['quoted', 'Quoted'], ['revise', 'Revise'], ['cut', 'Cut']];
+
+function decisionDefs() {
+  const P = id => S.pages.get(id);
+  const ns = S.items.find(it => it.versions.some(v => v.page === 'diary53') && it.versions.some(v => v.page === 'diary54'));
+  const nsChoices = [];
+  if (ns) {
+    const seen = [];
+    for (const v of ns.versions) for (const b of v.blocks) seen.push([v.page, b]);
+    seen.sort((a, b) => S.pages.get(a[0]).seq - S.pages.get(b[0]).seq || a[1] - b[1]);
+    for (const [pg, b] of seen) {
+      const lines = P(pg).blocks[b].lines;
+      if (!lines.length) continue;
+      nsChoices.push([`${pg}-${b}`, `${pg} · b${b}`, plain(lines[0].tx) + (lines.length > 1 ? ` (${lines.length} lines)` : '')]);
+    }
+    nsChoices.push(['layers', 'Keep drafts as layers', '']);
+  }
+  const d46 = P('diary46').blocks.map((b, i) => [b, i]).filter(([b]) => b.t === 'text' && b.lines.length).map(([, i]) => i);
+  return { ns, nsChoices, d46 };
+}
+
+function renderDecisions() {
+  const root = $('#v-decisions'); root.textContent = '';
+  const { ns, nsChoices, d46 } = decisionDefs();
+  if (!canWrite()) root.append(h('p', { class: 'note' }, S.dbState === 'connecting' ? 'Connecting…' : 'Saving unavailable — choices are shown read-only.'));
+
+  root.append(h('div', { class: 'dsec' }, 'Versions'));
+  root.append(dcard('nothing-shines-final', '“Nothing shines quite as brightly” — final version', ns ? itemPages(ns) : [], nsChoices.map(c => [c[0], c[1], c[2]])));
+
+  root.append(h('div', { class: 'dsec' }, 'Grouping'));
+  root.append(dcard('same-song-diary61a-diary62', '“why DO” (diary61a) and “In JUST” (diary62)', ['diary61a', 'diary62'], [['same', 'Same song'], ['separate', 'Separate']]));
+  root.append(dcard('one-piece-diary56a-diary57', '“I can only stand myself in” (diary56a) and “Different day. Different mirror.” (diary57)', ['diary56a', 'diary57'], [['one', 'One piece'], ['separate', 'Separate']]));
+
+  root.append(h('div', { class: 'dsec' }, 'Lines that may echo other sources'));
+  for (const e of ECHO) root.append(dcard(e.key, null, [e.page], ECHO_CHOICES, { page: e.page, blocks: e.blocks }));
+  const c46 = h('div', { class: 'dcard' }, h('h3', null, 'diary46 lines'), h('div', { class: 'dctx' }, h('button', { type: 'button', onclick: () => goPage('diary46') }, 'diary46'), h('button', { type: 'button', onclick: () => openViewer('diary46') }, 'scan')));
+  for (const b of d46) c46.append(h('div', { class: 'subd' }, dbody(`echo-diary46-${b}`, ECHO_CHOICES, { page: 'diary46', blocks: [b] })));
+  root.append(c46);
+
+  root.append(h('div', { class: 'dsec' }, 'Visibility of flagged pages'));
+  const vc = h('div', { class: 'dcard' }, h('h3', null, 'Public / private / decide later'));
+  for (const f of S.data.flagged) {
+    const p = S.pages.get(f.page);
+    const firsts = S.items.filter(it => it.g !== 4 && it.versions.some(v => v.page === f.page)).map(it => it.first);
+    const img = h('img', { src: p.thumb, alt: f.page, loading: 'lazy' }); img.addEventListener('click', () => openViewer(f.page, null, f.spread));
+    vc.append(h('div', { class: 'vis' }, img, h('div', null,
+      h('div', { class: 'dctx', style: 'margin:0' }, h('button', { type: 'button', onclick: () => goPage(f.page) }, f.page + (f.spread ? ' · 2015 spread part' : '')), firsts.length ? h('span', { style: 'font-family:var(--serif);font-size:13px' }, firsts.slice(0, 3).join(' · ')) : null),
+      dbody(f.key, [['public', 'Public'], ['private', 'Private'], ['later', 'Decide later']], null, true))));
+  }
+  root.append(vc);
+
+  root.append(h('div', { class: 'dsec' }, 'Release'));
+  root.append(dcard('release-numbering', 'Release numbering', [], [['fixed', 'Fixed in advance'], ['as-posted', 'Assigned as each posts']]));
+  root.append(dcard('participation', 'Participation', [], [['counts', 'Counts toward the 100'], ['around', 'Sits around it'], ['undecided', 'Undecided']]));
+  updateDecisions();
+}
+
+function dcard(key, title, pages, choices, lines) {
+  const c = h('div', { class: 'dcard' });
+  if (title) c.append(h('h3', null, title));
+  else if (lines) c.append(h('h3', null, `${lines.page} · b${lines.blocks.join(', ')}`));
+  if (pages.length || lines) {
+    const pg = pages.length ? pages : [lines.page];
+    c.append(h('div', { class: 'dctx' }, pg.map(p => h('button', { type: 'button', onclick: () => goPage(p) }, p)), pg.length ? h('button', { type: 'button', onclick: () => openViewer(pg[0]) }, 'scan') : null));
+  }
+  c.append(dbody(key, choices, lines));
+  return c;
+}
+
+function dbody(key, choices, lines, compact) {
+  const box = h('div', { class: 'dbody', 'data-key': key });
+  if (lines) {
+    const p = S.pages.get(lines.page);
+    const dl = h('div', { class: 'dlines' });
+    for (const b of lines.blocks) for (const l of p.blocks[b].lines) {
+      const r = rv(l.id);
+      dl.append(renderMarkup(r && r.status === 'corrected' ? r.text : l.tx, 'tx'));
+    }
+    box.append(dl);
+  }
+  const ch = h('div', { class: 'choices', role: 'group' });
+  for (const [val, label, sub] of choices) {
+    ch.append(h('button', { type: 'button', class: 'choice', 'data-v': val, 'aria-pressed': 'false', onclick: () => choose(key, val) }, label, sub ? h('small', null, sub) : null));
+  }
+  box.append(ch);
+  const ta = h('textarea', { rows: '1', placeholder: 'Note', 'aria-label': 'Note' });
+  const sb = h('button', { class: 'btn small', type: 'button', disabled: true, onclick: () => saveNote(key, ta) }, 'Save note');
+  ta.addEventListener('input', () => { sb.disabled = !canWrite() || ta.value === ((dv(key) || {}).note || ''); });
+  box.append(h('div', { class: 'dnote' }, ta, sb), h('div', { class: 'dmeta' }));
+  if (compact) box.querySelector('.dnote').style.marginTop = '2px';
+  return box;
+}
+
+function choose(key, val) {
+  if (!canWrite()) return;
+  const d = dv(key) || {};
+  const ta = $(`.dbody[data-key="${key}"] textarea`);
+  const note = ta && ta.value !== (d.note || '') ? ta.value : (d.note || '');
+  write('decisions', key, { choice: d.choice === val ? '' : val, note, at: nowISO() });
+}
+function saveNote(key, ta) {
+  if (!canWrite()) return;
+  const d = dv(key) || {};
+  write('decisions', key, { choice: d.choice || '', note: ta.value, at: nowISO() });
+}
+function updateDecisions() {
+  for (const box of $$('#v-decisions .dbody')) {
+    const key = box.dataset.key; const d = dv(key);
+    for (const b of $$('.choice', box)) { b.setAttribute('aria-pressed', String(!!d && d.choice === b.dataset.v)); b.disabled = !canWrite(); }
+    const ta = $('textarea', box), sb = $('.dnote .btn', box);
+    const at = (d && d.at) || '';
+    if (document.activeElement !== ta && ta.dataset.synced !== at) { ta.value = (d && d.note) || ''; ta.dataset.synced = at; }
+    ta.disabled = !canWrite();
+    sb.disabled = !canWrite() || ta.value === ((d && d.note) || '');
+    $('.dmeta', box).textContent = d && d.at ? `Saved ${fmtDate(d.at)}` : '';
+  }
+}
+
+function goPage(pageId, block) {
+  let i = -1;
+  if (block != null) i = S.itemOf.has(pageId + '-' + block) ? S.itemOf.get(pageId + '-' + block) : -1;
+  if (i < 0) i = S.items.findIndex(it => it.versions.some(v => v.page === pageId));
+  if (i < 0) return;
+  showView('review');
+  setItem(i, { page: pageId });
+}
+
+/* ------------------------------------------------------------ versions */
+const staged = [];
+function renderVersions() {
+  const root = $('#v-versions'); root.textContent = '';
+  const up = h('div', { class: 'up' });
+  if (!S.assets || !canWrite()) {
+    up.append(h('p', { class: 'note', style: 'margin:0' }, S.dbState === 'connecting' ? 'Connecting…' : 'Uploads unavailable in this view.'));
+  } else {
+    const cam = h('input', { type: 'file', accept: 'image/*', capture: 'environment', class: 'sr', id: 'f-cam' });
+    const lib = h('input', { type: 'file', accept: 'image/*', multiple: true, class: 'sr', id: 'f-lib' });
+    for (const inp of [cam, lib]) inp.addEventListener('change', () => { for (const f of inp.files) stage(f); inp.value = ''; renderStaged(); });
+    up.append(cam, lib, h('div', { class: 'up-row' },
+      h('button', { class: 'btn primary', type: 'button', onclick: () => cam.click() }, 'Take photo'),
+      h('button', { class: 'btn', type: 'button', onclick: () => lib.click() }, 'Choose images')),
+      h('div', { id: 'staged' }));
+  }
+  root.append(up, h('h2', { class: 'sub' }, 'Added'), h('div', { id: 'vlist' }));
+  renderStaged(); renderVersionsList();
+}
+function stage(file) {
+  if (!/^image\//.test(file.type) && !/\.(jpe?g|png|gif|webp|heic|heif)$/i.test(file.name)) return;
+  staged.push({ key: Math.random().toString(36).slice(2), file, url: URL.createObjectURL(file), pieceId: undefined, q: '', note: '', state: '', err: '' });
+}
+function renderStaged() {
+  const box = $('#staged'); if (!box) return; box.textContent = '';
+  for (const s of staged) {
+    const att = s.pieceId === null ? h('div', { class: 'attached' }, 'New poem') : s.pieceId ? (() => { const it = S.items.find(x => x.id === s.pieceId); return h('div', { class: 'attached' }, it.first, ' ', h('small', null, itemPages(it).join(', '))); })() : null;
+    const q = h('input', { type: 'search', placeholder: 'First line…', value: s.q, 'aria-label': 'Attach to piece by first line' });
+    const picks = h('div', { class: 'picks', hidden: true });
+    const showPicks = () => {
+      picks.textContent = '';
+      const t = q.value.trim().toLowerCase();
+      const res = S.items.filter(it => it.g !== 4 && (!t || it.first.toLowerCase().includes(t) || itemPages(it).some(p => p === t))).slice(0, 30);
+      picks.append(h('button', { type: 'button', onclick: () => { s.pieceId = null; s.q = ''; renderStaged(); } }, 'New poem'));
+      for (const it of res) picks.append(h('button', { type: 'button', onclick: () => { s.pieceId = it.id; s.q = ''; renderStaged(); } }, it.first, h('small', null, itemPages(it).join(', '))));
+      picks.hidden = false;
+    };
+    q.addEventListener('input', () => { s.q = q.value; showPicks(); });
+    q.addEventListener('focus', showPicks);
+    const note = h('textarea', { rows: '2', placeholder: 'Optional note', 'aria-label': 'Note' }); note.value = s.note;
+    note.addEventListener('input', () => { s.note = note.value; });
+    const busy = s.state === 'uploading';
+    box.append(h('div', { class: 'staged' },
+      h('img', { src: s.url, alt: s.file.name }),
+      h('div', null,
+        h('div', { class: 'field' }, h('label', null, 'Attach to'), att, q, picks),
+        h('div', { class: 'field' }, h('label', null, 'Note'), note),
+        s.err ? h('div', { class: 'err' }, s.err) : null,
+        h('div', { class: 'up-row' },
+          h('button', { class: 'btn primary', type: 'button', disabled: busy || s.pieceId === undefined, onclick: () => upload(s) }, busy ? 'Uploading…' : 'Upload'),
+          h('button', { class: 'btn', type: 'button', disabled: busy, onclick: () => { URL.revokeObjectURL(s.url); staged.splice(staged.indexOf(s), 1); renderStaged(); } }, 'Remove'),
+          s.pieceId === undefined ? h('span', { class: 'note', style: 'align-self:center' }, 'Pick a piece or “New poem”') : null))));
+  }
+}
+async function toUploadable(file) {
+  const ok = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  const big = file.size > 6 * 1024 * 1024;
+  if (ok.includes(file.type) && !big) return file;
+  // re-encode (HEIC on some browsers, or very large photos) to JPEG, long side 2600px
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 2600 / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+  cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+  return await new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', 0.88));
+}
+async function upload(s) {
+  if (!S.assets || !canWrite()) return;
+  s.state = 'uploading'; s.err = ''; renderStaged();
+  let res = null;
+  try {
+    const blob = await toUploadable(s.file);
+    for (let a = 0; ; a++) {
+      try { res = await S.assets.upload(blob, { type: blob.type || 'image/jpeg' }); break; }
+      catch (e) {
+        const code = e && e.code;
+        if (code === 'store_unavailable' && a < 1) { await sleep(800 + Math.random() * 800); continue; }
+        throw e;
+      }
+    }
+  } catch (e) {
+    const code = e && e.code;
+    s.state = ''; s.err = code === 'too_large' ? 'Image too large.' : code === 'unsupported_type' ? 'Unsupported image type.' : code === 'quota_or_state' ? 'Storage full or unavailable.' : code === 'rate_limited' ? 'Too many uploads — try again shortly.' : 'Upload failed.';
+    if (code === 'capability_disabled' || code === 'not_granted' || code === 'capability_removed') S.assets = null;
+    renderStaged(); return;
+  }
+  const id = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  write('versions', id, { pieceId: s.pieceId === undefined ? null : s.pieceId, assetId: res.id, assetUrl: '/_blob/' + res.id, note: s.note.trim(), at: nowISO(), status: 'new' });
+  URL.revokeObjectURL(s.url); staged.splice(staged.indexOf(s), 1);
+  renderStaged(); renderVersionsList();
+}
+function renderVersionsList() {
+  const box = $('#vlist'); if (!box) return; box.textContent = '';
+  const vs = versionsList();
+  if (!vs.length) { box.append(h('p', { class: 'empty-note' }, 'Nothing added yet.')); return; }
+  const g = h('div', { class: 'vgrid' });
+  for (const v of vs) {
+    const it = v.pieceId ? S.items.find(x => x.id === v.pieceId) : null;
+    g.append(h('div', { class: 'vthumb' }, h('div', { class: 'im' }, vImg(v)),
+      h('div', { class: 'cap' }, h('b', null, it ? it.first : 'New poem'), h('span', null, (it ? itemPages(it).join(', ') + ' · ' : '') + fmtDate(v.at)), v.note ? h('div', { class: 'note' }, v.note) : null,
+        it ? h('button', { class: 'btn small', type: 'button', style: 'margin-top:6px', onclick: () => { showView('review'); setItem(S.items.indexOf(it)); } }, 'Open piece') : null)));
+  }
+  box.append(g);
+}
+
+/* ------------------------------------------------------------ release */
+// Collections: release/{pieceKey}, batches/{id}, rconfig/settings
+const POOLS = [['series', 'Series'], ['reserve', 'Reserve'], ['archive', 'Archive']];
+const PREP = [['edits', 'Edits final'], ['response', 'Response end note'], ['foot', 'Footnotes'], ['endn', 'Endnotes'], ['cite', 'Citations'], ['acad', 'Academic note'], ['social', 'Social post']];
+const EXPO = [
+  ['social', 'Social post', false], ['site', 'Own site / web piece', false], ['members', 'Member-only layer', false],
+  ['media', 'Reading or recording online', false], ['sold', 'Print, zine or book sold', true], ['download', 'Downloadable file', true],
+  ['journal', 'Journal publication', true], ['anthology', 'Contest or anthology', true],
+];
+const EXPO_LABEL = Object.fromEntries(EXPO.map(e => [e[0], e[1]]));
+const EXPO_PUB = Object.fromEntries(EXPO.map(e => [e[0], e[2]]));
+const SUB_ST = [['sent', 'Sent'], ['accepted', 'Accepted'], ['declined', 'Declined'], ['withdrawn', 'Withdrawn']];
+const RSUBS = [['sort', 'Sort'], ['calendar', 'Calendar'], ['copyright', 'Copyright'], ['exposure', 'Exposure'], ['subs', 'Submissions']];
+const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {} };
+
+function cget(coll, id) { const p = S.pending[coll].get(id); if (p) return p.data; return S.server[coll].get(id) || null; }
+function call(coll) { const m = new Map(S.server[coll]); for (const [k, p] of S.pending[coll]) if (p.data) m.set(k, p.data); else m.delete(k); return m; }
+function rel(key) { return cget('release', key) || {}; }
+function relSet(key, patch) { if (!canWrite()) return; const d = { ...rel(key), ...patch, at: nowISO() }; write('release', key, d); }
+function cfg() { return cget('rconfig', 'settings') || {}; }
+
+function candidates() {
+  const out = [];
+  for (const it of S.items) {
+    if (it.g === 4) continue;
+    const [n, t] = itemProgress(it);
+    out.push({ key: it.id, title: it.first, meta: `${KIND[it.kind] || it.kind}${it.status ? ' · ' + it.status : ''} · ${itemPages(it).join(', ')}`, verified: t > 0 && n === t, prog: `${n}/${t} lines`, seq: S.pages.get(it.versions[0].page).seq, item: it });
+  }
+  for (const v of versionsList()) {
+    if (v.pieceId) continue;
+    out.push({ key: v.id, title: 'New poem', meta: `added ${fmtDate(v.at)}${v.note ? ' · ' + v.note : ''}`, verified: v.status === 'transcribed' || v.status === 'done', prog: v.status || 'new', seq: 1e6 + Date.parse(v.at || 0) / 1e9, ver: v });
+  }
+  return out;
+}
+function candMap() { const m = new Map(); for (const c of candidates()) m.set(c.key, c); return m; }
+function batchOf(key) { for (const [id, b] of call('batches')) if ((b.items || []).includes(key)) return { id, ...b }; return null; }
+function exposures(key) { return (rel(key).exposures || []); }
+function seriesList() {
+  const cm = candMap();
+  const xs = [];
+  for (const [key, r] of call('release')) if (r.pool === 'series' && cm.has(key)) xs.push({ c: cm.get(key), r });
+  xs.sort((a, b) => (a.r.order ?? 1e9) - (b.r.order ?? 1e9) || a.c.seq - b.c.seq);
+  return xs;
+}
+function numberingMode() { const d = dv('release-numbering'); return d && d.choice === 'as-posted' ? 'as-posted' : d && d.choice === 'fixed' ? 'fixed' : ''; }
+function weekDate(i) {
+  const s = cfg().start; if (!s) return '';
+  const d = new Date(s + 'T12:00:00'); if (isNaN(d)) return '';
+  d.setDate(d.getDate() + 7 * i);
+  return shortDate(d);
+}
+function shortDate(d) { if (typeof d === 'string') d = new Date(d + 'T12:00:00'); if (isNaN(d)) return ''; return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + (d.getFullYear() !== new Date().getFullYear() ? ' ’' + String(d.getFullYear()).slice(2) : ''); }
+
+function renderRelease() {
+  const root = $('#v-release'); root.textContent = '';
+  const cs = candidates(); const rels = call('release');
+  const cnt = { series: 0, reserve: 0, archive: 0, unsorted: 0 };
+  let posted = 0;
+  for (const c of cs) { const r = rels.get(c.key) || {}; cnt[r.pool || 'unsorted']++; if ((r.exposures || []).some(e => e.type === 'social')) posted++; }
+  let registered = 0; for (const [, b] of call('batches')) if (b.status === 'registered') registered += (b.items || []).length;
+  if (!canWrite()) root.append(h('p', { class: 'note' }, S.dbState === 'connecting' ? 'Connecting…' : 'Saving unavailable — shown read-only.'));
+  root.append(h('div', { class: 'rsum' },
+    stat('Series', `${cnt.series}`, '/100'), stat('Reserve', `${cnt.reserve}`, cnt.reserve < 15 ? ' · aim 15–30' : ''), stat('Archive', `${cnt.archive}`),
+    stat('Unsorted', `${cnt.unsorted}`), stat('Posted', `${posted}`), stat('Registered', `${registered}`)));
+  const nav = h('div', { class: 'rnav', role: 'tablist' });
+  for (const [k, l] of RSUBS) nav.append(h('button', { type: 'button', 'aria-selected': String(RF.sub === k), onclick: () => { RF.sub = k; LS.set('rsub', k); renderRelease(); } }, l));
+  root.append(nav);
+  const body = h('div', { class: 'rbody' }); root.append(body);
+  ({ sort: rSort, calendar: rCalendar, copyright: rCopyright, exposure: rExposure, subs: rSubs }[RF.sub] || rSort)(body);
+}
+function stat(label, val, tail) { return h('div', { class: 'rstat' }, h('span', null, label), h('b', null, val, tail ? h('small', null, tail) : null)); }
+function updateRelease() {
+  const root = $('#v-release');
+  const a = document.activeElement;
+  if (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { RF.dirty = true; return; }
+  const y = window.scrollY; renderRelease(); window.scrollTo(0, y);
+}
+function openPiece(c) { if (c.item) { showView('review'); setItem(S.items.indexOf(c.item)); } }
+function titleEl(c) {
+  return h('button', { type: 'button', class: 'rt', onclick: () => openPiece(c) }, c.title);
+}
+function chip(text, kind) { return h('span', { class: 'rchip' + (kind ? ' ' + kind : '') }, text); }
+function expoChip(key) {
+  const ex = exposures(key); if (!ex.length) return null;
+  const pub = ex.some(e => EXPO_PUB[e.type]);
+  return chip(pub ? 'published (sold/downloadable)' : `appeared ${ex.length}×`, 'warn');
+}
+
+/* sort */
+function rSort(body) {
+  const fs = h('div', { class: 'choices' });
+  for (const [k, l] of [['unsorted', 'Unsorted'], ['series', 'Series'], ['reserve', 'Reserve'], ['archive', 'Archive'], ['all', 'All']])
+    fs.append(h('button', { type: 'button', class: 'choice', 'aria-pressed': String(RF.filter === k), onclick: () => { RF.filter = k; LS.set('rfilter', k); renderRelease(); } }, l));
+  body.append(h('p', { class: 'note' }, 'Series pieces get posted. Reserve pieces never appear online in any form (text, scan, draft or fragment) so they stay eligible for journals that count any online appearance as published. Archive stays with the facsimile.'), fs);
+  const groups = [[1, 'Complete poems and songs'], [2, 'Drafts and fragments'], [3, 'Prose, letters, notes'], [0, 'New poems']];
+  for (const [g, gl] of groups) {
+    const list = candidates().filter(c => (c.item ? c.item.g : 0) === g).filter(c => { const p = rel(c.key).pool || ''; return RF.filter === 'all' || (RF.filter === 'unsorted' ? !p : p === RF.filter); });
+    if (!list.length) continue;
+    body.append(h('div', { class: 'dsec' }, gl, h('small', null, ` ${list.length}`)));
+    for (const c of list) {
+      const r = rel(c.key);
+      const ch = h('div', { class: 'choices tight' });
+      for (const [k, l] of POOLS) ch.append(h('button', { type: 'button', class: 'choice', 'aria-pressed': String(r.pool === k), disabled: !canWrite(), onclick: () => setPool(c.key, r.pool === k ? '' : k) }, l));
+      const warn = r.pool === 'reserve' && exposures(c.key).length ? h('div', { class: 'err' }, 'Logged as already appearing — strict journals will count it as published.') : null;
+      body.append(h('div', { class: 'rrow' },
+        h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, c.meta, ' · ', h('span', { class: c.verified ? 'okt' : '' }, c.verified ? 'verified' : c.prog)), warn),
+        h('div', { class: 'rside' }, expoChip(c.key), ch)));
+    }
+  }
+}
+function setPool(key, pool) {
+  const patch = { pool };
+  if (pool === 'series' && rel(key).order == null) { let mx = -1; for (const [, r] of call('release')) if (r.pool === 'series' && r.order != null) mx = Math.max(mx, r.order); patch.order = mx + 1; }
+  relSet(key, patch);
+}
+
+/* calendar */
+function rCalendar(body) {
+  const st = h('input', { type: 'date', id: 'r-start', value: cfg().start || '' });
+  st.addEventListener('change', () => { if (canWrite()) write('rconfig', 'settings', { ...cfg(), start: st.value, at: nowISO() }); });
+  const mode = numberingMode();
+  body.append(h('div', { class: 'rbar' },
+    h('label', { for: 'r-start' }, 'First post'), st,
+    h('span', { class: 'note' }, 'One poem a week. Numbering: ', mode === 'fixed' ? 'fixed in advance (queue order)' : mode === 'as-posted' ? 'assigned when posted' : 'not decided (see Decisions)')));
+  const xs = seriesList();
+  if (!xs.length) { body.append(h('p', { class: 'empty-note' }, 'No Series pieces yet. Sort pieces into Series first.')); return; }
+  let postedN = 0;
+  xs.forEach(({ c, r }, i) => {
+    const posted = (r.exposures || []).find(e => e.type === 'social');
+    if (posted) postedN++;
+    const num = mode === 'fixed' ? i + 1 : r.num || null;
+    const b = batchOf(c.key);
+    const prep = r.prep || {}; const pdone = PREP.filter(([k]) => prep[k]).length;
+    const ready = c.verified && b && (b.status === 'filed' || b.status === 'registered') && pdone === PREP.length;
+    const open = RF.open === c.key;
+    const row = h('div', { class: 'rrow cal' + (posted ? ' posted' : '') });
+    row.append(h('div', { class: 'rnum' }, num ? h('b', null, `${num}`, h('small', null, '/100')) : h('span', null, '—'), h('small', null, posted ? (shortDate(posted.date) || 'posted') : weekDate(i))));
+    row.append(h('div', { class: 'rmain' }, titleEl(c),
+      h('div', { class: 'rgates' },
+        chip(c.verified ? 'verified' : 'not verified', c.verified ? 'ok' : 'warn'),
+        chip(b ? `GRUW ${b.status}` : 'no GRUW batch', b && b.status !== 'draft' ? 'ok' : 'warn'),
+        chip(`prep ${pdone}/${PREP.length}`, pdone === PREP.length ? 'ok' : ''),
+        posted ? chip('posted', 'ok') : ready ? chip('ready', 'ok') : null),
+      open ? calDetail(c, r, b, ready, posted) : null));
+    row.append(h('div', { class: 'rside col' },
+      h('button', { type: 'button', class: 'btn small', onclick: () => { RF.open = open ? null : c.key; renderRelease(); } }, open ? 'Close' : 'Open'),
+      h('div', { class: 'ud' },
+        h('button', { type: 'button', class: 'btn small', 'aria-label': 'Move earlier', disabled: !canWrite() || i === 0, onclick: () => swap(xs, i, i - 1) }, '↑'),
+        h('button', { type: 'button', class: 'btn small', 'aria-label': 'Move later', disabled: !canWrite() || i === xs.length - 1, onclick: () => swap(xs, i, i + 1) }, '↓'))));
+    body.append(row);
+  });
+}
+function swap(xs, i, j) { const a = xs[i], b = xs[j]; relSet(a.c.key, { order: j }); relSet(b.c.key, { order: i }); xs.forEach((x, k) => { if (k !== i && k !== j && x.r.order !== k) relSet(x.c.key, { order: k }); }); }
+function calDetail(c, r, b, ready, posted) {
+  const d = h('div', { class: 'rdetail' });
+  const prep = r.prep || {};
+  const cl = h('div', { class: 'checks' });
+  for (const [k, l] of PREP) {
+    const cb = h('input', { type: 'checkbox', id: `p-${c.key}-${k}`, disabled: !canWrite() }); cb.checked = !!prep[k];
+    cb.addEventListener('change', () => relSet(c.key, { prep: { ...(rel(c.key).prep || {}), [k]: cb.checked } }));
+    cl.append(h('label', { class: 'chk', for: cb.id }, cb, l));
+  }
+  d.append(cl);
+  if (!c.verified) d.append(h('p', { class: 'note' }, 'Verify every line in Review before posting.'));
+  if (!b) d.append(h('p', { class: 'note' }, 'Add it to a GRUW batch (Copyright) and file before posting — once posted it may no longer qualify as unpublished.'));
+  if (posted) d.append(h('p', { class: 'note' }, `Posted ${posted.date || ''}${posted.where ? ' · ' + posted.where : ''}`));
+  else {
+    const where = h('input', { type: 'text', id: `pw-${c.key}`, placeholder: 'Where (account / link)' });
+    const armed = RF.arm === c.key;
+    const go = h('button', { type: 'button', class: 'btn primary small' + (armed ? ' arm' : ''), disabled: !canWrite() }, ready ? 'Mark posted' : armed ? 'Not ready — tap again to confirm' : 'Mark posted anyway');
+    go.addEventListener('click', () => {
+      if (!ready && RF.arm !== c.key) { RF.arm = c.key; go.classList.add('arm'); go.textContent = 'Not ready — tap again to confirm'; return; }
+      RF.arm = null;
+      const mode = numberingMode();
+      let num = r.num;
+      if (mode === 'as-posted' && !num) { let mx = 0; for (const [, x] of call('release')) if (x.num) mx = Math.max(mx, x.num); num = mx + 1; }
+      const today = new Date().toISOString().slice(0, 10);
+      relSet(c.key, { num: num || null, exposures: [...exposures(c.key), { type: 'social', where: where.value.trim(), date: today, url: '', ver: 'final', at: nowISO() }] });
+    });
+    d.append(h('div', { class: 'up-row' }, where, go));
+  }
+  return d;
+}
+
+/* copyright */
+function rCopyright(body) {
+  body.append(h('p', { class: 'note' }, 'Group registration for unpublished works: up to 10 poems by you, filed before any of them is posted. Record which version each filing covered; later revisions are new material.'));
+  const cm = candMap();
+  const bs = Array.from(call('batches'), ([id, b]) => ({ id, ...b })).sort((a, b) => String(a.created || '').localeCompare(String(b.created || '')));
+  body.append(h('div', { class: 'up-row' }, h('button', { type: 'button', class: 'btn primary', disabled: !canWrite(), onclick: newBatch }, 'New batch')));
+  if (!bs.length) body.append(h('p', { class: 'empty-note' }, 'No batches yet.'));
+  bs.forEach((b, n) => {
+    const items = (b.items || []).map(k => cm.get(k)).filter(Boolean);
+    const card = h('div', { class: 'dcard' });
+    card.append(h('h3', null, `Batch ${n + 1} `, chip(b.status || 'draft', b.status === 'registered' ? 'ok' : b.status === 'filed' ? 'ok' : ''), h('small', { class: 'rmeta' }, ` ${items.length}/10`)));
+    for (const c of items) {
+      const ex = exposures(c.key);
+      card.append(h('div', { class: 'rrow slim' }, h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, c.key, rel(c.key).pool ? ' · ' + rel(c.key).pool : '', c.verified ? '' : ' · not verified')),
+        h('div', { class: 'rside' }, ex.length ? chip(ex.some(e => EXPO_PUB[e.type]) ? 'published' : 'appeared online', 'warn') : null,
+          b.status === 'draft' || !b.status ? h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: () => batchSet(b, { items: b.items.filter(k => k !== c.key) }) }, 'Remove') : null)));
+    }
+    if (!b.status || b.status === 'draft') {
+      if (items.length < 10) {
+        if (RF.batchAdd === b.id) {
+          const elig = seriesList().map(x => x.c).filter(c => !batchOf(c.key));
+          const pk = h('div', { class: 'picks' });
+          if (!elig.length) pk.append(h('p', { class: 'note', style: 'padding:10px;margin:0' }, 'No unbatched Series pieces.'));
+          for (const c of elig) pk.append(h('button', { type: 'button', onclick: () => batchSet(b, { items: [...(b.items || []), c.key] }) }, c.title, h('small', null, c.key + (c.verified ? '' : ' · not verified') + (exposures(c.key).length ? ' · appeared' : ''))));
+          card.append(pk, h('button', { type: 'button', class: 'btn small', onclick: () => { RF.batchAdd = null; renderRelease(); } }, 'Done adding'));
+        } else card.append(h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: () => { RF.batchAdd = b.id; renderRelease(); } }, 'Add Series pieces'));
+      }
+      const unv = items.filter(c => !c.verified).length;
+      const cmd = `python release/copyright/make_deposit.py ${items.map(c => c.key).join(' ')}`;
+      if (items.length) card.append(h('div', { class: 'cmd' }, h('code', null, cmd), copyBtn(cmd)), unv ? h('p', { class: 'note' }, `${unv} not verified — the deposit script refuses unverified pieces.`) : null);
+      card.append(batchForm(b, 'filed', [['filed', 'Filed on', 'date'], ['sr', 'Case / service request number', 'text']], 'Mark filed', items.length > 0));
+    } else if (b.status === 'filed') {
+      card.append(h('p', { class: 'rmeta' }, `Filed ${b.filed || ''}${b.sr ? ' · ' + b.sr : ''}`));
+      card.append(batchForm(b, 'registered', [['reg', 'Registration number', 'text'], ['eff', 'Effective date', 'date']], 'Mark registered', true));
+    } else card.append(h('p', { class: 'rmeta' }, `Filed ${b.filed || ''}${b.sr ? ' · ' + b.sr : ''} · Reg. ${b.reg || ''}${b.eff ? ' · effective ' + b.eff : ''}`));
+    body.append(card);
+  });
+  body.append(h('p', { class: 'note' }, 'Fee and rules: copyright.gov/gruw. Informational only, not legal advice.'));
+}
+function newBatch() { const id = 'b-' + Date.now().toString(36); write('batches', id, { items: [], status: 'draft', created: nowISO(), at: nowISO() }); RF.batchAdd = id; }
+function batchSet(b, patch) { if (!canWrite()) return; const { id, ...rest } = b; write('batches', id, { ...rest, ...patch, at: nowISO() }); }
+function batchForm(b, next, fields, label, enabled) {
+  const f = RF.bf[b.id] || (RF.bf[b.id] = {});
+  const box = h('div', { class: 'rform' });
+  for (const [k, l, t] of fields) {
+    const id = `bf-${b.id}-${k}`;
+    const inp = h('input', { type: t, id, value: f[k] || '' }); inp.addEventListener('input', () => { f[k] = inp.value; });
+    box.append(h('div', { class: 'field' }, h('label', { for: id }, l), inp));
+  }
+  box.append(h('button', { type: 'button', class: 'btn primary small', disabled: !canWrite() || !enabled, onclick: () => { const p = { status: next }; for (const [k] of fields) p[k] = (f[k] || '').trim(); batchSet(b, p); delete RF.bf[b.id]; } }, label));
+  return box;
+}
+function copyBtn(text) {
+  const b = h('button', { type: 'button', class: 'btn small' }, 'Copy');
+  b.addEventListener('click', () => { Promise.resolve().then(() => navigator.clipboard.writeText(text)).then(() => { b.textContent = 'Copied'; }).catch(() => { const r = document.createRange(); r.selectNodeContents(b.previousSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected'; }); });
+  return b;
+}
+
+/* piece picker */
+function picker(qKey, keyKey, filterFn) {
+  const cm = candMap();
+  if (RF[keyKey] && cm.has(RF[keyKey])) {
+    const c = cm.get(RF[keyKey]);
+    return h('div', { class: 'attached' }, c.title, ' ', h('small', null, c.key), ' ', h('button', { type: 'button', class: 'btn small', onclick: () => { RF[keyKey] = null; renderRelease(); } }, 'Change'));
+  }
+  const q = h('input', { type: 'search', id: 'pk-' + qKey, placeholder: 'First line or id…', value: RF[qKey] });
+  const pk = h('div', { class: 'picks', hidden: true });
+  const show = () => {
+    pk.textContent = ''; const t = q.value.trim().toLowerCase();
+    const res = candidates().filter(filterFn || (() => true)).filter(c => !t || c.title.toLowerCase().includes(t) || c.key === t).slice(0, 30);
+    for (const c of res) pk.append(h('button', { type: 'button', onclick: () => { RF[keyKey] = c.key; RF[qKey] = ''; renderRelease(); } }, c.title, h('small', null, c.key + (rel(c.key).pool ? ' · ' + rel(c.key).pool : ''))));
+    pk.hidden = !res.length;
+  };
+  q.addEventListener('input', () => { RF[qKey] = q.value; show(); }); q.addEventListener('focus', show);
+  return h('div', null, q, pk);
+}
+
+/* exposure */
+function rExposure(body) {
+  body.append(h('p', { class: 'note' }, 'Log every place any version of a piece has appeared, including drafts, fragments and scans. Strict journals treat all of these as published. For copyright, sold copies and downloads count as publication; display-only posts usually do not.'));
+  const form = h('div', { class: 'dcard' }, h('h3', null, 'Log an appearance'));
+  form.append(h('div', { class: 'field' }, h('label', null, 'Piece'), picker('expoQ', 'expoKey')));
+  const e = RF.expo;
+  const sel = h('select', { id: 'ex-type' }); for (const [k, l] of EXPO) sel.append(h('option', { value: k, selected: e.type === k }, l));
+  sel.addEventListener('change', () => { e.type = sel.value; });
+  const inp = (k, l, t) => { const i = h('input', { type: t, id: 'ex-' + k, value: e[k] || '' }); i.addEventListener('input', () => { e[k] = i.value; }); return h('div', { class: 'field' }, h('label', { for: 'ex-' + k }, l), i); };
+  form.append(h('div', { class: 'grid2' }, h('div', { class: 'field' }, h('label', { for: 'ex-type' }, 'Type'), sel), inp('date', 'Date', 'date'), inp('where', 'Where', 'text'), inp('ver', 'Version shown (final, draft, scan…)', 'text'), inp('url', 'Link', 'url')));
+  const key = RF.expoKey;
+  if (key && rel(key).pool === 'reserve') form.append(h('p', { class: 'err' }, 'This is a Reserve piece. Logging an appearance means strict journals will treat it as published.'));
+  form.append(h('button', { type: 'button', class: 'btn primary', disabled: !canWrite() || !key, onclick: () => {
+    relSet(key, { exposures: [...exposures(key), { type: e.type, where: e.where.trim(), date: e.date || new Date().toISOString().slice(0, 10), url: e.url.trim(), ver: e.ver.trim(), at: nowISO() }] });
+    RF.expo = { type: e.type, where: '', date: '', url: '', ver: '' };
+  } }, 'Log appearance'));
+  body.append(form);
+  const cm = candMap(); const all = [];
+  for (const [k, r] of call('release')) (r.exposures || []).forEach((x, i) => { if (cm.has(k)) all.push({ c: cm.get(k), x, i, pool: r.pool }); });
+  all.sort((a, b) => String(b.x.date).localeCompare(String(a.x.date)));
+  body.append(h('div', { class: 'dsec' }, 'Logged', h('small', null, ` ${all.length}`)));
+  if (!all.length) body.append(h('p', { class: 'empty-note' }, 'Nothing logged yet.'));
+  for (const { c, x, i, pool } of all) {
+    body.append(h('div', { class: 'rrow slim' },
+      h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, `${x.date || ''} · ${EXPO_LABEL[x.type] || x.type}${x.where ? ' · ' + x.where : ''}${x.ver ? ' · ' + x.ver : ''}`, x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener', class: 'rlink' }, ' link') : null)),
+      h('div', { class: 'rside' }, pool === 'reserve' ? chip('reserve', 'warn') : null, EXPO_PUB[x.type] ? chip('copyright: published', 'warn') : null,
+        h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: () => relSet(c.key, { exposures: exposures(c.key).filter((_, j) => j !== i) }) }, 'Remove'))));
+  }
+}
+
+/* submissions */
+function rSubs(body) {
+  body.append(h('p', { class: 'note' }, 'Track Reserve poems sent to journals. Posted Series poems can go only to journals that accept previously posted work; check each journal’s guidelines when you submit.'));
+  const form = h('div', { class: 'dcard' }, h('h3', null, 'Record a submission'));
+  form.append(h('div', { class: 'field' }, h('label', null, 'Piece'), picker('subQ', 'subKey', c => rel(c.key).pool === 'reserve' || rel(c.key).pool === 'series')));
+  const s = RF.sub;
+  const j = h('input', { type: 'text', id: 'sb-j', value: s.journal }); j.addEventListener('input', () => { s.journal = j.value; });
+  const d = h('input', { type: 'date', id: 'sb-d', value: s.date }); d.addEventListener('input', () => { s.date = d.value; });
+  form.append(h('div', { class: 'grid2' }, h('div', { class: 'field' }, h('label', { for: 'sb-j' }, 'Journal or contest'), j), h('div', { class: 'field' }, h('label', { for: 'sb-d' }, 'Sent'), d)));
+  const key = RF.subKey;
+  if (key && exposures(key).length) form.append(h('p', { class: 'err' }, 'Logged as already appearing online. Many journals will count it as published.'));
+  form.append(h('button', { type: 'button', class: 'btn primary', disabled: !canWrite() || !key || !s.journal.trim(), onclick: () => {
+    relSet(key, { subs: [...(rel(key).subs || []), { journal: s.journal.trim(), sent: s.date || new Date().toISOString().slice(0, 10), status: 'sent', at: nowISO() }] });
+    RF.sub = { journal: '', date: '' };
+  } }, 'Record submission'));
+  body.append(form);
+  const cm = candMap(); const rows = [];
+  for (const [k, r] of call('release')) if ((r.subs || []).length && cm.has(k)) rows.push({ c: cm.get(k), r });
+  body.append(h('div', { class: 'dsec' }, 'Out and decided', h('small', null, ` ${rows.length} pieces`)));
+  if (!rows.length) body.append(h('p', { class: 'empty-note' }, 'No submissions yet.'));
+  for (const { c, r } of rows) {
+    const acc = r.subs.some(x => x.status === 'accepted'); const pend = r.subs.filter(x => x.status === 'sent').length;
+    const card = h('div', { class: 'dcard' }, h('h3', null, titleEl(c), ' ', r.pool ? chip(r.pool) : null));
+    if (acc && pend) card.append(h('p', { class: 'err' }, `Accepted — withdraw from the ${pend} still pending.`));
+    r.subs.forEach((x, i) => {
+      const ch = h('div', { class: 'choices tight' });
+      for (const [k, l] of SUB_ST) ch.append(h('button', { type: 'button', class: 'choice', 'aria-pressed': String(x.status === k), disabled: !canWrite(), onclick: () => { const subs = rel(c.key).subs.slice(); subs[i] = { ...subs[i], status: k, at: nowISO() }; relSet(c.key, { subs }); } }, l));
+      card.append(h('div', { class: 'rrow slim' }, h('div', { class: 'rmain' }, h('b', { class: 'rj' }, x.journal), h('div', { class: 'rmeta' }, `sent ${x.sent || ''}`)), h('div', { class: 'rside' }, ch)));
+    });
+    body.append(card);
+  }
+}
+
+/* ------------------------------------------------------------ search */
+let searchIndex = null;
+function doSearch() {
+  const q = $('#q').value.trim().toLowerCase();
+  const box = $('#results'); box.textContent = '';
+  if (q.length < 2) return;
+  if (!searchIndex) searchIndex = ALL_LINE_IDS.map(id => [id, plain(S.lines.get(id).l.tx).toLowerCase()]);
+  const out = [];
+  for (const [id, t] of searchIndex) {
+    const r = rv(id); const t2 = r && r.status === 'corrected' ? plain(r.text).toLowerCase() : '';
+    if (t.includes(q) || t2.includes(q) || id === q || id.startsWith(q + '-')) { out.push(id); if (out.length >= 150) break; }
+  }
+  if (!out.length) { box.append(h('p', { class: 'empty-note' }, 'No lines found.')); return; }
+  box.append(h('p', { class: 'note' }, out.length >= 150 ? 'First 150 lines' : `${out.length} line${out.length === 1 ? '' : 's'}`));
+  for (const id of out) {
+    const { l, p, bi } = S.lines.get(id);
+    const i = S.itemOf.get(p.id + '-' + bi);
+    const it = S.items[i];
+    const r = rv(id);
+    box.append(h('button', { type: 'button', class: 'res', onclick: () => { showView('review'); setItem(i, { line: id }); setActive(id, true); } },
+      renderMarkup(r && r.status === 'corrected' ? r.text : l.tx),
+      h('div', { class: 'm' }, `${id}${it && it.g !== 4 ? ' · ' + it.first : ''}${r ? ' · ' + r.status : ''}`)));
+  }
+}
+function renderPageGrid() {
+  const g = $('#pagegrid'); if (g.childElementCount) { updatePageGrid(); return; }
+  for (const p of S.data.pages) {
+    g.append(h('button', { type: 'button', 'data-p': p.id, onclick: () => goPage(p.id) }, h('img', { src: p.thumb, alt: '', loading: 'lazy' }), h('span', { class: 'pl' }, p.id)));
+  }
+  updatePageGrid();
+}
+function updatePageGrid() {
+  for (const b of $$('#pagegrid button')) {
+    const p = S.pages.get(b.dataset.p);
+    let n = 0, t = 0; for (const bl of p.blocks) for (const l of bl.lines) { t++; if (rv(l.id)) n++; }
+    const s = b.querySelector('.pl'); s.textContent = p.id + (t ? ` ${n}/${t}` : '');
+    s.classList.toggle('pd', t > 0 && n === t);
+  }
+}
+
+/* ------------------------------------------------------------ views + wiring */
+function showView(v) {
+  if (S.editing && v !== 'review') cancelEdit();
+  S.view = v;
+  for (const b of $$('.tabs button')) b.setAttribute('aria-selected', String(b.dataset.view === v));
+  for (const s of $$('.view')) s.hidden = s.id !== 'v-' + v;
+  if (v === 'decisions') renderDecisions();
+  if (v === 'versions') renderVersions();
+  if (v === 'release') renderRelease();
+  if (v === 'search') { renderPageGrid(); doSearch(); }
+  if (v === 'review') requestAnimationFrame(layoutCrops);
+  updateBar();
+  window.scrollTo(0, 0);
+}
+
+function wire() {
+  for (const b of $$('.tabs button')) b.addEventListener('click', () => showView(b.dataset.view));
+  $('#b-prev').addEventListener('click', () => moveActive(-1));
+  $('#b-next').addEventListener('click', () => moveActive(1));
+  $('#b-confirm').addEventListener('click', () => { if ($('#b-confirm').dataset.mode === 'next') setItem(S.idx + 1); else if (S.active) confirmLine(S.active); });
+  $('#b-edit').addEventListener('click', () => S.active && startEdit(S.active));
+  $('#queue').addEventListener('click', e => { if (e.target === $('#queue') || e.target.closest('[data-close]')) $('#queue').hidden = true; });
+  $('#hide-done').addEventListener('change', () => { LS.set('hideDone', $('#hide-done').checked); renderQueue(); });
+  $('#viewer').addEventListener('click', e => { const z = e.target.closest('[data-z]'); if (z) zoom(z.dataset.z === 'fit' ? 'fit' : Number(z.dataset.z)); if (e.target.closest('[data-close]')) closeViewer(); });
+  let qt = 0; $('#q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(doSearch, 120); });
+  let rt = 0; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layoutCrops(); setHdr(); if (vState && !$('#viewer').hidden) zoom('fit'); }, 100); });
+  setHdr();
+
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'textarea' || tag === 'input') return;
+    if (e.key === 'Escape') { if (!$('#viewer').hidden) closeViewer(); else if (!$('#queue').hidden) $('#queue').hidden = true; return; }
+    if (!$('#viewer').hidden || !$('#queue').hidden) return;
+    if (e.key === '/') { e.preventDefault(); showView('search'); $('#q').focus(); return; }
+    if (S.view !== 'review') return;
+    const k = e.key;
+    if (k === 'j' || k === 'J') { e.preventDefault(); moveActive(1); }
+    else if (k === 'k' || k === 'K') { e.preventDefault(); moveActive(-1); }
+    else if (k === 'Enter') { if (tag === 'button' && !e.target.closest('.bar')) return; e.preventDefault(); if ($('#b-confirm').dataset.mode === 'next') setItem(S.idx + 1); else if (S.active && canWrite()) confirmLine(S.active); }
+    else if (k === 'e' || k === 'E') { if (S.active) { e.preventDefault(); startEdit(S.active); } }
+    else if (k === ']' || k === 'n') setItem(S.idx + 1);
+    else if (k === '[' || k === 'p') setItem(S.idx - 1);
+  });
+
+  // horizontal swipe between items
+  const area = $('#v-review'); let sx = 0, sy = 0, st = 0, ok = false;
+  area.addEventListener('touchstart', e => { if (e.touches.length !== 1 || S.editing || e.target.closest('textarea,input,.editor')) { ok = false; return; } ok = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); }, { passive: true });
+  area.addEventListener('touchend', e => {
+    if (!ok) return; ok = false;
+    const t = e.changedTouches[0]; const dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Date.now() - st < 700 && Math.abs(dx) > 80 && Math.abs(dy) < 45) setItem(S.idx + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+}
+document.addEventListener('focusout', () => setTimeout(() => { if (RF.dirty && S.view === 'release' && !(document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))) { RF.dirty = false; updateRelease(); } }, 0));
+function setHdr() { const hd = $('.top'); if (hd) document.documentElement.style.setProperty('--hdr', hd.offsetHeight + 'px'); }
+
+boot();
+})();
+</script>
+
+</body></html>
