@@ -94,9 +94,13 @@ export class CDP {
 // connection cannot be made, when the work throws, and when it succeeds. A browser that was launched is a process of
 // its own (it does not end when this one does) and it holds the profile directory, so every step after the launch
 // belongs inside the cleanup scope.
-//   launch():       -> { proc, wsUrl }       (proc has kill())
+//   launch():       -> { proc, wsUrl }       (proc has kill(); a child process also has once/exitCode/signalCode)
 //   connect(wsUrl): -> a CDP (or anything with close())
-export async function withBrowser({ launch, connect }, work) {
+//   stopGraceMs / stopKillMs: how long cleanup waits for the browser to exit after SIGTERM, then after SIGKILL
+// Cleanup does not finish until the browser has exited (or the time limits have passed): the caller usually calls
+// process.exit() right afterwards, and a child that is still running then is left behind, as a zombie where PID 1
+// does not reap children (a container).
+export async function withBrowser({ launch, connect, stopGraceMs, stopKillMs }, work) {
   let launched = null, cdp = null;
   try {
     launched = await launch();
@@ -104,8 +108,32 @@ export async function withBrowser({ launch, connect }, work) {
     return await work(cdp, launched);
   } finally {
     if (cdp) { try { cdp.close(); } catch {} }
-    if (launched && launched.proc) { try { launched.proc.kill("SIGTERM"); } catch {} }
+    if (launched && launched.proc) await stopBrowser(launched.proc, { graceMs: stopGraceMs, killMs: stopKillMs });
   }
+}
+
+export const DEFAULT_STOP_GRACE_MS = 5000;
+export const DEFAULT_STOP_KILL_MS = 2000;
+
+// Signal a browser process and wait until it has exited: SIGTERM, then (after graceMs) SIGKILL, then wait killMs more.
+// Resolves true when the process is known to be gone, false when that could not be established (a process object
+// that cannot report its exit, or one that was still running when the time limits ran out). Never throws.
+export async function stopBrowser(proc, { graceMs = DEFAULT_STOP_GRACE_MS, killMs = DEFAULT_STOP_KILL_MS } = {}) {
+  const watchable = typeof proc.once === "function";
+  const gone = () => proc.exitCode != null || proc.signalCode != null;
+  if (watchable && gone()) return true;
+  // listen before signalling: the exit can be reported as soon as the signal is delivered
+  const exited = watchable ? new Promise(res => proc.once("exit", () => res(true))) : null;
+  try { proc.kill("SIGTERM"); } catch { return watchable ? gone() : false; }
+  if (!exited) return false;
+  if (await settledWithin(exited, graceMs)) return true;
+  try { proc.kill("SIGKILL"); } catch { return gone(); }
+  return await settledWithin(exited, killMs);
+}
+
+function settledWithin(promise, ms) {
+  let timer;
+  return Promise.race([promise, new Promise(res => { timer = setTimeout(() => res(false), ms); })]).finally(() => clearTimeout(timer));
 }
 
 // Write `text` to `stream` and exit with `code` only once the data has been handed to the operating system.

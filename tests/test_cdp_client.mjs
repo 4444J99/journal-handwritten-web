@@ -5,6 +5,7 @@ import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import net from 'node:net';
+import { EventEmitter } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { CDP, withBrowser, writeThenExit } from '../tools/cdp_client.mjs';
@@ -165,6 +166,62 @@ test('withBrowser still stops the browser when closing the connection or killing
   assert.equal(proc.killed, 1);
 });
 
+// ---- withBrowser: cleanup waits until the browser has really exited (otherwise it stays a zombie when this process
+// ends straight afterwards, e.g. as PID 1 of a container that does not reap children)
+
+// A browser stand-in that behaves like a child process: it emits 'exit' some time after the signal it obeys.
+class FakeChild extends EventEmitter {
+  constructor({ obeys = ['SIGTERM', 'SIGKILL'], exitAfterMs = 50 } = {}) {
+    super(); this.kills = []; this.obeys = obeys; this.exitAfterMs = exitAfterMs; this.exitCode = null; this.signalCode = null;
+  }
+  kill(sig) {
+    this.kills.push(sig);
+    if (this.obeys.includes(sig) && this.exitCode === null && this.signalCode === null) {
+      setTimeout(() => { this.signalCode = sig; this.emit('exit', null, sig); }, this.exitAfterMs);
+    }
+    return true;
+  }
+}
+const withChild = (proc, extra = {}) => withBrowser({ launch: async () => ({ proc, wsUrl: 'ws://x' }), connect: async () => ({ close() {} }), ...extra }, async () => 'ok');
+
+test('withBrowser does not return until the browser has exited after SIGTERM', async () => {
+  const child = new FakeChild({ exitAfterMs: 150 });
+  const t0 = Date.now();
+  assert.equal(await withChild(child), 'ok');
+  assert.ok(Date.now() - t0 >= 140, 'returned before the browser had exited');
+  assert.notEqual(child.signalCode, null, 'the browser had not exited when withBrowser returned');
+  assert.deepEqual(child.kills, ['SIGTERM']);
+});
+
+test('withBrowser escalates to SIGKILL when the browser ignores SIGTERM, and waits for that exit too', async () => {
+  const child = new FakeChild({ obeys: ['SIGKILL'], exitAfterMs: 30 });
+  assert.equal(await withChild(child, { stopGraceMs: 100, stopKillMs: 2000 }), 'ok');
+  assert.deepEqual(child.kills, ['SIGTERM', 'SIGKILL']);
+  assert.equal(child.signalCode, 'SIGKILL');
+});
+
+test('withBrowser gives up after the time limits when the browser cannot be stopped, and does not hang', { timeout: 8000 }, async () => {
+  const child = new FakeChild({ obeys: [] });
+  const t0 = Date.now();
+  assert.equal(await withChild(child, { stopGraceMs: 100, stopKillMs: 100 }), 'ok');
+  assert.ok(Date.now() - t0 < 3000);
+  assert.deepEqual(child.kills, ['SIGTERM', 'SIGKILL']);
+});
+
+test('withBrowser does not signal a browser that has already exited', async () => {
+  const child = new FakeChild(); child.exitCode = 0;
+  assert.equal(await withChild(child), 'ok');
+  assert.deepEqual(child.kills, []);
+});
+
+test('withBrowser also waits for the exit when the connection could not be made', async () => {
+  const child = new FakeChild({ exitAfterMs: 120 });
+  const t0 = Date.now();
+  await assert.rejects(withBrowser({ launch: async () => ({ proc: child, wsUrl: 'ws://x' }), connect: async () => { throw new Error('websocket error'); } }, async () => 'unreachable'), /websocket error/);
+  assert.ok(Date.now() - t0 >= 110);
+  assert.notEqual(child.signalCode, null);
+});
+
 // ---- connect: a DevTools endpoint that accepts the connection and never completes the WebSocket handshake
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -186,9 +243,15 @@ test('connect gives up when the endpoint accepts the connection but never comple
   try {
     await assert.rejects(CDP.connect(`ws://127.0.0.1:${srv.port}/devtools/browser/x`, { connectTimeoutMs: 300 }), /no WebSocket handshake within 300 ms/);
     assert.ok(Date.now() - t0 < 4000, 'rejected promptly');
-    for (let i = 0; i < 40 && srv.state.closed === 0; i++) await sleep(50);
-    assert.equal(srv.state.accepted, 1);
-    assert.equal(srv.state.closed, 1, 'the half-open socket was closed by the client');
+    // How many TCP connections a native WebSocket makes before it gives up depends on the Node version (24.x opens
+    // and at once closes a second one when the connecting socket is aborted), so wait until every accepted
+    // connection has closed, and stays that way, rather than expecting a particular count.
+    for (let i = 0; i < 60; i++) {
+      await sleep(50);
+      if (srv.state.accepted >= 1 && srv.state.closed === srv.state.accepted) { await sleep(150); if (srv.state.closed === srv.state.accepted) break; }
+    }
+    assert.ok(srv.state.accepted >= 1, 'the client never connected');
+    assert.equal(srv.state.closed, srv.state.accepted, 'a connection to the stuck endpoint was left open by the client');
   } finally { await srv.stop(); }
 });
 
