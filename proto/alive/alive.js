@@ -22,6 +22,7 @@ const CAP = 400;            // live sprite cap
 const RAMP = 12;            // seconds from empty paper to the dense field
 const REDUCED_T = 14;       // the one static frame under prefers-reduced-motion
 const FH = 64, FG = 2, SB = 34, BGAP = 160; // floor height, floor gap, stanza setback, gap between buildings (world units)
+const OVF_MIN = 8, OVF_MAX = 16;                     // how far (world units) a crop may overflow its floor, top and bottom
 
 let VIEW = VIEWS.includes(Q.get("view")) ? Q.get("view") : "architecture";
 let PIN = UNITS.includes(Q.get("unit")) && VIEW !== "spiral" ? Q.get("unit") : null;
@@ -230,6 +231,9 @@ function layoutBuildings() {
   let x = 0; CITYB = []; CITYH = 0;
   for (const p of PIECES) {
     if (!p.lines.length) continue;
+    // p001 (own ink, regions): a crop may overflow its floor by half of its tallest line's excess over the floor, so no
+    // real ink is cut (92 px tallest line -> 14); the 57 other pieces keep the old 8 (their boxes are loose, not segmented)
+    p.ovf = p.hasAtoms ? Math.min(OVF_MAX, Math.max(OVF_MIN, Math.ceil((Math.max(...p.lines.map(l => l.h)) - FH) / 2))) : OVF_MIN;
     let y = 0, first = true;
     for (const S of p.stanzas) {
       if (!first) y += SB; first = false;
@@ -293,13 +297,16 @@ function drawBuilding(b, unit) {
     } else {
       for (const S of p.stanzas) {
         const fl = floorsOf(S); polyFloors(fl); g.fillStyle = TH.sheet; g.fill();
-        for (const r of fl) { const s = wholeLine(r.L); SCR = z * dpr; blitFloor(p, r.L, s, r.x0, r.y0, 0); }
+        for (const r of fl) { const s = wholeLine(r.L); SCR = z * dpr; blitFloor(p, r.L, s, r.x0, r.y0, p.hasAtoms ? p.ovf : 0); }
         polyFloors(fl); g.stroke();
       }
     }
     return;
   }
-  // line / word / glyph: floors one by one, ledge at each setback
+  // line / word / glyph: floors one by one, ledge at each setback. Three passes over the visible floors (fills, then
+  // crops, then outlines) so that a crop which overflows its floor (see blitFloor) is never painted over by the
+  // fill of the neighbouring floor.
+  const fl = [];
   for (const S of p.stanzas) {
     if (S !== p.stanzas[0] && S.lines.length) {
       const L0 = S.lines[0], f = floorWorld(b, L0);
@@ -308,24 +315,39 @@ function drawBuilding(b, unit) {
     for (const L of S.lines) {
       const f = floorWorld(b, L);
       if (f.y0 > cull.y1 || f.y0 + FH < cull.y0 || f.x0 > cull.x1 || f.x0 + L.w < cull.x0) continue;
-      if (unit === "line") {
-        g.fillStyle = TH.sheet; g.fillRect(f.x0, f.y0, L.w, FH);
-        SCR = z * dpr; blitFloor(p, L, wholeLine(L), f.x0, f.y0, 8);
-        g.strokeRect(f.x0, f.y0, L.w, FH);
-      } else {
-        g.fillStyle = TH.wall; g.fillRect(f.x0, f.y0, L.w, FH); g.strokeRect(f.x0, f.y0, L.w, FH);
-        const cells = unit === "word" ? L.words.map(w => w.box) : L.words.flatMap(w => w.glyphs).concat(L.marks);
-        if (!cells.length) { g.fillStyle = TH.sheet; g.fillRect(f.x0, f.y0, L.w, FH); SCR = z * dpr; blitFloor(p, L, wholeLine(L), f.x0, f.y0, 8); continue; }
-        const pad = unit === "word" ? 4 : 2;
-        for (const cb of cells) {
-          const s = subRect(L, cb); if (!s) continue;
-          const dx = f.x0 + (s.box[0] - L.box[0]), dy = f.y0 + (FH - L.h) / 2 + (s.box[1] - L.box[1]);
-          g.fillStyle = TH.sheet; g.fillRect(dx - pad, Math.max(f.y0 + 1, dy - pad), s.pw + 2 * pad, Math.min(FH - 2, s.ph + 2 * pad));
-          SCR = z * dpr; blitFloor(p, L, s, f.x0, f.y0, 8, true);
-          g.strokeRect(dx - pad, Math.max(f.y0 + 1, dy - pad), s.pw + 2 * pad, Math.min(FH - 2, s.ph + 2 * pad));
+      const it = { L, f, cells: null, whole: false };
+      if (unit !== "line") {
+        const cs = unit === "word" ? L.words.map(w => w.box) : L.words.flatMap(w => w.glyphs).concat(L.marks);
+        if (!cs.length) it.whole = true;
+        else {
+          const pad = unit === "word" ? 4 : 2;
+          it.cells = [];
+          for (const cb of cs) {
+            const s = subRect(L, cb); if (!s) continue;
+            const dx = f.x0 + (s.box[0] - L.box[0]), dy = f.y0 + (FH - L.h) / 2 + (s.box[1] - L.box[1]);
+            it.cells.push({ s, rx: dx - pad, ry: Math.max(f.y0 + 1, dy - pad), rw: s.pw + 2 * pad, rh: Math.min(FH - 2, s.ph + 2 * pad) });
+          }
         }
       }
+      fl.push(it);
     }
+  }
+  for (const it of fl) {                                  // pass 1: fills
+    const { L, f } = it;
+    if (unit === "line" || it.whole) { g.fillStyle = TH.sheet; g.fillRect(f.x0, f.y0, L.w, FH); }
+    else { g.fillStyle = TH.wall; g.fillRect(f.x0, f.y0, L.w, FH); g.fillStyle = TH.sheet; for (const c of it.cells) g.fillRect(c.rx, c.ry, c.rw, c.rh); }
+  }
+  SCR = z * dpr;
+  for (const it of fl) {                                  // pass 2: crops
+    const { L, f } = it;
+    if (unit === "line" || it.whole) blitFloor(p, L, wholeLine(L), f.x0, f.y0, p.ovf);
+    else for (const c of it.cells) blitFloor(p, L, c.s, f.x0, f.y0, p.ovf, true);
+  }
+  for (const it of fl) {                                  // pass 3: outlines
+    const { L, f } = it;
+    if (unit === "line") g.strokeRect(f.x0, f.y0, L.w, FH);
+    else if (it.whole) continue;
+    else { g.strokeRect(f.x0, f.y0, L.w, FH); for (const c of it.cells) g.strokeRect(c.rx, c.ry, c.rw, c.rh); }
   }
 }
 // blit a sub-rectangle of line L placed in its floor (floor-local offset = native, vertically centred), clipped to the floor +- ovf
