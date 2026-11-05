@@ -1,0 +1,15 @@
+name = "versforms-studio"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = "../studio"
+
+# The D1 database and the R2 bucket do not exist yet. Nothing here has been
+# created on Cloudflare. `database_id` is deliberately omitted: the real id only
+# exists after `wrangler d1 create versforms-studio`. See README.md.
+[[d1_databases]]
+binding = "DB"
+database_name = "versforms-studio"
+
+[[r2_buckets]]
+# "ASSETS" is reserved by Pages (the static-file binding), so the bucket is bound as PHOTOS.
+binding = "PHOTOS"
+bucket_name = "versforms-studio-assets"
