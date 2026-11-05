@@ -177,30 +177,39 @@ def _fold(name):
     return kept.strip().strip(".").strip().lower()
 
 
-def check_export_names(root):
-    """Every release document is named exactly p<digits>.json, and no folder only RESEMBLES a collection folder.
-    A document whose name merely looks right (P001.json, p001.JSON, 'p001 .json', fullwidth digits) or a stray
-    file would otherwise be ignored: its piece would then read as 'unsorted' (a gate that --force overrides) while
-    a Reserve document sits next to it. A hard stop, naming the entry; --force does not override it."""
+def check_export_names(root, piece_ids=None):
+    """Every release document is named exactly p<digits>.json AND that id is a piece that exists, and no folder only
+    RESEMBLES a collection folder. A document whose name merely looks right (P001.json, p001.JSON, 'p001 .json',
+    fullwidth digits), has the right shape but names no piece (p0001.json, p1.json, a name padded with zeros, the id of a
+    piece that no longer exists) or is a stray file would otherwise be ignored: its piece would then read as 'unsorted'
+    (a gate that --force overrides) while a Reserve document sits next to it. A hard stop, naming the entry; --force
+    does not override it. `piece_ids` is the set of ids in site/data/j.json; a run always passes it. The one tolerated
+    stranger is a regular file named exactly .DS_Store (Finder creates it)."""
     for entry in sorted(os.listdir(root)):
         if entry not in COLLECTIONS and _fold(entry) in COLLECTIONS:
             raise Stop(f"{root}/{entry!r} looks like the collection {_fold(entry)!r} but is not named exactly that, so its documents would be ignored. Rename or remove it")
     folder = Path(root) / "release"
     if folder.is_dir():
         for entry in sorted(os.listdir(folder)):
+            if entry == ".DS_Store" and (folder / entry).is_file() and not (folder / entry).is_symlink():
+                continue
             if not RELEASE_DOC_NAME_RE.fullmatch(entry):
                 raise Stop(f"release/{entry!r} is not a release document name: they are exactly p<digits>.json (lowercase, ASCII digits, no spaces). "
                            "A file that only resembles one would be ignored and its piece would read as unsorted, even if it says Reserve. Rename or remove it")
             if (folder / entry).is_symlink() or not (folder / entry).is_file():
                 raise Stop(f"release/{entry!r} is not a regular file (a directory or a link); a release document must be a plain file")
+            if piece_ids is not None and entry[:-len(".json")] not in piece_ids:
+                raise Stop(f"release/{entry[:80]!r} names no piece: {entry[:-len('.json')][:40]!r} is not a piece id in site/data/j.json (zero padding, extra digits and the id of a piece that no longer exists all end here). "
+                           "A release document that names no piece would be ignored while a Reserve document sits in it. Rename or remove it")
 
 
-def load_db_with_root(path):
+def load_db_with_root(path, piece_ids=None):
     """-> (export directory, {collection: {doc id: doc}}) from EXPORT_DIR/COLLECTION/DOCID.json.
     A document that is not a JSON object, a release entry or a collection folder whose name only resembles the
-    right one, and an export with no release documents at all, are hard stops."""
+    right one, a release document that names no piece (when `piece_ids` is given, as a run always does), and an
+    export with no release documents at all, are hard stops."""
     root = find_db_root(path)
-    check_export_names(root)
+    check_export_names(root, piece_ids)
     db = {c: {} for c in COLLECTIONS}
     for c in COLLECTIONS:
         folder = root / c
@@ -912,7 +921,7 @@ def run(a):
 
     try:
         src = Source(root)
-        db_root, db = load_db_with_root(a.db)
+        db_root, db = load_db_with_root(a.db, piece_ids=set(src.pieces))
     except Stop as e:
         say(f"FAIL  stop cannot load inputs: {e}")
         return EXIT_STOP

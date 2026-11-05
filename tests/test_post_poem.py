@@ -1528,12 +1528,12 @@ class HardenedPostingTests(Base):
                         "\uff50\uff10\uff10\uff11.json",            # fullwidth p001
                         "p\u0660\u0660\u0661.json",                  # Arabic-Indic digits
                         "p0\u200b01.json",                            # zero-width space
-                        "p001\u202f.json", "notes.txt", ".DS_Store", "README.md", "x-diary2.json", "b-1.json", "p.json", "p-1.json"]
+                        "p001\u202f.json", "notes.txt", ".DS_store", "README.md", "x-diary2.json", "b-1.json", "p.json", "p-1.json"]
 
     def hidden_reserve_case(self, name, as_dir=False):
         """The export has release documents, a Series one for another piece, none named exactly for p001, and a Reserve
         document for p001 under a name that only looks like p001's."""
-        self.prepare(release={"p050": {"pool": "series"}})
+        self.prepare(release={"p003": {"pool": "series"}})
         (self.db / "release" / "p001.json").unlink()
         target = self.db / "release" / name
         if as_dir:
@@ -1553,12 +1553,68 @@ class HardenedPostingTests(Base):
                 self.assertIn("is not a release document name", self.out)
                 self.assertIn(repr(name), self.out)  # the message names the file
 
+    # ---- B1 (second form). the right SHAPE is not enough: the name must be a piece id that exists in site/data/j.json
+    def test_a_release_entry_that_names_no_piece_is_a_hard_stop_that_force_cannot_override(self):
+        # p0001, p1 and a zero-padded name have the shape p<digits>.json, but no piece has that id: the document would be
+        # ignored, p001 would read as unsorted, and --force would post it although a Reserve document sits there
+        for name in ("p0001.json", "p1.json", "p01.json", "p000.json", "p" + "0" * 240 + "1.json", "p999.json", "p0002.json"):
+            with self.subTest(name=name[:20] + ("..." if len(name) > 20 else "")):
+                self.fresh()
+                self.hidden_reserve_case(name)
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-shared-scan", "p002,p003,p004,p006,p007"), 3, self.out)
+                self.assertIn("names no piece", self.out)
+                self.assertIn(repr(name)[:30], self.out)  # the message names the file
+
+    def test_a_stale_release_document_of_a_piece_that_no_longer_exists_is_a_hard_stop(self):
+        self.prepare(release={"p003": {"pool": "series"}, "p120": {"pool": "series"}})  # p120 is not in this site/data/j.json
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("names no piece", self.out)
+
+    def test_an_unknown_id_is_a_hard_stop_on_the_already_public_path_too(self):
+        self.prepare()  # p002 is already public
+        (self.db / "release" / "p0002.json").write_text('{"pool": "reserve"}')
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("names no piece", self.out)
+
+    def test_a_real_run_with_a_zero_padded_reserve_document_pushes_nothing(self):
+        self.hidden_reserve_case("p0001.json")
+        self.fake_gh()
+        self.clone, self.bare = make_public(self.tmp)
+        rel_before = (self.root / "release" / "public.json").read_bytes()
+        refs_before = git(self.bare, "for-each-ref")
+        self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", dry=False, public=self.clone), 3, self.out)
+        self.assertEqual(git(self.bare, "for-each-ref"), refs_before)
+        self.assertEqual(git(self.clone, "branch", "--list", "post/p001"), "")
+        self.assertEqual((self.root / "release" / "public.json").read_bytes(), rel_before)
+
+    def test_only_a_regular_file_called_exactly_dot_ds_store_is_tolerated_in_the_release_folder(self):
+        self.prepare()
+        (self.db / "release" / ".DS_Store").write_bytes(b"\x00\x00\x00\x01Bud1")  # Finder creates it
+        self.assertEqual(self.go("p001"), 0, self.out)
+        for name in (".DS_store", ".ds_store", ".DS_Store "):
+            with self.subTest(name=name):
+                self.fresh()
+                self.prepare()
+                (self.db / "release" / name).write_bytes(b"x")
+                self.assertEqual(self.go("p001"), 3, self.out)
+        self.fresh()
+        self.prepare()
+        (self.db / "release" / ".DS_Store").mkdir()  # a DIRECTORY with that name is not Finder's file
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.fresh()
+        self.prepare()
+        (self.tmp / "target").write_text("x")
+        (self.db / "release" / ".DS_Store").symlink_to(self.tmp / "target")
+        self.assertEqual(self.go("p001"), 3, self.out)
+
     def test_a_directory_or_a_symlink_in_the_release_folder_is_a_hard_stop(self):
         self.hidden_reserve_case("p001.json", as_dir=True)  # a DIRECTORY called p001.json
         self.assertEqual(self.go("p001", "--force"), 3, self.out)
         self.assertIn("is not a regular file", self.out)
         self.fresh()
-        self.prepare(release={"p050": {"pool": "series"}})
+        self.prepare(release={"p003": {"pool": "series"}})
         (self.tmp / "elsewhere.json").write_text('{"pool": "reserve"}')
         (self.db / "release" / "p001.json").unlink()
         (self.db / "release" / "p001.json").symlink_to(self.tmp / "elsewhere.json")
@@ -1585,17 +1641,17 @@ class HardenedPostingTests(Base):
         for look_alike in ("release ", " release", "Release.", "\uff52elease", "reviews "):
             with self.subTest(folder=look_alike):
                 self.fresh()
-                self.prepare(release={"p050": {"pool": "series"}})
+                self.prepare(release={"p003": {"pool": "series"}})
                 (self.db / look_alike).mkdir()
                 (self.db / look_alike / "p001.json").write_text('{"pool": "reserve"}')
                 self.assertEqual(self.go("p001", "--force"), 3, self.out)
                 self.assertIn("looks like the collection", self.out)
 
     def test_a_legitimate_release_folder_still_passes_and_a_missing_document_is_still_the_forceable_gate(self):
-        self.prepare(release={"p050": {"pool": "series"}, "p003": {"pool": "series"}})
+        self.prepare(release={"p006": {"pool": "series"}, "p003": {"pool": "series"}})
         self.assertEqual(self.go("p001"), 0, self.out)
         self.fresh()
-        self.prepare(release={"p050": {"pool": "series"}})
+        self.prepare(release={"p003": {"pool": "series"}})
         (self.db / "release" / "p001.json").unlink()  # NO document for p001: unsorted, a gate, forceable (the brief's design)
         self.assertEqual(self.go("p001"), 2, self.out)
         self.assertEqual(self.go("p001", "--force"), 0, self.out)
