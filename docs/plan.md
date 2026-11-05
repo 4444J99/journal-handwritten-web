@@ -4,6 +4,22 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 
 > Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-28 (synced 2026-11-05). The Project doc is the working copy; this file is versioned here so each revision of the plan is kept. Per-chat plans and their status: `docs/chats/`.
 
+## T03 preparation addendum — 2026-11-05
+
+The [T03 release procedure](releases/t03-release-procedure.md), [author-decision packet](releases/t03-author-decisions.md), [sourced policy](releases/t03-policy-and-disposition.md) and [clearance contract](releases/release-clearance-contract.md) now use PR #101 head `e5ae157ef556690e73047e30225cad61c5484cf9`. The original `5d111c1` / `e0177fa` eight-file rehearsal is preserved at `release/packets/2026-11-05-t03-baseline/`; current output is at `release/packets/2026-11-05-t03/`. Baseline counts and hashes are not current acceptance.
+
+The bounded private preview selects `p001-diary1-0`; both p001 and that version remain derived candidates awaiting the author. Journal-page order is preserved; `as-posted` and participation `around` remain derived defaults. The author-selected title and font are versforms and ajp-scribbles.
+
+The genuine preserved export has 38 reviews and zero release records. The current posting CLI stops at **exit 3** in the empty-release loader. The private helper uses `studio-cf/import_export.scan` and separately evaluates the existing gates: reviews pass, Series false, batch false. No fake release record is added. Keep the documented filed/registered-batch gate, distinguishing workflow confirmation and actual filing evidence. Older skip-filing advice is not policy.
+
+Content exclusion (text/version data and images) passes, but 13 withheld-page identifiers and PAL/HF block structures remain in `index.html`; **complete technical exclusion is false**. An explicit author metadata rule or a T04/builder fix and a new check remains required. The private comparison shows p126 on diary62a; no shared-scan flag provides clearance.
+
+Reserve-size and launch-bank proposals remain unresolved. Weekly cadence and existing-resource/no-spend constraints remain. Replace elapsed dates with an author-confirmed T0 after clearance and weekly intervals; no future date is committed. Both Site/social false values are UI enum classifications, not stored `pub` event fields. Event semantics remain an author/integrator decision. The local D1 receipt's 12 passing checks include a narrow desktop 390-pixel viewport; separate release-browser touch emulation is not physical-phone acceptance. No physical-phone pass is claimed.
+
+Both this versioned plan and its repository counterpart now carry the addendum. PR #103 restored the historical `claude/plan.md`; the matching addendum patch has already been applied in this checkout and is retained only as a reproducible historical handoff. The underlying October 28 plan remains historical. Source/deposit and phone interfaces remain with T02/T04; shared studio changes go through T01. PR #101 review [4487062599](https://github.com/4444J99/journal-handwritten-web/pull/101#discussion_r4487062599) remains a non-dry-run execution gate.
+
+No live state, private whitelist, publication, filing, merge or deployment is changed. The private shared memory packet remains inaccessible; the addendum uses accessible repository evidence and the current integrator receipts.
+
 ## Source
 - 123 scanned journal pages, c. 2014–2015, from github.com/4444J99/etceter4 (commit dfcbf0f, `img/photos/diary/`); 63 two-page spreads scanned September 2015 (`diary_originals.zip`).
 - The published page crops cut off writing on 8 pages (37, 37a, 43, 48, 53a, 59, 59a, 60a). That text was recovered from the 2015 spreads.

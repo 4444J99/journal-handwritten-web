@@ -1,0 +1,404 @@
+{
+  "observed_date": "2026-11-05",
+  "repository": "4444J99/journal-handwritten-web",
+  "visibility": "private",
+  "initial_main": "d830d2a8f0556c50917d34528ab0b19cf7e0579a",
+  "refreshed_main": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+  "dependency": {
+    "pr": 101,
+    "head": "e5ae157ef556690e73047e30225cad61c5484cf9",
+    "tree": "c4c4fb0479b5be9563258a85b58a8458fe1d1f8a",
+    "state": "open",
+    "review_threads": [
+      {
+        "id": "PRRT_kwDOVZ9Su860SO1R",
+        "resolved": false,
+        "outdated": true,
+        "path": "tools/post_poem.py",
+        "comments": [
+          {
+            "id": 4486446890,
+            "created_at": "2026-11-05T21:45:36Z",
+            "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Exclude authorized text from the unpublished-line substring scan**\n\nWhen an unpublished line is a substring of a longer published line, subtracting `texts_ok` only removes exact matches, so the substring scan rejects legitimate published content. This already affects the checked-in data: posting p002's default version publishes diary2 block 2 line 1, which contains the shorter reading from unpublished block 4 line 1. Even with the unpublished block correctly emptied and all gates satisfied, `leak_check` reports a leak and posting exits 3; `--force` cannot override it. Exempt occurrences within authorized published readings (while retaining the structural check on unpublished blocks) so overlapping wording does not prevent publication.\n\nUseful? React with 👍 / 👎.\n\n<!-- codex-code-review-finding:v1 -->"
+          }
+        ]
+      },
+      {
+        "id": "PRRT_kwDOVZ9Su860SO1Y",
+        "resolved": false,
+        "outdated": true,
+        "path": "tools/post_poem.py",
+        "comments": [
+          {
+            "id": 4486446898,
+            "created_at": "2026-11-05T21:45:36Z",
+            "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate the complete origin hostname instead of a URL substring**\n\nIf the supplied clone's origin is `https://notgithub.com/4444J99/versforms.git` or `https://example.invalid/github.com/4444J99/versforms.git`, this function returns true because the regex matches anywhere in the URL. The remaining repository checks only establish that the clone is clean and level with its own origin, so they cannot catch this mistaken identity. Consequently, `fill_public_repo` can replace `site/` and commit in an unintended repository despite the identity hard stop reporting PASS. Parse the URL and SCP-style SSH forms and require the hostname to equal `github.com` and the repository path to match exactly.\n\nUseful? React with 👍 / 👎.\n\n<!-- codex-code-review-finding:v1 -->"
+          }
+        ]
+      },
+      {
+        "id": "PRRT_kwDOVZ9Su860TqA-",
+        "resolved": false,
+        "outdated": false,
+        "path": "tools/post_poem.py",
+        "comments": [
+          {
+            "id": 4487062599,
+            "created_at": "2026-11-05T22:57:00Z",
+            "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate every effective push URL before publishing**\n\nIf `origin` has multiple `remote.origin.pushurl` entries, with the expected GitHub repository first and another repository second, this check sees only the first URL and passes. `git remote get-url --push -h` documents `--all` as “return all URLs”; without it, additional destinations are omitted. In a local two-bare-repository reproduction, the fully qualified push used later in `run()` sent the branch to both destinations, so its explicit refspec does not prevent this bypass of the repository-identity hard stop. Retrieve all effective push URLs and reject additional destinations before committing or pushing.\n\nUseful? React with 👍 / 👎.\n\n<!-- codex-code-review-finding:v1 -->"
+          }
+        ]
+      }
+    ],
+    "late_changes": "Stricter export/pool/URL/scratch validation, broader scan detection, stronger withholding, isolated public worktree, atomic whitelist updates. Empty release collection now actual CLI exit3."
+  },
+  "issues": [
+    {
+      "number": 3,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/3",
+      "title": "[2026-10-24-release-methods-and-standards] 01 · Research report: release standards, growth, protection, precedents",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:52:55Z",
+      "updated_at": "2026-11-05T16:52:55Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-24-release-methods-and-standards/01-release-research-report.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-24-release-methods-and-standards/01-release-research-report.md)\nChat record: [`docs/chats/2026-10-24-release-methods-and-standards.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-24-release-methods-and-standards.md)\n\n### Plan\n- [ ] Decide public n/100 vs held-back pool for journals/contests; write a short release policy (Claude suggestion)\n- [ ] Scan archival masters with web derivatives and 3-2-1 backups; privacy pass per page (Claude suggestion)\n- [ ] Register unpublished batches with the US Copyright Office before posting (Claude suggestion)\n- [ ] Per-poem repo structure (scans, transcriptions, metadata, version tags); AI-crawler opt-outs and rights page (Claude suggestion)\n- [ ] Site MVP (grid of 100, chrome-free deep zoom, tap-to-reveal), email list, release schedule, milestone deposits (Claude suggestion)\n- [ ] Numbered print/zine prototype; phase-two variorum view; grant/residency applications (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 6,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/6",
+      "title": "[2026-10-26-etceter4-journal-build] 02 · Three paths: font, full-text preservation, dynamic presentation",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:53:03Z",
+      "updated_at": "2026-11-05T16:53:03Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-26-etceter4-journal-build/02-three-paths-pipeline-start.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-26-etceter4-journal-build/02-three-paths-pipeline-start.md)\nChat record: [`docs/chats/2026-10-26-etceter4-journal-build.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-26-etceter4-journal-build.md)\n\n### Plan\n- [x] Transcribe all 123 pages (Claude)\n- [x] Build preservation archive (Claude)\n- [x] Build handwriting font (Claude)\n- [x] Research dynamic presentation and prototype the presentation (Claude)\n- [ ] Decide which personal pages may be public (author)\n- [x] Do not change the etceter4 repo until the author says so (Claude)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 10,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/10",
+      "title": "[2026-10-26-etceter4-journal-build] 06 · Remove AI text, chrome-on-tap reader; count of complete poems",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:53:13Z",
+      "updated_at": "2026-11-05T16:53:13Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-26-etceter4-journal-build/06-immersive-redesign-poem-count.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-26-etceter4-journal-build/06-immersive-redesign-poem-count.md)\nChat record: [`docs/chats/2026-10-26-etceter4-journal-build.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-26-etceter4-journal-build.md)\n\n### Plan\n- [x] Redesign reader to the author's rules (Claude)\n- [x] Catalog pieces and count complete poems (Claude)\n- [ ] Settle borderline calls (\"Nothing shines\" final, two possible pairs, lines that may echo other sources) (author)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 20,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/20",
+      "title": "[2026-10-27-application-feedback-review] 02 · Cross-check of Gemini's review and merged priority list",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:53:37Z",
+      "updated_at": "2026-11-05T16:53:37Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-27-application-feedback-review/02-gemini-review-comparison.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-application-feedback-review/02-gemini-review-comparison.md)\nChat record: [`docs/chats/2026-10-27-application-feedback-review.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-application-feedback-review.md)\n\n### Plan\n- [x] Implement combined priorities 1-7 in the merged piece (Claude suggestion)\n- [ ] Decide final version vs. drafts-as-layers for loosely shown drafts (plan item 4) (author)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 27,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/27",
+      "title": "[2026-10-27-product-business-model] 02 · Business-model research report",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:53:55Z",
+      "updated_at": "2026-11-05T16:53:55Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-27-product-business-model/02-business-model-research.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-product-business-model/02-business-model-research.md)\nChat record: [`docs/chats/2026-10-27-product-business-model.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-product-business-model.md)\n\n### Plan\n- [ ] Post the 100 poems free; hold a reserve of 15-30 poems never posted, for journals (Claude suggestion)\n- [ ] Register each 10-poem batch via GRUW before posting (Claude suggestion)\n- [ ] Later income: membership for version/notes layers, numbered print editions, Kickstarter for collected/facsimile edition (Claude suggestion)\n- [ ] Keep the font exclusive for now; keep the web piece free; skip NFTs as a core model (Claude suggestion)\n- [ ] Attorney review of font license and contributor terms (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 28,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/28",
+      "title": "[2026-10-27-product-business-model] 03 · Release plan and studio Release tab",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:53:57Z",
+      "updated_at": "2026-11-05T16:53:57Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-27-product-business-model/03-release-tab-build.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-product-business-model/03-release-tab-build.md)\nChat record: [`docs/chats/2026-10-27-product-business-model.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-27-product-business-model.md)\n\n### Plan\n- [x] Add Release tab to review studio, test, republish MVognnZQrtRQ6QCMaF7341, update plan.md and project docs (Claude)\n- [ ] Sort pieces into Series/Reserve/Archive and set a first-post date in the Release tab (author)\n- [ ] Choose a numbering option in Decisions to fix n/100 numbers (author)\n- [ ] Connect or locate the local build folder so the deposit script can run (author)\n- [ ] Submit Reserve poems to journals; file the first GRUW batch before posting (author)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 40,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/40",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 01 · Launch approach and account structure",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:54:27Z",
+      "updated_at": "2026-11-05T16:54:27Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan/01-launch-approach-and-accounts.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan/01-launch-approach-and-accounts.md)\nChat record: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan.md)\n\n### Plan\n- [ ] Settle name, handles, domain (author)\n- [ ] Pick the Reserve (author)\n- [ ] Replace pre-post gates with post-hoc layers (Claude suggestion)\n- [ ] Open only journal + personal accounts at first (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 41,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/41",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 02 · Cadence, GRUW and account count",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:54:29Z",
+      "updated_at": "2026-11-05T16:54:29Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan/02-cadence-gruw-accounts.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan/02-cadence-gruw-accounts.md)\nChat record: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan.md)\n\n### Plan\n- [ ] Settle name, handles, domain (author)\n- [ ] Skip GRUW (not explicitly accepted; conflicts with Release tab/advisory) (Claude suggestion)\n- [ ] Reserve handles on all platforms; post on two (Claude suggestion)\n- [ ] Rewrite Release tab as lanes; weekly calendar (offered) (Claude)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 42,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/42",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 03 · Clarifying gatekeepers and the Reserve",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:54:31Z",
+      "updated_at": "2026-11-05T16:54:31Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan/03-gatekeepers-and-reserve.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan/03-gatekeepers-and-reserve.md)\nChat record: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan.md)\n\n### Plan\n- [ ] Keep a small Reserve via a ten-minute sort (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 46,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/46",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 07 · Launch day, week and month plan",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:54:41Z",
+      "updated_at": "2026-11-05T16:54:41Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan/07-launch-week-month-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan/07-launch-week-month-plan.md)\nChat record: [`docs/chats/2026-10-31-poetry-archive-relaunch-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-10-31-poetry-archive-relaunch-plan.md)\n\n### Plan\n- [ ] Name/handle, poems 1-4, bio, post frame, poem 1 transcription check (author)\n- [ ] Post poem 1 on Nov 1 (author)\n- [ ] Weekly poems Nov 8/15/22 with one new lane each (Claude suggestion)\n- [ ] Keep site private until a posted-only filter exists (Claude suggestion)\n- [ ] Rewrite Release tab; add posted-only filter (offered) (Claude)\n- [x] Copy published v4 index.html into site/ (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 62,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/62",
+      "title": "[2026-11-03-poetry-release-plan] 01 · Numbered n/100 release plan",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:55:16Z",
+      "updated_at": "2026-11-05T16:55:16Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-11-03-poetry-release-plan/01-numbered-release-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan/01-numbered-release-plan.md)\nChat record: [`docs/chats/2026-11-03-poetry-release-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan.md)\n\n### Plan\n- [ ] Build a 100-row release tracker (number, piece, status, post date, links) (Claude suggestion)\n- [ ] Decide order, possible merged pairs, multi-draft final version; check possibly borrowed lines (author)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 63,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/63",
+      "title": "[2026-11-03-poetry-release-plan] 02 · Goal of 100 full poems with versions",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:55:18Z",
+      "updated_at": "2026-11-05T16:55:18Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-11-03-poetry-release-plan/02-hundred-full-poems-versions.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan/02-hundred-full-poems-versions.md)\nChat record: [`docs/chats/2026-11-03-poetry-release-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan.md)\n\n### Plan\n- [ ] Decide numbering: fixed in advance vs assigned as posted (author)\n- [ ] Decide ordering: interleaved vs journal first (author)\n- [ ] Bank about 10-15 ready pieces before #1 (Claude suggestion)\n- [ ] Build the tracker once numbering is decided (Claude)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    },
+    {
+      "number": 65,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/65",
+      "title": "[2026-11-03-poetry-release-plan] 04 · Next steps and all avenues",
+      "state": "open",
+      "assignees": null,
+      "created_at": "2026-11-05T16:55:23Z",
+      "updated_at": "2026-11-05T16:55:23Z",
+      "comments": 0,
+      "body": "Exchange document: [`docs/chats/2026-11-03-poetry-release-plan/04-next-steps-all-avenues.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan/04-next-steps-all-avenues.md)\nChat record: [`docs/chats/2026-11-03-poetry-release-plan.md`](https://github.com/4444J99/journal-handwritten-web/blob/main/docs/chats/2026-11-03-poetry-release-plan.md)\n\n### Plan\n- [ ] Lock the project name (author)\n- [ ] Pick poem #1, bank more, set first-post date (author)\n- [ ] Decide copyright registration approach before #1 (author)\n- [ ] Copy merged-piece v4 into repo site/ and test on a real iPhone — copy done 2026-11-05 (2744d7a); iPhone test still open (Claude)\n- [ ] Fold avenues and tensions into plan.md (Claude suggestion)\n- [ ] Exclude Reserve poems from public site builds (Claude suggestion)\n\n---\n_Generated by [Claude Code](https://claude.ai/code)_"
+    }
+  ],
+  "shared_context": {
+    "packet": "2026-10-16-v1.1",
+    "projection": "2026-10-16-v1.1-r2",
+    "project": "g-p-6a10bcb4ada4819194e881431212101a",
+    "access": "inaccessible; no claims attributed to unseen contents"
+  },
+  "history_limit": "Local baseline was reconstructed as an exact SHA-verified shallow commit/tree using GitHub connector data and independently verified existing blobs. No ancestry/cleanup claims from missing earlier history.",
+  "latest_main_delta": {
+    "pull_request": 103,
+    "description": "Historical claude/ documents and README imported; no runtime input changes relative to PR101 snapshot.",
+    "runtime_inputs_equal": true,
+    "compared_prefixes": [
+      "site/",
+      "studio/",
+      "exports/",
+      "studio-cf/"
+    ],
+    "tree_sha": "20f81d8fb3b65a1235d36009effca9b806265df1",
+    "claude_plan_blob": "e69db0c34376f25e827d99c5619466175fc1080b",
+    "subsequent_pr": 114,
+    "subsequent_tree_sha": "fdf70c9dc9f86ea8c4c5556b1349b5a3bba803f7",
+    "subsequent_runtime_inputs_equal": true,
+    "current_main_check_blob": "84d766fdfb2f5ec784c5ad0a11c7b65187047ca1",
+    "current_main_check_result": "exit 0; 509 references, 511 checksums; temporary execution, no branch replacement",
+    "late_pr101_runtime_inputs_equal": true,
+    "late_pr101_compared_prefixes": [
+      "site/",
+      "studio/",
+      "exports/",
+      "studio-cf/"
+    ],
+    "final_main_runtime_inputs_equal": true
+  },
+  "main_observations": [
+    {
+      "sha": "d830d2a8f0556c50917d34528ab0b19cf7e0579a",
+      "role": "initial"
+    },
+    {
+      "sha": "04168b1f68bc4579fae245f8411b0b337d064369",
+      "role": "after PR103"
+    },
+    {
+      "sha": "cd6a00a830e142b4affa74dfc020438214b6bec7",
+      "observed_at": "2026-11-05T22:51:18Z",
+      "role": "after PR114"
+    },
+    {
+      "sha": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+      "observed_at": "2026-11-05 23:13:08 UTC",
+      "role": "PR117 launch-lanes session record; runtime prefixes independently compared, unchanged"
+    }
+  ],
+  "dependency_baseline": {
+    "pr": 101,
+    "head": "5d111c13764655312c32ddf1b55390198bc7f70c",
+    "state": "open",
+    "tree": "1961b7608a0ccb016ec3544ca7af86d1021c2630",
+    "review_threads": [
+      {
+        "id": "PRRT_kwDOVZ9Su860SO1R",
+        "resolved": false,
+        "outdated": true,
+        "path": "tools/post_poem.py",
+        "comments": [
+          {
+            "id": 4486446890,
+            "created_at": "2026-11-05T21:45:36Z",
+            "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Exclude authorized text from the unpublished-line substring scan**\n\nWhen an unpublished line is a substring of a longer published line, subtracting `texts_ok` only removes exact matches, so the substring scan rejects legitimate published content. This already affects the checked-in data: posting p002's default version publishes diary2 block 2 line 1, which contains the shorter reading from unpublished block 4 line 1. Even with the unpublished block correctly emptied and all gates satisfied, `leak_check` reports a leak and posting exits 3; `--force` cannot override it. Exempt occurrences within authorized published readings (while retaining the structural check on unpublished blocks) so overlapping wording does not prevent publication.\n\nUseful? React with 👍 / 👎.\n\n<!-- codex-code-review-finding:v1 -->"
+          }
+        ]
+      },
+      {
+        "id": "PRRT_kwDOVZ9Su860SO1Y",
+        "resolved": false,
+        "outdated": true,
+        "path": "tools/post_poem.py",
+        "comments": [
+          {
+            "id": 4486446898,
+            "created_at": "2026-11-05T21:45:36Z",
+            "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate the complete origin hostname instead of a URL substring**\n\nIf the supplied clone's origin is `https://notgithub.com/4444J99/versforms.git` or `https://example.invalid/github.com/4444J99/versforms.git`, this function returns true because the regex matches anywhere in the URL. The remaining repository checks only establish that the clone is clean and level with its own origin, so they cannot catch this mistaken identity. Consequently, `fill_public_repo` can replace `site/` and commit in an unintended repository despite the identity hard stop reporting PASS. Parse the URL and SCP-style SSH forms and require the hostname to equal `github.com` and the repository path to match exactly.\n\nUseful? React with 👍 / 👎.\n\n<!-- codex-code-review-finding:v1 -->"
+          }
+        ]
+      }
+    ]
+  },
+  "final_issue_observation": {
+    "observed_at": "2026-11-05 23:13:08 UTC",
+    "issues": [
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:52:55Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:53:03Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:53:13Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:53:37Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:53:55Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:53:57Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:54:27Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:54:29Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:54:31Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:54:41Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:55:16Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:55:18Z"
+      },
+      {
+        "state": "open",
+        "comments": 0,
+        "updated_at": "2026-11-05T16:55:23Z"
+      }
+    ]
+  },
+  "late_gate_findings": {
+    "engine_metadata": "13 withheld page IDs plus PAL/HF block structure remain in reader HTML; not cleared",
+    "push_url_review": 4487062599,
+    "posting_export": "Authentic preserved38review/0release export now exits3 before normal gates; private inspection uses existing studio import_export.scan"
+  },
+  "late_repository_record": {
+    "source": "docs/chats/2026-11-05-versforms-launch-lanes.md",
+    "revision": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+    "blob": "e530dad2f5eb0b5cdb04b9d2ab6b8491412b626b",
+    "scope": "Read current source report; other-repository exposure, live deployment and account claims not independently reverified; no new authority inferred"
+  },
+  "linked_late_owner_records": {
+    "issues": [
+      {
+        "number": 105,
+        "url": "https://github.com/4444J99/journal-handwritten-web/issues/105",
+        "title": "Owner: sort p001-p010 into Series / Reserve / Archive in the studio",
+        "state": "open",
+        "comments": 0,
+        "body": "**Owner:** the author. Which poems go public is the author's choice only.\n\n## What\nSort the first ten poems into **Series**, **Reserve** or **Archive**, in journal-page order: `p001` to `p010` (`p001` is journal page `diary1`).\n\n## Steps\n1. Open https://versforms-studio.pages.dev/ and sign in with the owner email (Cloudflare Access sends a one-time code).\n2. Release tab, then Sort. Pick Series, Reserve or Archive for each of the ten.\n3. Tell the session (or comment here) when the first choice is made; a read of the database then confirms the write landed.\n\n## Why it matters\n- The posting script (`tools/post_poem.py`, PR #101) only posts a piece that is in Series, fully verified, and in a copyright batch marked filed.\n- Reserve pieces never appear online in any form, and the script treats a Reserve piece as a hard stop that `--force` cannot override.\n- Nothing is sorted today: the `release` collection in the studio database is empty.\n\n## Not verified\nSaving a choice through the deployed studio has not been tested (reads were; writes were tested only against a local copy).\n"
+      },
+      {
+        "number": 108,
+        "url": "https://github.com/4444J99/journal-handwritten-web/issues/108",
+        "title": "Owner decisions: three questions from the independent check of the posting script (PR #101)",
+        "state": "open",
+        "comments": 1,
+        "body": "**Owner:** the author. Raised by an independent check of the posting script (PR #101); the three questions are design or content calls, so they are left undecided.\n\n## A. Page ids inside every public build\nEvery public build ships the viewer's hard-coded lists of other pages' ids (a palette table naming journal pages with their block numbers, and a short list of three hand-lettering pages). They are engine-template data, not text or scans, and they exist in the v4 site already. If one of those pages is later sorted into Reserve, its id would be metadata in a public file.\n- Option 1: accept (ids only, no content), and note it.\n- Option 2: change the public build to drop everything but the posted piece. More work, and it changes the viewer.\n\n## B. Font description records\nThe renamed font carries two descriptive name records (a short description line and a sample-text line) that say it was built from the author's journal scans. They are technical, but they ship with the font download.\n- Option 1: the author signs them off as written.\n- Option 2: blank them.\n\n## C. \"not yet checked by the author\" line\nThe info panel can show this line even for a piece that passed the verification gate. It is reader-visible text.\n- Option 1: remove the line from public builds.\n- Option 2: derive it from the verification data so it is only shown when true.\n\n## State\nPR #101 carries the fixes for the blocker and major findings of the check; these three are listed there as open questions.\n"
+      },
+      {
+        "number": 113,
+        "url": "https://github.com/4444J99/journal-handwritten-web/issues/113",
+        "title": "Runbook: first post (p001) once the gates are met",
+        "state": "open",
+        "comments": 0,
+        "body": "**Owner:** the author (decides what goes public and when). This is the runbook for the first post, so it can be done once the gates are met.\n\n## Preconditions (each its own item)\n- [ ] Studio sort done: `p001` in Series (the Release-tab sort issue).\n- [ ] `p001` fully verified in the studio (every line confirmed).\n- [ ] Copyright batch 1 filed and recorded, or the author chooses `--force` on that gate (the GRUW issue).\n- [ ] PR #101 (posting script) merged after its independent re-check.\n- [ ] Answers to the three build questions (the post-poem questions issue), or acceptance as written.\n\n## Steps (see `docs/posting.md` once #101 is merged)\n1. Dry run: `python3 tools/post_poem.py p001 --dry-run` and read the gate and check output.\n2. Real run: the script builds only that poem's final version and opens a pull request in the public repo `4444J99/versforms`. It never pushes to the public repo's `main`.\n3. The author reviews that PR and merges it. Cloudflare Pages deploys `versforms.pages.dev`.\n4. Check live: the page loads, the title is `versforms`, `noindex` is still present, no other poem's text or scan is served.\n5. In the studio, Release tab, \"Mark posted\": where `versforms.pages.dev`, account `vers.forms`, the post URL if there is one.\n\n## Not changed\n`noindex` stays. Removing it is documented in `docs/noindex.md` and is the author's decision.\n\n## Note on p001\n`p001` has two versions (journal pages `diary1` and `diary62a`). By default only the `diary1` version is publishable, because `diary62a` also carries unreleased `p126`. The newer version holds five of the author's corrections; the script warns about this.\n"
+      }
+    ],
+    "comments108": [
+      {
+        "id": 6671798198,
+        "url": "https://github.com/4444J99/journal-handwritten-web/issues/108#issuecomment-6671798198",
+        "created_at": null,
+        "body": "**Details from the session that wrote the posting script (read from the code and the real data, 2026-11-05).** Nothing is decided; the options are the same three questions.\n\n**A. Page ids in the engine.** They are engine-template data already in the live v4 page (literals in `site/index.html`, committed with the v4 piece). The palette table names 4 revision sets over pages `diary13`, `13a`, `14`, `14a`, `53`, `53a`, `54`, `3`, `8`, `8a` with block indices (pieces `p020`, `p096`/`p097`, `p004`, `p012`); the hand-lettering list names `diary21a`, `diary63`, `diary26` (pieces `p032`, `p068`, `p040`). Ids and structure only, no text. The viewer skips a page that is not in the data, but the 4 revision chips still render without thumbnails. Whether any of those pieces will be Reserve depends on the sort (not made yet).\n- Option 1: leave as is; the author rules whether a page id counts as metadata under rule 4.\n- Option 2: the build rewrites the two literals (like the title and the font) to keep only pages in that build. This needs the viewer to tolerate an empty palette table (it reads the first entry), so it is a viewer change to reconcile with the next version of `site/index.html`.\n\n**B. Font name records.** The built font has the standard records 1 to 6 plus two free-text ones: ID 0 (copyright, 74 characters) and ID 10 (description, 58 characters). The PR description asks for the author's sign-off (item 6); the records are listed on the console at build time, and if listing fails the line says so.\n- Option 1: keep, with the sign-off line and the console listing.\n- Option 2: the build blanks records 0 and 10, or sets text the author chooses (any replacement text must be the author's own words).\n\n**C. The \"not yet checked by the author\" line.** It comes from `fillInfo()` in `site/index.html` (about lines 2840 to 2846): a template string chosen by one boolean for the whole data file, `DATA.prov.verified`, which is false in the repository. So a piece whose every line passed the verification gate still shows \"not yet checked\". It is behind taps: the control bar is hidden until tapped, then the Information button opens the panel.\n- Option 1 (data only): the build sets `verified` true only when every line of every piece in that build is confirmed or corrected. That is a claim in the author's name, so the author decides.\n- Option 2 (template edit like the title): drop that one list item so no status is shown. The smallest change that cannot show a wrong status.\n"
+      }
+    ]
+  }
+}
