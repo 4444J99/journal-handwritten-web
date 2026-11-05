@@ -4,8 +4,9 @@ Synthetic fixtures only: invented three-line pieces and 8-pixel jpgs. No real po
 Run from anywhere:  python3 -m unittest discover -s tests -v
 Scratch files go where tempfile puts them (set TMPDIR to keep them on the external drive).
 """
-import contextlib, io, json, os, re, shutil, stat, subprocess, sys, tempfile, unittest
+import base64, contextlib, io, json, os, re, shutil, stat, subprocess, sys, tempfile, unittest
 from pathlib import Path
+from unittest import mock
 
 TESTS = Path(__file__).resolve().parent
 TOOLS = TESTS.parent / "tools"
@@ -20,13 +21,42 @@ GIT_ENV = {
     "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0",
 }
 
-INDEX_HTML = (
-    '<!doctype html><html><head><meta charset=utf8>'
-    '<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">'
-    '<style>:root{--a:1}</style>\n<title>Fixture Title</title>\n'
-    '<style>@font-face{font-family:"Test Diary";src:url(data:font/woff2;base64,' + "QUJD" * 40 + ')}</style>'
-    '</head><body><canvas id="cv" aria-label="Fixture canvas"></canvas><p>set in Test Diary</p></body></html>\n'
-)
+OLD = "Etceter" + "4"  # the old font name the source page carries; built from parts so this file is not a search hit
+VENV_PY = os.environ.get("VERSFORMS_FONT_PYTHON") or build_public.FONT_PYTHON_DEFAULT
+HAVE_VENV = False
+try:
+    _r = subprocess.run([VENV_PY, "-c", "import fontTools, brotli"], capture_output=True, timeout=60)
+    HAVE_VENV = _r.returncode == 0
+except (OSError, subprocess.SubprocessError):
+    pass
+needs_venv = unittest.skipUnless(HAVE_VENV, f"font venv python not usable at {VENV_PY} (needs fontTools and brotli); font tests skipped")
+NO_VENV = {"VERSFORMS_FONT_PYTHON": "/nonexistent/font-python"}  # makes the font step unable to run
+
+
+def make_font(name, flavor="woff2"):
+    """Synthetic font bytes carrying `name` everywhere (needs the venv)."""
+    r = subprocess.run([VENV_PY, str(TESTS / "make_test_font.py"), name, "--flavor", flavor], capture_output=True, check=True, timeout=120)
+    return r.stdout
+
+
+# a real synthetic font when the venv exists, else stand-in bytes (then the font cannot be decoded here)
+FONT_BYTES = make_font(OLD + " Diary") if HAVE_VENV else b"not a font " * 20
+FONT_B64 = base64.b64encode(FONT_BYTES).decode("ascii")
+
+
+def index_html(font_b64=FONT_B64, extra=""):
+    return (
+        '<!doctype html><html><head><meta charset=utf8>'
+        '<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">'
+        '<style>:root{--f-hand:"' + OLD + ' Diary","Segoe Print",cursive}</style>\n<title>Fixture Title</title>\n'
+        '<style>@font-face{font-family:"' + OLD + ' Diary";src:url(data:font/woff2;base64,' + font_b64 + ') format("woff2")}'
+        'p{font-family:' + OLD + 'Diary,serif}</style>'
+        '</head><body><canvas id="cv" aria-label="Fixture canvas"></canvas><p>set in ' + OLD + ' Diary</p>'
+        '<script>ctx.font = `34px "' + OLD + ' Diary"`; document.fonts.load(\'34px "' + OLD.lower() + ' diary"\');</script>' + extra +
+        '</body></html>\n')
+
+
+INDEX_HTML = index_html()
 
 # page -> list of (block owner piece id or None); piece -> versions as [(page, [blocks])]
 # p001: V0 on pg1, V1 on pg2 (top = V1). p002 shares pg2. p004 shares pg1. p003 stands alone.
@@ -377,6 +407,41 @@ class HardStopTests(Base):
         self.make_spread()
         self.assertEqual(self.go("p003"), 0, self.out)
 
+    def add_blank_facing_page(self, page="pgx"):
+        """A page with no piece and no review item that faces pg3 in the spread image."""
+        self.make_spread(left="pg3", right="pg5")
+        jp = self.root / "site" / "data" / "j.json"
+        j = json.loads(jp.read_text())
+        j["pages"] = [p for p in j["pages"] if p["id"] != "pg5"]
+        j["pages"].append(dict(next(p for p in j["pages"] if p["id"] == "pg3"), id=page, B=[{"t": 0, "L": ["x"]}], sp={"s": "right", "cb": [0, 0, 1, 1], "f": None, "k": "spr.jpg"}))
+        j["pieces"] = [p for p in j["pieces"] if p["id"] not in ("p006", "p007")]
+        jp.write_text(json.dumps(j))
+
+    def test_facing_page_with_no_piece_and_no_item_needs_acceptance_by_page_id(self):
+        # the script cannot tell whether the facing page of a copied spread image is written on
+        self.prepare(pids=("p003",), public=())
+        self.add_blank_facing_page()
+        self.assertEqual(self.go("p003"), 3, self.out)
+        self.assertIn("--accept-shared-scan pgx", self.out)
+        self.assertIn("facing page of the spread image", self.out)
+        self.assertEqual(self.go("p003", "--force"), 3)
+        self.assertFalse((self.work / "build" / "img" / "s").exists())
+        self.assertEqual(self.go("p003", "--accept-shared-scan", "pgx"), 0, self.out)
+        self.assertIn("accepted shared scan: pgx", self.out)
+        self.assertTrue((self.work / "build" / "img" / "s" / "spr.jpg").is_file())
+
+    def test_unpublished_version_of_the_same_piece_on_the_facing_page_is_listed_not_blocked(self):
+        # p001 V1 on pg2; its V0 sits on pg1, which is the other page of the spread image (p004 also sits on pg1)
+        self.prepare(release={"p004": {"pool": "series"}})
+        self.make_spread(left="pg2", right="pg1")
+        self.assertEqual(self.go("p001"), 3, self.out)  # p004 needs acceptance
+        self.assertEqual(self.go("p001", "--accept-shared-scan", "p004"), 0, self.out)
+        src, db = post_poem.Source(self.root), post_poem.load_db(self.db)
+        finds = post_poem.shared_scan(src, db, "p001", [1], {"p001", "p002"}, {"p004"})
+        own = [f for f in finds if f["id"] == "p001"]
+        self.assertEqual([(f["page"], f["status"]) for f in own], [("pg1", "ok")])
+        self.assertIn("another version of the same piece", own[0]["reason"])
+
     def test_spread_mates_found_by_page_named_like_the_file(self):
         # real data: diary60 has sp.f None, diary60a has sp.f 'diary60'; here pg5 plays the page the file is named after
         self.prepare(pids=("p003",), public=())
@@ -431,32 +496,84 @@ class HardStopTests(Base):
         self.assertEqual(self.go("p001", public=clone), 3)
         self.assertIn("main is fetched", self.out)
 
-    def test_branch_that_exists_is_a_hard_stop(self):
+    def test_branch_that_exists_is_a_hard_stop_and_the_detail_says_where(self):
         self.prepare()
-        clone, _ = make_public(self.tmp)
+        clone, bare = make_public(self.tmp)
+        self.assertEqual(self.go("p001", public=clone), 0, self.out)
+        self.assertRegex(self.out, r"PASS  stop +branch post/p001 does not exist yet \[p001\]\n")  # no stray detail on a pass
+        self.assertNotIn("already exists", self.out)
         git(clone, "branch", "post/p001")
         self.assertEqual(self.go("p001", public=clone), 3, self.out)
+        self.assertIn("does not exist yet [p001]: exists locally", self.out)
+        git(clone, "branch", "-q", "-D", "post/p001")
+        git(clone, "push", "-q", "origin", "main:refs/heads/post/p001")
+        self.assertEqual(self.go("p001", public=clone), 3, self.out)
+        self.assertIn("does not exist yet [p001]: exists on origin", self.out)
+
+    def test_public_repo_results_are_listed_once_in_the_pull_request(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        body = (self.work / "pr-body.md").read_text()
+        for name in ("remote origin is 4444J99/versforms", "on branch main", "working tree clean", "main is fetched", "does not exist yet"):
+            self.assertEqual(body.count(name), 1, name)
 
     def test_real_run_requires_public_repo(self):
         self.prepare()
         self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False), 64, self.out)
 
-    def test_embedded_font_needs_acceptance_in_a_real_run(self):
+    def test_font_that_cannot_be_checked_needs_acceptance_in_a_real_run(self):
+        # the venv is missing: the font cannot be decoded, so the unchecked font needs --accept-embedded-font; --force does not help
         self.prepare()
         clone, _ = make_public(self.tmp)
         head = git(clone, "rev-parse", "HEAD")
-        self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 3, self.out)
-        self.assertIn("Test Diary", self.out)
-        self.assertIn("downloadable", self.out)
-        self.assertEqual(git(clone, "rev-parse", "HEAD"), head)
-        self.assertEqual(self.go("p001", "--no-pr", "--force", dry=False, public=clone), 3)  # force does not help
-        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        with mock.patch.dict(os.environ, NO_VENV):
+            self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 3, self.out)
+            self.assertIn("could not be decoded and checked", self.out)
+            self.assertIn("font python not found", self.out)
+            self.assertIn("--accept-embedded-font", self.out)
+            self.assertEqual(git(clone, "rev-parse", "HEAD"), head)
+            self.assertEqual(self.go("p001", "--no-pr", "--force", dry=False, public=clone), 3)  # force does not help
+            self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        body = (self.work / "pr-body.md").read_text()
+        self.assertIn("published it unchecked", body)
 
-    def test_dry_run_only_warns_about_the_font(self):
+    @needs_venv
+    def test_checkable_font_needs_no_flag_and_is_renamed(self):
         self.prepare()
-        self.assertEqual(self.go("p001"), 0, self.out)
+        clone, _ = make_public(self.tmp)
+        self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 0, self.out)
+        self.assertIn("font: renamed to ajp-scribbles", self.out)
+        self.assertNotIn("could not be decoded", self.out)
+        body = (self.work / "pr-body.md").read_text()
+        self.assertIn("Embedded font(s) decoded and checked: 1", body)
+
+    def test_dry_run_only_warns_when_the_font_cannot_be_checked(self):
+        self.prepare()
+        with mock.patch.dict(os.environ, NO_VENV):
+            self.assertEqual(self.go("p001"), 0, self.out)
         self.assertIn("WARN  stop embedded font", self.out)
         self.assertIn("--accept-embedded-font", self.out)
+
+    def test_old_name_in_any_output_file_is_a_hard_stop_even_with_force(self):
+        # a payload the build does not touch: a non-font data URI whose bytes carry the name as UTF-16BE
+        payload = base64.b64encode(("x" + OLD.upper()).encode("utf-16-be")).decode()
+        make_private(self.root, extra_public=["p002"])
+        (self.root / "site" / "index.html").write_text(index_html(extra=f'<img src="data:image/png;base64,{payload}">'))
+        ready_db(self.db, pids=("p001",), _root=self.root)
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 3, self.out)
+        self.assertIn("raw bytes", self.out)
+        self.assertEqual(self.go("p001", "--force", "--accept-embedded-font"), 3)
+        self.assertNotIn(OLD.lower(), self.out.lower())  # the log names places, never the name
+
+    @needs_venv
+    def test_old_name_inside_a_font_that_is_left_unrenamed_is_a_hard_stop(self):
+        self.prepare()
+        with mock.patch.object(build_public, "rename_embedded_fonts", lambda html: (html, [])):
+            self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("font name id1", self.out)
+        self.assertIn("data URI 1", self.out)
+        self.assertNotIn(OLD.lower(), self.out.lower())
 
 
 class BuildTests(Base):
@@ -515,27 +632,87 @@ class BuildTests(Base):
         self.assertIn("WARNING  info panel text produced from prov: Machine transcription (2026-01-01), not yet checked by the author", self.out)
         self.assertIn("empty link, empty commit and empty path", self.out)
 
-    def test_already_public_piece_moved_out_of_series_is_warned_about(self):
+    def test_already_public_piece_in_reserve_or_archive_is_a_hard_stop_even_with_force(self):
+        for pool in ("reserve", "archive"):
+            with self.subTest(pool=pool):
+                shutil.rmtree(self.tmp, ignore_errors=True)
+                self.setUp()
+                self.prepare(release={"p002": {"pool": pool}})
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertRegex(self.out, r"FAIL  stop +already-public piece is not in Reserve or Archive \[p002\]")
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", "--accept-shared-scan", "p002"), 3)
+                self.assertFalse((self.work / "build").exists())  # nothing was built
+        # a real run publishes nothing and leaves the release list alone
+        shutil.rmtree(self.tmp, ignore_errors=True)
+        self.setUp()
         self.prepare(release={"p002": {"pool": "reserve"}})
+        clone, _ = make_public(self.tmp)
+        before = git(clone, "for-each-ref")
+        self.assertEqual(self.go("p001", "--force", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertEqual(git(clone, "for-each-ref"), before)
+        self.assertEqual(json.loads((self.root / "release" / "public.json").read_text()), {"pieces": ["p002"]})
+
+    def test_already_public_piece_that_is_unsorted_is_only_a_warning(self):
+        self.prepare()  # p002 has no release document
         self.assertEqual(self.go("p001"), 0, self.out)
-        self.assertRegex(self.out, r"WARNING  p002 is already in release/public\.json .* release pool is now reserve")
+        self.assertRegex(self.out, r"WARNING  p002 is already in release/public\.json .* release pool is unsorted")
         shutil.rmtree(self.tmp, ignore_errors=True)
         self.setUp()
         self.prepare(release={"p002": {"pool": "series"}})
         self.assertEqual(self.go("p001"), 0, self.out)
         self.assertNotIn("p002 is already in release/public.json", self.out)
 
-    def test_default_workdir_is_beside_the_private_repo_not_the_system_temp(self):
+    def test_shared_scan_stop_runs_over_every_rebuilt_piece(self):
+        # p002 is already public and sits on pg2 next to p001 (not requested, not public). Posting p003 rebuilds p002.
+        for label, rel, code in (("unsorted", {}, 3), ("reserve", {"p001": {"pool": "reserve"}}, 3), ("series", {"p001": {"pool": "series"}}, 3)):
+            with self.subTest(label):
+                shutil.rmtree(self.tmp, ignore_errors=True)
+                self.setUp()
+                self.prepare(pids=("p003",), public=("p002",), release=dict(rel, p002={"pool": "series"}))
+                self.assertEqual(self.go("p003"), code, self.out)
+                self.assertRegex(self.out, r"FAIL  stop +\(i\) shared scan \(already public, rebuilt\) \[p002\]")
+                self.assertIn("p001 on pg2", self.out)
+                self.assertEqual(self.go("p003", "--force"), 3)
+        # Series but not public: accepting it lets the post through; a co-resident that is public is fine
+        shutil.rmtree(self.tmp, ignore_errors=True)
+        self.setUp()
+        self.prepare(pids=("p003",), public=("p002",), release={"p001": {"pool": "series"}, "p002": {"pool": "series"}})
+        self.assertEqual(self.go("p003", "--accept-shared-scan", "p001"), 0, self.out)
+        self.assertNotIn("SENTINEL-p001", self.all_text(self.work / "build"))
+        shutil.rmtree(self.tmp, ignore_errors=True)
+        self.setUp()
+        self.prepare(pids=("p003",), public=("p002", "p001"), release={"p002": {"pool": "series"}, "p001": {"pool": "series"}})
+        self.assertEqual(self.go("p003"), 0, self.out)
+
+    def test_version_report_names_published_newest_and_unpublished_corrections(self):
+        orig = line_text("p007", 1, 1, 0)
+        self.prepare(pids=("p007",), public=(), reviews={"pg5-1-0": {"status": "corrected", "text": "AUTHOR-FIX", "original": orig}})
+        self.assertEqual(self.go("p007"), 0, self.out)
+        self.assertIn("published: V[0] p007-0; newest in the stack (last entry of V): V[1] p007-1; top of the stack: V[0]; corrected reviews on versions NOT published: 1", self.out)
+        self.assertRegex(self.out, r"WARNING  p007: 1 line\(s\) the author corrected sit on version\(s\) that are not published \(V\[1\]\)")
+        self.assertNotIn("AUTHOR-FIX", self.out)
+        self.assertNotIn("AUTHOR-FIX", self.all_text(self.work / "build"))
+        # whole stack: nothing is unpublished
+        self.assertEqual(self.go("p007", "--include-versions"), 0, self.out)
+        self.assertNotIn("corrected reviews on versions NOT published", self.out)
+
+    def test_default_workdir_is_inside_the_repository_scratch_not_beside_it(self):
         self.prepare()
         argv = ["p001", "--db", str(self.db), "--source", str(self.root), "--dry-run"]
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             self.assertEqual(post_poem.main(argv), 0, buf.getvalue())
-        made = sorted(p.name for p in self.tmp.glob("post-poem-*"))
+        self.assertEqual(sorted(p.name for p in self.tmp.glob("post-poem-*")), [])  # nothing next to the repository
+        made = sorted(p.name for p in (self.root / ".post-poem-work").glob("post-poem-*"))
         self.assertEqual(len(made), 1, made)
-        self.assertTrue((self.tmp / made[0] / "build" / "index.html").is_file())
+        self.assertTrue((self.root / ".post-poem-work" / made[0] / "build" / "index.html").is_file())
 
-    def test_output_check_fails_when_a_text_file_other_than_index_names_the_other_project(self):
+    def test_the_scratch_directory_is_git_ignored_in_this_repository(self):
+        ignore = (TESTS.parent / ".gitignore").read_text().splitlines()
+        self.assertIn(post_poem.DEFAULT_SCRATCH + "/", ignore)
+
+    def test_output_check_fails_when_a_text_file_names_the_other_project_in_any_case(self):
         self.prepare()
         self.assertEqual(self.go("p001"), 0, self.out)
         src = post_poem.Source(self.root)
@@ -543,9 +720,18 @@ class BuildTests(Base):
         published = {("pg2", 0)}
         ok = {s for pg, bi in published for s in src.jpages[pg]["B"][bi]["L"]}
         run = lambda: {n: o for n, o, _ in post_poem.check_output(src, out, ["p002", "p001"], published, ok, ["p002", "p001"])}
-        name = "no output text file other than index.html names the other project"
+        name = next(n for n in run() if n.startswith("no output file, decoded data URI or decoded font table names the other project"))
         self.assertTrue(run()[name])
-        (out / "_headers").write_text("/*\n  X-Robots-Tag: noindex\n# " + "Etceter" + "4\n")
+        headers = (out / "_headers").read_text()
+        for spelling in (OLD, OLD.lower(), OLD.upper()):
+            (out / "_headers").write_text(headers + "# " + spelling + "\n")
+            self.assertFalse(run()[name], spelling)
+        (out / "_headers").write_text(headers)
+        html = (out / "index.html").read_text()
+        (out / "index.html").write_text(html.replace("</body>", "<!-- " + OLD.upper() + " --></body>"))
+        self.assertFalse(run()[name])
+        (out / "index.html").write_text(html)
+        (out / "data" / "extra.bin").write_bytes(OLD.lower().encode("utf-16-le"))
         self.assertFalse(run()[name])
 
     def test_correction_without_text_does_not_pass_gate_b(self):
@@ -560,8 +746,9 @@ class BuildTests(Base):
         vp = html.index("<meta name=viewport")
         self.assertEqual(html.index('<meta name="robots"'), html.index(">", vp) + 1)
         self.assertEqual((self.work / "build" / "_headers").read_text(), "/*\n  X-Robots-Tag: noindex\n")
-        self.assertIn("<title>Fixture Title</title>", html)  # title untouched
-        self.assertIn("WARNING  visible title is 'Fixture Title'", self.out)
+        self.assertIn("<title>versforms</title>", html)
+        self.assertEqual(re.findall(r"<title>(.*?)</title>", html), ["versforms"])
+        self.assertNotIn("WARNING  visible title", self.out)
 
     def test_prov_source_keys_removed(self):
         self.prepare()
@@ -628,10 +815,13 @@ class BuildTests(Base):
         rows = post_poem.audit_strings(self.work / "build")
         kinds = {k for k, _ in rows}
         self.assertTrue({"title", "aria-label", "font embedded", "prov keys", "block notes"} <= kinds)
-        self.assertIn(("title", "Fixture Title"), rows)
+        self.assertIn(("title", "versforms"), rows)
         self.assertIn(("aria-label", "Fixture canvas"), rows)
         self.assertIn(("prov keys", "tdate, verified"), rows)
-        self.assertTrue(any(k == "font embedded" and "Test Diary" in v for k, v in rows))
+        self.assertTrue(any(k == "font embedded" and "ajp-scribbles" in v for k, v in rows))
+        self.assertFalse(any(OLD.lower() in v.lower() for _, v in rows))
+        if HAVE_VENV:
+            self.assertIn(("font file name", "ajp-scribbles Regular"), rows)
 
     def test_dry_run_prints_file_list_with_sizes(self):
         self.prepare()
@@ -722,7 +912,8 @@ class RealRunTests(Base):
         self.prepare()
         self.clone, self.bare = make_public(self.tmp)
         before = git(self.clone, "for-each-ref")
-        self.assertEqual(self.go("p001", dry=False, public=self.clone), 3)  # font not accepted
+        with mock.patch.dict(os.environ, NO_VENV):
+            self.assertEqual(self.go("p001", dry=False, public=self.clone), 3)  # font cannot be checked and is not accepted
         self.assertEqual(git(self.clone, "for-each-ref"), before)
         self.assertEqual(json.loads((self.root / "release" / "public.json").read_text()), {"pieces": ["p002"]})
 
@@ -733,6 +924,7 @@ class BuildPublicCompat(Base):
         out = self.tmp / "out"
         res = build_public.build(out, [], site=self.root / "site")
         self.assertEqual((out / "index.html").read_text(), build_public.SHELL)
+        self.assertEqual(re.findall(r"<title>(.*?)</title>", build_public.SHELL), ["versforms"])
         self.assertEqual(sorted(p.name for p in out.iterdir()), ["index.html"])
         self.assertIn('<meta name="robots" content="noindex">', build_public.SHELL)
         self.assertEqual(res["pages"], [])
@@ -766,6 +958,221 @@ class BuildPublicCompat(Base):
         self.assertFalse(build_public.has_noindex('<meta name="robots" content="all">'))
         self.assertFalse(build_public.has_noindex('<meta name="viewport" content="noindex">'))
         self.assertTrue(build_public.has_noindex('<meta content="noindex" name="robots">'))
+
+
+class BrandingTests(Base):
+    """Title, font family text and the whole output tree free of the old name."""
+
+    def test_rebrand_renames_every_spelling_of_the_family(self):
+        forms = [f'"{OLD} Diary"', f"'{OLD.lower()} diary'", f"{OLD.upper()}DIARY", f"{OLD}-Diary", f"{OLD}_Diary", f"{OLD}  Diary", f"{OLD} Diary Regular"]
+        for f in forms:
+            with self.subTest(f=f):
+                html = build_public.rebrand("<title>x</title><style>a{font-family:" + f + ",serif}</style>")
+                self.assertFalse(build_public.OLD_NAME_RE.search(html), html)
+                self.assertIn("ajp-scribbles", html)
+        html = build_public.rebrand('<TITLE>\n Old </TITLE>')
+        self.assertEqual(html, "<title>versforms</title>")
+        with self.assertRaises(ValueError):
+            build_public.rebrand("<head></head>")
+
+    def test_output_tree_has_title_font_family_and_no_old_name(self):
+        self.prepare()
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        out = self.work / "build"
+        html = (out / "index.html").read_text()
+        self.assertEqual(re.findall(r"<title>(.*?)</title>", html), ["versforms"])
+        plain = post_poem.strip_data_uris(html)
+        self.assertIn('@font-face{font-family:"ajp-scribbles"', plain)
+        self.assertIn('--f-hand:"ajp-scribbles"', plain)
+        self.assertIn('`34px "ajp-scribbles"`', plain)
+        self.assertIn("document.fonts.load('34px \"ajp-scribbles\"')", plain)
+        self.assertIn("p{font-family:ajp-scribbles,serif}", plain)
+        self.assertIn("set in ajp-scribbles", plain)
+        for p in out.rglob("*"):
+            if p.is_file():
+                self.assertFalse(post_poem.raw_has_old_name(p.read_bytes()), p.name)
+                self.assertFalse(build_public.OLD_NAME_RE.search(p.read_text(errors="ignore")), p.name)
+        for mime, raw in post_poem.iter_data_uris(html):
+            self.assertFalse(post_poem.raw_has_old_name(raw))
+        self.assertEqual(post_poem.name_scan(out)["hits"], [])
+        self.assertNotIn(OLD.lower(), self.out.lower())
+
+    def test_source_index_is_not_edited(self):
+        self.prepare()
+        before = (self.root / "site" / "index.html").read_bytes()
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        self.assertEqual((self.root / "site" / "index.html").read_bytes(), before)
+
+    def test_pr_body_never_names_the_old_project(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        body = (self.work / "pr-body.md").read_text()
+        self.assertFalse(build_public.OLD_NAME_RE.search(body))
+        self.assertFalse(build_public.OLD_NAME_RE.search(self.out))
+        self.assertFalse(build_public.OLD_NAME_RE.search(git(clone, "log", "-1", "--format=%B")))
+
+    def test_pr_body_with_the_old_name_is_refused_before_anything_is_committed(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        before = git(clone, "for-each-ref")
+        real = post_poem.render_pr_body
+        with mock.patch.object(post_poem, "render_pr_body", lambda ctx: real(ctx) + "\n" + OLD + "\n"):
+            self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("pull request text names the other project", self.out)
+        self.assertEqual(git(clone, "for-each-ref"), before)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+        self.assertEqual(json.loads((self.root / "release" / "public.json").read_text()), {"pieces": ["p002"]})
+
+    def test_font_step_errors_are_clear(self):
+        with mock.patch.dict(os.environ, NO_VENV):
+            with self.assertRaises(build_public.FontToolError) as c:
+                build_public.run_font_tool("check", b"x")
+            self.assertIn("font python not found", str(c.exception))
+            self.assertIn("VERSFORMS_FONT_PYTHON", str(c.exception))
+        make_private(self.root, extra_public=[])
+        with mock.patch.dict(os.environ, NO_VENV):
+            r = build_public.build(self.tmp / "o1", ["p003"], site=self.root / "site")
+        self.assertIn("font python not found", r["font_error"])
+        self.assertTrue((self.tmp / "o1" / "index.html").is_file())
+
+    def test_python_without_fonttools_is_reported(self):
+        try:
+            import fontTools  # noqa: F401
+            self.skipTest("the system python has fontTools, cannot simulate its absence")
+        except ImportError:
+            pass
+        with mock.patch.dict(os.environ, {"VERSFORMS_FONT_PYTHON": sys.executable}):
+            with self.assertRaises(build_public.FontToolError) as c:
+                build_public.run_font_tool("check", b"x")
+        self.assertIn("lacks fontTools or brotli", str(c.exception))
+
+    def test_build_public_cli_warns_when_the_font_cannot_be_renamed(self):
+        make_private(self.root, extra_public=["p003"])
+        shutil.copytree(TOOLS, self.root / "tools")
+        env = dict(os.environ, **NO_VENV)
+        r = subprocess.run([sys.executable, str(self.root / "tools" / "build_public.py"), str(self.tmp / "out"), "--release", str(self.root / "release" / "public.json")],
+                           capture_output=True, text=True, env=env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("WARNING: the embedded font was not renamed", r.stdout)
+
+
+@needs_venv
+class FontTests(Base):
+    """The font helper and the venv step. Skipped with a message when the venv is missing."""
+
+    def tool(self, mode, data, *args):
+        return build_public.run_font_tool(mode, data, *args)
+
+    def renamed(self, data):
+        doc = self.tool("rename", data, "--family", "ajp-scribbles", "--full", "ajp-scribbles Regular", "--postscript", "ajp-scribbles-Regular")
+        return base64.b64decode(doc["font_b64"]), doc
+
+    def test_synthetic_font_carries_the_old_name_in_every_place(self):
+        d = self.tool("describe", FONT_BYTES)
+        olds = [v for v in d["name_records"].values() if OLD.lower() in v.lower()]
+        self.assertGreaterEqual(len(olds), 10)  # ids 0,1,3,4,6 on two platforms
+        self.assertTrue(all(OLD.lower() in n.lower() for n in d["cff_font_names"]))
+        chk = self.tool("check", FONT_BYTES)
+        self.assertFalse(chk["ok"])
+        for needle in ("name id1 platform3", "name id1 platform1", "name id4", "name id6", "name id0", "name id3", "CFF font name", "CFF top dict FullName", "CFF top dict FamilyName", "CFF top dict Notice", "raw table 'CFF '"):
+            self.assertTrue(any(h.startswith(needle) for h in chk["hits"]), (needle, chk["hits"]))
+
+    def test_rename_round_trip_changes_only_the_names(self):
+        new, doc = self.renamed(FONT_BYTES)
+        self.assertEqual(doc["hits_after"], [])
+        a, b = self.tool("describe", FONT_BYTES), self.tool("describe", new)
+        self.assertEqual(b["flavor"], "woff2")
+        self.assertEqual(a["glyph_count"], b["glyph_count"])
+        self.assertEqual(a["glyph_order"], b["glyph_order"])
+        self.assertEqual(a["cmap"], b["cmap"])
+        self.assertEqual(a["hmtx"], b["hmtx"])  # advance widths and side bearings
+        self.assertEqual(a["tables"], b["tables"])
+        self.assertTrue(new[:4] == b"wOF2" and new != FONT_BYTES)
+        names = b["name_records"]
+        for key, rec in names.items():
+            nid = int(key.split("/")[0])
+            self.assertFalse(build_public.OLD_NAME_RE.search(rec), key)
+            if nid in (1, 16):
+                self.assertEqual(rec, "ajp-scribbles")
+            if nid == 4:
+                self.assertEqual(rec, "ajp-scribbles Regular")
+            if nid == 6:
+                self.assertEqual(rec, "ajp-scribbles-Regular")
+        ids = {(k.split("/")[0], k.split("/")[1]) for k in names}
+        for plat in ("1", "3"):
+            for nid in ("1", "4", "6"):
+                self.assertIn((nid, plat), ids)  # present on both platforms
+        self.assertEqual(b["cff_font_names"], ["ajp-scribbles-Regular"])
+        self.assertTrue(self.tool("check", new)["ok"])
+        self.assertFalse(post_poem.raw_has_old_name(new))
+
+    def test_other_name_records_and_cff_strings_are_rewritten(self):
+        new, _ = self.renamed(FONT_BYTES)
+        names = self.tool("describe", new)["name_records"]
+        self.assertTrue(any(v == "ajp-scribbles-Regular-1.0" for k, v in names.items() if k.startswith("3/")))  # unique id
+        self.assertTrue(any("ajp-scribbles" in v and v.startswith("Test font") for k, v in names.items() if k.startswith("0/")))  # copyright
+        self.assertEqual(self.tool("check", new)["hits"], [])  # incl. CFF Notice, CFF string index, raw tables
+
+    def test_font_without_the_old_name_is_left_alone_by_the_build(self):
+        other = make_font("Plain Face")
+        html = '<style>@font-face{font-family:"x";src:url(data:font/woff2;base64,' + base64.b64encode(other).decode() + ')}</style>'
+        out, reports = build_public.rename_embedded_fonts(html)
+        self.assertEqual(out, html)
+        self.assertEqual([r["renamed"] for r in reports], [False])
+
+    def test_unparseable_font_is_reported_not_renamed(self):
+        html = '<style>@font-face{src:url(data:font/woff2;base64,' + base64.b64encode(b"nonsense" * 9).decode() + ')}</style>'
+        out, reports = build_public.rename_embedded_fonts(html)
+        self.assertEqual(out, html)
+        self.assertIn("error", reports[0])
+
+    def test_ttf_otf_flavours_and_raw_font_files_are_checked(self):
+        for flavor in ("woff", "none"):
+            with self.subTest(flavor=flavor):
+                data = make_font(OLD + " Diary", flavor)
+                self.assertFalse(self.tool("check", data)["ok"])
+                new, doc = self.renamed(data)
+                self.assertEqual(doc["hits_after"], [])
+                self.assertTrue(self.tool("check", new)["ok"])
+        # a font file (not a data URI) in the output tree is checked too
+        out = self.tmp / "tree"
+        (out / "f").mkdir(parents=True)
+        (out / "f" / "face.woff2").write_bytes(FONT_BYTES)
+        (out / "index.html").write_text("<title>versforms</title>")
+        self.assertTrue(any("f/face.woff2" in h and "font" in h for h in post_poem.name_scan(out)["hits"]))
+
+    def test_utf16_and_macroman_spellings_are_found(self):
+        for enc in ("utf-16-be", "utf-16-le", "mac_roman", "ascii"):
+            with self.subTest(enc=enc):
+                self.assertTrue(post_poem.raw_has_old_name(b"zz" + OLD.upper().encode(enc) + b"zz"))
+        self.assertFalse(post_poem.raw_has_old_name(b"etceter 4 and ajp-scribbles"))
+
+    def test_real_run_commits_a_renamed_font_without_any_flag(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 0, self.out)
+        committed = git(clone, "show", "HEAD:site/index.html")
+        uris = [raw for mime, raw in post_poem.iter_data_uris(committed) if mime.startswith("font/")]
+        self.assertEqual(len(uris), 1)
+        self.assertTrue(self.tool("check", uris[0])["ok"])
+        self.assertEqual(self.tool("describe", uris[0])["glyph_count"], self.tool("describe", FONT_BYTES)["glyph_count"])
+
+    def test_real_font_in_the_source_page_if_present(self):
+        real = ROOT_REAL_INDEX
+        if not real.is_file():
+            self.skipTest("site/index.html not found")
+        html = real.read_text(encoding="utf-8")
+        fonts = [raw for mime, raw in post_poem.iter_data_uris(html) if mime.startswith("font/")]
+        if not fonts:
+            self.skipTest("no embedded font in site/index.html")
+        new, doc = self.renamed(fonts[0])
+        a, b = self.tool("describe", fonts[0]), self.tool("describe", new)
+        self.assertEqual((a["glyph_count"], a["cmap"], a["hmtx"]), (b["glyph_count"], b["cmap"], b["hmtx"]))
+        self.assertEqual(doc["hits_after"], [])
+
+
+ROOT_REAL_INDEX = TESTS.parent / "site" / "index.html"
 
 
 if __name__ == "__main__":

@@ -14,13 +14,14 @@ Exit codes
     3  a hard stop; --force never overrides these:
          own pool is reserve or archive, shared scan (including the facing page of a spread
          image), stale transcript, unknown piece id, public repository preconditions,
-         embedded font not accepted, output checks
+         the old project name found anywhere in the output (text, decoded fonts), embedded font
+         that cannot be decoded and checked and --accept-embedded-font missing, output checks
     64 usage error
     1  an operation failed part-way (git, gh); the message says what state was left
 
 stdlib and Pillow only. Poem text is never printed, logged, or put in a commit or PR body.
 """
-import argparse, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile
+import argparse, base64, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
@@ -32,8 +33,8 @@ PUBLIC_REPO_NAME = "4444J99/versforms"
 COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
 POOLS = ("series", "reserve", "archive")
 PLACEHOLDER = "[[quoted passage:]]"
-# the author's music; built from parts so this file is not itself a hit
-OLD_NAME_RE = re.compile("etceter" + "4", re.I)
+OLD_NAME_RE = build_public.OLD_NAME_RE  # the author's music; no vers.forms artifact may name it
+DEFAULT_SCRATCH = ".post-poem-work"
 EXIT_OK, EXIT_PARTIAL, EXIT_GATE, EXIT_STOP, EXIT_USAGE = 0, 1, 2, 3, 64
 
 
@@ -232,6 +233,25 @@ def load_corrections(src, db, pid, indices):
     return corr, counts, stale
 
 
+def unpublished_corrections(src, db, pid, indices):
+    """How many lines carrying an author correction ('corrected' review with text) sit on versions of the
+    piece that are NOT published (blocks that are also part of a published version do not count)."""
+    pub = set(src.published_blocks(pid, indices))
+    seen = set()
+    for i, v in enumerate(src.pieces[pid]["V"]):
+        if i in indices:
+            continue
+        for pg, blocks in v["P"]:
+            for b in blocks:
+                if (pg, b) in pub:
+                    continue
+                for li in range(len(src.jpages[pg]["B"][b]["L"])):
+                    doc = db["reviews"].get(f"{pg}-{b}-{li}")
+                    if doc and doc.get("status") == "corrected" and isinstance(doc.get("text"), str):
+                        seen.add(f"{pg}-{b}-{li}")
+    return len(seen)
+
+
 # ------------------------------------------------------------------ shared scan
 
 def pool_of(db, other):
@@ -250,10 +270,17 @@ def shared_scan(src, db, pid, indices, public_ids, accepted):
     mates = src.spread_mates(direct)  # the spread image of a published page shows the facing page too
     pages = set(direct) | set(mates)
     via = lambda pg: " (facing page of the spread image)" if pg in mates else ""
+    seen = set()  # pages on which some piece or item was found
     for q in src.j["pieces"]:
-        if q["id"] == pid:
-            continue
         on = sorted({pg for v in q["V"] for pg, _ in v["P"] if pg in pages})
+        if q["id"] == pid:
+            # the piece's own writing on a facing page (another version) shows in the spread image
+            for pg in on:
+                if pg in mates:
+                    seen.add(pg)
+                    out.append(dict(page=pg, id=pid, status="ok", reason="another version of the same piece (facing page of the spread image)"))
+            continue
+        seen.update(on)
         for pg in on:
             if q["id"] in public_ids:
                 out.append(dict(page=pg, id=q["id"], status="ok", reason="already public or posted in this run" + via(pg)))
@@ -271,10 +298,17 @@ def shared_scan(src, db, pid, indices, public_ids, accepted):
             continue
         for v in it["versions"]:
             if v["page"] in pages:
+                seen.add(v["page"])
                 if it["id"] in accepted:
                     out.append(dict(page=v["page"], id=it["id"], status="accepted", reason="other lines on the page; accepted with --accept-shared-scan" + via(v["page"])))
                 else:
                     out.append(dict(page=v["page"], id=it["id"], status="needs-accept", reason="other lines (not a poem) are visible in the scan; pass --accept-shared-scan " + it["id"] + via(v["page"])))
+    # a facing page with no piece and no review item cannot be shown to be blank: the author must name it
+    for pg in sorted(set(mates) - seen):
+        if pg in accepted:
+            out.append(dict(page=pg, id=pg, status="accepted", reason="facing page of the spread image with no piece or review item; accepted with --accept-shared-scan"))
+        else:
+            out.append(dict(page=pg, id=pg, status="needs-accept", reason=f"facing page of the spread image; no piece or review item is known on it, so it cannot be shown to be blank; pass --accept-shared-scan {pg}"))
     return out
 
 
@@ -289,6 +323,73 @@ def find_embedded_fonts(html):
 
 def strip_data_uris(html):
     return re.sub(r"data:[a-z0-9/+.-]+;base64,[A-Za-z0-9+/=]+", "data:...", html, flags=re.I)
+
+
+def iter_data_uris(text):
+    """(mime, decoded bytes) of every base64 data: URI in a text."""
+    for m in build_public.DATA_URI_RE.finditer(text):
+        try:
+            yield m.group(1), base64.b64decode(m.group(2), validate=True)
+        except ValueError:
+            continue
+
+
+OLD_FORMS = (OLD_NAME_RE.pattern.encode(), OLD_NAME_RE.pattern.encode("utf-16-be"), OLD_NAME_RE.pattern.encode("utf-16-le"))
+
+
+def raw_has_old_name(data):
+    """ASCII (which is also the Mac Roman spelling of these letters), UTF-16BE and UTF-16LE, any letter case."""
+    low = bytes(data).lower()
+    return any(f in low for f in OLD_FORMS)
+
+
+def name_scan(out):
+    """Search the whole output for the old project name, in any letter case.
+
+    Every file: a text search (utf-8) and a raw byte search (ASCII / Mac Roman, UTF-16BE, UTF-16LE).
+    Every base64 data: URI found in a text file is decoded; a font (by MIME type or magic bytes) goes
+    through the font tool, which searches the decoded name table (all platforms, encodings and languages),
+    the CFF strings, glyph names, the WOFF2 metadata and the raw bytes of every table; any other payload
+    gets the raw byte search. A compressed WOFF2 stream cannot be searched as raw bytes, so for a font the
+    decoded tables are the authority.
+    -> dict(hits=[location, ...], fonts_checked=int, unchecked=[location, ...], reason=str)
+    Locations are paths and field labels, never the matched text."""
+    out = Path(out)
+    hits, unchecked, reason, checked = [], [], "", 0
+
+    def check_payload(label, mime, raw):
+        nonlocal reason, checked
+        if raw_has_old_name(raw):
+            hits.append(f"{label}: raw bytes")
+        if build_public.is_font(mime, raw):
+            try:
+                doc = build_public.run_font_tool("check", raw)
+            except build_public.FontDecodeError as e:
+                unchecked.append(f"{label}: font cannot be decoded")
+                reason = reason or str(e)
+                return
+            except build_public.FontToolError as e:
+                unchecked.append(f"{label}: font cannot be decoded here")
+                reason = reason or str(e)
+                return
+            checked += 1
+            hits.extend(f"{label}: font {h}" for h in doc["hits"])
+
+    for p in sorted(out.rglob("*")):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(out).as_posix()
+        data = p.read_bytes()
+        if OLD_NAME_RE.search(data.decode("utf-8", "ignore")):
+            hits.append(f"{rel}: text")
+        if raw_has_old_name(data):
+            hits.append(f"{rel}: raw bytes")
+        if data[:4] in build_public.FONT_MAGIC and data[:4] != b"\x00\x01\x00\x00":
+            check_payload(rel, "font/" + rel.rsplit(".", 1)[-1], data)
+        elif p.suffix.lower() in TEXT_SUFFIXES:
+            for i, (mime, raw) in enumerate(iter_data_uris(data.decode("utf-8", "ignore"))):
+                check_payload(f"{rel} data URI {i + 1} ({mime})", mime, raw)
+    return dict(hits=sorted(set(hits)), fonts_checked=checked, unchecked=unchecked, reason=reason)
 
 
 def audit_strings(out_dir):
@@ -306,12 +407,17 @@ def audit_strings(out_dir):
         rows.append(("alt", v))
     for f in find_embedded_fonts(html):
         rows.append(("font embedded", f"{f['family']} ({f['kind']}, about {f['bytes']} bytes, downloadable)"))
-    seen = set()
-    for m in re.finditer(r"etceter4", plain, re.I):
-        ctx = re.sub(r"\s+", " ", plain[max(0, m.start() - 30):m.end() + 30]).strip()
-        if ctx not in seen:
-            seen.add(ctx)
-            rows.append(("name mention", ctx))
+    try:
+        names = set()
+        for mime, raw in iter_data_uris(html):
+            if build_public.is_font(mime, raw):
+                d = build_public.run_font_tool("describe", raw)
+                names.update(d["name_records"].values())
+                names.update(d["cff_font_names"])
+        for n in sorted(names):
+            rows.append(("font file name", n))
+    except build_public.FontToolError:
+        pass
     jpath = out / "data" / "j.json"
     if jpath.exists():
         j = json.loads(jpath.read_text())
@@ -326,9 +432,12 @@ def audit_strings(out_dir):
     return rows
 
 
+TEXT_SUFFIXES = (".json", ".html", ".txt", ".css", ".js", ".svg", ".xml", ".md", "")
+
+
 def _text_files(out):
     for p in sorted(Path(out).rglob("*")):
-        if p.is_file() and p.suffix.lower() in (".json", ".html", ".txt", "") :
+        if p.is_file() and p.suffix.lower() in TEXT_SUFFIXES:
             yield p
 
 
@@ -362,18 +471,20 @@ def leak_check(src, out, published, texts_ok):
     return sorted(bad)
 
 
-def check_output(src, out, effective, published, texts_ok, pieces_expected):
-    """-> [(name, ok, detail)] checks run on the build output."""
+def check_output(src, out, effective, published, texts_ok, pieces_expected, scan=None):
+    """-> [(name, ok, detail)] checks run on the build output. `scan` is a name_scan() result (made here if omitted)."""
     out = Path(out)
     res = []
     html = (out / "index.html").read_text(encoding="utf-8")
     res.append(("index.html has <meta name=\"robots\" content=\"noindex\"> (or a stricter robots tag that includes noindex)", build_public.has_noindex(html), ""))
-    named = []
-    for p in _text_files(out):
-        if p.name != "index.html":  # index.html names the embedded font; that is the --accept-embedded-font stop
-            if OLD_NAME_RE.search(p.read_text(encoding="utf-8", errors="ignore")):
-                named.append(p.relative_to(out).as_posix())
-    res.append(("no output text file other than index.html names the other project", not named, ", ".join(named)))
+    titles = re.findall(r"<title>(.*?)</title>", strip_data_uris(html), re.S | re.I)
+    res.append((f"index.html title element is exactly {build_public.PUBLIC_TITLE}", titles == [build_public.PUBLIC_TITLE], f"found {titles!r}" if titles != [build_public.PUBLIC_TITLE] else ""))
+    src_html = (src.site / "index.html").read_text(encoding="utf-8")
+    if build_public.OLD_FONT_RE.search(src_html):
+        plain = strip_data_uris(html)
+        res.append((f"index.html uses the font family {build_public.PUBLIC_FONT_FAMILY}", build_public.PUBLIC_FONT_FAMILY in plain, ""))
+    scan = scan if scan is not None else name_scan(out)
+    res.append(("no output file, decoded data URI or decoded font table names the other project (any letter case, ASCII / UTF-16)", not scan["hits"], "; ".join(scan["hits"][:8])))
     hdr = out / "_headers"
     h = hdr.read_text() if hdr.exists() else ""
     res.append(("_headers sets X-Robots-Tag: noindex for /*", bool(re.search(r"^/\*\s*\n\s+X-Robots-Tag:\s*noindex\s*$", h, re.M)), ""))
@@ -437,7 +548,8 @@ def check_public_repo(path, branch):
     res.append(("main is fetched (local HEAD equals origin/main)", bool(remote) and remote == head, "cannot reach origin" if not remote else f"origin/main is {remote[:7]}, HEAD is {head[:7]}"))
     local_b = git(p, "rev-parse", "--verify", "--quiet", f"refs/heads/{branch}", check=False)
     remote_b = git(p, "ls-remote", "--heads", "origin", f"refs/heads/{branch}", check=False)
-    res.append((f"branch {branch} does not exist yet", local_b.returncode != 0 and not remote_b.stdout.strip(), "already exists"))
+    where = [w for w, there in (("locally", local_b.returncode == 0), ("on origin", bool(remote_b.stdout.strip()))) if there]
+    res.append((f"branch {branch} does not exist yet", not where, ("exists " + " and ".join(where)) if where else ""))
     return res
 
 
@@ -461,7 +573,9 @@ def render_pr_body(ctx):
     L.append("## What changed")
     L.append(f"- Piece(s): {', '.join(ctx['pids'])}")
     for pid in ctx["pids"]:
-        L.append(f"- {pid}: {ctx['versions'][pid]['how']}; version(s) published: {len(ctx['versions'][pid]['indices'])} of {ctx['versions'][pid]['total']}")
+        v = ctx["versions"][pid]
+        L.append(f"- {pid}: {v['how']}; version(s) published: {', '.join('V[%d]' % i for i in v['indices'])} of {v['total']}; "
+                 f"newest in the stack: V[{v['newest']}]; top of the stack: V[{v['top']}]; corrected reviews on versions not published: {v['unpublished_corrected']}")
     L.append(f"- Pages in the public site: {len(ctx['pages'])} ({', '.join(ctx['pages'])})")
     d = ctx["diff"]
     L.append(f"- Files: {len(d['added'])} added, {len(d['changed'])} changed, {len(d['removed'])} removed; {d['bytes']} bytes in the new site/")
@@ -483,7 +597,8 @@ def render_pr_body(ctx):
     L.append("- Rendering on a real phone or other device")
     L.append("- A Cloudflare Pages preview deploy of this branch")
     L.append("- Author sign-off on the shared scans listed here: " + (", ".join(f"{f['id']} on {f['page']} ({f['status']})" for f in ctx["shared"]) or "none found"))
-    L.append("- Author sign-off on the embedded font (font file and its name become downloadable): " + (", ".join(ctx["fonts"]) or "none embedded"))
+    for note in ctx["font_notes"]:
+        L.append(f"- {note}")
     for w in ctx["warnings"]:
         L.append(f"- {w}")
     L.append("- Reader-visible strings (list only; the author decides):")
@@ -504,10 +619,10 @@ def parse_args(argv):
     ap.add_argument("--include-versions", action="store_true", help="publish the whole version stack (needs the author's approval)")
     ap.add_argument("--force", action="store_true", help="override the three gates only")
     ap.add_argument("--accept-shared-scan", action="append", default=[], metavar="IDS", help="ids of Series pieces / other-line items whose writing may show in a shared scan")
-    ap.add_argument("--accept-embedded-font", action="store_true", help="accept that index.html embeds a downloadable font whose name becomes public")
+    ap.add_argument("--accept-embedded-font", action="store_true", help="only for the case where the embedded font cannot be decoded and checked (the font venv is missing): accept publishing it unchecked")
     ap.add_argument("--dry-run", action="store_true", help="run every gate and hard stop, build into scratch, write nothing in the public repo")
     ap.add_argument("--no-pr", action="store_true", help="commit the branch in the public clone but do not push or open a PR")
-    ap.add_argument("--workdir", help="scratch directory for the build (default: a new post-poem-* directory next to the private repository)")
+    ap.add_argument("--workdir", help="scratch directory for the build (default: a new post-poem-* directory under .post-poem-work/ in the private repository, which is git-ignored)")
     ap.add_argument("--source", default=str(ROOT), help="private repository root (default: this repository)")
     return ap.parse_args(argv)
 
@@ -569,11 +684,25 @@ def run(a):
     for pid in src.public:
         if pid not in pids:
             pool = pool_of(db, pid)
-            if pool != "series":
-                warnings.append(f"{pid} is already in release/public.json and is rebuilt into this site, but its release pool is now {pool}. Its pool, gates and shared scans are not rechecked here; decide whether it should stay public")
+            if pool in ("reserve", "archive"):
+                # a piece posted earlier and since moved to Reserve/Archive must not be rebuilt into a new public site
+                record("stop", pid, "already-public piece is not in Reserve or Archive", False,
+                       f"pool is {pool}; it is in release/public.json and would be rebuilt and published again. Take it out of release/public.json (and decide how to retire it publicly) first; --force does not override this")
+            elif pool != "series":
+                warnings.append(f"{pid} is already in release/public.json and is rebuilt into this site, but its release pool is {pool}. Its gates are not rechecked here; decide whether it should stay public")
     for pid in effective:
         v = versions[pid]
         say(f"versions {pid}: publishing {len(v['indices'])} of {v['total']} ({v['how']})")
+        pc = src.pieces[pid]
+        n_v = len(pc["V"])
+        v["newest"], v["top"] = n_v - 1, pc["top"]
+        v["unpublished_corrected"] = unpublished_corrections(src, db, pid, select[pid])
+        if pid in pids and not a.include_versions and n_v > 1:
+            ids = ", ".join(f"V[{i}] {pc['V'][i]['id']}" for i in select[pid])
+            say(f"  published: {ids}; newest in the stack (last entry of V): V[{n_v - 1}] {pc['V'][n_v - 1]['id']}; top of the stack: V[{pc['top']}]; "
+                f"corrected reviews on versions NOT published: {v['unpublished_corrected']}")
+            if v["unpublished_corrected"]:
+                warnings.append(f"{pid}: {v['unpublished_corrected']} line(s) the author corrected sit on version(s) that are not published ({', '.join('V[%d]' % i for i in range(n_v) if i not in select[pid])}); those corrections are not in the public data")
     if a.include_versions:
         say("NOTE  --include-versions publishes the whole version stack of: " + ", ".join(pids) + ". This needs the author's approval.")
     for pid in effective:
@@ -587,24 +716,27 @@ def run(a):
         if n["unreviewed"] and pid in pids:
             warnings.append(f"{pid}: {n['unreviewed']} published line(s) have no review; the machine reading is published for them")
     public_ids = set(effective)
-    for pid in pids:
+    used_ids = set()
+    # the shared-scan stop runs over EVERY piece in the rebuilt list: the pieces already public are rebuilt too
+    for pid in effective:
         finds = shared_scan(src, db, pid, select[pid], public_ids, accepted)
-        shared_all.extend(finds)
+        shared_all.extend(f for f in finds if f["status"] != "ok" or pid in pids)
+        used_ids.update(f["id"] for f in finds)
         bad = [f for f in finds if f["status"] in ("stop", "needs-accept")]
-        detail = f"{len(finds)} co-resident piece(s) or item(s) on {len(src.pages_of(pid, select[pid]))} page(s)"
+        detail = f"{len(finds)} co-resident piece(s), item(s) or facing page(s) on {len(src.pages_of(pid, select[pid]))} page(s)"
         if bad:
             detail += "; " + "; ".join(f"{f['id']} on {f['page']}: {f['reason']}" for f in bad)
-        record("stop", pid, "(i) shared scan", not bad, detail)
+        record("stop", pid, "(i) shared scan" + ("" if pid in pids else " (already public, rebuilt)"), not bad, detail)
         for f in finds:
             if f["status"] == "accepted":
                 say(f"  accepted shared scan: {f['id']} on {f['page']}")
-        extra = sorted(accepted - {f["id"] for f in finds})
-        if extra:
-            warnings.append(f"--accept-shared-scan named ids that share no scan with {pid}: {', '.join(extra)}")
         sib = {pg for pg in src.pages_of(pid, select[pid]) for q in [src.pieces[pid]]
                for vi, v in enumerate(q["V"]) if vi not in select[pid] for p2, _ in v["P"] if p2 == pg}
         if sib:
             warnings.append(f"{pid}: the scan of {', '.join(sorted(sib))} also shows writing of its unpublished version(s)")
+    extra = sorted(accepted - used_ids)
+    if extra:
+        warnings.append(f"--accept-shared-scan named ids that share no scan with any rebuilt piece: {', '.join(extra)}")
     for vdoc in db["versions"].values():
         if vdoc.get("pieceId") in pids:
             warnings.append(f"{vdoc.get('pieceId')}: the studio holds a new-version photo for this piece that is not in site/data/j.json yet")
@@ -622,17 +754,6 @@ def run(a):
         say("FAIL  stop --public-repo is required unless --dry-run")
         return EXIT_USAGE
 
-    # --- embedded font
-    html_src = (src.site / "index.html").read_text(encoding="utf-8")
-    fonts = find_embedded_fonts(html_src)
-    font_names = [f"{f['family']} ({f['bytes']} bytes)" for f in fonts]
-    if fonts:
-        why = "index.html embeds " + ", ".join(font_names) + ": the font file becomes downloadable from the public site and its name becomes public"
-        if a.dry_run:
-            say(f"WARN  stop embedded font: {why}. A real run needs --accept-embedded-font.")
-        else:
-            record("stop", ",".join(pids), "embedded font accepted (--accept-embedded-font)", a.accept_embedded_font, "" if a.accept_embedded_font else why)
-
     stops = [r for r in results if r[0] == "stop" and not r[3]]
     gates = [r for r in results if r[0] == "gate" and not r[3]]
     if stops:
@@ -646,18 +767,41 @@ def run(a):
         say(f"\nFORCED past {len(gates)} failed gate(s).")
 
     # --- build
-    # default scratch: a new directory beside the private repository, never the system temp directory
-    workdir = Path(a.workdir) if a.workdir else Path(tempfile.mkdtemp(prefix="post-poem-", dir=str(root.resolve().parent)))
-    workdir.mkdir(parents=True, exist_ok=True)
+    # default scratch: a new directory under the repository's git-ignored .post-poem-work/, never a sibling of the repository
+    if a.workdir:
+        workdir = Path(a.workdir)
+        workdir.mkdir(parents=True, exist_ok=True)
+    else:
+        scratch = root / DEFAULT_SCRATCH  # inside the repository, git-ignored; never a sibling directory of the repository
+        scratch.mkdir(parents=True, exist_ok=True)
+        workdir = Path(tempfile.mkdtemp(prefix="post-poem-", dir=str(scratch)))
     out = workdir / "build"
     res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True)
     published = set(res["published"])
     texts_ok = {s for (pg, bi) in published for s in src.jpages[pg]["B"][bi]["L"]} | set(corrections.values())
-    checks = check_output(src, out, effective, published, texts_ok, effective)
+    scan = name_scan(out)
+    checks = check_output(src, out, effective, published, texts_ok, effective, scan=scan)
+    font_notes = []
+    for f in res["fonts"]:
+        if f.get("renamed"):
+            say(f"font: renamed to {build_public.PUBLIC_FONT_FAMILY} ({f['glyphs']} glyphs, {f['bytes']} -> {f['bytes_out']} bytes, {f['changed']} name/CFF record(s) rewritten)")
+    if scan["unchecked"]:
+        why = ("the embedded font could not be decoded and checked for the other project's name (" + "; ".join(scan["unchecked"]) + "): "
+               + (scan["reason"] or res["font_error"] or "no reason given"))
+        if res["font_error"] and not scan["reason"]:
+            why += f" [{res['font_error']}]"
+        if a.dry_run:
+            say(f"WARN  stop embedded font: {why}. A real run needs --accept-embedded-font.")
+        else:
+            checks.append(("embedded font unchecked: --accept-embedded-font given", bool(a.accept_embedded_font),
+                           "" if a.accept_embedded_font else why + ". Install the font venv (VERSFORMS_FONT_PYTHON) or pass --accept-embedded-font to publish the font unchecked"))
+        font_notes.append("The embedded font could not be decoded and checked here; --accept-embedded-font published it unchecked: " + "; ".join(scan["unchecked"]))
+    elif scan["fonts_checked"]:
+        font_notes.append(f"Embedded font(s) decoded and checked: {scan['fonts_checked']} (name table records, CFF strings, glyph names, raw table bytes); renamed in the build to {build_public.PUBLIC_FONT_FAMILY}")
     for name, ok, detail in checks:
         say(f"{'PASS' if ok else 'FAIL'}  check {name}" + (f": {detail}" if detail else ""))
     if not all(ok for _, ok, _ in checks):
-        say("\nREFUSED: the build output failed its own checks.")
+        say("\nREFUSED: the build output failed its own checks. --force does not override these.")
         return EXIT_STOP
     for pg, ids in sorted(res["shared"].items()):
         say(f"  note: {pg} also carries {sorted(ids)} — visible in the scan, text withheld")
@@ -666,8 +810,6 @@ def run(a):
     say(f"\nbuild: {len(listing)} files, {sum(listing.values())} bytes, {len(res['pages'])} page(s), {res['applied']} correction(s) applied")
     say(f"data/j.json sha256 {sha}")
     audit = audit_strings(out)
-    title = next((v for k, v in audit if k == "title"), "")
-    say(f"WARNING  visible title is {title!r}; the author's decision on the title is pending and this script does not change it.")
     say("reader-visible strings (list only):")
     for kind, value in audit:
         say(f"  {kind}: {value[:140]}")
@@ -690,16 +832,20 @@ def run(a):
     after = tree_hashes(out)
     diff = dict(added=[k for k in after if k not in before], changed=[k for k in after if k in before and after[k] != before[k]],
                 removed=[k for k in before if k not in after], bytes=sum(s for s, _ in after.values()))
+    # the pull request text is public: it is rendered and checked BEFORE anything is committed
+    ctx = dict(pids=pids, versions=versions, pages=res["pages"], diff=diff, results=results, checks=checks,
+               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, font_notes=font_notes, warnings=warnings, audit=audit)
+    body = render_pr_body(ctx)
+    if OLD_NAME_RE.search(body):
+        say("FAIL  stop the pull request text names the other project; nothing was committed. --force does not override this")
+        return EXIT_STOP
+    (workdir / "pr-body.md").write_text(body)
     try:
         sha_commit = fill_public_repo(a.public_repo, out, branch, "Post " + ", ".join(pids))
     except RuntimeError as e:
         say(f"ERROR  {e}")
         return EXIT_PARTIAL
     say(f"committed {sha_commit[:7]} on branch {branch} in {a.public_repo}")
-    ctx = dict(pids=pids, versions=versions, pages=res["pages"], diff=diff, results=results, checks=checks + pub_checks,
-               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, fonts=font_names, warnings=warnings, audit=audit)
-    body = render_pr_body(ctx)
-    (workdir / "pr-body.md").write_text(body)
     if not a.no_pr:
         try:
             git(a.public_repo, "push", "-u", "origin", branch)
