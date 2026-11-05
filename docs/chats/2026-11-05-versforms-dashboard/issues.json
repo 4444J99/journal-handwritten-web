@@ -1,0 +1,93 @@
+[
+ {
+  "nn": "01",
+  "file": "01-internal-dashboard-location.md",
+  "title": "[2026-11-05-versforms-dashboard] 01 · Location of the internal review dashboard",
+  "plan": [
+   {
+    "text": "Update Release tab: Mark posted defaults to versforms, Exposure log records site URL",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Port the studio to a private Cloudflare project later",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 83
+ },
+ {
+  "nn": "02",
+  "file": "02-repo-split-and-hosting.md",
+  "title": "[2026-11-05-versforms-dashboard] 02 · Public/private repo split and private hosting",
+  "plan": [
+   {
+    "text": "Do not connect the private repo to Pages until an Access policy is in place",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Add the Cloudflare Access policy (author email only) in the dashboard",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Create D1 database, API, storage swap and data import",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 84
+ },
+ {
+  "nn": "03",
+  "file": "03-claude-code-launch-prompt.md",
+  "title": "[2026-11-05-versforms-dashboard] 03 · Claude Code prompt for outstanding launch work",
+  "plan": [
+   {
+    "text": "Run the launch prompt in Claude Code",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Export studio data and merged piece v4 index.html",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 85
+ },
+ {
+  "nn": "04",
+  "file": "04-studio-export-pr-73.md",
+  "title": "[2026-11-05-versforms-dashboard] 04 · Studio database export to GitHub (PR #73)",
+  "plan": [
+   {
+    "text": "Merge PR #73",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fix Actions runners not starting on the private repo (billing/minutes or Actions setting)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Remove data export and v4 file from the prompt's waiting-on-me list",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Re-check PR #73 review state",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 86
+ }
+]
