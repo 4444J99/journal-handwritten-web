@@ -37,6 +37,14 @@ Other:
 - Posting goes "in order of the pages of the journal".
 - GitHub billing "won't be fixed for weeks"; asked for a way around it.
 - Delegated to logic: whether to merge versforms#1; numbering; whether participation counts toward the 100.
+- Design direction for the merged piece (his words, abridged):
+  - Structure view: "see the structure as just glyphs, just letters, or parts of words, or as words, or sentences like lines, or stanzas or poems. And it should create a sort of like a cityscape, a building, a cityscape building."
+  - Building shape: centered line-length profile (his choice from the options offered).
+  - Choosing the unit: both zoom and a hidden selector (his choice).
+  - Views: "The architecture of the structure is the macro view of everything, zoomed out. The spiral version, which is either spiral of pages or spiral of lines, that's sort of the journey. ... They're just different ways to view it."
+  - Reading: "when you zoom into the poem, we have all this dead space, and that's where the animation should happen on the sides and the background around it."
+  - Animation: the words of the poem being read "animate the page, populate on the page, kind of like mad. Frenzied." Not readable, like dense overlapping ghosted handwriting. Scatter was criticised as arbitrary ("every decision needs to serve an aesthetic logical purpose").
+  - He pasted a research report ("Making the Journal Alive") as his answer on where the small units come from. It recommends his own scans as the only source.
 
 ## Plan / next steps
 Derived by Claude at the author's instruction (labelled; he can overrule any of them):
@@ -51,6 +59,16 @@ Derived by Claude at the author's instruction (labelled; he can overrule any of 
 - **author:** Series / Reserve / Archive sort, GRUW batch filing (a real copyright step), before any post.
 - **open, nobody:** Step 6 cannot be met until `apply_reviews.py`, `build_data.py`, `assemble.py` and `app_build/build.py` exist. They were not found on this machine; they lived in earlier cloud sessions.
 - **open, author:** the font fill-in sheet needs `ingest_fillin.py`, which is also missing; not needed for launch.
+- **Claude:** local prototype on poem 1 only, branch `alive-prototype` (own worktree, standalone under `proto/alive/`, nothing in `site/` or `studio/`, never pushed to the public repo): architecture view built from the text, spiral view, reading view with the animation in the dead space. Units come from scan crops only; a segmentation spike decides which units (word, glyph, part of word) are honestly possible, and units that do not pass are not shown.
+- **Claude reading, to confirm:** his pasted report is taken to mean "scans only" for the prototype. The report itself leaves open whether the handwriting font may stand in for scan crops; the prototype does not use the font to draw any unit.
+- **open, author (from the pasted report; none decided):**
+  - Whether Markov or n-gram recombination of his own words counts as machine-authored.
+  - Whether context is the viewer's (their weather or location) or authored.
+  - Whether a "being written" stroke animation may ever appear (it would be a reconstruction).
+  - Whether struck-through and inserted words are first-class units.
+  - Whether published-but-later-revised versions stay available to the animation forever.
+  - Which participation tier, if any (parameters only, annotations, contributed handwriting).
+  - Not built and not to be built until decided: sensors, weather, location, microphone, concordance blooms, modulation patches, Markov, any generated text.
 
 ## Status
-In progress. Merged: versforms#1 (verified live). Open and unmerged: #89, #92, #93, #94 (each with the verification and gaps in its description). The three lanes are running in the forked session and were not pushed when this record was written; none is claimed as verified here.
+In progress. Merged: versforms#1 (verified live). Open and unmerged: #89, #92, #93, #94 (each with the verification and gaps in its description). The three lanes are running in the forked session and were not pushed when this record was written; none is claimed as verified here. The design prototype on poem 1 was started afterwards and is not claimed as built or verified here.
