@@ -4,6 +4,9 @@
 //   node tools/verify_site.mjs [--out REPORT.md] [--json-out REPORT.json]
 //                              [--scratch DIR] [--chrome PATH] [--ready-timeout MS]
 //
+// The scratch directory (Chrome profile, screenshots) defaults to $VERIFY_SITE_SCRATCH, else
+// a verify-site folder under the system temporary directory.
+//
 // Node >= 22 (global WebSocket and fetch), no npm packages.
 //
 // What it does
@@ -29,6 +32,7 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -39,7 +43,7 @@ const SITE = path.join(REPO, "site");
 // ---------------------------------------------------------------- arguments
 const argv = process.argv.slice(2);
 const opt = (name, dflt) => { const i = argv.indexOf(name); return i >= 0 && argv[i + 1] !== undefined ? argv[i + 1] : dflt; };
-const SCRATCH = path.resolve(opt("--scratch", "/Volumes/Archive4T/Temporary/versforms-work/site-verify"));
+const SCRATCH = path.resolve(opt("--scratch", process.env.VERIFY_SITE_SCRATCH || path.join(os.tmpdir(), "verify-site")));
 const CHROME = opt("--chrome", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome");
 const OUT_MD = opt("--out", null);
 const OUT_JSON = opt("--json-out", null);
@@ -130,6 +134,7 @@ const SCHEMES = ["light", "dark"];
 const V4 = [
   ["controls-hidden-rest", "Controls: hidden at rest"],
   ["controls-pointer-rest", "Controls: on desktop appear when the pointer rests on the bar's own place"],
+  ["controls-pointer-elsewhere", "Controls: on desktop stay hidden when the pointer rests elsewhere along the bottom edge"],
   ["controls-margin", "Controls: sit 34px above the screen edge (desktop)"],
   ["controls-autohide", "Controls: hide 2.8s after use"],
   ["controls-open-poem-hides", "Controls: opening a poem hides them"],
@@ -140,7 +145,8 @@ const V4 = [
   ["upright-close", "Close in, pages and lines turn upright; far views keep their angles; tap targets follow"],
   ["stack-reading", "Version stack: long poem opens at reading size; wheel/drag/arrows scroll; tall-poem drag scrolls instead of peeling"],
   ["focus-exit-esc", "Focus exit: Esc returns to the arrangement"],
-  ["focus-exit-tap", "Focus exit: one tap anywhere outside returns (no jump to another poem)"],
+  ["focus-exit-tap", "Focus exit: one tap outside returns to the arrangement"],
+  ["focus-exit-nojump", "Focus exit: a tap that lands on another poem returns without focusing that poem"],
   ["buttons-pressed", "Content/arrangement buttons show pressed state at once"],
   ["buttons-interrupt", "Content/arrangement buttons interrupt a running camera move"],
   ["strip-labels", "Version strip: thumbnails labelled with date or n/N"],
@@ -230,6 +236,16 @@ async function runCell(cdp, baseUrl, cell) {
     if (!r || !r.w) setCheck(cell, "controls-pointer-rest", "EXERCISED-FAIL", "#pill has no box");
     else {
       const cx = r.x + r.w / 2, cy = r.y + r.h / 2;
+      // negative half first, with the bar still hidden: rest on the bottom edge well away from the bar
+      {
+        const ex = Math.max(12, Math.min(vp.width - 12, cx < vp.width / 2 ? cx + vp.width * 0.35 : cx - vp.width * 0.35)), ey = vp.height - 6;
+        await mouse("mouseMoved", 20, 20); await sleep(150);
+        await mouse("mouseMoved", ex - 20, ey); await mouse("mouseMoved", ex, ey);
+        await sleep(1200);
+        const leaked = await uiOn();
+        setCheck(cell, "controls-pointer-elsewhere", !leaked ? "EXERCISED-PASS" : "EXERCISED-FAIL", `pointer moved to (${Math.round(ex)},${Math.round(ey)}), on the bottom edge ${Math.round(Math.abs(ex - cx))}px from the centre of #pill, and rested ~1.2s: body.ui=${leaked}`);
+        if (leaked) { await mouse("mouseMoved", 20, 20); await sleep(3600); }
+      }
       await mouse("mouseMoved", 20, 20); await sleep(150);
       await mouse("mouseMoved", cx - 30, cy); await mouse("mouseMoved", cx, cy);
       await sleep(900);
@@ -253,6 +269,7 @@ async function runCell(cdp, baseUrl, cell) {
     }
   } else {
     setCheck(cell, "controls-pointer-rest", "NOT-EXERCISED", "matchMedia((hover:hover) and (pointer:fine)) is false in this cell; the pointer-rest path only runs for fine pointers");
+    setCheck(cell, "controls-pointer-elsewhere", "NOT-EXERCISED", "matchMedia((hover:hover) and (pointer:fine)) is false in this cell; there is no resting pointer");
     setCheck(cell, "controls-margin", "NOT-EXERCISED", "the 34px margin is declared only under (hover:hover) and (pointer:fine), which does not match here");
     if (hooks) {
       await ev(`window.__uiOff=null`); await ev(`window.__jc.ui(true)`);
@@ -276,23 +293,47 @@ async function runCell(cdp, baseUrl, cell) {
     return { q, uiBefore, focusKey: await ev(`window.__jc.focusKey()`), uiAfter: await uiOn() };
   };
   if (!itemKey) {
-    for (const k of ["controls-open-poem-hides", "focus-exit-esc", "focus-exit-tap"]) setCheck(cell, k, "NOT-EXERCISED", hooks ? "no tappable item key found" : "test hooks absent; cannot locate an item to tap");
+    for (const k of ["controls-open-poem-hides", "focus-exit-esc", "focus-exit-tap", "focus-exit-nojump"]) setCheck(cell, k, "NOT-EXERCISED", hooks ? "no tappable item key found" : "test hooks absent; cannot locate an item to tap");
   } else {
     const a = await openItem();
     const okOpen = a.focusKey !== null;
     setCheck(cell, "controls-open-poem-hides", okOpen && a.uiBefore && !a.uiAfter ? "EXERCISED-PASS" : "EXERCISED-FAIL", `item ${itemKey} located via test hook (quad cx=${Math.round(a.q.cx)} cy=${Math.round(a.q.cy)} w=${Math.round(a.q.w)} h=${Math.round(a.q.h)}) and tapped with real input; controls visible before=${a.uiBefore}; focusKey after=${a.focusKey}; controls visible after=${a.uiAfter}`);
-    if (!okOpen) { setCheck(cell, "focus-exit-esc", "NOT-EXERCISED", "tap did not focus the item"); setCheck(cell, "focus-exit-tap", "NOT-EXERCISED", "tap did not focus the item"); }
+    if (!okOpen) { for (const k of ["focus-exit-esc", "focus-exit-tap", "focus-exit-nojump"]) setCheck(cell, k, "NOT-EXERCISED", "tap did not focus the item"); }
     else {
       await key("Escape", "Escape", 27); await sleep(1500);
       const k1 = await ev(`window.__jc.focusKey()`);
       setCheck(cell, "focus-exit-esc", k1 === null ? "EXERCISED-PASS" : "EXERCISED-FAIL", `Escape key event sent; focusKey after 1.5s=${k1}`);
       const b = await openItem();
-      if (b.focusKey === null) setCheck(cell, "focus-exit-tap", "NOT-EXERCISED", "second tap did not focus the item");
+      if (b.focusKey === null) { for (const k of ["focus-exit-tap", "focus-exit-nojump"]) setCheck(cell, k, "NOT-EXERCISED", "second tap did not focus the item"); }
       else {
-        const ox = vp.width - 14, oy = 14; // far corner, away from the bar
+        // First tap: the far corner, away from the bar (proves "returns to the arrangement" only).
+        const ox = vp.width - 14, oy = 14;
         await tap(ox, oy); await sleep(1500);
         const k2 = await ev(`window.__jc.focusKey()`);
-        setCheck(cell, "focus-exit-tap", k2 === null ? "EXERCISED-PASS" : "EXERCISED-FAIL", `focused ${b.focusKey}; one real tap at (${ox},${oy}); focusKey after 1.5s=${k2} (null = arrangement, no other poem focused)`);
+        setCheck(cell, "focus-exit-tap", k2 === null ? "EXERCISED-PASS" : "EXERCISED-FAIL", `focused ${b.focusKey}; one real tap at (${ox},${oy}); focusKey after 1.5s=${k2} (null = arrangement)`);
+        // Second round: look for another poem whose on-screen centre is outside the focused poem's box, tap there,
+        // and require that focus is released and that poem is NOT the one now focused.
+        const c = await openItem();
+        const otherKey = await ev(`(()=>{const a=${JSON.stringify(itemKey)};for(const k of [window.__jc.tallest("f"),window.__jc.tallest("s")]) if(k&&k!==a) return k; return null})()`);
+        if (c.focusKey === null) setCheck(cell, "focus-exit-nojump", "NOT-EXERCISED", "third tap did not focus the item");
+        else if (!otherKey) setCheck(cell, "focus-exit-nojump", "NOT-EXERCISED", "no second poem key found through the test hooks");
+        else {
+          const fq = await ev(`window.__jc.quad(${JSON.stringify(itemKey)})`), oq = await ev(`window.__jc.quad(${JSON.stringify(otherKey)})`);
+          const inView = oq && oq.cx > 8 && oq.cx < vp.width - 8 && oq.cy > 8 && oq.cy < vp.height - 8;
+          const clear = fq && oq && Math.hypot(oq.cx - fq.cx, oq.cy - fq.cy) > Math.hypot(fq.w, fq.h) / 2 + 8; // outside the focused poem's box
+          if (!inView || !clear) setCheck(cell, "focus-exit-nojump", "NOT-EXERCISED", `centre of ${otherKey} (${oq ? Math.round(oq.cx) + "," + Math.round(oq.cy) : "no quad"}) is ${!inView ? "off screen" : "inside the focused poem's box"}, so a tap there would not test the clause`);
+          else {
+            const uiPre = await uiOn();
+            await tap(oq.cx, oq.cy); await sleep(1500);
+            const k3 = await ev(`window.__jc.focusKey()`), uiPost = await uiOn();
+            const where = `one real tap at the centre of ${otherKey}'s quad (${Math.round(oq.cx)},${Math.round(oq.cy)}), outside the focused item's quad`;
+            if (k3 === c.focusKey && uiPost !== uiPre)
+              // singleTap sends a tap inside the focused stack's layer box (plus a 30-unit pad) to toggleUI(); that box is larger than quad(), so this tap did not test the clause
+              setCheck(cell, "focus-exit-nojump", "NOT-EXERCISED", `focused ${c.focusKey}; ${where}; focus stayed and the controls toggled (body.ui ${uiPre} -> ${uiPost}), which is the page's behaviour for a tap inside the focused stack's own area, so the tap point did not lie outside the stack`);
+            else
+              setCheck(cell, "focus-exit-nojump", k3 === null ? "EXERCISED-PASS" : "EXERCISED-FAIL", `focused ${c.focusKey}; ${where}; focusKey after 1.5s=${k3} (null = released, ${otherKey} not focused). Limit: the tap point comes from the page's own quad() hook; no pixel read shows ${otherKey} drawn there`);
+          }
+        }
       }
     }
   }
@@ -325,10 +366,14 @@ async function runCell(cdp, baseUrl, cell) {
       await tapCenter(`[data-a="${a2}"]`); await sleep(120);
       const a3 = await pick("data-a", ["poem", "scatter", "spiral"].filter(x => x !== a2));
       if (a3 && await ensure(`[data-a="${a3}"]`)) {
+        // page's own flag: settled is false while a transition is running (site/index.html: set false when a move starts)
+        const running = (await ev(`window.__jc.settled`)) === false;
         await tapCenter(`[data-a="${a3}"]`); await sleep(60);
         const p = await pressed(`[data-a="${a3}"]`); await sleep(2500);
         const st = await ev(`window.__jc.state`);
-        setCheck(cell, "buttons-interrupt", p === "true" && st.endsWith("-" + a3) ? "EXERCISED-PASS" : "EXERCISED-FAIL", `second arrangement click ${a3} sent ~120ms after ${a2}: pressed at once=${p}; state before=${state0}, after settle=${st}. Only the final state and pressed mark were observed; the camera path itself was not sampled`);
+        const okFinal = p === "true" && st.endsWith("-" + a3);
+        const note = `second arrangement click ${a3} sent ~120ms after ${a2}: first move running at that moment (__jc.settled===false)=${running}; pressed at once=${p}; state before=${state0}, after settle=${st}. Only the flag, the final state and the pressed mark were observed; the camera path itself was not sampled`;
+        setCheck(cell, "buttons-interrupt", !okFinal ? "EXERCISED-FAIL" : running ? "EXERCISED-PASS" : "NOT-EXERCISED", running || !okFinal ? note : `the first move had already finished when the second click arrived, so nothing was interrupted. ${note}`);
       } else setCheck(cell, "buttons-interrupt", "NOT-EXERCISED", "no second arrangement button available");
     } else setCheck(cell, "buttons-interrupt", "NOT-EXERCISED", "test hooks absent or arrangement button unreachable");
   }
@@ -352,7 +397,7 @@ async function runCell(cdp, baseUrl, cell) {
   no("zoom-cap", "no measurement of line width against screen width was implemented");
   no("upright-close", "no measurement of item rotation at close zoom was implemented");
   no("stack-reading", "needs a long multi-version poem opened and scrolled; not implemented");
-  no("strip-labels", "version strip lives in the journal (book) view, which this run does not open");
+  no("strip-labels", "the version strip shows in the journal (book) view and on the canvas when a multi-version stack is focused; this run opens neither the book view nor a multi-version stack");
 
   return finish();
 
