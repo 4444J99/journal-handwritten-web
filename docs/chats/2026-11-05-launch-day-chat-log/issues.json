@@ -116,5 +116,53 @@
   ],
   "close": true,
   "number": 82
+ },
+ {
+  "nn": "10",
+  "file": "10-leftover-launch-items.md",
+  "title": "[2026-11-05-launch-day-chat-log] 10 · Work the leftover launch items",
+  "plan": [
+   {
+    "text": "Review and merge PR #73",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fix the GitHub billing / spending limit so Actions can start",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide which GitHub Apps to remove from versforms",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Push the two tags from a local clone; check etceter4 visibility read-only (handed off in 11)",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 87
+ },
+ {
+  "nn": "11",
+  "file": "11-handoff-to-claude-code.md",
+  "title": "[2026-11-05-launch-day-chat-log] 11 · Hand off to Claude Code",
+  "plan": [
+   {
+    "text": "Open Claude Code in a clone of this repository and paste the prompt from docs/handoff-2026-11-05.md",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "In that session, work the do-now list and log its own record",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 88
  }
 ]
