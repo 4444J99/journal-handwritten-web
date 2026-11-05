@@ -35,6 +35,7 @@ import crypto from "node:crypto";
 import os from "node:os";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { CDP, writeThenExit } from "./cdp_client.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, "..");
@@ -81,26 +82,7 @@ function startServer() {
 }
 
 // ---------------------------------------------------------------- CDP client
-class CDP {
-  constructor(ws) { this.ws = ws; this.id = 0; this.pending = new Map(); this.handlers = [];
-    ws.addEventListener("message", ev => {
-      const m = JSON.parse(ev.data);
-      if (m.id) { const p = this.pending.get(m.id); if (p) { this.pending.delete(m.id); m.error ? p.rej(new Error(`${p.method}: ${m.error.message}`)) : p.res(m.result); } }
-      else for (const h of this.handlers) h(m);
-    });
-  }
-  static async connect(url) {
-    const ws = new WebSocket(url);
-    await new Promise((res, rej) => { ws.addEventListener("open", res, { once: true }); ws.addEventListener("error", () => rej(new Error("websocket error")), { once: true }); });
-    return new CDP(ws);
-  }
-  send(method, params = {}, sessionId) {
-    const id = ++this.id;
-    return new Promise((res, rej) => { this.pending.set(id, { res, rej, method }); this.ws.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) })); });
-  }
-  on(h) { this.handlers.push(h); }
-  close() { try { this.ws.close(); } catch {} }
-}
+// The client (command time limit, rejection of waiting commands when the socket closes) is in cdp_client.mjs.
 
 async function launchChrome() {
   const profile = path.join(SCRATCH, "profile");
@@ -471,7 +453,7 @@ async function main() {
   const json = JSON.stringify(rep, null, 2);
   if (OUT_MD) await fsp.writeFile(OUT_MD, md);
   if (OUT_JSON) await fsp.writeFile(OUT_JSON, json);
-  process.stdout.write(json + "\n\n" + md + "\n");
-  process.exit(rep.ok ? 0 : 1);
+  // exit only after the report has been handed to the operating system: a large report written to a pipe is cut short otherwise
+  writeThenExit(process.stdout, json + "\n\n" + md + "\n", rep.ok ? 0 : 1);
 }
-main().catch(e => { console.error("verifier failed:", e); process.exit(2); });
+main().catch(e => writeThenExit(process.stderr, "verifier failed: " + (e && e.stack || e) + "\n", 2));
