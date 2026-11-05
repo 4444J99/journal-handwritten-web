@@ -344,10 +344,12 @@ def main():
     want = list(dict.fromkeys(load_release(a.release).get("pieces", [])))
     res = build(a.out, want)
     print(f"released pieces: {len(want)}; pages: {len(res['pages'])}")
-    if res["font_error"]:
-        print(f"  WARNING: the embedded font was not renamed: {res['font_error']}")
     for pg in sorted(res["shared"]):
         print(f"  note: {pg} also carries unreleased {sorted(res['shared'][pg])} — visible in the scan, text withheld")
+    if res["font_error"]:
+        print(f"  WARNING: the embedded font was not renamed: {res['font_error']}")
+        print("  The output still carries the old font name inside the embedded font; do not publish it. Install the font venv (VERSFORMS_FONT_PYTHON) and run again.")
+        sys.exit(3)
 
 
 if __name__ == "__main__":

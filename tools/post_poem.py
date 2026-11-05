@@ -14,8 +14,9 @@ Exit codes
     3  a hard stop; --force never overrides these:
          own pool is reserve or archive, shared scan (including the facing page of a spread
          image), stale transcript, unknown piece id, public repository preconditions,
-         the old project name found anywhere in the output (text, decoded fonts), embedded font
-         that cannot be decoded and checked and --accept-embedded-font missing, output checks
+         the old project name found anywhere in the output (text, decoded fonts), an embedded font
+         that does not parse, an embedded font that cannot be decoded here (no font venv) without
+         --accept-embedded-font, output checks
     64 usage error
     1  an operation failed part-way (git, gh); the message says what state was left
 
@@ -352,10 +353,12 @@ def name_scan(out):
     the CFF strings, glyph names, the WOFF2 metadata and the raw bytes of every table; any other payload
     gets the raw byte search. A compressed WOFF2 stream cannot be searched as raw bytes, so for a font the
     decoded tables are the authority.
-    -> dict(hits=[location, ...], fonts_checked=int, unchecked=[location, ...], reason=str)
+    -> dict(hits=[location, ...], fonts_checked=int, unchecked=[location, ...], undecodable=[location, ...], reason=str)
+    unchecked: the font tool could not run at all (no venv python, fontTools or brotli missing): --accept-embedded-font
+    may cover this. undecodable: the tool ran and the bytes did not parse as a font: always a hard stop.
     Locations are paths and field labels, never the matched text."""
     out = Path(out)
-    hits, unchecked, reason, checked = [], [], "", 0
+    hits, unchecked, undecodable, reason, checked = [], [], [], "", 0
 
     def check_payload(label, mime, raw):
         nonlocal reason, checked
@@ -365,7 +368,7 @@ def name_scan(out):
             try:
                 doc = build_public.run_font_tool("check", raw)
             except build_public.FontDecodeError as e:
-                unchecked.append(f"{label}: font cannot be decoded")
+                undecodable.append(f"{label}: font does not parse")
                 reason = reason or str(e)
                 return
             except build_public.FontToolError as e:
@@ -389,7 +392,7 @@ def name_scan(out):
         elif p.suffix.lower() in TEXT_SUFFIXES:
             for i, (mime, raw) in enumerate(iter_data_uris(data.decode("utf-8", "ignore"))):
                 check_payload(f"{rel} data URI {i + 1} ({mime})", mime, raw)
-    return dict(hits=sorted(set(hits)), fonts_checked=checked, unchecked=unchecked, reason=reason)
+    return dict(hits=sorted(set(hits)), fonts_checked=checked, unchecked=unchecked, undecodable=undecodable, reason=reason)
 
 
 def audit_strings(out_dir):
@@ -798,6 +801,10 @@ def run(a):
         font_notes.append("The embedded font could not be decoded and checked here; --accept-embedded-font published it unchecked: " + "; ".join(scan["unchecked"]))
     elif scan["fonts_checked"]:
         font_notes.append(f"Embedded font(s) decoded and checked: {scan['fonts_checked']} (name table records, CFF strings, glyph names, raw table bytes); renamed in the build to {build_public.PUBLIC_FONT_FAMILY}")
+    if scan["undecodable"]:
+        # the venv ran and the font did not parse: a compressed WOFF2 cannot be searched as raw bytes, so nothing vouches for it
+        checks.append(("every embedded font parses and passes the name check (--accept-embedded-font does not cover this)", False,
+                       "; ".join(scan["undecodable"]) + ": " + (scan["reason"] or "no reason given")))
     for name, ok, detail in checks:
         say(f"{'PASS' if ok else 'FAIL'}  check {name}" + (f": {detail}" if detail else ""))
     if not all(ok for _, ok, _ in checks):

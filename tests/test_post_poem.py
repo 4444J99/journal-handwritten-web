@@ -548,6 +548,21 @@ class HardStopTests(Base):
         body = (self.work / "pr-body.md").read_text()
         self.assertIn("Embedded font(s) decoded and checked: 1", body)
 
+    def test_font_that_does_not_parse_is_a_hard_stop_the_flag_does_not_cover(self):
+        # the venv ran but the bytes are not a font (here simulated): nothing vouches for them
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        before = git(clone, "for-each-ref")
+        err = build_public.FontDecodeError("font tool failed: simulated parse error")
+        with mock.patch.object(build_public, "run_font_tool", side_effect=err):
+            for extra in ((), ("--accept-embedded-font",), ("--accept-embedded-font", "--force")):
+                with self.subTest(extra=extra):
+                    self.assertEqual(self.go("p001", "--no-pr", *extra, dry=False, public=clone), 3, self.out)
+                    self.assertIn("--accept-embedded-font does not cover this", self.out)
+                    self.assertIn("font does not parse", self.out)
+            self.assertEqual(self.go("p001", "--accept-embedded-font", "--force"), 3, self.out)  # a dry run refuses too
+        self.assertEqual(git(clone, "for-each-ref"), before)
+
     def test_dry_run_only_warns_when_the_font_cannot_be_checked(self):
         self.prepare()
         with mock.patch.dict(os.environ, NO_VENV):
@@ -937,7 +952,8 @@ class BuildPublicCompat(Base):
         shutil.copytree(TOOLS, self.root / "tools")
         r = subprocess.run([sys.executable, str(self.root / "tools" / "build_public.py"), str(out), "--release", str(self.root / "release" / "public.json")],
                            capture_output=True, text=True, env=env)
-        self.assertEqual(r.returncode, 0, r.stderr)
+        # without the font venv the CLI refuses to call the output good (exit 3, see test_build_public_cli_warns...)
+        self.assertEqual(r.returncode, 0 if HAVE_VENV else 3, r.stderr)
         self.assertIn("released pieces: 1; pages: 1", r.stdout)
         self.assertIn('content="noindex"', (out / "index.html").read_text())
 
@@ -1053,8 +1069,10 @@ class BrandingTests(Base):
         env = dict(os.environ, **NO_VENV)
         r = subprocess.run([sys.executable, str(self.root / "tools" / "build_public.py"), str(self.tmp / "out"), "--release", str(self.root / "release" / "public.json")],
                            capture_output=True, text=True, env=env)
-        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(r.returncode, 3, r.stderr)  # the output would carry the old font name: not a success
         self.assertIn("WARNING: the embedded font was not renamed", r.stdout)
+        self.assertIn("do not publish it", r.stdout)
+        self.assertTrue((self.tmp / "out" / "index.html").is_file())
 
 
 @needs_venv
