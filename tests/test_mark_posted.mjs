@@ -47,6 +47,15 @@ test('host-less and scheme-relative http(s) strings are rejected (they would res
     assert.equal(checkPostUrl(v).ok, false, v);
 });
 
+test('control and zero-width characters are rejected, and a rejected url is never stored', () => {
+  const withChar = c => 'https://x' + String.fromCharCode(c) + 'y.com';
+  for (const c of [0x00, 0x01, 0x1f, 0x7f, 0xad, 0x61c, 0x200b, 0x200c, 0x200d, 0x200e, 0x200f, 0x202a, 0x202e, 0x2028, 0x2029, 0x2060, 0x2066, 0xfeff])
+    assert.equal(checkPostUrl(withChar(c)).ok, false, 'U+' + c.toString(16));
+  assert.equal(checkPostUrl('https://studio.test@' + String.fromCharCode(0x200b) + 'example.com').ok, false);
+  assert.equal(postedEntry({ where: 'w', account: 'a', url: 'javascript:alert(1)' }, 'D', 'T').url, '');
+  assert.equal(postedEntry({ where: 'w', account: 'a', url: 'https:x' }, 'D', 'T').url, '');
+});
+
 test('every accepted url is absolute: it resolves to itself against any base', () => {
   const base = 'https://studio.test/studio/index.html';
   for (const v of ['https://versforms.pages.dev/', 'http://example.org/a?b#c', 'HTTPS://Example.org/x'])

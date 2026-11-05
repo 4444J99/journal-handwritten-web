@@ -1272,15 +1272,17 @@ function batchOf(key) { for (const [id, b] of call('batches')) if ((b.items || [
 function exposures(key) { return (rel(key).exposures || []); }
 /* mark-posted helpers begin */
 const POST_DEFAULTS = { where: 'versforms.pages.dev', account: 'vers.forms' };
+function hiddenChar(t) { return /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(t); }
 function checkPostUrl(s) {
   const t = String(s == null ? '' : s).trim();
   if (!t) return { ok: true, url: '' };
-  if (!/^https?:\/\/[^\/?#\s]+/i.test(t) || /\s/.test(t)) return { ok: false, url: t };
+  if (!/^https?:\/\/[^\/?#\s]+/i.test(t) || /\s/.test(t) || hiddenChar(t)) return { ok: false, url: t };
   let u; try { u = new URL(t); } catch (e) { return { ok: false, url: t }; }
   return { ok: (u.protocol === 'http:' || u.protocol === 'https:') && !!u.hostname, url: t };
 }
 function postedEntry(f, date, at) {
-  return { type: 'social', where: String(f.where == null ? '' : f.where).trim(), account: String(f.account == null ? '' : f.account).trim(), date, url: checkPostUrl(f.url).url, ver: 'final', at };
+  const c = checkPostUrl(f.url);
+  return { type: 'social', where: String(f.where == null ? '' : f.where).trim(), account: String(f.account == null ? '' : f.account).trim(), date, url: c.ok ? c.url : '', ver: 'final', at };
 }
 /* mark-posted helpers end */
 function seriesList() {
