@@ -206,8 +206,10 @@ python3 studio-cf/import_export.py EXPORT_DIR --sql-out import.sql --remote     
 For `exports/studio-db-2026-11-05` the dry run reports `reviews 38` and 0 for
 the other five collections, 0 rejects. The SQL contains the schema, one `rev`
 bump per collection that receives documents, and `INSERT OR REPLACE` per
-document (JSON written pure ASCII, quotes doubled). Re-running replaces the same
-rows and bumps `rev` once more. Under this host's Node, `wrangler d1 execute
+document (JSON written pure ASCII, quotes doubled). The importer refuses NaN,
+Infinity and -Infinity (and a number such as `1e999`, which Python reads as infinity): JSON cannot hold
+them, and one such stored row would make the API's `JSON.parse` fail for every read of that
+collection. Re-running replaces the same rows and bumps `rev` once more. Under this host's Node, `wrangler d1 execute
 --local` prints its result and then does not exit, so `--local` stops it once it
 has reported success.
 
@@ -231,8 +233,10 @@ keys in stored order), no folder for an empty collection, and a `README.md` with
 per-collection counts. `--local` opens the SQLite file of a wrangler persist directory
 read-only (the one that has a `vf_docs` table; it never modifies it). `--out` needs a
 directory that does not exist or is empty, so nothing is ever overwritten or deleted.
-Invalid rows (unknown collection, bad id, not an object, over 64 KiB, duplicate) are
-rejects that block writing unless `--skip-rejects`. `tests/test_export_db.py` proves
+Invalid rows (unknown collection, bad id, not an object, NaN or Infinity, over 64 KiB,
+duplicate) are rejects that block writing unless `--skip-rejects`. The 64 KiB limit is measured on the
+compact JSON, the way the API measures a document, not on the pretty-printed file (a document the API
+accepts can be well over 64 KiB once indented). `tests/test_export_db.py` proves
 `import_export.py` followed by `export_db.py` reproduces the original files byte for
 byte (synthetic documents with quotes, newlines and non-ASCII text; and, when the PR 73
 export is present in scratch, its 38 real files).

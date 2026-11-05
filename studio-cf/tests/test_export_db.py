@@ -214,6 +214,44 @@ class ValidationTests(unittest.TestCase):
         self.assertTrue(any("duplicate" in r for r in rejects))
         self.assertTrue(any("unknown collection" in r for r in rejects))
 
+    def test_size_is_measured_on_the_compact_form_the_api_uses(self):
+        # 44 KB compact, over 150 KB pretty-printed: the API accepts it, so the export must not reject it
+        doc = {"n": [i % 10 for i in range(22000)]}
+        self.assertGreater(len(ed.render(doc).encode()), ie.MAX_DOC_BYTES * 2)
+        over = {"n": [i % 10 for i in range(33000)]}
+        docs, rejects = self.rejected([
+            {"collection": "release", "id": "pretty_big", "data": json.dumps(doc, separators=(",", ":"))},
+            {"collection": "release", "id": "really_big", "data": json.dumps(over, separators=(",", ":"))},
+        ])
+        self.assertEqual(sorted(docs["release"]), ["pretty_big"])
+        self.assertEqual(len(rejects), 1)
+        self.assertIn("release/really_big", rejects[0])
+        self.assertIn("compact", rejects[0])
+
+    def test_a_document_that_is_large_only_when_pretty_survives_export_then_import(self):
+        doc = {"n": [i % 10 for i in range(22000)]}
+        with tmpdir() as d:
+            out = Path(d) / "export"
+            docs, rejects = ed.collect([{"collection": "release", "id": "pretty_big", "data": json.dumps(doc)}])
+            self.assertEqual(rejects, [])
+            ed.write_export(docs, out, "2026-11-05")
+            self.assertGreater((out / "release" / "pretty_big.json").stat().st_size, ie.MAX_DOC_BYTES)
+            back, back_rejects = ie.scan(out)
+            self.assertEqual(back_rejects, [])
+            self.assertEqual(back["release"]["pretty_big"], doc)
+
+    def test_nan_and_infinity_rows_are_rejected(self):
+        docs, rejects = self.rejected([
+            {"collection": "reviews", "id": "nan", "data": '{"a": NaN}'},
+            {"collection": "reviews", "id": "inf", "data": '{"a": [Infinity]}'},
+            {"collection": "reviews", "id": "huge", "data": '{"a": 1e999}'},
+            {"collection": "reviews", "id": "already_object", "data": {"a": float("nan")}},
+            {"collection": "reviews", "id": "fine", "data": '{"a": 1.5}'},
+        ])
+        self.assertEqual(sorted(docs["reviews"]), ["fine"])
+        self.assertEqual(len(rejects), 4)
+        self.assertTrue(all("cannot hold" in r for r in rejects), rejects)
+
     def test_cli_refuses_to_write_with_rejects_unless_skipped(self):
         with tmpdir() as d:
             js = Path(d) / "rows.json"

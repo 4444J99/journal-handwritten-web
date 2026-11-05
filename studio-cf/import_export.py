@@ -45,7 +45,8 @@ import sqlguard  # noqa: E402
 
 COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
-MAX_DOC_BYTES = 64 * 1024
+MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
+MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
 DB_NAME = "object-lessons-submissions"
 DEFAULT_WRANGLER = "/opt/homebrew/bin/wrangler"
 
@@ -56,6 +57,31 @@ class Reject:
 
     def __str__(self):
         return f"{self.path}: {self.reason}"
+
+
+class NonStandardJSON(ValueError):
+    """NaN, Infinity or -Infinity: Python's json accepts them, JSON (and the API's JSON.parse) does not."""
+
+
+def _reject_constant(name):
+    raise NonStandardJSON(name)
+
+
+def loads_strict(text):
+    """json.loads that refuses NaN, Infinity and -Infinity. One such stored row would make the API's
+    JSON.parse fail for every read of its whole collection."""
+    return json.loads(text, parse_constant=_reject_constant)
+
+
+def compact_json(data):
+    """The compact form the API stores. Raises ValueError for NaN or Infinity, which also catches a number such
+    as 1e999 that Python reads as infinity and would write back as the invalid text 'Infinity'."""
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+
+
+def compact_size(data):
+    """Size in bytes of the document as the API measures it (its compact JSON, UTF-8), not of a pretty-printed file."""
+    return len(compact_json(data).encode("utf-8"))
 
 
 def scan(export_dir):
@@ -87,19 +113,27 @@ def scan(export_dir):
                 rejects.append(Reject(rel, "invalid document id"))
                 continue
             raw = f.read_bytes()
-            if len(raw) > MAX_DOC_BYTES:
-                rejects.append(Reject(rel, f"larger than {MAX_DOC_BYTES} bytes ({len(raw)})"))
+            if len(raw) > MAX_FILE_BYTES:
+                rejects.append(Reject(rel, f"larger than {MAX_FILE_BYTES} bytes as a file ({len(raw)})"))
                 continue
             try:
-                data = json.loads(raw.decode("utf-8"))
-            except (UnicodeDecodeError, json.JSONDecodeError) as e:
+                data = loads_strict(raw.decode("utf-8"))
+            except NonStandardJSON:
+                rejects.append(Reject(rel, "contains NaN or Infinity, which JSON cannot hold"))
+                continue
+            except ValueError as e:  # UnicodeDecodeError and json.JSONDecodeError
                 rejects.append(Reject(rel, f"not valid UTF-8 JSON ({type(e).__name__})"))
                 continue
             if not isinstance(data, dict):
                 rejects.append(Reject(rel, "top level is not a JSON object"))
                 continue
-            if len(json.dumps(data, ensure_ascii=False).encode("utf-8")) > MAX_DOC_BYTES:
-                rejects.append(Reject(rel, f"larger than {MAX_DOC_BYTES} bytes once re-serialised"))
+            try:
+                size = compact_size(data)
+            except ValueError:
+                rejects.append(Reject(rel, "contains a number JSON cannot hold (NaN, Infinity or beyond the double range)"))
+                continue
+            if size > MAX_DOC_BYTES:
+                rejects.append(Reject(rel, f"larger than {MAX_DOC_BYTES} bytes once compacted ({size})"))
                 continue
             docs[entry.name][doc_id] = data
     return docs, rejects
@@ -125,7 +159,7 @@ def build_sql(docs, now, include_schema=True):
         parts.append(f"INSERT INTO vf_revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
         for doc_id in sorted(items):
             # ensure_ascii keeps the statement pure ASCII with no raw newlines
-            text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"))
+            text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"), allow_nan=False)
             parts.append(
                 "INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES "
                 f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}));"

@@ -40,7 +40,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import sqlguard  # noqa: E402
-from import_export import COLLECTIONS, DOC_ID_RE, MAX_DOC_BYTES, DB_NAME, Reject  # noqa: E402
+from import_export import COLLECTIONS, DOC_ID_RE, MAX_DOC_BYTES, DB_NAME, Reject, NonStandardJSON, compact_size, loads_strict  # noqa: E402
 
 QUERY = "SELECT collection, id, data FROM vf_docs ORDER BY collection, id"
 
@@ -128,15 +128,25 @@ def collect(rows):
             rejects.append(Reject(label, "duplicate document"))
             continue
         try:
-            data = json.loads(raw) if isinstance(raw, str) else raw
+            data = loads_strict(raw) if isinstance(raw, str) else raw
+        except NonStandardJSON:
+            rejects.append(Reject(label, "data contains NaN or Infinity, which JSON cannot hold"))
+            continue
         except json.JSONDecodeError:
             rejects.append(Reject(label, "data is not valid JSON"))
             continue
         if not isinstance(data, dict):
             rejects.append(Reject(label, "data is not a JSON object"))
             continue
-        if len(render(data).encode("utf-8")) > MAX_DOC_BYTES:
-            rejects.append(Reject(label, f"larger than {MAX_DOC_BYTES} bytes"))
+        # measured the way the API measures a document (compact JSON); the pretty-printed file is larger and
+        # must not decide, or a document the API accepts would block the whole export
+        try:
+            size = compact_size(data)
+        except ValueError:
+            rejects.append(Reject(label, "data contains a number JSON cannot hold (NaN, Infinity or beyond the double range)"))
+            continue
+        if size > MAX_DOC_BYTES:
+            rejects.append(Reject(label, f"larger than {MAX_DOC_BYTES} bytes ({size} compact)"))
             continue
         seen.add((coll, doc_id))
         docs[coll][doc_id] = data
@@ -145,7 +155,7 @@ def collect(rows):
 
 def render(data):
     """One document file: the format of the PR 73 export, byte for byte."""
-    return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+    return json.dumps(data, indent=2, ensure_ascii=False, allow_nan=False) + "\n"
 
 
 def readme_text(docs, date):

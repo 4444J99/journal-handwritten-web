@@ -107,13 +107,53 @@ class ScanTests(unittest.TestCase):
             self.assertEqual(len(docs["reviews"]), 1)
 
     def test_size_limit_is_in_bytes_and_inclusive(self):
+        # the limit is on the compact JSON, the form the API stores and measures
         with tmpdir() as d:
-            overhead = len(json.dumps({"s": ""}).encode())
-            write(d, "rconfig/exact.json", json.dumps({"s": "x" * (65536 - overhead)}))
-            write(d, "rconfig/over.json", json.dumps({"s": "x" * (65536 - overhead + 1)}))
+            compact = lambda o: json.dumps(o, separators=(",", ":"))
+            overhead = len(compact({"s": ""}).encode())
+            write(d, "rconfig/exact.json", compact({"s": "x" * (65536 - overhead)}))
+            write(d, "rconfig/over.json", compact({"s": "x" * (65536 - overhead + 1)}))
             docs, rejects = ie.scan(d)
             self.assertIn("exact", docs["rconfig"])
             self.assertEqual([r.path for r in rejects], ["rconfig/over.json"])
+
+    def test_a_pretty_printed_file_is_measured_by_its_compact_form(self):
+        # 22,000 one-digit numbers: 44 KB compact, over 150 KB pretty-printed. The API accepts the document, so the importer must.
+        doc = {"n": [i % 10 for i in range(22000)]}
+        self.assertLess(ie.compact_size(doc), ie.MAX_DOC_BYTES)
+        pretty = json.dumps(doc, indent=2)
+        self.assertGreater(len(pretty.encode()), ie.MAX_DOC_BYTES * 2)
+        big = {"n": [i % 10 for i in range(33000)]}
+        self.assertGreater(ie.compact_size(big), ie.MAX_DOC_BYTES)
+        with tmpdir() as d:
+            write(d, "release/pretty_ok.json", pretty)
+            write(d, "release/too_big.json", json.dumps(big, indent=2))
+            docs, rejects = ie.scan(d)
+            self.assertIn("pretty_ok", docs["release"])
+            self.assertEqual([r.path for r in rejects], ["release/too_big.json"])
+            self.assertTrue(rejects[0].reason.startswith("larger than 65536 bytes once compacted"))
+
+    def test_nan_and_infinity_are_rejected_and_never_reach_the_sql(self):
+        # Python's json reads these; JSON and the API's JSON.parse do not, and one stored row would break every read of its collection
+        bad = {
+            "nan": '{"a": NaN}', "inf": '{"a": Infinity}', "neg": '{"a": -Infinity}', "deep": '{"a": [1, {"b": [NaN]}]}',
+            "huge": '{"a": 1e999}', "neghuge": '{"a": -1e999}',
+        }
+        with tmpdir() as d:
+            for name, text in bad.items():
+                write(d, f"decisions/{name}.json", text)
+            write(d, "decisions/fine.json", '{"a": 1.5e300, "b": [0, -0.0, 1e-320]}')
+            docs, rejects = ie.scan(d)
+            self.assertEqual(sorted(r.path for r in rejects), sorted(f"decisions/{n}.json" for n in bad))
+            self.assertEqual(sorted(docs["decisions"]), ["fine"])
+            reasons = {r.path: r.reason for r in rejects}
+            self.assertEqual(reasons["decisions/nan.json"], "contains NaN or Infinity, which JSON cannot hold")
+            self.assertTrue(reasons["decisions/huge.json"].startswith("contains a number JSON cannot hold"))
+            sql = ie.build_sql(docs, "2026-11-05T00:00:00Z")
+            self.assertNotRegex(sql, r"(?i)\b(nan|infinity)\b")
+        # build_sql itself refuses a value that slipped past validation
+        with self.assertRaises(ValueError):
+            ie.build_sql({c: ({"x": {"a": float("inf")}} if c == "reviews" else {}) for c in ie.COLLECTIONS}, "T")
 
     def test_rejects_block_writing_unless_skipped(self):
         with tmpdir() as d:
