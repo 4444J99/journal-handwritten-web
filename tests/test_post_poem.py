@@ -222,7 +222,7 @@ class GateTests(Base):
                 shutil.rmtree(self.tmp, ignore_errors=True)
                 self.setUp()
                 self.prepare(release=release)
-                self.assertEqual(self.go("p001"), 2, self.out)
+                self.assertEqual(self.go("p001"), 3, self.out)  # gate (a) fails and the own-pool hard stop applies
                 self.assertIn("FAIL  gate (a) in Series", self.out)
         self.setUp()
         self.prepare()
@@ -258,9 +258,22 @@ class GateTests(Base):
         self.assertEqual(self.go("p001"), 0, self.out)
 
     def test_force_overrides_gates_only(self):
-        self.prepare(release={"p001": {"pool": "reserve"}}, skip_review=("pg2-0-0",))
+        self.prepare(release={"p001": {"pool": "weird"}}, skip_review=("pg2-0-0",))
+        self.assertEqual(self.go("p001"), 2, self.out)
         self.assertEqual(self.go("p001", "--force"), 0, self.out)
         self.assertIn("FORCED past 2 failed gate(s)", self.out)
+
+    def test_own_reserve_or_archive_pool_is_a_hard_stop_even_with_force(self):
+        for pool in ("reserve", "archive"):
+            with self.subTest(pool=pool):
+                shutil.rmtree(self.tmp, ignore_errors=True)
+                self.setUp()
+                self.prepare(release={"p001": {"pool": pool}})
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertIn("requested piece is not in Reserve or Archive", self.out)
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", "--accept-shared-scan", "p002"), 3)
+                self.assertFalse((self.work / "build").exists())  # nothing was built
 
     def test_unknown_piece_is_a_hard_stop(self):
         self.prepare()
@@ -314,6 +327,70 @@ class HardStopTests(Base):
         self.setUp()
         self.prepare(release={"p004": {"pool": "series"}})
         self.assertEqual(self.go("p001", "--include-versions", "--accept-shared-scan", "p004"), 0, self.out)
+
+    def make_spread(self, left="pg3", right="pg5", f_on="left"):
+        """Make `left` and `right` the two pages of one spread image (as in the real data: only one of them
+        may carry sp.f; the other is found through the shared sp.k)."""
+        jp = self.root / "site" / "data" / "j.json"
+        j = json.loads(jp.read_text())
+        for p in j["pages"]:
+            if p["id"] in (left, right):
+                p["sp"] = {"s": "left" if p["id"] == left else "right", "cb": [0, 0, 1, 1],
+                           "f": "spr" if (p["id"] == left) == (f_on == "left") else None, "k": "spr.jpg"}
+        jp.write_text(json.dumps(j))
+        (self.root / "site" / "img" / "s").mkdir(parents=True, exist_ok=True)
+        Image.new("RGB", (8, 8), (10, 10, 10)).save(self.root / "site" / "img" / "s" / "spr.jpg")
+
+    def test_spread_image_facing_page_counts_as_shared_scan(self):
+        # p003 on pg3; the spread image of pg3 also shows pg5, which carries p007
+        for label, rel in (("unsorted", {}), ("reserve", {"p007": {"pool": "reserve"}}), ("archive", {"p007": {"pool": "archive"}})):
+            with self.subTest(label=label):
+                shutil.rmtree(self.tmp, ignore_errors=True)
+                self.setUp()
+                self.prepare(pids=("p003",), public=(), release=rel)
+                self.make_spread(f_on="left")  # the published page carries sp.f, so the whole spread image is copied
+                self.assertEqual(self.go("p003"), 3, self.out)
+                self.assertIn("(i) shared scan", self.out)
+                self.assertIn("p007", self.out)
+                self.assertIn("facing page of the spread image", self.out)
+                self.assertEqual(self.go("p003", "--force", "--accept-shared-scan", "p007"), 3)
+                self.assertFalse((self.work / "build" / "img" / "s").exists())  # the spread image was not built
+
+    def test_facing_page_is_not_a_leak_when_the_published_page_has_no_spread_image(self):
+        # only the page that carries sp.f makes the build copy img/s/..jpg; the other page of the spread does not
+        self.prepare(pids=("p003",), public=())
+        self.make_spread(f_on="right")
+        self.assertEqual(self.go("p003"), 0, self.out)
+        self.assertFalse((self.work / "build" / "img" / "s").exists())
+
+    def test_spread_facing_series_piece_needs_accept_and_public_one_is_fine(self):
+        self.prepare(pids=("p003",), public=(), release={"p007": {"pool": "series"}})
+        self.make_spread()
+        self.assertEqual(self.go("p003"), 3, self.out)
+        self.assertIn("--accept-shared-scan p007", self.out)
+        self.assertEqual(self.go("p003", "--accept-shared-scan", "p007"), 0, self.out)
+        self.assertTrue((self.work / "build" / "img" / "s" / "spr.jpg").is_file())
+        self.assertNotIn("SENTINEL-p007", self.all_text(self.work / "build"))
+        shutil.rmtree(self.tmp, ignore_errors=True)
+        self.setUp()
+        self.prepare(pids=("p003",), public=("p007",))
+        self.make_spread()
+        self.assertEqual(self.go("p003"), 0, self.out)
+
+    def test_spread_mates_found_by_page_named_like_the_file(self):
+        # real data: diary60 has sp.f None, diary60a has sp.f 'diary60'; here pg5 plays the page the file is named after
+        self.prepare(pids=("p003",), public=())
+        self.make_spread()
+        jp = self.root / "site" / "data" / "j.json"
+        j = json.loads(jp.read_text())
+        for p in j["pages"]:
+            if p["id"] == "pg3":
+                p["sp"]["f"], p["sp"]["k"] = "pg5", "other-key.jpg"
+            if p["id"] == "pg5":
+                p["sp"] = {"s": "left", "cb": [0, 0, 1, 1], "f": None, "k": "pg5.jpg"}
+        jp.write_text(json.dumps(j))
+        self.assertEqual(post_poem.Source(self.root).spread_mates(["pg3"]), ["pg5"])
+        self.assertEqual(post_poem.Source(self.root).spread_mates(["pg2"]), [])  # no sp.f: no spread image is copied
 
     def test_stale_transcript_refused_even_with_force(self):
         self.prepare(reviews={"pg2-0-1": {"status": "confirmed", "original": "an older machine reading"}})
@@ -438,6 +515,39 @@ class BuildTests(Base):
         self.assertIn("WARNING  info panel text produced from prov: Machine transcription (2026-01-01), not yet checked by the author", self.out)
         self.assertIn("empty link, empty commit and empty path", self.out)
 
+    def test_already_public_piece_moved_out_of_series_is_warned_about(self):
+        self.prepare(release={"p002": {"pool": "reserve"}})
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.assertRegex(self.out, r"WARNING  p002 is already in release/public\.json .* release pool is now reserve")
+        shutil.rmtree(self.tmp, ignore_errors=True)
+        self.setUp()
+        self.prepare(release={"p002": {"pool": "series"}})
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.assertNotIn("p002 is already in release/public.json", self.out)
+
+    def test_default_workdir_is_beside_the_private_repo_not_the_system_temp(self):
+        self.prepare()
+        argv = ["p001", "--db", str(self.db), "--source", str(self.root), "--dry-run"]
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.assertEqual(post_poem.main(argv), 0, buf.getvalue())
+        made = sorted(p.name for p in self.tmp.glob("post-poem-*"))
+        self.assertEqual(len(made), 1, made)
+        self.assertTrue((self.tmp / made[0] / "build" / "index.html").is_file())
+
+    def test_output_check_fails_when_a_text_file_other_than_index_names_the_other_project(self):
+        self.prepare()
+        self.assertEqual(self.go("p001"), 0, self.out)
+        src = post_poem.Source(self.root)
+        out = self.work / "build"
+        published = {("pg2", 0)}
+        ok = {s for pg, bi in published for s in src.jpages[pg]["B"][bi]["L"]}
+        run = lambda: {n: o for n, o, _ in post_poem.check_output(src, out, ["p002", "p001"], published, ok, ["p002", "p001"])}
+        name = "no output text file other than index.html names the other project"
+        self.assertTrue(run()[name])
+        (out / "_headers").write_text("/*\n  X-Robots-Tag: noindex\n# " + "Etceter" + "4\n")
+        self.assertFalse(run()[name])
+
     def test_correction_without_text_does_not_pass_gate_b(self):
         self.prepare(reviews={"pg2-0-1": {"status": "corrected", "original": line_text("p001", 1, 0, 1)}})
         self.assertEqual(self.go("p001"), 2, self.out)
@@ -549,6 +659,15 @@ class DryRunWritesNothing(Base):
         self.assertEqual(self.snapshot(self.root), before_private)  # release/public.json untouched
         self.assertIn("DRY RUN", self.out)
 
+    def test_dry_run_leaves_the_git_index_file_untouched(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        index = clone / ".git" / "index"
+        os.utime(index, ns=(1_000_000_000_000_000_000, 1_000_000_000_000_000_000))  # make a rewrite visible
+        before = (index.read_bytes(), index.stat().st_mtime_ns)
+        self.assertEqual(self.go("p001", public=clone), 0, self.out)
+        self.assertEqual((index.read_bytes(), index.stat().st_mtime_ns), before)
+
 
 class RealRunTests(Base):
     def run_real(self, *extra, **kw):
@@ -638,6 +757,15 @@ class BuildPublicCompat(Base):
         self.assertEqual(build_public.add_noindex("<head>x"), "<head>" + n + "x")
         with self.assertRaises(ValueError):
             build_public.add_noindex("no head here")
+
+    def test_stricter_existing_robots_tag_is_never_weakened(self):
+        for tag in ('<meta name="robots" content="noindex,nofollow">', "<meta name=robots content='NOINDEX, nofollow'>"):
+            html = '<head><meta name="viewport" content="a">' + tag + "</head>"
+            self.assertEqual(build_public.add_noindex(html), html)
+            self.assertTrue(build_public.has_noindex(html))
+        self.assertFalse(build_public.has_noindex('<meta name="robots" content="all">'))
+        self.assertFalse(build_public.has_noindex('<meta name="viewport" content="noindex">'))
+        self.assertTrue(build_public.has_noindex('<meta content="noindex" name="robots">'))
 
 
 if __name__ == "__main__":

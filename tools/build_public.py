@@ -65,10 +65,14 @@ def pack(rects, width=2048):
 def add_noindex(html):
     """Return html carrying <meta name="robots" content="noindex">.
 
-    An existing robots meta is replaced; otherwise the tag goes right after the viewport meta
-    (quoted or unquoted attributes), or after <head> when there is no viewport meta."""
+    An existing robots meta that already says noindex is kept as it is (a stricter tag such as
+    "noindex,nofollow" is never weakened); an existing robots meta without noindex is replaced;
+    otherwise the tag goes right after the viewport meta (quoted or unquoted attributes), or after
+    <head> when there is no viewport meta."""
     robots = re.search(r"<meta\s+name=[\"']?robots[\"']?[^>]*>", html, re.I)
     if robots:
+        if re.search(r"noindex", robots.group(0), re.I):
+            return html
         return html[:robots.start()] + NOINDEX_META + html[robots.end():]
     viewport = re.search(r"<meta\s+name=[\"']?viewport[\"']?[^>]*>", html, re.I)
     if viewport:
@@ -77,6 +81,12 @@ def add_noindex(html):
     if head:
         return html[:head.end()] + NOINDEX_META + html[head.end():]
     raise ValueError("index.html has no viewport meta and no <head>: cannot place the noindex tag")
+
+
+def has_noindex(html):
+    """True when some robots meta tag in html contains noindex."""
+    return any(re.search(r"name=[\"']?robots[\"']?", t, re.I) and re.search(r"noindex", t, re.I)
+               for t in re.findall(r"<meta\b[^>]*>", html, re.I))
 
 
 def load_release(path):

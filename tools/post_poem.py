@@ -12,7 +12,8 @@ Exit codes
     0  done (or dry run complete)
     2  a gate failed (Series, fully verified, filed batch); --force overrides these three only
     3  a hard stop; --force never overrides these:
-         shared scan, stale transcript, unknown piece id, public repository preconditions,
+         own pool is reserve or archive, shared scan (including the facing page of a spread
+         image), stale transcript, unknown piece id, public repository preconditions,
          embedded font not accepted, output checks
     64 usage error
     1  an operation failed part-way (git, gh); the message says what state was left
@@ -31,6 +32,8 @@ PUBLIC_REPO_NAME = "4444J99/versforms"
 COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
 POOLS = ("series", "reserve", "archive")
 PLACEHOLDER = "[[quoted passage:]]"
+# the author's music; built from parts so this file is not itself a hit
+OLD_NAME_RE = re.compile("etceter" + "4", re.I)
 EXIT_OK, EXIT_PARTIAL, EXIT_GATE, EXIT_STOP, EXIT_USAGE = 0, 1, 2, 3, 64
 
 
@@ -77,6 +80,26 @@ class Source:
 
     def pages_of(self, pid, indices):
         return sorted({pg for i in indices for pg, _ in self.pieces[pid]["V"][i]["P"]})
+
+    def spread_mates(self, pages):
+        """Pages whose scan shares a spread image file with one of `pages`.
+
+        The build copies img/s/{sp.f}.jpg for every published page that has sp.f. That file is the
+        whole two-page spread, so whatever is written on the other page of the spread is in the
+        downloaded image. The spread file of a page is its sp.f; the other page of the spread is
+        found by the same sp.k (spread key) or the same sp.f, or by being the page the file is named after."""
+        pages = set(pages)
+        mates = set()
+        for pg in pages:
+            sp = self.jpages[pg].get("sp") or {}
+            f, k = sp.get("f"), sp.get("k")
+            if not f:
+                continue
+            for q in self.j["pages"]:
+                s2 = q.get("sp") or {}
+                if q["id"] != pg and ((k and s2.get("k") == k) or s2.get("f") == f or q["id"] == f):
+                    mates.add(q["id"])
+        return sorted(mates - pages)
 
     def published_blocks(self, pid, indices):
         return sorted({(pg, b) for i in indices for pg, bl in self.pieces[pid]["V"][i]["P"] for b in bl})
@@ -223,32 +246,35 @@ def shared_scan(src, db, pid, indices, public_ids, accepted):
     """Every other piece (and non-piece 'other lines' item) on a page the published versions sit on.
     status: ok | accepted | needs-accept | stop"""
     out = []
-    pages = src.pages_of(pid, indices)
+    direct = src.pages_of(pid, indices)
+    mates = src.spread_mates(direct)  # the spread image of a published page shows the facing page too
+    pages = set(direct) | set(mates)
+    via = lambda pg: " (facing page of the spread image)" if pg in mates else ""
     for q in src.j["pieces"]:
         if q["id"] == pid:
             continue
         on = sorted({pg for v in q["V"] for pg, _ in v["P"] if pg in pages})
         for pg in on:
             if q["id"] in public_ids:
-                out.append(dict(page=pg, id=q["id"], status="ok", reason="already public or posted in this run"))
+                out.append(dict(page=pg, id=q["id"], status="ok", reason="already public or posted in this run" + via(pg)))
                 continue
             pool = pool_of(db, q["id"])
             if pool == "series":
                 if q["id"] in accepted:
-                    out.append(dict(page=pg, id=q["id"], status="accepted", reason="Series, not yet public; accepted with --accept-shared-scan"))
+                    out.append(dict(page=pg, id=q["id"], status="accepted", reason="Series, not yet public; accepted with --accept-shared-scan" + via(pg)))
                 else:
-                    out.append(dict(page=pg, id=q["id"], status="needs-accept", reason="Series but not public yet; pass --accept-shared-scan " + q["id"]))
+                    out.append(dict(page=pg, id=q["id"], status="needs-accept", reason="Series but not public yet; pass --accept-shared-scan " + q["id"] + via(pg)))
             else:
-                out.append(dict(page=pg, id=q["id"], status="stop", reason=f"pool is {pool}: its writing would be visible in the scan"))
+                out.append(dict(page=pg, id=q["id"], status="stop", reason=f"pool is {pool}: its writing would be visible in the scan" + via(pg)))
     for it in src.review["items"]:
         if it["id"] in src.pieces:
             continue
         for v in it["versions"]:
             if v["page"] in pages:
                 if it["id"] in accepted:
-                    out.append(dict(page=v["page"], id=it["id"], status="accepted", reason="other lines on the page; accepted with --accept-shared-scan"))
+                    out.append(dict(page=v["page"], id=it["id"], status="accepted", reason="other lines on the page; accepted with --accept-shared-scan" + via(v["page"])))
                 else:
-                    out.append(dict(page=v["page"], id=it["id"], status="needs-accept", reason="other lines (not a poem) are visible in the scan; pass --accept-shared-scan " + it["id"]))
+                    out.append(dict(page=v["page"], id=it["id"], status="needs-accept", reason="other lines (not a poem) are visible in the scan; pass --accept-shared-scan " + it["id"] + via(v["page"])))
     return out
 
 
@@ -341,7 +367,13 @@ def check_output(src, out, effective, published, texts_ok, pieces_expected):
     out = Path(out)
     res = []
     html = (out / "index.html").read_text(encoding="utf-8")
-    res.append(("index.html has <meta name=\"robots\" content=\"noindex\">", build_public.NOINDEX_META in html, ""))
+    res.append(("index.html has <meta name=\"robots\" content=\"noindex\"> (or a stricter robots tag that includes noindex)", build_public.has_noindex(html), ""))
+    named = []
+    for p in _text_files(out):
+        if p.name != "index.html":  # index.html names the embedded font; that is the --accept-embedded-font stop
+            if OLD_NAME_RE.search(p.read_text(encoding="utf-8", errors="ignore")):
+                named.append(p.relative_to(out).as_posix())
+    res.append(("no output text file other than index.html names the other project", not named, ", ".join(named)))
     hdr = out / "_headers"
     h = hdr.read_text() if hdr.exists() else ""
     res.append(("_headers sets X-Robots-Tag: noindex for /*", bool(re.search(r"^/\*\s*\n\s+X-Robots-Tag:\s*noindex\s*$", h, re.M)), ""))
@@ -397,7 +429,7 @@ def check_public_repo(path, branch):
     res.append((f"remote origin is {PUBLIC_REPO_NAME}", remote_is_public_repo(url), url or "no origin"))
     cur = git(p, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip()
     res.append(("on branch main", cur == "main", f"on {cur!r}"))
-    dirty = git(p, "status", "--porcelain", check=False).stdout.strip()
+    dirty = git(p, "--no-optional-locks", "status", "--porcelain", check=False).stdout.strip()  # does not refresh .git/index
     res.append(("working tree clean", not dirty, f"{len(dirty.splitlines())} changed or untracked path(s)" if dirty else ""))
     head = git(p, "rev-parse", "HEAD", check=False).stdout.strip()
     ls = git(p, "ls-remote", "origin", "refs/heads/main", check=False)
@@ -475,7 +507,7 @@ def parse_args(argv):
     ap.add_argument("--accept-embedded-font", action="store_true", help="accept that index.html embeds a downloadable font whose name becomes public")
     ap.add_argument("--dry-run", action="store_true", help="run every gate and hard stop, build into scratch, write nothing in the public repo")
     ap.add_argument("--no-pr", action="store_true", help="commit the branch in the public clone but do not push or open a PR")
-    ap.add_argument("--workdir", help="scratch directory for the build (default: a new temporary directory)")
+    ap.add_argument("--workdir", help="scratch directory for the build (default: a new post-poem-* directory next to the private repository)")
     ap.add_argument("--source", default=str(ROOT), help="private repository root (default: this repository)")
     return ap.parse_args(argv)
 
@@ -508,6 +540,10 @@ def run(a):
     # --- gates (requested pieces only)
     for pid in pids:
         record("gate", pid, "(a) in Series", *gate_series(db, pid))
+        own = pool_of(db, pid)
+        if own in ("reserve", "archive"):
+            # --force overrides the gates only: a Reserve or Archive piece never goes online in any form
+            record("stop", pid, "requested piece is not in Reserve or Archive", False, f"pool is {own}; --force does not override this")
         record("gate", pid, "(b) every line confirmed or corrected", *gate_verified(src, db, pid))
         record("gate", pid, "(c) in a filed or registered batch", *gate_filed(db, pid))
 
@@ -530,6 +566,11 @@ def run(a):
     except Stop as e:
         say(f"FAIL  stop {e}")
         return EXIT_STOP
+    for pid in src.public:
+        if pid not in pids:
+            pool = pool_of(db, pid)
+            if pool != "series":
+                warnings.append(f"{pid} is already in release/public.json and is rebuilt into this site, but its release pool is now {pool}. Its pool, gates and shared scans are not rechecked here; decide whether it should stay public")
     for pid in effective:
         v = versions[pid]
         say(f"versions {pid}: publishing {len(v['indices'])} of {v['total']} ({v['how']})")
@@ -605,7 +646,8 @@ def run(a):
         say(f"\nFORCED past {len(gates)} failed gate(s).")
 
     # --- build
-    workdir = Path(a.workdir) if a.workdir else Path(tempfile.mkdtemp(prefix="post-poem-"))
+    # default scratch: a new directory beside the private repository, never the system temp directory
+    workdir = Path(a.workdir) if a.workdir else Path(tempfile.mkdtemp(prefix="post-poem-", dir=str(root.resolve().parent)))
     workdir.mkdir(parents=True, exist_ok=True)
     out = workdir / "build"
     res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True)
