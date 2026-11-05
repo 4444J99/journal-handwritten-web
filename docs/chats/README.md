@@ -10,6 +10,7 @@ Conventions
 - Records written on 2026-11-05 were made from claude.ai chat summaries or excerpts, not full transcripts.
   Correct a record by editing it in a new commit; history keeps the earlier wording.
 - New chats: add a record before the session ends (see `CLAUDE.md` at the repo root).
+- Per-exchange breakdown: each chat runs its prompt from `PROMPTS.md`, which follows `PROCESS.md` and writes `docs/chats/<record>/NN-*.md` plus one GitHub issue per exchange.
 
 ## Chats
 
