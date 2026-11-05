@@ -216,7 +216,17 @@ class Base(unittest.TestCase):
         make_private(self.root, other_items=other_items, extra_public=public)
         ready_db(self.db, pids=pids, _root=self.root, **dbkw)
 
+    def skip_without_font_venv(self):
+        """The fixture page names the old font family, so its embedded font is known to carry the old name.
+        Without the font venv it cannot be renamed and every run, dry or real, is refused (by design; covered by
+        the tests that set NO_VENV on purpose). A test that expects a successful run cannot run in that case."""
+        page = self.root / "site" / "index.html"
+        if (not HAVE_VENV and os.environ.get("VERSFORMS_FONT_PYTHON") != NO_VENV["VERSFORMS_FONT_PYTHON"]
+                and page.is_file() and build_public.OLD_FONT_RE.search(page.read_text(encoding="utf-8"))):
+            self.skipTest(f"font venv python not usable at {VENV_PY}: a run on a page that names the old font family is refused without it")
+
     def go(self, *args, dry=True, public=None, db=None):
+        self.skip_without_font_venv()
         argv = list(args) + ["--db", str(db or self.db), "--source", str(self.root), "--workdir", str(self.work)]
         if dry:
             argv.append("--dry-run")
@@ -601,12 +611,39 @@ class HardStopTests(Base):
             self.assertEqual(self.go("p001", "--accept-embedded-font", "--force"), 3, self.out)  # a dry run refuses too
         self.assertEqual(git(clone, "for-each-ref"), before)
 
-    def test_dry_run_only_warns_when_the_font_cannot_be_checked(self):
+    def test_dry_run_fails_like_a_real_run_for_a_font_known_to_carry_the_old_name(self):
+        # the page's font family is the old name and there is no venv to rename the file: a real run is refused,
+        # so a dry run must not report success either (a script reading the exit status would be misled)
         self.prepare()
+        with mock.patch.dict(os.environ, NO_VENV):
+            self.assertEqual(self.go("p001"), 3, self.out)
+            self.assertEqual(self.go("p001", "--accept-embedded-font", "--force"), 3, self.out)
+        self.assertRegex(self.out, r"FAIL  check embedded font is renamed")
+        self.assertIn("does not cover this", self.out)
+
+    def test_dry_run_only_warns_for_a_font_of_unknown_content_that_cannot_be_checked(self):
+        make_private(self.root, extra_public=["p002"])
+        html = re.sub(OLD + r"[ ]?Diary", "Fixture Hand", INDEX_HTML, flags=re.I)
+        self.assertNotRegex(html, "(?i)" + OLD)
+        (self.root / "site" / "index.html").write_text(html)
+        ready_db(self.db, pids=("p001",), _root=self.root)
         with mock.patch.dict(os.environ, NO_VENV):
             self.assertEqual(self.go("p001"), 0, self.out)
         self.assertIn("WARN  stop embedded font", self.out)
-        self.assertIn("--accept-embedded-font", self.out)
+        self.assertIn("A real run needs --accept-embedded-font", self.out)
+
+    @needs_venv
+    def test_a_file_or_directory_name_with_the_old_name_is_a_hard_stop_and_is_never_repeated_in_the_log(self):
+        self.prepare()
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        out = self.work / "build"
+        (out / "data" / ("notes-" + OLD.lower() + ".txt")).write_text("plain")
+        (out / ("dir-" + OLD.upper())).mkdir()
+        (out / ("dir-" + OLD.upper()) / "inner.txt").write_text("plain")
+        scan = post_poem.name_scan(out)
+        names = [h for h in scan["hits"] if "its path" in h]
+        self.assertEqual(len(names), 2, scan["hits"])
+        self.assertFalse(any(build_public.OLD_NAME_RE.search(h) for h in scan["hits"]), scan["hits"])
 
     def test_old_name_in_any_output_file_is_a_hard_stop_even_with_force(self):
         # a payload the build does not touch: a non-font data URI whose bytes carry the name as UTF-16BE
@@ -752,6 +789,7 @@ class BuildTests(Base):
 
     def test_default_workdir_is_inside_the_repository_scratch_not_beside_it(self):
         self.prepare()
+        self.skip_without_font_venv()
         argv = ["p001", "--db", str(self.db), "--source", str(self.root), "--dry-run"]
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
@@ -765,6 +803,7 @@ class BuildTests(Base):
         ignore = (TESTS.parent / ".gitignore").read_text().splitlines()
         self.assertIn(post_poem.DEFAULT_SCRATCH + "/", ignore)
 
+    @needs_venv
     def test_output_check_fails_when_a_text_file_names_the_other_project_in_any_case(self):
         self.prepare()
         self.assertEqual(self.go("p001"), 0, self.out)
@@ -1159,6 +1198,8 @@ class FontTests(Base):
         self.assertEqual(a["hmtx"], b["hmtx"])  # advance widths and side bearings
         self.assertEqual(a["tables"], b["tables"])
         self.assertTrue(new[:4] == b"wOF2" and new != FONT_BYTES)
+        # the build must not stamp the current time into the font: same input, same bytes, on every run
+        self.assertEqual(a["head_modified"], b["head_modified"])
         names = b["name_records"]
         for key, rec in names.items():
             nid = int(key.split("/")[0])

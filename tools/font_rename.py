@@ -51,7 +51,9 @@ def rewrite(s, family, full, ps):
 
 def load(data):
     from fontTools.ttLib import TTFont
-    return TTFont(io.BytesIO(data))
+    # recalcTimestamp=False: saving must not stamp the current time into head.modified, otherwise every build
+    # produces different font bytes (and a different index.html) from the same input.
+    return TTFont(io.BytesIO(data), recalcTimestamp=False)
 
 
 def scan(font, raw=True):
@@ -149,7 +151,8 @@ def describe(data):
     return dict(flavor=font.flavor, glyph_count=len(font.getGlyphOrder()), glyph_order=font.getGlyphOrder(),
                 cmap={str(k): v for k, v in sorted(font.getBestCmap().items())},
                 hmtx={g: list(m) for g, m in font["hmtx"].metrics.items()},
-                tables=sorted(font.reader.keys()), name_records=names, cff_font_names=cff_names)
+                tables=sorted(font.reader.keys()), name_records=names, cff_font_names=cff_names,
+                head_modified=int(font["head"].modified))
 
 
 def main(argv=None):

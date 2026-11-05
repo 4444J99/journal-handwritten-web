@@ -382,11 +382,18 @@ def name_scan(out):
             checked += 1
             hits.extend(f"{label}: font {h}" for h in doc["hits"])
 
+    n_file = 0
     for p in sorted(out.rglob("*")):
         if not p.is_file():
             continue
+        n_file += 1
         rel = p.relative_to(out).as_posix()
         data = p.read_bytes()
+        if OLD_NAME_RE.search(rel):
+            # file and directory names are public too. Say which file by position, never by the name, and
+            # use that label for every other finding on the file so the log never repeats the name.
+            hits.append(f"output file {n_file}: its path")
+            rel = f"output file {n_file}"
         if OLD_NAME_RE.search(data.decode("utf-8", "ignore")):
             hits.append(f"{rel}: text")
         if raw_has_old_name(data):
@@ -822,10 +829,8 @@ def run(a):
             # so the acceptance flag (for a font of unknown content) does not apply
             msg = ("the embedded font is known to carry the other project's name (the page's font family is that name) and it was not renamed; "
                    "--accept-embedded-font does not cover this. Install the font venv (VERSFORMS_FONT_PYTHON) and run again")
-            if a.dry_run:
-                say(f"WARN  stop embedded font: {why}. {msg[0].upper() + msg[1:]}. A real run is refused.")
-            else:
-                checks.append(("embedded font is renamed (the source font is known to carry the other project's name)", False, why + ". " + msg))
+            # a dry run fails exactly as a real run does, so a script that checks the exit status is not told "fine" about input a real run refuses
+            checks.append(("embedded font is renamed (the source font is known to carry the other project's name)", False, why + ". " + msg))
         elif a.dry_run:
             say(f"WARN  stop embedded font: {why}. A real run needs --accept-embedded-font.")
         else:
@@ -834,6 +839,8 @@ def run(a):
         font_notes.append("The embedded font could not be decoded and checked here; --accept-embedded-font published it unchecked: " + "; ".join(scan["unchecked"]))
     elif scan["fonts_checked"]:
         font_notes.append(f"Embedded font(s) decoded and checked: {scan['fonts_checked']} (name table records, CFF strings, glyph names, raw table bytes); renamed in the build to {build_public.PUBLIC_FONT_FAMILY}")
+        # the font is downloadable and its other name records can hold personal names; they are on the console only
+        font_notes.append("Author sign-off on the embedded font file's own metadata (its name records are downloadable with the font; they were listed to the author on the console and are not repeated here)")
     if scan["undecodable"]:
         # the venv ran and the font did not parse: a compressed WOFF2 cannot be searched as raw bytes, so nothing vouches for it
         checks.append(("every embedded font parses and passes the name check (--accept-embedded-font does not cover this)", False,
