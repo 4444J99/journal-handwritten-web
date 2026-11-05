@@ -263,8 +263,34 @@ describe('owner token', () => {
       assert.equal(ok.status, 404, 'owner ' + p.slice(0, 30));
       assert.ok(!/wrangler|Could not serve|ENOTDIR|ENAMETOOLONG|\/Volumes\//.test(ok.body), 'no simulator or path detail in the body');
     }
+    // Paths that try to leave the served directory. The simulator's static layer decodes
+    // "%2f" after routing, so "..%2f" used to read files one level up (studio-cf/wrangler.toml,
+    // studio-cf/README.md). Every form must be a bodyless 404 for the owner, and a 403 for anyone else.
+    const escapes = [
+      '/..%2fstudio-cf%2fwrangler.toml', '/..%2Fstudio-cf%2FREADME.md', '/..%2f..%2fetc/passwd',
+      '/..%5cstudio-cf%5cwrangler.toml', '/%2e%2e%2fstudio-cf%2fwrangler.toml', '/..%252fstudio-cf%252fwrangler.toml',
+      '/data%2f..%2f..%2fstudio-cf%2fwrangler.toml', '/a%2fb',
+    ];
+    for (const p of escapes) {
+      assert.equal((await rawGet(p)).status, 403, 'no token ' + p);
+      assert.equal((await rawGet(p, tok(STRANGER))).status, 403, 'wrong user ' + p);
+      const ok = await rawGet(p, owner());
+      assert.equal(ok.status, 404, 'owner ' + p);
+      assert.equal(ok.body.length, 0, 'no body for ' + p);
+    }
     // ordinary odd-but-valid paths still behave
-    for (const p of ['/%zz', '//', '/..%2f..%2fetc/passwd', '/a%20b']) assert.ok([200, 404].includes((await rawGet(p, owner())).status), p);
+    for (const p of ['/%zz', '//', '/a%20b']) assert.ok([200, 404].includes((await rawGet(p, owner())).status), p);
+    // the guard must not refuse real files
+    assert.equal((await rawGet('/', owner())).status, 200);
+    assert.equal((await rawGet('/data/review.json', owner())).status, 200);
+    assert.equal((await rawGet('/img/thumbs/diary1.jpg', owner())).status, 200);
+    assert.equal((await rawGet('/cf-adapter.js', owner())).status, 200);
+  });
+
+  test('the API path is classified case-insensitively: no static caching header on /API/me', async () => {
+    const r = await call('/API/me', { token: owner() });
+    assert.equal(r.status, 200);
+    assert.equal(r.headers.get('cache-control'), 'no-store');
   });
 
   test('asset validation', async () => {

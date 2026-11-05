@@ -29,8 +29,10 @@ def main(argv=None):
     ap.add_argument("--out", default=str(HERE / "dist"), help="output directory (default studio-cf/dist)")
     args = ap.parse_args(argv)
     out = Path(args.out).resolve()
-    if out.exists() and out.name != "dist" and any(out.iterdir()):
-        raise SystemExit(f"refusing to overwrite a non-empty directory that is not named 'dist': {out}")
+    # The only directory this script ever empties is its own generated, git-ignored
+    # studio-cf/dist. Any other --out must not exist yet or must be empty.
+    if out.exists() and out != HERE / "dist" and any(out.iterdir()):
+        raise SystemExit(f"refusing to write into a non-empty directory other than {HERE / 'dist'}: {out}")
 
     published = {}  # published path -> source path
     for p in sorted((ROOT / "studio").rglob("*")):

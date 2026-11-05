@@ -83,12 +83,23 @@ python3 studio-cf/build_dist.py          # writes studio-cf/dist/ (git-ignored)
 `wrangler pages dev dist` (run from `studio-cf/`) was checked locally: full scans
 and thumbnails are served with a valid token and refused without one.
 
-### The one network call of `wrangler pages dev`
+### Network calls of `wrangler pages dev`
 
-Besides the local D1/R2 simulation, `wrangler pages dev` (through Miniflare) makes one
-anonymous request to `https://workers.cloudflare.com/cf.json` to fill `request.cf`,
-and caches the answer in `.wrangler/cache/cf.json` under the directory it runs in
-(git-ignored here). `wrangler pages dev --help` (4.104) has no flag for it. The
+Besides the local D1/R2 simulation, `wrangler pages dev` (wrangler 4.104) was seen
+making two anonymous requests of its own:
+
+1. Miniflare asks `https://workers.cloudflare.com/cf.json` to fill `request.cf` and
+   caches the answer in `.wrangler/cache/cf.json` under the directory it runs in
+   (git-ignored here). Switch described below.
+2. Wrangler asks `https://api.github.com/repos/cloudflare/skills/contents/skills`
+   (a list of agent-skill names) and caches the answer as
+   `cloudflare-skills-repo-cache.json` in wrangler's own config directory, even with
+   `WRANGLER_SEND_METRICS=false`. This is not a Cloudflare host and carries no studio
+   data. No switch for it was found; that is not proof that none exists. In this
+   repository's test runs the cache lands in the scratch directory the tests set as
+   `XDG_CONFIG_HOME`, not in the repository.
+
+`wrangler pages dev --help` (4.104) has no flag for the first. The
 supported switch is the environment variable `CLOUDFLARE_CF_FETCH_ENABLED=false`
 (<https://developers.cloudflare.com/workers/wrangler/system-environment-variables/>):
 nothing is fetched or cached and a built-in placeholder is used. To keep any cache
@@ -120,7 +131,17 @@ character, a segment over 255 bytes, a path over 2048 characters) is answered 40
 middleware, and a 502 from the static-file layer (under `wrangler pages dev`, a file used
 as a directory such as `/index.html/` made the local simulator answer 502 with a
 path-bearing error text; the studio itself never returns 502) is also turned into a
-bodyless 404. Covered by the "unusual paths" test in `tests/server.test.mjs`.
+bodyless 404. What the hosted service answers for these paths was not checked.
+
+Paths that leave the served directory: under `wrangler pages dev`, `/..%2fstudio-cf%2fwrangler.toml`
+(an encoded slash inside a `..` segment, which the URL parser does not collapse) was served
+from one level above `studio/`, for an authenticated caller only. The middleware now
+answers a bodyless 404 for any static path with an encoded slash or backslash (`%2f`, `%5c`),
+a raw backslash, or a `.` or `..` segment after up to three rounds of decoding. Whether the
+hosted service, which serves an uploaded file list, was ever open to this is not known.
+Routes are matched without regard to case (`/API/me` reaches the API), so the middleware also
+sorts `/api/` and `/_blob/` case-insensitively when it picks the caching header.
+Covered by the "unusual paths" and "API path" tests in `tests/server.test.mjs`.
 
 Token rules: exactly three segments; header `alg` must be `RS256` (so `none`
 and `HS256` are refused before any key lookup); `kid` required; signature

@@ -257,8 +257,9 @@ def main(argv=None):
         print(f"applied to local D1 in {args.local}")
 
     if args.remote:
-        print("\nNOT executed. When the Cloudflare Access policy is confirmed and the database exists, run:\n")
+        print("\nNOT executed. When the Cloudflare Access policy is confirmed, run:\n")
         print(f"  wrangler d1 execute {DB_NAME} --remote --cwd {HERE} --file={sql_path.resolve()}\n")
+        print("If wrangler does not find its login, put `env -u XDG_CONFIG_HOME` in front (README step 10).\n")
     return 0
 
 
