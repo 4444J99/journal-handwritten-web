@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+/* tokens copied from site/index.html (--desk, --sheet, --ink, --ink-2, --blend rules). The task gave #e6dfd2 for the
+   paper; the real piece uses #e6e0d2, which is used here. */
+:root{--desk:#e6e0d2;--sheet:#f7f4ec;--ink:#2b2a27;--ink-2:#7a7262;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--desk:#121110;--sheet:#1c1a17;--ink:#e7dfcd;--ink-2:#9d968a;color-scheme:dark}}
+:root[data-theme="dark"]{--desk:#121110;--sheet:#1c1a17;--ink:#e7dfcd;--ink-2:#9d968a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;background:var(--desk)}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+/* the unit selector: hidden until tapped (or the s key); plain small text and nothing else */
+#sel{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:2px;z-index:5;font:12px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#sel[hidden]{display:none}
+#sel button{all:unset;cursor:pointer;color:var(--ink-2);padding:3px 6px;min-width:44px;min-height:22px}
+#sel button[aria-pressed="true"]{color:var(--ink);text-decoration:underline}
+#sel button[disabled]{opacity:.35;cursor:default}
+#sel button:focus-visible{outline:1px solid var(--ink-2)}
+/* invisible tap zone for the selector on touch screens (no s key there) */
+#hot{position:fixed;left:0;bottom:0;width:56px;height:56px;z-index:4;background:transparent}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="sel" hidden></div>
+<div id="hot"></div>
+<script src="alive.js"></script>
+</body>
+</html>
