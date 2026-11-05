@@ -255,10 +255,17 @@ header; that token stands in for Cloudflare Access and is not access control, so
 expose the port beyond this machine. Nothing talks to Cloudflare and the real database is
 never touched. What you click is kept in `studio-cf/.demo-state/` (git-ignored) between
 runs; delete that folder to start again from the exports. Needs node, python3 and wrangler;
-`DEMO_PORT` and `DEMO_STATE` override the port and the state folder. It was run on
-2026-11-05: `/api/me` answered the demo owner with write access, the page loaded all six
-collections, showed 38 reviewed lines on the first piece, and the two derived decisions
-appeared in the Decisions tab.
+`DEMO_PORT`, `DEMO_STATE` and `WRANGLER_BIN` override the port, the state folder and the
+wrangler used. First-run setup is complete only when `.demo-state/initialized` exists; an
+interrupted first run is repaired by the next launch (the imports are idempotent).
+The proxy (`demo-proxy.mjs`) refuses any Host other than its own (421), translates only its
+own origin to the upstream's so the API's same-origin check passes for the page's own writes,
+and forwards any other Origin unchanged so the API still rejects it; `tests/demo-proxy.test.mjs`
+covers each rule. It was run on 2026-11-05: `/api/me` answered the demo owner with write
+access, the page loaded all six collections, showed 38 reviewed lines on the first piece, and
+the two derived decisions appeared in the Decisions tab. Writes from the page itself were
+checked in a browser: undoing one line's review took the server from 38 to 37 documents and
+confirming it again took it back to 38, each shown as "Saved".
 
 ## wrangler and your login
 

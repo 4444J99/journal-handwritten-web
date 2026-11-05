@@ -5,16 +5,15 @@
 // What runs: the real Pages Functions and API on `wrangler pages dev` with a LOCAL D1/R2
 // simulation (nothing talks to Cloudflare), the studio's real page and scans (build_dist.py),
 // a copy of the committed exports (the author's reviews plus the derived decisions), and a
-// small proxy on 127.0.0.1 that adds a freshly signed TEST token, because a browser cannot
-// send the Access header itself. That token stands in for Cloudflare Access; this is not
-// access control and must never be exposed beyond this machine.
+// small proxy on 127.0.0.1 (demo-proxy.mjs) that adds a freshly signed TEST token, because a
+// browser cannot send the Access header itself. That token stands in for Cloudflare Access;
+// this is not access control and must never be exposed beyond this machine.
 //
 // State lives in studio-cf/.demo-state (git-ignored) and persists between runs, so what you
 // click is kept; delete that folder to start again from the exports. The real database is
-// never touched. Needs: node, python3, wrangler (/opt/homebrew/bin/wrangler or WRANGLER_BIN).
+// never touched. Needs: node, python3, wrangler (/opt/homebrew/bin/wrangler, or set WRANGLER_BIN).
 // Environment: DEMO_PORT (default 8790), DEMO_STATE (default studio-cf/.demo-state).
 import { spawnSync } from 'node:child_process';
-import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -25,6 +24,7 @@ const PORT = Number(process.env.DEMO_PORT || 8790);
 const BASE_DIR = path.resolve(process.env.DEMO_STATE || path.join(HERE, '.demo-state'));
 const STATE = path.join(BASE_DIR, 'd1');
 const DIST = path.join(BASE_DIR, 'dist');
+const MARKER = path.join(BASE_DIR, 'initialized');
 const EXPORTS = [
   path.join(REPO, 'exports', 'studio-db-2026-11-05'),
   path.join(REPO, 'exports', 'derived-decisions-2026-11-05'),
@@ -43,15 +43,21 @@ const load = rel => import(pathToFileURL(path.join(HERE, rel)).href);
 fs.mkdirSync(BASE_DIR, { recursive: true });
 const { makeKey, signRS256, claims, startJwks } = await load('tests/helpers/jwt.mjs');
 const { startPagesDev } = await load('tests/helpers/wrangler.mjs');
+const { createProxy } = await load('demo-proxy.mjs');
 
 if (!fs.existsSync(path.join(DIST, 'index.html'))) {
   run('python3', [path.join(HERE, 'build_dist.py'), '--out', DIST]);
 }
-if (!fs.existsSync(STATE)) {
+// First-run setup is complete only when the marker exists. The imports are idempotent
+// (CREATE TABLE IF NOT EXISTS, INSERT OR REPLACE), so an interrupted or partly failed first run
+// is repaired by simply running them again; the marker is written only after all of them succeed.
+if (!fs.existsSync(MARKER)) {
   fs.mkdirSync(STATE, { recursive: true });
+  const wr = process.env.WRANGLER_BIN ? ['--wrangler', process.env.WRANGLER_BIN] : [];
   for (const dir of EXPORTS) {
-    if (fs.existsSync(dir)) run('python3', [path.join(HERE, 'import_export.py'), dir, '--local', STATE]);
+    if (fs.existsSync(dir)) run('python3', [path.join(HERE, 'import_export.py'), dir, '--local', STATE, ...wr]);
   }
+  fs.writeFileSync(MARKER, new Date().toISOString() + '\n');
 }
 
 const key = makeKey('demo-kid');
@@ -65,16 +71,7 @@ const srv = await startPagesDev({
   ACCESS_JWKS_URL_TEST: `http://${team}/cdn-cgi/access/certs`,
 }, 'demo', { persist: STATE, dir: DIST });
 
-const token = () => signRS256(key, claims({ iss, aud: AUD, email: OWNER }));
-const proxy = http.createServer((req, res) => {
-  const headers = { ...req.headers, host: `127.0.0.1:${srv.port}`, 'cf-access-jwt-assertion': token() };
-  const up = http.request({ host: '127.0.0.1', port: srv.port, method: req.method, path: req.url, headers }, r => {
-    res.writeHead(r.statusCode, r.headers);
-    r.pipe(res);
-  });
-  up.on('error', () => { if (!res.headersSent) res.writeHead(502); res.end('upstream error'); });
-  req.pipe(up);
-});
+const proxy = createProxy({ upstreamPort: srv.port, token: () => signRS256(key, claims({ iss, aud: AUD, email: OWNER })) });
 await new Promise(r => proxy.listen(PORT, '127.0.0.1', r));
 console.log(`WORKBENCH READY: http://127.0.0.1:${PORT}/  (local copy in ${BASE_DIR}; delete it to reset)`);
 
