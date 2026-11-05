@@ -182,7 +182,7 @@ def select_versions(src, db, pid, include_versions):
         raise Stop(f"{pid}: final-version decisions name more than one version ({sorted(found)}); the author must settle it in the studio")
     if found:
         return [found.pop()], "decided final", notes
-    return [pc["top"]], "top of the stack (newest; no decided final)", notes
+    return [pc["top"]], "top of the stack; no decided final", notes
 
 
 def load_corrections(src, db, pid, indices):
@@ -293,6 +293,10 @@ def audit_strings(out_dir):
         notes = sum(len(p.get("u") or []) for p in j["pages"])
         blk = sum(1 for p in j["pages"] for b in p["B"] if "u" in b)
         rows.append(("block notes", f"page reading notes: {notes}; blocks carrying a note flag: {blk}"))
+        prov = j.get("prov", {})
+        rows.append(("info panel (from prov)", "Machine transcription (%s), %s by the author. Spelling and line breaks kept." % (prov.get("tdate", ""), "checked" if prov.get("verified") else "not yet checked")))
+        if not ({"repo", "commit", "path"} & set(prov)):
+            rows.append(("info panel (from prov)", "Scans: line renders with an empty link, empty commit and empty path (source repository keys removed)"))
     return rows
 
 
@@ -520,6 +524,9 @@ def run(a):
             versions[pid] = dict(indices=idx, how=how, total=len(src.pieces[pid]["V"]))
             if pid in pids:
                 warnings.extend(f"{pid}: {n}" for n in notes)
+                n_v = len(src.pieces[pid]["V"])
+                if not a.include_versions and how.startswith("top") and idx != [n_v - 1]:
+                    warnings.append(f"{pid}: the top of the stack (V[{idx[0]}]) is not the last entry of V (V[{n_v - 1}]); the engine's own order labels the last entry 'newest'. Publishing the top; check this is the version the author wants")
     except Stop as e:
         say(f"FAIL  stop {e}")
         return EXIT_STOP
@@ -622,6 +629,9 @@ def run(a):
     say("reader-visible strings (list only):")
     for kind, value in audit:
         say(f"  {kind}: {value[:140]}")
+    for kind, value in audit:
+        if kind == "info panel (from prov)":
+            warnings.append(f"info panel text produced from prov: {value}")
     for w in warnings:
         say(f"WARNING  {w}")
 

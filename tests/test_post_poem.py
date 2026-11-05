@@ -37,8 +37,9 @@ PIECES = {
     "p003": dict(V=[[("pg3", [0])]], top=0),
     "p004": dict(V=[[("pg1", [2])]], top=0),
     "p006": dict(V=[[("diary53", [0])], [("diary54", [0])]], top=1),
+    "p007": dict(V=[[("pg5", [0])], [("pg5", [1])]], top=0),  # top of the stack is not the last entry of V
 }
-ORDER = ["p001", "p002", "p003", "p004", "p006"]
+ORDER = ["p001", "p002", "p003", "p004", "p006", "p007"]
 
 
 def line_text(pid, vi, bi, li):
@@ -61,7 +62,7 @@ def make_private(root, other_items=None, extra_public=None):
             for pg, blocks in v:
                 for b in blocks:
                     owner[(pg, b)] = (pi, vi, st.index(vi), pid)
-    for pg in ("pg1", "pg2", "pg3", "diary53", "diary54"):
+    for pg in ("pg1", "pg2", "pg3", "diary53", "diary54", "pg5"):
         nb = 1 + max(b for (p, b) in owner if p == pg)
         B, RB = [], []
         for bi in range(nb):
@@ -83,7 +84,7 @@ def make_private(root, other_items=None, extra_public=None):
         rpages[pg]["blocks"].append({"t": "text", "spread": None, "note": None, "lines": [{"id": f"{pg}-{len(rpages[pg]['blocks'])}-0", "tx": "other", "box": [0, 0, 1, 1]}]})
         pages[pg]["B"].append({"t": 0, "L": ["other"]})
         items.append({"id": oid, "first": "", "kind": "other", "status": "", "g": 4, "versions": [{"page": pg, "blocks": [len(pages[pg]["B"]) - 1]}]})
-    j = {"v": 2, "pages": list(pages.values()), "groups": [["pg1", "pg2"], ["pg3"], ["diary53", "diary54"]], "atlas": [[16 * 5, 16]],
+    j = {"v": 2, "pages": list(pages.values()), "groups": [["pg1", "pg2"], ["pg3"], ["diary53", "diary54"]], "atlas": [[16 * 8, 16]],
          "pieces": [{"id": pid, "top": PIECES[pid]["top"],
                      "st": sorted(range(len(PIECES[pid]["V"])), key=lambda i: (i != PIECES[pid]["top"], i)),
                      "V": [{"id": f"{pid}-{k}", "s": "j", "d": None, "P": [[pg, bl] for pg, bl in v]} for k, v in enumerate(PIECES[pid]["V"])]}
@@ -98,7 +99,7 @@ def make_private(root, other_items=None, extra_public=None):
             Image.new("RGB", (8, 8), (200, 190, 180)).save(root / "site" / "img" / sub / f"{pg}.jpg")
     (root / "site" / "img" / "a").mkdir(parents=True)
     for k in ("t", "k"):
-        Image.new("RGB", (80, 16), (100, 100, 100)).save(root / "site" / "img" / "a" / f"{k}0.jpg")
+        Image.new("RGB", (128, 16), (100, 100, 100)).save(root / "site" / "img" / "a" / f"{k}0.jpg")
     (root / "release" / "public.json").write_text(json.dumps({"pieces": list(extra_public or [])}, indent=2) + "\n")
 
 
@@ -213,6 +214,7 @@ class GateTests(Base):
         self.assertEqual(self.go("p001"), 0, self.out)
         for g in ("(a) in Series", "(b) every line", "(c) in a filed"):
             self.assertRegex(self.out, "PASS  gate +" + re.escape(g))
+        self.assertNotIn("is not the last entry of V", self.out)  # p001's top is its last entry in the fixture
 
     def test_gate_a_fails_for_reserve_and_missing_doc(self):
         for release in ({"p001": {"pool": "reserve"}}, {"p001": {"pool": "archive"}}):
@@ -297,6 +299,10 @@ class HardStopTests(Base):
         self.assertEqual(self.go("p001", "--accept-shared-scan", "p002"), 3, self.out)
         self.assertIn("x-pg2", self.out)
         self.assertEqual(self.go("p001", "--accept-shared-scan", "p002,x-pg2"), 0, self.out)
+        text = self.all_text(self.work / "build")
+        self.assertNotIn("SENTINEL-p002", text)
+        self.assertNotIn("other", json.dumps(self.pubjson()["pages"][0]["B"][2]["L"]))  # the other-lines block is emptied
+        self.assertEqual(self.pubjson()["pages"][0]["B"][2]["L"], [""])
 
     def test_only_published_version_pages_count(self):
         # p004 shares pg1, which only the unpublished V0 uses: no stop by default, a stop with the whole stack
@@ -420,6 +426,18 @@ class BuildTests(Base):
         self.assertIn("1 correction(s) applied", self.out)
         self.assertNotIn(fixed, self.out)  # text is never printed
 
+    def test_top_of_stack_that_is_not_the_last_version_is_published_with_a_warning(self):
+        self.prepare(pids=("p007",), public=())
+        self.assertEqual(self.go("p007"), 0, self.out)
+        self.assertEqual([v["id"] for v in self.pc("p007")["V"]], ["p007-0"])
+        self.assertIn("WARNING  p007: the top of the stack (V[0]) is not the last entry of V (V[1])", self.out)
+
+    def test_info_panel_sentences_from_prov_are_listed_as_warnings(self):
+        self.prepare()
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.assertIn("WARNING  info panel text produced from prov: Machine transcription (2026-01-01), not yet checked by the author", self.out)
+        self.assertIn("empty link, empty commit and empty path", self.out)
+
     def test_correction_without_text_does_not_pass_gate_b(self):
         self.prepare(reviews={"pg2-0-1": {"status": "corrected", "original": line_text("p001", 1, 0, 1)}})
         self.assertEqual(self.go("p001"), 2, self.out)
@@ -465,6 +483,7 @@ class BuildTests(Base):
         self.assertNotIn("g", b1)
         self.assertNotIn("v", b1)
         self.assertIn("also carries ['p002']", self.out)
+        self.assertNotIn("SENTINEL-p002", self.all_text(self.work / "build"))  # the shared page's other piece: no text anywhere
 
     def test_piece_links_are_renumbered(self):
         # p003 is index 2 in the source data; alone it must be index 0 in the public data
