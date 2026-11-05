@@ -42,6 +42,17 @@ test('other schemes and non-urls are rejected', () => {
     assert.equal(checkPostUrl(v).ok, false, v);
 });
 
+test('host-less and scheme-relative http(s) strings are rejected (they would resolve against the studio origin)', () => {
+  for (const v of ['https:x', 'http:/x', 'https:///x', 'https://?x', 'http://#x', 'https://a b', 'https:\\\\x', ' https:x '])
+    assert.equal(checkPostUrl(v).ok, false, v);
+});
+
+test('every accepted url is absolute: it resolves to itself against any base', () => {
+  const base = 'https://studio.test/studio/index.html';
+  for (const v of ['https://versforms.pages.dev/', 'http://example.org/a?b#c', 'HTTPS://Example.org/x'])
+    assert.equal(new URL(v, base).host.toLowerCase(), new URL(v).host.toLowerCase(), v);
+});
+
 test('entry from defaults keeps the existing shape plus account', () => {
   const e = postedEntry({ where: POST_DEFAULTS.where, account: POST_DEFAULTS.account, url: '' }, '2026-11-05', '2026-11-05T00:00:00.000Z');
   assert.deepEqual({ ...e }, { type: 'social', where: 'versforms.pages.dev', account: 'vers.forms', date: '2026-11-05', url: '', ver: 'final', at: '2026-11-05T00:00:00.000Z' });
