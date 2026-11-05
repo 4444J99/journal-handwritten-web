@@ -16,13 +16,15 @@ finish with a session record, `python3 tools/check.py`, a commit and a push.
 - Tags `v2026.11.05` and `v2026.10.27` pushed (lightweight, unsigned; the signing program configured in git is missing).
 - `etceter4`: public, Pages-served; `img/photos/diary/` has 124 files, a sample returns HTTP 200. Nothing changed.
 - Actions: new tag-push runs fail in 3–4 s on the billing annotation; no re-run.
-- PR #73 summarized for his decision (39 files, +211/−0, exports only, no code or site files).
+- PR #73 summarized for his decision (39 files, +211/−0, exports only, no code or site files). After his yes it was
+  squash-merged at its reviewed head as `12fb3146f2d0d4a972622bc5192ffb01ac05c914`.
 
 ## Author decisions
 - Do the "Do now" list and ask before each "Ask first" item.
+- "Yes, merge #73" — PR #73 only.
 - Earlier approvals do not carry over to new actions.
 
 ## Plan
-- Merge PR #73 — **author**, **open**.
+- Merge PR #73 — **author** approved, **done**.
 - Changes to `etceter4`, GitHub App removals, releasing poem 1, any Cloudflare change — **author**, **open**.
 - Fix billing, then re-run the check workflow — **author** then **Claude**, **open**.

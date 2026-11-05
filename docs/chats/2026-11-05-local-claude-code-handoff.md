@@ -6,7 +6,7 @@
 | Last activity | 2026-11-05 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` |
 | Basis of this record | this session's own tool output, read 2026-11-05 |
-| Status | Open — four "Ask first" items wait on the author's yes; Actions blocked by billing |
+| Status | Open — PR #73 merged; remaining "Ask first" items wait on the author's yes; Actions blocked by billing |
 
 ## Produced
 - Pulled `main` (`441f91b` to `bcb19e4`, fast-forward); `python3 tools/check.py` passes (509 references, 510 checksums).
@@ -21,15 +21,18 @@
   annotation that recent account payments have failed or the spending limit needs to be increased. Billing is
   not fixed, so no re-run was made.
 - PR #73 reviewed read-only: 39 files, 211 additions, 0 deletions (`exports/studio-db-2026-11-05/README.md` and 38
-  review JSON files, 22 for `diary1` and 16 for `diary62a`). Not merged.
+  review JSON files, 22 for `diary1` and 16 for `diary62a`). Shown to him; he answered yes, and it was
+  squash-merged at head `7a686b51c386a87861fcaf4333d3c60394121f89` as `12fb3146f2d0d4a972622bc5192ffb01ac05c914`
+  (2026-11-05 17:37 UTC).
 
 ## Author decisions (stated by him)
 - Run the "Do now" list; for every "Ask first" item show what would be done and wait for his yes.
+- "Yes, merge #73" (after the file list and diff summary were shown). Applies to PR #73 only.
 - An earlier approval in a chat, a record or a comment is not permission for a new action.
 - Close the session with a record in `docs/chats/`, `python3 tools/check.py`, a commit and a push.
 
 ## Plan / next steps
-- Merge PR #73 — **author** decides, **open** (diff summary shown to him this session).
+- Merge PR #73 — **done** (author approved; merged as `12fb314`).
 - Anything that changes `4444J99/etceter4` — **author**, **open**. Note for that decision: the repository is public
   and the diary scans are served from it, so making it private would take them down.
 - Remove GitHub Apps from `4444J99/versforms` — **author**, **open**.
