@@ -10,15 +10,40 @@ own Cloudflare account, so the studio no longer depends on the artifact:
 | `functions/api/[[path]].js` | `/api/*` (routing and validation in `lib/api.js`) |
 | `functions/_blob/[[id]].js` | `GET /_blob/ID`, streams a photo from R2 |
 | `lib/auth.js`, `lib/api.js` | The code behind the functions (plain modules, unit-testable) |
-| `schema.sql` | D1 tables `docs` and `revs` (idempotent) |
+| `schema.sql` | D1 tables `vf_docs` and `vf_revs` (`CREATE TABLE IF NOT EXISTS`, idempotent) |
+| `sqlguard.py` | Refuses any generated SQL that touches something other than `vf_` objects (see "The shared database") |
 | `../studio/cf-adapter.js` | Defines `window.claude.use('db' / 'user' / 'assets')` over the API, only when the page is not inside claude.ai |
 | `import_export.py` | Loads an export directory into D1 (dry run, SQL file, local simulation, remote command printed only) |
+| `export_db.py` | The reverse: writes the same per-document layout from `wrangler d1 execute --json` output or a local persist directory |
 | `build_dist.py` | Assembles the complete site (page, data, thumbnails **and** full scans) into `dist/` |
 | `tests/` | `node:test` and `unittest` suites, see "Tests" |
 
-**Nothing here has been deployed and no Cloudflare resource has been created.**
-The D1 database and the R2 bucket do not exist yet, so `wrangler.toml` has no
-`database_id` (it only exists after `wrangler d1 create`).
+**Nothing here has been deployed and this lane created no Cloudflare resource
+and made no Cloudflare call.** Storage is two existing resources on the owner's
+account (author decision, 2026-11-05): the empty D1 database
+`object-lessons-submissions` (`database_id` `f1a89504-2ddd-4c9b-ade8-eb52f6aee7a3`,
+now in `wrangler.toml`) and the R2 bucket `versforms-studio-assets`. The account
+is at its 10-database cap, so no D1 database is created.
+
+## The shared database
+
+`object-lessons-submissions` belongs to another project: it holds that project's
+`submissions` table, two indexes on it, and `_cf_KV`, with 0 rows. The studio must
+never touch any of that, so:
+
+* every studio object is prefixed `vf_` (`vf_docs`, `vf_revs`), and `schema.sql`
+  uses `CREATE TABLE IF NOT EXISTS` and `vf_` names only;
+* `sqlguard.py` is a whitelist check on generated SQL. It accepts only
+  `CREATE TABLE/INDEX IF NOT EXISTS vf_...`, `INSERT [OR REPLACE] INTO vf_...`,
+  `DELETE FROM vf_...` and `SELECT ... FROM vf_...`, and refuses quoted or
+  schema-qualified names, `sqlite_*`, `_cf_*`, `DROP`, `ALTER`, `UPDATE` (except
+  an upsert's `DO UPDATE`), `ATTACH`, `PRAGMA`, `VACUUM`, triggers and views. String
+  literals (the JSON data) are ignored by the scan. `import_export.py` runs it in
+  `build_sql`, before anything is written, applied locally or printed for
+  `--remote`; `export_db.py` runs it on its query;
+* `tests/test_sqlguard.py` proves the guard and scans the studio's own JavaScript
+  (`lib/api.js`, `functions/`) and `schema.sql` for any statement on a non-`vf_`
+  object.
 
 ## Read this before deploying
 
@@ -138,25 +163,66 @@ rows and bumps `rev` once more. Under this host's Node, `wrangler d1 execute
 --local` prints its result and then does not exit, so `--local` stops it once it
 has reported success.
 
+## Exporting the data
+
+```
+python3 studio-cf/export_db.py --from-json docs.json --dry-run          # counts only
+python3 studio-cf/export_db.py --from-json docs.json --out /path/to/export-DATE
+python3 studio-cf/export_db.py --local /path/to/persist-dir --out /path/to/export-DATE
+```
+
+`docs.json` is the output of (run by the author, after `wrangler login`):
+
+```
+env -u XDG_CONFIG_HOME wrangler d1 execute object-lessons-submissions --remote --json --command "SELECT collection, id, data FROM vf_docs ORDER BY collection, id" > docs.json
+```
+
+The output has the layout of `exports/studio-db-2026-11-05`: `COLLECTION/DOCID.json`,
+one document per file (2-space indent, characters not escaped, one trailing newline,
+keys in stored order), no folder for an empty collection, and a `README.md` with
+per-collection counts. `--local` opens the SQLite file of a wrangler persist directory
+read-only (the one that has a `vf_docs` table; it never modifies it). `--out` needs a
+directory that does not exist or is empty, so nothing is ever overwritten or deleted.
+Invalid rows (unknown collection, bad id, not an object, over 64 KiB, duplicate) are
+rejects that block writing unless `--skip-rejects`. `tests/test_export_db.py` proves
+`import_export.py` followed by `export_db.py` reproduces the original files byte for
+byte (synthetic documents with quotes, newlines and non-ASCII text; and, when the PR 73
+export is present in scratch, its 38 real files).
+
+## wrangler and your login
+
+The author runs `wrangler login` himself; this lane never does. Afterwards wrangler
+may need `env -u XDG_CONFIG_HOME` in front of the command to see the legacy config at
+`~/Library/Preferences/.wrangler`, where that login is kept, if `XDG_CONFIG_HOME` is
+set in the shell (the lane's tests set it to a scratch directory so nothing is written
+to the internal disk). So run the real commands as
+
+```
+env -u XDG_CONFIG_HOME wrangler d1 execute object-lessons-submissions --remote ...
+```
+
+This is the author's instruction; it is UNVERIFIED here because no login exists in
+this lane and no Cloudflare call was made. All the commands this README gives for the
+real account assume the prefix.
+
 ## Dashboard steps (do them in this order)
 
 The Cloudflare account work below is the author's; nothing was run.
 
 1. Create the Pages project **empty**, with no deployment:
    `wrangler pages project create versforms-studio --production-branch main`.
-2. Create the storage:
-   `wrangler d1 create versforms-studio`, then `wrangler r2 bucket create versforms-studio-assets`.
-   Paste the printed D1 `database_id` into `[[d1_databases]]` in `wrangler.toml`
-   (the id is not a secret). When `pages_build_output_dir` is present, Cloudflare
-   treats this file as the source of truth for the project's bindings
+2. The storage already exists: the D1 database `object-lessons-submissions`
+   (shared, see "The shared database"; its `database_id` is already in
+   `wrangler.toml`) and the R2 bucket `versforms-studio-assets`. Create nothing.
+   When `pages_build_output_dir` is present, Cloudflare
+   treats `wrangler.toml` as the source of truth for the project's bindings
    (<https://developers.cloudflare.com/pages/functions/wrangler-configuration/>),
    so the D1 and R2 bindings (`DB`, and `PHOTOS` for the bucket, because
    `ASSETS` is reserved by Pages) come from it. Check them under the project's
-   **Settings > Bindings**. UNVERIFIED: whether `wrangler pages deploy` would
-   create missing resources automatically when `database_id` is omitted.
-   Automatic provisioning is documented for Workers (`wrangler deploy`, 4.45.0
-   and later), not for Pages, so do not rely on it.
-3. Apply the schema: `wrangler d1 execute versforms-studio --remote --cwd studio-cf --file studio-cf/schema.sql`.
+   **Settings > Bindings** after the first deploy.
+3. Apply the schema (only `CREATE TABLE IF NOT EXISTS vf_...`; it leaves the other
+   project's `submissions` table alone):
+   `env -u XDG_CONFIG_HOME wrangler d1 execute object-lessons-submissions --remote --cwd studio-cf --file studio-cf/schema.sql`.
 4. Zero Trust > Access controls > Applications > create a new application,
    **Self-hosted**, name it `versforms-studio`. Add **both** public hostnames:
    `versforms-studio.pages.dev` **and** `*.versforms-studio.pages.dev`
@@ -181,7 +247,8 @@ The Cloudflare account work below is the author's; nothing was run.
 9. Only now deploy: `python3 studio-cf/build_dist.py`, then from `studio-cf/`
    `wrangler pages deploy dist --project-name versforms-studio`.
 10. Import the data: `python3 studio-cf/import_export.py EXPORT_DIR --sql-out import.sql --remote`,
-    then run the command it prints.
+    then run the command it prints, with `env -u XDG_CONFIG_HOME` in front if
+    wrangler does not see your login.
 11. Verify: with no session, `curl -i https://versforms-studio.pages.dev/` and
     `.../api/me` and `.../data/review.json` must be answered by the Access login
     (a redirect to `cloudflareaccess.com`), never by studio content. Then open
@@ -219,6 +286,8 @@ python3 -m unittest discover -s studio-cf/tests -p 'test_*.py'
 * `browser-smoke.test.mjs`: real page in headless Google Chrome through the adapter
   (skipped visibly if Chrome is absent).
 * `test_import_export.py`: parsing, rejects, escaping (round trip through sqlite3), counts.
+* `test_sqlguard.py`: the vf_-only guard and a scan of the studio's own SQL.
+* `test_export_db.py`: `export_db.py` and the byte-for-byte round trip with the importer.
 
 Test files, wrangler logs and persisted state go to `STUDIO_CF_SCRATCH` (default
 `/Volumes/Archive4T/Temporary/versforms-work/studio-cf`).
