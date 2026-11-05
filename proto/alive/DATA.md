@@ -74,7 +74,7 @@ So the page code gives line 2 the box of line 3, and so on. All other lines key 
 
 Stanza = block. Blank lines and stanza breaks are not represented in `L`. In the image each of the five breaks between the six
 blocks is exactly one empty ruled row (measured: ruled rows used per block 3,4,4,4,3,4 with one unused row between blocks).
-Blocks 0 and 1 begin alike and may be two drafts of one stanza; nothing in the data says so (`g[2]` is just the order).
+The data carries no relation between blocks beyond `g[2]`, the order.
 
 ## pieces[] record
 
@@ -97,10 +97,12 @@ Method: shear to level the rules, Otsu threshold (171), strip rule pixels, 8-con
 rule rows by centroid, merge marks and fragments into glyphs, split words on gaps >= 1.25 x x-height.
 
 - Ink rows found: 22 = transcription lines (stable across thresholds 110 to 190). Row-to-line order is the only text-to-line link.
-- Word boxes: 87 boxes against 90 whitespace tokens. Box count equals token count on 19 of 22 lines; one of those (a line in
+- Line extents: ink x1 equals the author box x1 within 1.1 px on 19 of 22 lines; the three that differ are the two block-2
+  lines hit by the key shift and one line whose descender tail runs 38 px past its author box. Line boxes are clamped to the page.
+- Word boxes: 86 boxes against 90 whitespace tokens. Box count equals token count on 19 of 22 lines; one of those (a line in
   stanza 3) was found wrong by eye (boxes hold shifted ink) and withdrawn: 18 of 22 lines carry text. The gap rule and threshold
   were picked on these 22 lines, so this rate is optimistic.
-- Glyph boxes (ink-component groups): 302 against 340 letters; count equals letters on 4 of 22 lines. Letters are spaced widely
+- Glyph boxes (ink-component groups): 301 against 340 letters; count equals letters on 4 of 22 lines. Letters are spaced widely
   and some join, so a glyph is not a letter. Letter text is attached only on words whose glyph count equals the letter count in a
   word-aligned line: 112 of 340 letters (33 percent).
 - Known flaws: some word crops in stanzas 3 and 4 carry ink from a neighbouring line's descenders; punctuation tokens that

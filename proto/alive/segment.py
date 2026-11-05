@@ -234,7 +234,9 @@ def glyphs_for_row(comps, xh, rule_y, width, speck=8, dot_area=0.12, dot_dim=0.5
             return True
         if h <= 3 and abs(c["sy"] - rule_y) <= 2.5:
             return True
-        return (c["x1"] >= width - 2 or c["x0"] <= 1) and w <= 12
+        # page-edge shadow / column line: thin sliver within 8 px of the left or right image edge
+        return (c["x1"] >= width - 8 or c["x0"] <= 8) and w <= 4 or \
+            ((c["x1"] >= width - 2 or c["x0"] <= 1) and w <= 12)
     gl = [dict(c, parts=1) for c in comps if not junk(c)]
     dropped = len(comps) - len(gl)
     dmax = dot_area * xh * xh
@@ -323,12 +325,16 @@ def words_for_row(glyphs, xh, rule):
 
 # ---------------------------------------------------------------- boxes
 
-def obox(items, s_unused=None):
-    """Original-frame box of component-like items (x from sheared == original)."""
+def obox(items, size=None):
+    """Original-frame box of component-like items (x from sheared == original).
+    size=(w, h) clamps the box to the image."""
     x0 = min(i["x0"] for i in items)
     x1 = max(i["x1"] for i in items)
     y0 = int(math.floor(min(i["oy0"] for i in items)))
     y1 = int(math.ceil(max(i["oy1"] for i in items)))
+    if size:
+        x0, x1 = max(0, x0), min(size[0], x1)
+        y0, y1 = max(0, y0), min(size[1], y1)
     return [x0, y0, x1, y1]
 
 
@@ -374,7 +380,7 @@ def segment_rows(state, xh, gap_rule, min_ink=400):
         words = words_for_row([g for g in gl if not g["mark"]], xh, gap_rule)
         out.append({"row": k, "rule_y": state["rules"][k], "glyphs": gl, "words": words,
                     "specks": dropped, "ink": sum(c["n"] for c in cs),
-                    "box": obox(gl) if gl else None})
+                    "box": obox(gl, state["size"]) if gl else None})
     return out
 
 

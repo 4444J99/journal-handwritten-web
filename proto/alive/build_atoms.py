@@ -207,13 +207,13 @@ def main(argv):
         toks = tokens_of(ln["text"])
         words = []
         for wi, wd in enumerate(r["final_words"]):
-            wbox = S.obox(wd)
+            wbox = S.obox(wd, state["size"])
             gl = []
             wtxt = toks[wi] if aligned_words else None
             lets = letters_of(wtxt) if wtxt else None
             glyph_aligned = bool(lets) and len(wd) == len(lets)
             for gi, g in enumerate(wd):
-                ge = {"box": S.obox([g]), "ink_px": g["n"], "components": g["parts"]}
+                ge = {"box": S.obox([g], state["size"]), "ink_px": g["n"], "components": g["parts"]}
                 if glyph_aligned:
                     ge["text"] = lets[gi]
                 gl.append(ge)
@@ -221,7 +221,9 @@ def main(argv):
             if aligned_words:
                 we["text"] = wtxt
             words.append(we)
-        marks = [{"box": S.obox([g]), "ink_px": g["n"]} for g in r["glyphs"] if g["mark"]]
+        marks = [{"box": S.obox([g], state["size"]), "ink_px": g["n"]} for g in r["glyphs"] if g["mark"]]
+        abox = author.get(best_key) if best_key else None
+        dx1 = round(lbox[2] - abox[2], 1) if abox else None
         line = {"stanza": ln["stanza"], "line": ln["line"], "index": idx, "box": lbox,
                 "rule_row": r["row"],
                 "text": ln["text"],
@@ -229,14 +231,25 @@ def main(argv):
                 "author_box_expected_key": "%d-%d" % (ln["block"], ln["line"]) if exp else None,
                 "author_box_best_key": "%d-%d" % best_key if best_key else None,
                 "author_box_best_iou": round(best_iou, 3),
+                "ink_x1_minus_author_x1": dx1,
                 "words_alignment": aligned_words,
                 "n_word_boxes_gap_rule": sx["boxes"], "n_tokens": sx["tokens"],
                 "glyphs_total": sx["glyphs"], "letters_total": sx["letters"],
                 "words": words, "marks": marks}
         out_st[ln["stanza"]]["lines"].append(line)
 
+    def union(boxes):
+        return [min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)]
+    for st in out_st:
+        st["box"] = union([l["box"] for l in st["lines"]])
+    poem_box = union([st["box"] for st in out_st])
+    flagged = [l["index"] for st in out_st for l in st["lines"]
+               if l["ink_x1_minus_author_x1"] is not None and abs(l["ink_x1_minus_author_x1"]) > 25]
     meta = {
-        "poem": PIECE_ID, "version_index": 0, "version_id": ver["id"],
+        "poem": PIECE_ID, "poem_box": poem_box,
+        "edge_check": {"rule": "|ink x1 - author x1| > 25 px", "flagged_line_indices": flagged,
+                       "note": "author boxes are loose and block 2 is keyed off by one; flags are for review, not errors"},
+ "version_index": 0, "version_id": ver["id"],
         "source_page": {"id": PAGE_ID, "image": "site/img/p/%s.jpg" % PAGE_ID, "size": [state["size"][0], state["size"][1]]},
         "frame": "pixels of site/img/p/diary1.jpg, [x0,y0,x1,y1], x1/y1 exclusive, origin top-left; analysis runs in a sheared frame and is mapped back (about +-1 px)",
         "parameters": {
@@ -266,7 +279,7 @@ def main(argv):
                   "match rates are optimistic: the gap rule and threshold were picked on these same 22 lines",
                   "author line boxes for block 2: keys 2-1 and 2-2 hold the boxes of lines 2 and 3; line 1 has none (see author_box_* fields)"],
     }
-    doc = {"meta": meta, "stanzas": out_st}
+    doc = {"meta": meta, "poem": PIECE_ID, "box": poem_box, "stanzas": out_st}
     with open(a.out, "w") as f:
         json.dump(doc, f, indent=1)
         f.write("\n")

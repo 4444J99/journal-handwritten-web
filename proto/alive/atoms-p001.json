@@ -1,6 +1,21 @@
 {
  "meta": {
   "poem": "p001",
+  "poem_box": [
+   40,
+   15,
+   1128,
+   1600
+  ],
+  "edge_check": {
+   "rule": "|ink x1 - author x1| > 25 px",
+   "flagged_line_indices": [
+    8,
+    10,
+    16
+   ],
+   "note": "author boxes are loose and block 2 is keyed off by one; flags are for review, not errors"
+  },
   "version_index": 0,
   "version_id": "p001-diary1-0",
   "source_page": {
@@ -47,9 +62,9 @@
    "letters_in_count_equal_words_guided_tier": 0,
    "letter_alignment_rate_gap_tier": 0.329,
    "letter_alignment_rate_incl_guided": 0.329,
-   "boxes_total": 87,
+   "boxes_total": 86,
    "tokens_total": 90,
-   "glyphs_total": 302
+   "glyphs_total": 301
   },
   "viable": {
    "stanza": {
@@ -282,12 +297,12 @@
     "thresh": 171,
     "gap_rule": "fixed:0.8",
     "rows": 22,
-    "word_line_rate": 0.5,
+    "word_line_rate": 0.545,
     "glyph_line_rate": 0.182,
-    "boxes": 102,
+    "boxes": 101,
     "tokens": 90,
-    "glyphs": 302,
-    "letter_alignment_rate": 0.165
+    "glyphs": 301,
+    "letter_alignment_rate": 0.206
    },
    {
     "thresh": 171,
@@ -295,9 +310,9 @@
     "rows": 22,
     "word_line_rate": 0.773,
     "glyph_line_rate": 0.182,
-    "boxes": 90,
+    "boxes": 89,
     "tokens": 90,
-    "glyphs": 302,
+    "glyphs": 301,
     "letter_alignment_rate": 0.294
    },
    {
@@ -306,9 +321,9 @@
     "rows": 22,
     "word_line_rate": 0.818,
     "glyph_line_rate": 0.182,
-    "boxes": 87,
+    "boxes": 86,
     "tokens": 90,
-    "glyphs": 302,
+    "glyphs": 301,
     "letter_alignment_rate": 0.329
    },
    {
@@ -317,9 +332,9 @@
     "rows": 22,
     "word_line_rate": 0.727,
     "glyph_line_rate": 0.182,
-    "boxes": 83,
+    "boxes": 82,
     "tokens": 90,
-    "glyphs": 302,
+    "glyphs": 301,
     "letter_alignment_rate": 0.291
    },
    {
@@ -328,21 +343,21 @@
     "rows": 22,
     "word_line_rate": 0.5,
     "glyph_line_rate": 0.182,
-    "boxes": 67,
+    "boxes": 66,
     "tokens": 90,
-    "glyphs": 302,
+    "glyphs": 301,
     "letter_alignment_rate": 0.156
    },
    {
     "thresh": 171,
     "gap_rule": "ratio",
     "rows": 22,
-    "word_line_rate": 0.682,
+    "word_line_rate": 0.727,
     "glyph_line_rate": 0.182,
-    "boxes": 94,
+    "boxes": 93,
     "tokens": 90,
-    "glyphs": 302,
-    "letter_alignment_rate": 0.3
+    "glyphs": 301,
+    "letter_alignment_rate": 0.341
    },
    {
     "thresh": 190,
@@ -419,6 +434,13 @@
    "author line boxes for block 2: keys 2-1 and 2-2 hold the boxes of lines 2 and 3; line 1 has none (see author_box_* fields)"
   ]
  },
+ "poem": "p001",
+ "box": [
+  40,
+  15,
+  1128,
+  1600
+ ],
  "stanzas": [
   {
    "stanza": 0,
@@ -440,6 +462,7 @@
      "author_box_expected_key": "0-0",
      "author_box_best_key": "0-0",
      "author_box_best_iou": 0.848,
+     "ink_x1_minus_author_x1": -1.1,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -599,6 +622,7 @@
      "author_box_expected_key": "0-1",
      "author_box_best_key": "0-1",
      "author_box_best_iou": 0.859,
+     "ink_x1_minus_author_x1": -0.7,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 4,
      "n_tokens": 4,
@@ -868,6 +892,7 @@
      "author_box_expected_key": "0-2",
      "author_box_best_key": "0-2",
      "author_box_best_iou": 0.714,
+     "ink_x1_minus_author_x1": 0.7,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -996,6 +1021,12 @@
       }
      ]
     }
+   ],
+   "box": [
+    47,
+    15,
+    677,
+    221
    ]
   },
   {
@@ -1018,6 +1049,7 @@
      "author_box_expected_key": "1-0",
      "author_box_best_key": "1-0",
      "author_box_best_iou": 0.868,
+     "ink_x1_minus_author_x1": -0.1,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -1142,6 +1174,7 @@
      "author_box_expected_key": "1-1",
      "author_box_best_key": "1-1",
      "author_box_best_iou": 0.885,
+     "ink_x1_minus_author_x1": -0.9,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -1279,6 +1312,7 @@
      "author_box_expected_key": "1-2",
      "author_box_best_key": "1-2",
      "author_box_best_iou": 0.884,
+     "ink_x1_minus_author_x1": -0.6,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
@@ -1594,6 +1628,7 @@
      "author_box_expected_key": "1-3",
      "author_box_best_key": "1-3",
      "author_box_best_iou": 0.848,
+     "ink_x1_minus_author_x1": 0.4,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -1681,6 +1716,12 @@
      ],
      "marks": []
     }
+   ],
+   "box": [
+    47,
+    265,
+    924,
+    501
    ]
   },
   {
@@ -1703,6 +1744,7 @@
      "author_box_expected_key": "2-0",
      "author_box_best_key": "2-0",
      "author_box_best_iou": 0.926,
+     "ink_x1_minus_author_x1": -1.0,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
@@ -1998,6 +2040,7 @@
      "author_box_expected_key": "2-1",
      "author_box_best_key": "2-1",
      "author_box_best_iou": 0.083,
+     "ink_x1_minus_author_x1": 140.6,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 6,
      "n_tokens": 6,
@@ -2286,6 +2329,7 @@
      "author_box_expected_key": "2-2",
      "author_box_best_key": "2-1",
      "author_box_best_iou": 0.692,
+     "ink_x1_minus_author_x1": 12.6,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 4,
      "n_tokens": 4,
@@ -2511,6 +2555,7 @@
      "author_box_expected_key": null,
      "author_box_best_key": "2-2",
      "author_box_best_iou": 0.182,
+     "ink_x1_minus_author_x1": -540.6,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 1,
      "n_tokens": 1,
@@ -2602,6 +2647,12 @@
      ],
      "marks": []
     }
+   ],
+   "box": [
+    53,
+    550,
+    972,
+    774
    ]
   },
   {
@@ -2624,6 +2675,7 @@
      "author_box_expected_key": "3-0",
      "author_box_best_key": "3-0",
      "author_box_best_iou": 0.869,
+     "ink_x1_minus_author_x1": -0.0,
      "words_alignment": null,
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 3,
@@ -2751,6 +2803,7 @@
      "author_box_expected_key": "3-1",
      "author_box_best_key": "3-1",
      "author_box_best_iou": 0.911,
+     "ink_x1_minus_author_x1": 0.3,
      "words_alignment": null,
      "n_word_boxes_gap_rule": 6,
      "n_tokens": 7,
@@ -3082,6 +3135,7 @@
      "author_box_expected_key": "3-2",
      "author_box_best_key": "3-2",
      "author_box_best_iou": 0.61,
+     "ink_x1_minus_author_x1": -0.6,
      "words_alignment": null,
      "n_word_boxes_gap_rule": 4,
      "n_tokens": 4,
@@ -3331,6 +3385,7 @@
      "author_box_expected_key": "3-3",
      "author_box_best_key": "3-3",
      "author_box_best_iou": 0.913,
+     "ink_x1_minus_author_x1": -0.8,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
@@ -3546,6 +3601,12 @@
      ],
      "marks": []
     }
+   ],
+   "box": [
+    40,
+    835,
+    1128,
+    1073
    ]
   },
   {
@@ -3568,6 +3629,7 @@
      "author_box_expected_key": "4-0",
      "author_box_best_key": "4-0",
      "author_box_best_iou": 0.917,
+     "ink_x1_minus_author_x1": -1.0,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 7,
      "n_tokens": 7,
@@ -3829,6 +3891,7 @@
      "author_box_expected_key": "4-1",
      "author_box_best_key": "4-1",
      "author_box_best_iou": 0.874,
+     "ink_x1_minus_author_x1": 38.3,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
@@ -4112,6 +4175,7 @@
      "author_box_expected_key": "4-2",
      "author_box_best_key": "4-2",
      "author_box_best_iou": 0.707,
+     "ink_x1_minus_author_x1": -0.5,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
@@ -4355,6 +4419,12 @@
       }
      ]
     }
+   ],
+   "box": [
+    46,
+    1121,
+    1006,
+    1309
    ]
   },
   {
@@ -4377,6 +4447,7 @@
      "author_box_expected_key": "5-0",
      "author_box_best_key": "5-0",
      "author_box_best_iou": 0.949,
+     "ink_x1_minus_author_x1": -0.3,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -4568,6 +4639,7 @@
      "author_box_expected_key": "5-1",
      "author_box_best_key": "5-1",
      "author_box_best_iou": 0.866,
+     "ink_x1_minus_author_x1": -0.9,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 7,
      "n_tokens": 7,
@@ -4898,6 +4970,7 @@
      "author_box_expected_key": "5-2",
      "author_box_best_key": "5-2",
      "author_box_best_iou": 0.983,
+     "ink_x1_minus_author_x1": -0.8,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 2,
      "n_tokens": 2,
@@ -5037,19 +5110,20 @@
      "box": [
       52,
       1534,
-      1132,
-      1601
+      1056,
+      1600
      ],
      "rule_row": 27,
      "text": "Of that which you were so fond ?",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
      "author_box_expected_key": "5-3",
      "author_box_best_key": "5-3",
-     "author_box_best_iou": 0.818,
+     "author_box_best_iou": 0.884,
+     "ink_x1_minus_author_x1": -0.5,
      "words_alignment": null,
-     "n_word_boxes_gap_rule": 7,
+     "n_word_boxes_gap_rule": 6,
      "n_tokens": 8,
-     "glyphs_total": 22,
+     "glyphs_total": 21,
      "letters_total": 24,
      "words": [
       {
@@ -5200,7 +5274,7 @@
         542,
         1557,
         627,
-        1601
+        1600
        ],
        "glyphs": [
         {
@@ -5208,7 +5282,7 @@
           542,
           1559,
           572,
-          1601
+          1600
          ],
          "ink_px": 481,
          "components": 1
@@ -5327,31 +5401,16 @@
         }
        ],
        "glyphs_aligned": false
-      },
-      {
-       "box": [
-        1130,
-        1579,
-        1132,
-        1600
-       ],
-       "glyphs": [
-        {
-         "box": [
-          1130,
-          1579,
-          1132,
-          1600
-         ],
-         "ink_px": 23,
-         "components": 1
-        }
-       ],
-       "glyphs_aligned": false
       }
      ],
      "marks": []
     }
+   ],
+   "box": [
+    40,
+    1348,
+    1088,
+    1600
    ]
   }
  ]
