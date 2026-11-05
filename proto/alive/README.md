@@ -94,7 +94,7 @@ A crop may overflow its floor, top and bottom, by half of the excess of the tall
 so 14 units; capped at 16; the 57 other pieces keep 8), so no ink of the line is cut; the crop holds only the line's own
 region ink, so no neighbour ink appears. Floors are drawn in three passes (fills, crops, outlines) so that an overflow is not
 painted over by the next floor's fill. The stanza unit uses the same overflow for p001 (it was 0). Scale-to-fit was not used:
-it would shrink six lines (box heights 84 to 92 px) by up to 30 percent against the others.
+fitting the six tall lines (box heights 84 to 92 px) into the 80 unit window would shrink them by up to 13 percent (30 percent into the bare 64 unit floor) against the other lines.
 Units, chosen by the on-screen height of one floor (`floorPx`): `poem` < 4 px, `stanza` < 10, `line` < 48, `word` < 110,
 `glyph` above. Drawing per unit: poem = one solid silhouette (floors and setbacks filled) with the line crops in it; stanza =
 each stanza a solid slab (floors contiguous) with an outline; line = each floor outlined, ledges at setbacks; word = word
@@ -150,5 +150,10 @@ Keys: `s` selector, `a` architecture, `b` spiral, `Enter` open READING, `Escape`
   in places, rule stubs show at box edges that touch the page margin, and lines of other items that have no box cannot be
   excluded. 142 of the 1047 lines of the 58 pieces have no box and are omitted from their buildings. Pieces other than p001
   may have the same block key shift as diary1 block 2 (review boxes are used as authored); not audited.
+- Pixel noise across theme switches: after repeated canvas read-backs, a re-render of the same architecture state (p001, fit view)
+  differs from the earlier frames by 7419 of 4096000 channel values (largest difference 23 levels; 147 values before the floors
+  were drawn in three passes). Frames drawn through the normal path (boot, theme switches) were identical to each other; only a
+  frame drawn by an explicit `render()` after several read-backs differed. Suspected cause, not established: a different
+  rasteriser path after the read-backs. Reading-view frames are pixel-identical across loads (SHA-256 check).
 - Version 0 of each piece only.
 - Reading is not scrollable: the column is fitted to the viewport.
