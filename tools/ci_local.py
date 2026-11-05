@@ -29,6 +29,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -38,17 +39,45 @@ SUITES = ["check", "py-tests", "node-tests", "studio-cf-py", "studio-cf-node"]
 INFO = chr(0x2139)  # the information mark node's test reporter prints before counts
 
 
+def kill_group(p):
+    """Stop a suite and everything it started (a dev server, a browser), not only its first process."""
+    # macOS answers EPERM, not ESRCH, when the only member left in a group is an unreaped zombie.
+    gone = (ProcessLookupError, PermissionError)
+    try:
+        os.killpg(p.pid, signal.SIGTERM)
+    except gone:
+        pass
+    try:
+        p.wait(timeout=1.0)  # reap the leader so only real stragglers remain in the group
+    except subprocess.TimeoutExpired:
+        pass
+    try:
+        os.killpg(p.pid, signal.SIGKILL)  # whatever ignored SIGTERM
+    except gone:
+        pass
+    try:
+        p.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        pass
+
+
 def run(cmd, cwd, timeout, env):
+    """Run one suite in its own process group; on timeout kill the whole group."""
     start = time.monotonic()
     try:
-        p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout, env=env)
-        return p.returncode, (p.stdout or "") + (p.stderr or ""), time.monotonic() - start
-    except subprocess.TimeoutExpired as e:
-        out = (e.stdout or b"")
-        out = out.decode("utf-8", "replace") if isinstance(out, bytes) else out
-        return 124, out + "\n[timed out]", time.monotonic() - start
+        p = subprocess.Popen(cmd, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, start_new_session=True)
     except FileNotFoundError as e:
         return 127, f"[command not found: {e.filename}]", time.monotonic() - start
+    try:
+        out, _ = p.communicate(timeout=timeout)
+        return p.returncode, out or "", time.monotonic() - start
+    except subprocess.TimeoutExpired:
+        kill_group(p)
+        try:
+            out, _ = p.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
+            out = ""
+        return 124, (out or "") + "\n[timed out]", time.monotonic() - start
 
 
 def count_unittest(out):
@@ -120,8 +149,9 @@ def main():
 
     env = dict(os.environ)
     if a.tmpdir:
-        Path(a.tmpdir).mkdir(parents=True, exist_ok=True)
-        env["TMPDIR"] = a.tmpdir
+        tmpdir = Path(a.tmpdir).resolve()  # suites run with cwd=root, so a relative TMPDIR would point elsewhere
+        tmpdir.mkdir(parents=True, exist_ok=True)
+        env["TMPDIR"] = str(tmpdir)
 
     selected = [s for s in plan(root) if (not a.only or s[0] in a.only) and s[0] not in a.skip]
     results = []
@@ -157,6 +187,14 @@ def main():
         Path(a.json_out).write_text(json.dumps(receipt, indent=2) + "\n")
 
     if a.status:
+        # The suites can run for minutes and may edit files or switch commits. Posting a result for
+        # the SHA read before they ran would then describe a commit that was not what got tested.
+        _, sha_after, _ = git(root, "rev-parse", "HEAD")
+        _, dirty_after, _ = git(root, "status", "--porcelain")
+        if sha_after != sha or dirty_after:
+            what = dirty_after or f"HEAD {sha[:8]} -> {sha_after[:8]}"
+            print("refused: the checkout changed while the suites ran, so the result would not describe a commit:\n" + what, file=sys.stderr)
+            return 2
         rc, url, _ = git(root, "remote", "get-url", "origin")
         m = re.search(r"github\.com[:/]+([^/]+)/([^/]+?)(?:\.git)?$", url or "")
         if not m:
