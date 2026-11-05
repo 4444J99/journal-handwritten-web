@@ -241,6 +241,25 @@ accepts can be well over 64 KiB once indented). `tests/test_export_db.py` proves
 byte (synthetic documents with quotes, newlines and non-ASCII text; and, when the PR 73
 export is present in scratch, its 38 real files).
 
+## Run the workbench locally (no Cloudflare)
+
+```
+node studio-cf/demo.mjs        # then open http://127.0.0.1:8790/ ; Ctrl-C stops it
+```
+
+This runs the real studio page, Pages Functions and API on `wrangler pages dev` with a
+**local** D1/R2 simulation, loaded from the committed exports (`exports/studio-db-2026-11-05`
+and `exports/derived-decisions-2026-11-05`). A small proxy on 127.0.0.1 adds a freshly
+signed **test** token for `owner@demo.test`, because a browser cannot send the Access
+header; that token stands in for Cloudflare Access and is not access control, so never
+expose the port beyond this machine. Nothing talks to Cloudflare and the real database is
+never touched. What you click is kept in `studio-cf/.demo-state/` (git-ignored) between
+runs; delete that folder to start again from the exports. Needs node, python3 and wrangler;
+`DEMO_PORT` and `DEMO_STATE` override the port and the state folder. It was run on
+2026-11-05: `/api/me` answered the demo owner with write access, the page loaded all six
+collections, showed 38 reviewed lines on the first piece, and the two derived decisions
+appeared in the Decisions tab.
+
 ## wrangler and your login
 
 The author runs `wrangler login` himself; this lane never does. Afterwards wrangler
@@ -253,13 +272,27 @@ to the internal disk). So run the real commands as
 env -u XDG_CONFIG_HOME wrangler d1 execute object-lessons-submissions --remote ...
 ```
 
-This is the author's instruction; it is UNVERIFIED here because no login exists in
-this lane and no Cloudflare call was made. All the commands this README gives for the
-real account assume the prefix.
+Verified on 2026-11-05, after the author's `wrangler login`: in a shell with
+`XDG_CONFIG_HOME=~/.config`, `wrangler whoami`, `wrangler d1 execute object-lessons-submissions
+--remote --file ...` and `wrangler pages project create versforms-studio` all worked
+**without** the prefix. Use the prefix only if wrangler answers "Not logged in".
 
 ## Dashboard steps (do them in this order)
 
-The Cloudflare account work below is the author's; nothing was run.
+State on 2026-11-05 (the first three steps were run by the lead session after the author's
+`wrangler login`; nothing is deployed):
+
+- **Step 1 done:** the empty Pages project `versforms-studio` exists with no deployment.
+- **Step 2 done:** the R2 bucket `versforms-studio-assets` exists (created through the
+  Cloudflare connector); the D1 database is the shared `object-lessons-submissions`.
+- **Step 3 done, and step 10 done early:** `vf_docs` and `vf_revs` were created and the 38
+  reviews (41 queries) and the two derived decisions (5 queries) were imported, then read
+  back with separate queries (reviews 38, decisions 2, one revision row each; the other
+  project's `submissions` table untouched at 0 rows). The import was run before the Access
+  policy because nothing can read the database yet: no route is deployed. The rows can be
+  removed with `DELETE FROM vf_docs; DELETE FROM vf_revs;`.
+- **Remaining:** steps 4 to 9 (the Access application, the variables, the deploy) and the
+  step 11 check. Steps 4 to 6 are the author's click-through; the rest can then be run.
 
 1. Create the Pages project **empty**, with no deployment:
    `wrangler pages project create versforms-studio --production-branch main`.
