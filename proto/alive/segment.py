@@ -17,7 +17,21 @@ Stdlib + Pillow only (no numpy).  Pipeline, all on one page image:
                    sheared-frame box and original-frame y extent.
   5. assign_rows   each component goes to the rule row whose band holds its
                    ink-mass centroid (band = rule centre - P + beta .. + beta,
-                   P = rule period, beta = descender allowance).
+                   P = rule period, beta = descender allowance).  This only
+                   decides WHICH rule rows carry text (>= min_ink ink px); it is
+                   the "before" of step 5b.
+  5b. partition    adjacent handwritten lines overlap vertically (descenders of
+                   line N touch ascenders of line N+1), so 8-connected components
+                   merge across rows and a centroid hands whole strokes to the
+                   wrong line.  partition() replaces the centroid ownership: one
+                   seam per adjacent text-line pair (a min-cost path, one boundary
+                   row per column, found by dynamic programming over the sheared
+                   ink mask; cost = 8-neighbour ink-ink adjacencies the seam
+                   separates + a straightness term + a centring tie-break).  Every
+                   ink pixel belongs to exactly one line; components are relabelled
+                   inside each line.  The region of a line is the closed polygon
+                   between its two seams (region_polygon).  Optional author
+                   waypoints (hard constraints, data not code) override the seam.
   6. glyphs        per row: drop specks, merge small marks (dots) into a host
                    component they sit over/under, merge near-touching or nested
                    fragments.  A glyph is an ink component group, NOT a letter.
@@ -25,6 +39,9 @@ Stdlib + Pillow only (no numpy).  Pipeline, all on one page image:
                    chosen rule splits a word (rule "fixed:K" = gap >= K*xh,
                    rule "ratio" = largest relative jump among the line's gaps
                    between a floor and a ceiling).
+
+Seam parameters (SEAM_PARAMS) were fixed after looking at the 22 lines of the one page
+this was built on: they are in-sample, not validated on held-out pages.
 
 All reported boxes are [x0, y0, x1, y1] integer pixels in the ORIGINAL page
 frame (x1, y1 exclusive).  Analysis runs in the sheared frame; boxes are mapped
@@ -148,8 +165,13 @@ def binarise(sh, thresh, rules, rule_half=2, probe=3):
     return mask, removed
 
 
-def label(mask, w, h, s, pad):
-    """8-connected components. Each: dict(n, x0, x1, Y0, Y1, sy, oy0, oy1)."""
+def label(mask, w, h, s, pad, owner=None, split=False):
+    """8-connected components. Each: dict(n, x0, x1, Y0, Y1, sy, oy0, oy1).
+
+    owner: optional padded bytearray (same layout as mask) of a line ordinal per pixel.
+    split=False: neighbours connect only when their owners are equal (relabelling inside
+    each line); each component then carries "owner".  split=True: connectivity ignores the
+    owner and each component carries "owners" (the sorted set of owners its pixels have)."""
     wp = w + 2
     seen = bytearray(len(mask))
     nb = (-1, 1, -wp, wp, -wp - 1, -wp + 1, wp - 1, wp + 1)
@@ -163,6 +185,9 @@ def label(mask, w, h, s, pad):
         x0 = y0 = 1 << 30
         x1 = y1 = -1
         oy0, oy1 = 1e9, -1e9
+        ow = owner[i] if owner is not None else None
+        ows = {ow} if (owner is not None and split) else None
+        link = owner is not None and not split
         while st:
             p = st.pop()
             y, x = divmod(p, wp)
@@ -180,10 +205,19 @@ def label(mask, w, h, s, pad):
             for o in nb:
                 q = p + o
                 if mask[q] and not seen[q]:
+                    if link and owner[q] != ow:
+                        continue
                     seen[q] = 1
+                    if ows is not None:
+                        ows.add(owner[q])
                     st.append(q)
-        comps.append({"n": n, "x0": x0, "x1": x1 + 1, "Y0": y0, "Y1": y1 + 1,
-                      "sy": sy / n, "oy0": oy0, "oy1": oy1 + 1})
+        c = {"n": n, "x0": x0, "x1": x1 + 1, "Y0": y0, "Y1": y1 + 1,
+             "sy": sy / n, "oy0": oy0, "oy1": oy1 + 1}
+        if link:
+            c["owner"] = ow
+        if ows is not None:
+            c["owners"] = sorted(ows)
+        comps.append(c)
     return comps
 
 
@@ -221,18 +255,21 @@ def _union(a, b):
             "parts": a.get("parts", 1) + b.get("parts", 1)}
 
 
-def glyphs_for_row(comps, xh, rule_y, width, speck=8, dot_area=0.12, dot_dim=0.5, near=3):
+def glyphs_for_row(comps, xh, rule_y, width, speck=8, dot_area=0.12, dot_dim=0.5, near=3, rules=None):
     """Merge a row's components into glyphs. Returns (glyphs, dropped).
 
-    Dropped: specks (< `speck` px), rule residue (<= 3 px tall, centred on the
-    rule) and page-border slivers (touching the left/right image edge, <= 12 px wide).
+    Dropped: specks (< `speck` px), rule residue (<= 3 px tall, centred on a
+    rule: the row's own, or with `rules` any rule, because the seam partition hands a line the
+    residue lying on an empty neighbouring rule) and page-border slivers (touching the
+    left/right image edge, <= 12 px wide).
     """
+    resid = rules if rules else [rule_y]
     def junk(c):
         h = c["Y1"] - c["Y0"]
         w = c["x1"] - c["x0"]
         if c["n"] < speck:
             return True
-        if h <= 3 and abs(c["sy"] - rule_y) <= 2.5:
+        if h <= 3 and min(abs(c["sy"] - r) for r in resid) <= 2.5:
             return True
         # page-edge shadow / column line: thin sliver within 8 px of the left or right image edge
         return (c["x1"] >= width - 8 or c["x0"] <= 8) and w <= 4 or \
@@ -346,6 +383,287 @@ def iou(a, b):
     return inter / u if u else 0.0
 
 
+# ---------------------------------------------------------------- seam partition
+
+# Fixed after looking at the 22 lines of diary1 (in-sample; see README.md / DATA.md).
+#  step          max change of the seam row between adjacent columns (px)
+#  straightness  cost per px of that change
+#  centring      tie-break cost per px away from the middle of the band
+#  descender_xh  band depth below the upper baseline, in x-heights; 1.6 * 23.68 = 37.9 px is
+#                just above the deepest single-line descender measured on diary1 (35.8 px)
+#  ascender_px   highest ascender above the baseline measured on diary1 (53.7 px); only used
+#                to widen the band across an empty ruled row
+#  body_bottom   the band starts this many rows below the upper rule centre (measured median)
+SEAM_PARAMS = {"step": 6, "straightness": 0.05, "centring": 0.002, "descender_xh": 1.6,
+               "ascender_px": 53.7, "body_bottom": 1}
+BIG = 1e6
+
+
+def _window_cols(mask, w, Hs, y_first, y_last):
+    """Per-column tuples of the ink flags of sheared rows y_first..y_last (inclusive)."""
+    wp = w + 2
+    rows = []
+    for Y in range(y_first, y_last + 1):
+        if 0 <= Y < Hs:
+            rows.append(mask[(Y + 1) * wp + 1:(Y + 1) * wp + 1 + w])
+        else:
+            rows.append(bytes(w))
+    return list(zip(*rows))
+
+
+def seam_dp(cols, lo, hi, yc, step, lam, eps, forced=None):
+    """Min-cost seam through candidate boundary rows lo..hi (sheared frame), one per column.
+
+    cols[x] holds the ink flags of rows lo-1..hi (index i <-> row lo-1+i).  A seam value y at a
+    column puts rows < y on the upper line and rows >= y on the lower one.  Cost: the number of
+    8-neighbour ink-ink adjacencies the seam separates (vertical ones at the column itself,
+    horizontal and diagonal ones between neighbouring columns) + lam * |change| + eps * |y - yc|.
+    forced: optional {x: (ymin, ymax)} hard windows.  Returns (seam list, total cost).
+    Pure python; the separated-pair count per column pair is closed-form from prefix sums."""
+    w = len(cols)
+    m = hi - lo + 1
+    cen = [eps * abs(y - yc) for y in range(lo, hi + 1)]
+
+    def node(x):
+        c = cols[x]
+        nd = [float(c[k] & c[k + 1]) for k in range(m)]
+        if forced and x in forced:
+            a, b = forced[x]
+            for k in range(m):
+                if not (a <= lo + k <= b):
+                    nd[k] += BIG
+        return nd
+
+    nd = node(0)
+    dp = [nd[k] + cen[k] for k in range(m)]
+    back = [None] * w
+    for x in range(1, w):
+        cl, cr = cols[x - 1], cols[x]
+        nd = node(x)
+        if any(cl) and any(cr):
+            n1 = m + 1
+            ei = [0] * n1
+            ej = [0] * n1
+            for i in range(n1):
+                if cl[i]:
+                    ei[i] = (cr[i - 1] if i else 0) + cr[i] + (cr[i + 1] if i + 1 < n1 else 0)
+                if cr[i]:
+                    ej[i] = (cl[i - 1] if i else 0) + cl[i] + (cl[i + 1] if i + 1 < n1 else 0)
+            rowtot, coltot = [0] * m, [0] * m
+            r = c = 0
+            for k in range(m):
+                r += ei[k]
+                c += ej[k]
+                rowtot[k] = r
+                coltot[k] = c
+            diag = [(cl[k] & cr[k + 1]) + (cl[k + 1] & cr[k]) for k in range(m)]
+            new, bk = [0.0] * m, [0] * m
+            for l in range(m):
+                best, bkk = float("inf"), 0
+                for k in range(max(0, l - step), min(m - 1, l + step) + 1):
+                    cut = coltot[l] - rowtot[k] if l > k else (diag[k] if l == k else rowtot[k] - coltot[l])
+                    v = (dp[k] + cut) + lam * abs(k - l)
+                    if v < best:
+                        best, bkk = v, k
+                new[l] = (best + nd[l]) + cen[l]
+                bk[l] = bkk
+        else:
+            new, bk = [0.0] * m, [0] * m
+            for l in range(m):
+                best, bkk = float("inf"), 0
+                for k in range(max(0, l - step), min(m - 1, l + step) + 1):
+                    v = (dp[k] + 0) + lam * abs(k - l)
+                    if v < best:
+                        best, bkk = v, k
+                new[l] = (best + nd[l]) + cen[l]
+                bk[l] = bkk
+        dp = new
+        back[x] = bk
+    k = min(range(m), key=lambda i: (dp[i], i))
+    cost = dp[k]
+    seam = [0] * w
+    for x in range(w - 1, -1, -1):
+        seam[x] = lo + k
+        if x:
+            k = back[x][k]
+    return seam, cost
+
+
+def text_rows_of(rows, min_ink=400):
+    """Rule rows that carry text: >= min_ink ink pixels under the centroid assignment."""
+    return [k for k in sorted(rows) if sum(c["n"] for c in rows[k]) >= min_ink]
+
+
+def seam_band(rules, ra, rb, xh, prm):
+    """Band (lo, hi) of candidate seam rows and the centring row for the pair of text rows ra < rb."""
+    Ba, Bb = rules[ra], rules[rb]
+    lo = int(round(Ba)) + prm["body_bottom"]
+    c_lo = Ba + prm["descender_xh"] * xh
+    c_hi = Bb - prm["ascender_px"]
+    hi = int(round(max(c_lo, c_hi)))
+    yc = (c_lo + c_hi) / 2.0 if c_hi > c_lo else (lo + hi) / 2.0
+    return lo, hi, yc
+
+
+def forced_windows(waypoints, pair, w, pad, s):
+    """{x: (ymin, ymax)} sheared-row windows for the author waypoints of one pair.
+    A waypoint record: {"pair": k, "points": [[x, y_page], ...], "tol": px}; the polyline is in
+    page pixels (x right, y down), the seam must stay within tol of it on its x range."""
+    out = {}
+    for wp_ in waypoints or []:
+        if wp_["pair"] != pair:
+            continue
+        pts = sorted(wp_["points"])
+        tol = float(wp_.get("tol", 1.0))
+        for (xa, ya), (xb, yb) in zip(pts, pts[1:]):
+            for x in range(int(math.ceil(xa)), int(math.floor(xb)) + 1):
+                if not 0 <= x < w:
+                    continue
+                t = (x - xa) / (xb - xa) if xb > xa else 0.0
+                yp = ya + t * (yb - ya)
+                Y = yp + pad - s * (x + 0.5)
+                out[x] = (int(math.ceil(Y - tol)), int(math.floor(Y + tol)))
+    return out
+
+
+def owner_array(seams, w, Hs):
+    """Padded bytearray (stride w+2): line ordinal per pixel, rows < seam0 -> 0, ... 255 on the pad."""
+    wp = w + 2
+    own = bytearray(b"\xff" * ((Hs + 2) * wp))
+    n = len(seams)
+    for x in range(w):
+        b = [0] + [sm[x] for sm in seams] + [Hs]
+        for j in range(n + 1):
+            y0, y1 = b[j], b[j + 1]
+            if y1 > y0:
+                own[(y0 + 1) * wp + x + 1:(y1 + 1) * wp + x + 1:wp] = bytes([j]) * (y1 - y0)
+    return own
+
+
+def cut_pairs(mask, own, w):
+    """8-neighbour ink-ink pairs whose owners differ: list of (Y, x) of the first pixel of each."""
+    wp = w + 2
+    pts = []
+    for i, v in enumerate(mask):
+        if not v:
+            continue
+        oi = own[i]
+        for o in (1, wp, wp + 1, wp - 1):
+            q = i + o
+            if q < len(mask) and mask[q] and own[q] != oi:
+                y, x = divmod(i, wp)
+                pts.append((y - 1, x - 1))
+    return pts
+
+
+def cluster_sites(pts, radius=3):
+    """Single-linkage groups of points at Chebyshev distance <= radius."""
+    seen = [False] * len(pts)
+    sites = []
+    for i in range(len(pts)):
+        if seen[i]:
+            continue
+        seen[i] = True
+        grp, st = [i], [i]
+        while st:
+            j = st.pop()
+            for q in range(len(pts)):
+                if not seen[q] and max(abs(pts[q][0] - pts[j][0]), abs(pts[q][1] - pts[j][1])) <= radius:
+                    seen[q] = True
+                    grp.append(q)
+                    st.append(q)
+        sites.append(grp)
+    return sites
+
+
+def partition(state, xh, min_ink=400, params=None, waypoints=None):
+    """Replace the centroid row assignment by the seam partition (see module docstring, 5b).
+
+    Needs the state of prepare().  Sets state["rows"] (rule row -> components owned by that line),
+    state["text_rows"], state["seams"] (one list of sheared boundary rows per adjacent text-line
+    pair), state["rows_centroid"] (the replaced assignment, kept for before/after) and
+    state["partition"] (parameters, bands, conservation and cut counts).  Asserts that every ink
+    pixel keeps exactly one owner and that the seams are strictly ordered."""
+    prm = dict(SEAM_PARAMS, **(params or {}))
+    w, h = state["size"]
+    Hs, pad, s = state["Hs"], state["pad"], state["slope"]
+    mask, rules = state["mask"], state["rules"]
+    cent = state["rows"]
+    trows = text_rows_of(cent, min_ink)
+    seams, costs, bands = [], [], []
+    for i in range(len(trows) - 1):
+        lo, hi, yc = seam_band(rules, trows[i], trows[i + 1], xh, prm)
+        hi = min(hi, Hs - 1)
+        forced = forced_windows(waypoints, i, w, pad, s)
+        if forced and any(not (lo <= a <= b <= hi) for a, b in forced.values()):
+            raise SystemExit("waypoint window outside the band of pair %d" % i)
+        cols = _window_cols(mask, w, Hs, lo - 1, hi)
+        sm, cost = seam_dp(cols, lo, hi, yc, prm["step"], prm["straightness"], prm["centring"], forced)
+        seams.append(sm)
+        costs.append(round(cost, 3))
+        bands.append([lo, hi])
+    for a, b in zip(seams, seams[1:]):
+        if not all(p < q for p, q in zip(a, b)):
+            raise SystemExit("seams are not strictly ordered")
+    own = owner_array(seams, w, Hs)
+    comps = label(mask, w, h, s, pad, owner=own)
+    ink_total = sum(c["n"] for c in state["comps"])
+    if sum(c["n"] for c in comps) != ink_total:
+        raise SystemExit("ink not conserved by the partition")
+    rows = {}
+    for c in comps:
+        k = trows[c["owner"]]
+        c["row"] = k
+        c["tall"] = (c["Y1"] - c["Y0"]) > 0.95 * state["period"]
+        rows.setdefault(k, []).append(c)
+    pts = cut_pairs(mask, own, w)
+    sites = cluster_sites(pts)
+    merged = [c for c in label(mask, w, h, s, pad, owner=own, split=True) if len(c["owners"]) > 1]
+    state["rows_centroid"] = cent
+    state["rows"] = rows
+    state["text_rows"] = trows
+    state["seams"] = seams
+    state["partition"] = {
+        "params": prm, "bands": bands, "costs": costs, "ink_total": ink_total, "ink_after": sum(c["n"] for c in comps),
+        "ink_per_line": [sum(c["n"] for c in rows.get(k, [])) for k in trows],
+        "cut_adjacencies": len(pts), "cut_sites": len(sites),
+        "merged_components_split": len(merged),
+        "waypoints_used": sorted({wp_["pair"] for wp_ in waypoints or []}),
+    }
+    return state
+
+
+def region_polygon(state, line, ndigits=2):
+    """Closed polygon (page pixels, clamped to the page) of the area between line's two seams.
+
+    Vertex x is the column centre (x + 0.5); y of a seam value Y is Y - pad + slope * x_centre.
+    Collinear runs are collapsed.  Half-open reading: a page pixel belongs to the region when its
+    centre has top <= y < bottom."""
+    w, h = state["size"]
+    pad, s, seams = state["pad"], state["slope"], state["seams"]
+
+    def curve(sm):
+        pts = [(0.0, sm[0] - pad + s * 0.0)]
+        pts += [(x + 0.5, sm[x] - pad + s * (x + 0.5)) for x in range(w)]
+        pts.append((float(w), sm[w - 1] - pad + s * w))
+        return pts
+
+    def flat(y):
+        return [(0.0, y), (float(w), y)]
+
+    def thin(pts):
+        out = [pts[0]]
+        for a, b, c in zip(pts, pts[1:], pts[2:]):
+            if abs((b[1] - a[1]) * (c[0] - b[0]) - (c[1] - b[1]) * (b[0] - a[0])) > 1e-7:
+                out.append(b)
+        out.append(pts[-1])
+        return out
+    top = flat(0.0) if line == 0 else thin(curve(seams[line - 1]))
+    bot = flat(float(h)) if line == len(seams) else thin(curve(seams[line]))
+    poly = top + bot[::-1]
+    return [[round(x, ndigits), round(min(max(y, 0.0), float(h)), ndigits)] for x, y in poly]
+
+
 # ---------------------------------------------------------------- driver
 
 def prepare(page_path, thresh=None, xh=22.4, beta_frac=0.3):
@@ -364,17 +682,21 @@ def prepare(page_path, thresh=None, xh=22.4, beta_frac=0.3):
     beta = beta_frac * period
     rows = assign_rows(comps, rules, period, beta)
     return {"size": (w, h), "slope": s, "pad": pad, "rules": rules, "period": period,
-            "thresh": t, "rule_px_removed": removed, "comps": comps, "rows": rows, "beta": beta}
+            "thresh": t, "rule_px_removed": removed, "comps": comps, "rows": rows, "beta": beta,
+            "mask": mask, "Hs": sh.size[1]}
 
 
-def segment_rows(state, xh, gap_rule, min_ink=400):
-    """Glyphs and words for every row that carries >= min_ink ink pixels."""
+def segment_rows(state, xh, gap_rule, min_ink=400, rows=None):
+    """Glyphs and words for every row that carries >= min_ink ink pixels.
+    rows: the {rule row: components} assignment to use (default state["rows"], which is the seam
+    partition once partition() has run; pass state["rows_centroid"] for the centroid 'before')."""
     out = []
-    for k in sorted(state["rows"]):
-        cs = state["rows"][k]
+    rows = state["rows"] if rows is None else rows
+    for k in sorted(rows):
+        cs = rows[k]
         if sum(c["n"] for c in cs) < min_ink:
             continue
-        gl, dropped = glyphs_for_row(cs, xh, state["rules"][k], state["size"][0])
+        gl, dropped = glyphs_for_row(cs, xh, state["rules"][k], state["size"][0], rules=state["rules"])
         # marks (dots, commas, periods) stay out of the gap analysis: they are
         # reported as glyphs flagged "mark" but never form or extend a word
         words = words_for_row([g for g in gl if not g["mark"]], xh, gap_rule)
@@ -412,13 +734,20 @@ def main(argv):
     ap.add_argument("--xh", type=float, default=22.4)
     ap.add_argument("--gap", default="ratio", help="ratio | fixed:K")
     ap.add_argument("--overlay-dir")
+    ap.add_argument("--no-seams", action="store_true", help="keep the centroid row assignment (no seam partition)")
+    ap.add_argument("--waypoints", help="JSON list of author seam waypoints (see forced_windows)")
     a = ap.parse_args(argv)
-    st = prepare(a.page, a.thresh)
+    st = prepare(a.page, a.thresh, a.xh)
+    if not a.no_seams:
+        partition(st, a.xh, waypoints=json.load(open(a.waypoints)) if a.waypoints else None)
     rule = ("ratio",) if a.gap == "ratio" else ("fixed", float(a.gap.split(":")[1]))
     rows = segment_rows(st, a.xh, rule)
     res = {"slope": st["slope"], "thresh": st["thresh"], "period": st["period"],
            "rows": [{"row": r["row"], "box": r["box"], "words": [obox(w) for w in r["words"]],
                      "glyphs": [obox([g]) for g in r["glyphs"]]} for r in rows]}
+    if not a.no_seams:
+        res["partition"] = st["partition"]
+        res["seams"] = st["seams"]
     json.dump(res, open(a.out, "w"))
     if a.overlay_dir:
         for i, r in enumerate(rows):

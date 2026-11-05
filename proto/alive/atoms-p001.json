@@ -41,7 +41,7 @@
    "rule_residue": "components <=3 px tall centred on a rule are dropped",
    "mark_rule": "dot/period: area<=0.12*xh^2 and size<=0.5*xh; comma-like: area<=0.45*xh^2, centroid at/below the rule, w<=0.7*xh, h<=1.1*xh",
    "glyph_merge": "marks merge into a host they sit over/under; nested or near-touching (<=3 px) fragments merge",
-   "row_assignment": "ink-mass centroid vs rule rows (band up to rule + 0.3*period)"
+   "row_assignment": "centroid vs rule rows (band up to rule + 0.3*period) only decides which rule rows carry text; ink ownership is the seam partition (meta.partition)"
   },
   "counts": {
    "stanzas": 6,
@@ -58,13 +58,13 @@
    "glyph_lines_equal_whole_line": 4,
    "glyph_line_rate": 0.182,
    "letters_total": 340,
-   "letters_in_count_equal_words_gap_tier": 112,
+   "letters_in_count_equal_words_gap_tier": 116,
    "letters_in_count_equal_words_guided_tier": 0,
-   "letter_alignment_rate_gap_tier": 0.329,
-   "letter_alignment_rate_incl_guided": 0.329,
+   "letter_alignment_rate_gap_tier": 0.341,
+   "letter_alignment_rate_incl_guided": 0.341,
    "boxes_total": 86,
    "tokens_total": 90,
-   "glyphs_total": 301
+   "glyphs_total": 306
   },
   "viable": {
    "stanza": {
@@ -73,7 +73,7 @@
    },
    "line": {
     "viable": true,
-    "basis": "22 ink rows = 22 lines; line boxes from ink; some boxes are contaminated by neighbouring descenders"
+    "basis": "22 ink rows = 22 lines; line boxes and regions from the seam partition (every ink pixel owned by one line); box rectangles of neighbours still overlap, regions do not"
    },
    "word": {
     "viable": true,
@@ -92,345 +92,660 @@
    "withdrawn_lines": [
     13
    ],
-   "reason": "box count equals token count but the word boxes hold the wrong ink; text withdrawn"
+   "reason": "line 13: box count equals token count (4 for 4) but, re-checked by eye after the seam partition, the seam still cuts three descender loops of line 12 at the neck and hands them to line 13 (one inside its first word box, two inside its fourth), and the upper bowl of the last letter group is split with line 12; text withdrawn until the author traces seam waypoints (seam-waypoints-diary1.json)"
   },
-  "sweep": [
-   {
-    "thresh": 110,
-    "gap_rule": "fixed:0.8",
-    "rows": 22,
-    "word_line_rate": 0.318,
-    "glyph_line_rate": 0.227,
-    "boxes": 106,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.097
+  "partition": {
+   "method": "min-cost seam per adjacent text-line pair (dynamic programming over the sheared ink mask), see segment.py partition()",
+   "frame": "seam values are boundary rows of the sheared frame (rows < seam belong to the upper line); each line's `region` polygon is the page-frame image of its two seams (page y = Y - pad + slope * x)",
+   "region_rule": "a page pixel belongs to a region when its centre has top <= y < bottom; regions of different lines never overlap by construction (seams strictly ordered)",
+   "parameters": {
+    "step": 6,
+    "straightness": 0.05,
+    "centring": 0.002,
+    "descender_xh": 1.6,
+    "ascender_px": 53.7,
+    "body_bottom": 1
    },
-   {
-    "thresh": 110,
-    "gap_rule": "fixed:1",
-    "rows": 22,
-    "word_line_rate": 0.591,
-    "glyph_line_rate": 0.227,
-    "boxes": 95,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.215
+   "x_height_used_px": 23.68,
+   "bands_sheared_Y": [
+    [
+     96,
+     133
+    ],
+    [
+     154,
+     191
+    ],
+    [
+     211,
+     273
+    ],
+    [
+     327,
+     364
+    ],
+    [
+     385,
+     422
+    ],
+    [
+     442,
+     479
+    ],
+    [
+     500,
+     561
+    ],
+    [
+     616,
+     652
+    ],
+    [
+     673,
+     710
+    ],
+    [
+     731,
+     768
+    ],
+    [
+     789,
+     850
+    ],
+    [
+     904,
+     941
+    ],
+    [
+     962,
+     999
+    ],
+    [
+     1020,
+     1057
+    ],
+    [
+     1077,
+     1138
+    ],
+    [
+     1193,
+     1230
+    ],
+    [
+     1251,
+     1288
+    ],
+    [
+     1309,
+     1370
+    ],
+    [
+     1424,
+     1461
+    ],
+    [
+     1482,
+     1519
+    ],
+    [
+     1540,
+     1577
+    ]
+   ],
+   "tuned_in_sample": "band depth 1.6*xh (checked against the deepest single-line descender measured on this page), ascender 53.7 px (the tallest ascender measured on this page), step, straightness and centring were fixed after looking at these same 22 lines; no held-out page was used",
+   "waypoints": {
+    "file": "seam-waypoints-diary1.json",
+    "pairs_constrained": [],
+    "note": "author-traced seam constraints, data not code; none supplied for this build"
    },
-   {
-    "thresh": 110,
-    "gap_rule": "fixed:1.25",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.227,
-    "boxes": 87,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.279
+   "ink_pixels": {
+    "total": 104452,
+    "owned_after": 104452,
+    "per_line": [
+     2122,
+     3868,
+     2740,
+     2028,
+     2236,
+     5607,
+     2355,
+     5521,
+     4811,
+     5309,
+     1993,
+     2628,
+     7466,
+     7862,
+     4649,
+     6764,
+     7346,
+     6871,
+     3613,
+     8396,
+     2456,
+     7811
+    ]
    },
-   {
-    "thresh": 110,
-    "gap_rule": "fixed:1.5",
-    "rows": 22,
-    "word_line_rate": 0.682,
-    "glyph_line_rate": 0.227,
-    "boxes": 83,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.274
+   "cut": {
+    "separated_ink_adjacencies": 47,
+    "sites": 5,
+    "components_split_across_lines": 5
    },
-   {
-    "thresh": 110,
-    "gap_rule": "fixed:2",
-    "rows": 22,
-    "word_line_rate": 0.455,
-    "glyph_line_rate": 0.227,
-    "boxes": 67,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.135
-   },
-   {
-    "thresh": 110,
-    "gap_rule": "ratio",
-    "rows": 22,
-    "word_line_rate": 0.545,
-    "glyph_line_rate": 0.227,
-    "boxes": 92,
-    "tokens": 90,
-    "glyphs": 322,
-    "letter_alignment_rate": 0.171
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "fixed:0.8",
-    "rows": 22,
-    "word_line_rate": 0.364,
-    "glyph_line_rate": 0.227,
-    "boxes": 103,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.129
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "fixed:1",
-    "rows": 22,
-    "word_line_rate": 0.636,
-    "glyph_line_rate": 0.227,
-    "boxes": 94,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.253
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "fixed:1.25",
-    "rows": 22,
-    "word_line_rate": 0.773,
-    "glyph_line_rate": 0.227,
-    "boxes": 86,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.3
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "fixed:1.5",
-    "rows": 22,
-    "word_line_rate": 0.682,
-    "glyph_line_rate": 0.227,
-    "boxes": 83,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.262
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "fixed:2",
-    "rows": 22,
-    "word_line_rate": 0.455,
-    "glyph_line_rate": 0.227,
-    "boxes": 67,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.126
-   },
-   {
-    "thresh": 130,
-    "gap_rule": "ratio",
-    "rows": 22,
-    "word_line_rate": 0.591,
-    "glyph_line_rate": 0.227,
-    "boxes": 93,
-    "tokens": 90,
-    "glyphs": 314,
-    "letter_alignment_rate": 0.194
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "fixed:0.8",
-    "rows": 22,
-    "word_line_rate": 0.5,
-    "glyph_line_rate": 0.182,
-    "boxes": 101,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.174
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "fixed:1",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.182,
-    "boxes": 91,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.256
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "fixed:1.25",
-    "rows": 22,
-    "word_line_rate": 0.818,
-    "glyph_line_rate": 0.182,
-    "boxes": 85,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.303
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "fixed:1.5",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.182,
-    "boxes": 81,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.265
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "fixed:2",
-    "rows": 22,
-    "word_line_rate": 0.5,
-    "glyph_line_rate": 0.182,
-    "boxes": 66,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.153
-   },
-   {
-    "thresh": 150,
-    "gap_rule": "ratio",
-    "rows": 22,
-    "word_line_rate": 0.636,
-    "glyph_line_rate": 0.182,
-    "boxes": 92,
-    "tokens": 90,
-    "glyphs": 306,
-    "letter_alignment_rate": 0.262
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "fixed:0.8",
-    "rows": 22,
-    "word_line_rate": 0.545,
-    "glyph_line_rate": 0.182,
-    "boxes": 101,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.206
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "fixed:1",
-    "rows": 22,
-    "word_line_rate": 0.773,
-    "glyph_line_rate": 0.182,
-    "boxes": 89,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.294
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "fixed:1.25",
-    "rows": 22,
-    "word_line_rate": 0.818,
-    "glyph_line_rate": 0.182,
-    "boxes": 86,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.329
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "fixed:1.5",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.182,
-    "boxes": 82,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.291
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "fixed:2",
-    "rows": 22,
-    "word_line_rate": 0.5,
-    "glyph_line_rate": 0.182,
-    "boxes": 66,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.156
-   },
-   {
-    "thresh": 171,
-    "gap_rule": "ratio",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.182,
-    "boxes": 93,
-    "tokens": 90,
-    "glyphs": 301,
-    "letter_alignment_rate": 0.341
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "fixed:0.8",
-    "rows": 22,
-    "word_line_rate": 0.591,
-    "glyph_line_rate": 0.227,
-    "boxes": 99,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.247
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "fixed:1",
-    "rows": 22,
-    "word_line_rate": 0.818,
-    "glyph_line_rate": 0.227,
-    "boxes": 88,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.326
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "fixed:1.25",
-    "rows": 22,
-    "word_line_rate": 0.818,
-    "glyph_line_rate": 0.227,
-    "boxes": 86,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.329
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "fixed:1.5",
-    "rows": 22,
-    "word_line_rate": 0.727,
-    "glyph_line_rate": 0.227,
-    "boxes": 82,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.291
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "fixed:2",
-    "rows": 22,
-    "word_line_rate": 0.5,
-    "glyph_line_rate": 0.227,
-    "boxes": 66,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.156
-   },
-   {
-    "thresh": 190,
-    "gap_rule": "ratio",
-    "rows": 22,
-    "word_line_rate": 0.773,
-    "glyph_line_rate": 0.227,
-    "boxes": 92,
-    "tokens": 90,
-    "glyphs": 298,
-    "letter_alignment_rate": 0.35
+   "before_after": {
+    "line_pairs_with_overlapping_boxes_centroid": {
+     "4-5": 2,
+     "5-6": 12,
+     "8-9": 10,
+     "9-10": 28,
+     "12-13": 57,
+     "13-14": 32,
+     "15-16": 26,
+     "16-17": 47,
+     "18-19": 10,
+     "19-20": 22
+    },
+    "line_pairs_with_overlapping_boxes_seam": {
+     "4-5": 2,
+     "5-6": 12,
+     "8-9": 10,
+     "9-10": 28,
+     "12-13": 27,
+     "13-14": 25,
+     "15-16": 26,
+     "16-17": 39,
+     "18-19": 10,
+     "19-20": 22
+    },
+    "boxes_over_80px_centroid": [
+     9,
+     13,
+     14,
+     15,
+     17,
+     19
+    ],
+    "boxes_over_80px_seam": [
+     9,
+     12,
+     13,
+     15,
+     16,
+     19
+    ],
+    "box_overlap_note": "box rectangles in the page frame still overlap between lines (a 37 px descender plus a 54 px ascender exceeds the 57.7 px pitch, and the 1.25 degree tilt adds about 22 px); only regions are disjoint",
+    "per_line": [
+     {
+      "index": 0,
+      "box_centroid": [
+       48,
+       15,
+       371,
+       77
+      ],
+      "box_seam": [
+       48,
+       15,
+       371,
+       77
+      ],
+      "ink_centroid": 2110,
+      "ink_seam": 2122,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 11,
+      "glyphs_seam": 11
+     },
+     {
+      "index": 1,
+      "box_centroid": [
+       47,
+       85,
+       677,
+       148
+      ],
+      "box_seam": [
+       47,
+       85,
+       677,
+       148
+      ],
+      "ink_centroid": 3868,
+      "ink_seam": 3868,
+      "word_boxes_centroid": 4,
+      "word_boxes_seam": 4,
+      "glyphs_centroid": 16,
+      "glyphs_seam": 16
+     },
+     {
+      "index": 2,
+      "box_centroid": [
+       67,
+       148,
+       487,
+       221
+      ],
+      "box_seam": [
+       67,
+       148,
+       487,
+       221
+      ],
+      "ink_centroid": 2740,
+      "ink_seam": 2740,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 8,
+      "glyphs_seam": 8
+     },
+     {
+      "index": 3,
+      "box_centroid": [
+       60,
+       265,
+       378,
+       316
+      ],
+      "box_seam": [
+       60,
+       265,
+       378,
+       316
+      ],
+      "ink_centroid": 2028,
+      "ink_seam": 2028,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 7,
+      "glyphs_seam": 7
+     },
+     {
+      "index": 4,
+      "box_centroid": [
+       47,
+       319,
+       381,
+       377
+      ],
+      "box_seam": [
+       47,
+       319,
+       381,
+       377
+      ],
+      "ink_centroid": 2236,
+      "ink_seam": 2236,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 8,
+      "glyphs_seam": 8
+     },
+     {
+      "index": 5,
+      "box_centroid": [
+       62,
+       375,
+       924,
+       446
+      ],
+      "box_seam": [
+       62,
+       375,
+       924,
+       446
+      ],
+      "ink_centroid": 5607,
+      "ink_seam": 5607,
+      "word_boxes_centroid": 5,
+      "word_boxes_seam": 5,
+      "glyphs_centroid": 20,
+      "glyphs_seam": 20
+     },
+     {
+      "index": 6,
+      "box_centroid": [
+       79,
+       434,
+       345,
+       501
+      ],
+      "box_seam": [
+       79,
+       434,
+       345,
+       501
+      ],
+      "ink_centroid": 2349,
+      "ink_seam": 2355,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 5,
+      "glyphs_seam": 5
+     },
+     {
+      "index": 7,
+      "box_centroid": [
+       57,
+       550,
+       898,
+       611
+      ],
+      "box_seam": [
+       57,
+       550,
+       898,
+       611
+      ],
+      "ink_centroid": 5521,
+      "ink_seam": 5521,
+      "word_boxes_centroid": 5,
+      "word_boxes_seam": 5,
+      "glyphs_centroid": 18,
+      "glyphs_seam": 18
+     },
+     {
+      "index": 8,
+      "box_centroid": [
+       59,
+       612,
+       972,
+       682
+      ],
+      "box_seam": [
+       59,
+       612,
+       972,
+       682
+      ],
+      "ink_centroid": 4811,
+      "ink_seam": 4811,
+      "word_boxes_centroid": 6,
+      "word_boxes_seam": 6,
+      "glyphs_centroid": 16,
+      "glyphs_seam": 16
+     },
+     {
+      "index": 9,
+      "box_centroid": [
+       53,
+       672,
+       844,
+       758
+      ],
+      "box_seam": [
+       53,
+       672,
+       844,
+       758
+      ],
+      "ink_centroid": 5309,
+      "ink_seam": 5309,
+      "word_boxes_centroid": 4,
+      "word_boxes_seam": 4,
+      "glyphs_centroid": 14,
+      "glyphs_seam": 14
+     },
+     {
+      "index": 10,
+      "box_centroid": [
+       62,
+       730,
+       304,
+       774
+      ],
+      "box_seam": [
+       62,
+       730,
+       304,
+       774
+      ],
+      "ink_centroid": 1990,
+      "ink_seam": 1993,
+      "word_boxes_centroid": 1,
+      "word_boxes_seam": 1,
+      "glyphs_centroid": 7,
+      "glyphs_seam": 7
+     },
+     {
+      "index": 11,
+      "box_centroid": [
+       41,
+       835,
+       472,
+       891
+      ],
+      "box_seam": [
+       41,
+       835,
+       472,
+       891
+      ],
+      "ink_centroid": 2625,
+      "ink_seam": 2628,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 8,
+      "glyphs_seam": 8
+     },
+     {
+      "index": 12,
+      "box_centroid": [
+       40,
+       891,
+       1128,
+       968
+      ],
+      "box_seam": [
+       40,
+       891,
+       1128,
+       975
+      ],
+      "ink_centroid": 6703,
+      "ink_seam": 7466,
+      "word_boxes_centroid": 6,
+      "word_boxes_seam": 6,
+      "glyphs_centroid": 23,
+      "glyphs_seam": 26
+     },
+     {
+      "index": 13,
+      "box_centroid": [
+       57,
+       911,
+       990,
+       1017
+      ],
+      "box_seam": [
+       57,
+       948,
+       990,
+       1037
+      ],
+      "ink_centroid": 8067,
+      "ink_seam": 7862,
+      "word_boxes_centroid": 4,
+      "word_boxes_seam": 4,
+      "glyphs_centroid": 18,
+      "glyphs_seam": 19
+     },
+     {
+      "index": 14,
+      "box_centroid": [
+       64,
+       985,
+       807,
+       1073
+      ],
+      "box_seam": [
+       64,
+       1012,
+       807,
+       1073
+      ],
+      "ink_centroid": 5207,
+      "ink_seam": 4649,
+      "word_boxes_centroid": 5,
+      "word_boxes_seam": 5,
+      "glyphs_centroid": 14,
+      "glyphs_seam": 14
+     },
+     {
+      "index": 15,
+      "box_centroid": [
+       46,
+       1121,
+       1000,
+       1212
+      ],
+      "box_seam": [
+       46,
+       1121,
+       1000,
+       1212
+      ],
+      "ink_centroid": 6753,
+      "ink_seam": 6764,
+      "word_boxes_centroid": 7,
+      "word_boxes_seam": 7,
+      "glyphs_centroid": 14,
+      "glyphs_seam": 14
+     },
+     {
+      "index": 16,
+      "box_centroid": [
+       58,
+       1186,
+       967,
+       1265
+      ],
+      "box_seam": [
+       58,
+       1186,
+       967,
+       1278
+      ],
+      "ink_centroid": 6741,
+      "ink_seam": 7346,
+      "word_boxes_centroid": 5,
+      "word_boxes_seam": 5,
+      "glyphs_centroid": 16,
+      "glyphs_seam": 17
+     },
+     {
+      "index": 17,
+      "box_centroid": [
+       49,
+       1218,
+       1006,
+       1309
+      ],
+      "box_seam": [
+       49,
+       1239,
+       1006,
+       1309
+      ],
+      "ink_centroid": 7476,
+      "ink_seam": 6871,
+      "word_boxes_centroid": 5,
+      "word_boxes_seam": 5,
+      "glyphs_centroid": 16,
+      "glyphs_seam": 16
+     },
+     {
+      "index": 18,
+      "box_centroid": [
+       42,
+       1348,
+       519,
+       1422
+      ],
+      "box_seam": [
+       42,
+       1348,
+       519,
+       1422
+      ],
+      "ink_centroid": 3613,
+      "ink_seam": 3613,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 11,
+      "glyphs_seam": 11
+     },
+     {
+      "index": 19,
+      "box_centroid": [
+       50,
+       1412,
+       1088,
+       1493
+      ],
+      "box_seam": [
+       50,
+       1412,
+       1088,
+       1493
+      ],
+      "ink_centroid": 8396,
+      "ink_seam": 8396,
+      "word_boxes_centroid": 7,
+      "word_boxes_seam": 7,
+      "glyphs_centroid": 21,
+      "glyphs_seam": 21
+     },
+     {
+      "index": 20,
+      "box_centroid": [
+       40,
+       1471,
+       342,
+       1526
+      ],
+      "box_seam": [
+       40,
+       1471,
+       342,
+       1526
+      ],
+      "ink_centroid": 2456,
+      "ink_seam": 2456,
+      "word_boxes_centroid": 2,
+      "word_boxes_seam": 2,
+      "glyphs_centroid": 9,
+      "glyphs_seam": 9
+     },
+     {
+      "index": 21,
+      "box_centroid": [
+       52,
+       1534,
+       1056,
+       1600
+      ],
+      "box_seam": [
+       52,
+       1534,
+       1056,
+       1600
+      ],
+      "ink_centroid": 7811,
+      "ink_seam": 7811,
+      "word_boxes_centroid": 6,
+      "word_boxes_seam": 6,
+      "glyphs_centroid": 21,
+      "glyphs_seam": 21
+     }
+    ]
    }
-  ],
+  },
+  "sweep": [],
   "notes": [
    "glyph = ink component group, not a letter; letters are spaced widely and some join or split",
    "marks (commas, periods, dots) are listed per line in 'marks' and never form words",
    "text appears only where a count check passed; 'text_basis' documents the line-level mapping",
-   "match rates are optimistic: the gap rule and threshold were picked on these same 22 lines",
+   "match rates are optimistic: the gap rule, the threshold and the seam parameters were picked on these same 22 lines",
    "author line boxes for block 2: keys 2-1 and 2-2 hold the boxes of lines 2 and 3; line 1 has none (see author_box_* fields)"
   ]
  },
@@ -456,6 +771,61 @@
       371,
       77
      ],
+     "region": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       1135.0,
+       0.0
+      ],
+      [
+       1135.0,
+       111.74
+      ],
+      [
+       68.5,
+       88.49
+      ],
+      [
+       66.5,
+       86.45
+      ],
+      [
+       64.5,
+       86.41
+      ],
+      [
+       63.5,
+       85.38
+      ],
+      [
+       62.5,
+       86.36
+      ],
+      [
+       60.5,
+       86.32
+      ],
+      [
+       59.5,
+       87.3
+      ],
+      [
+       58.5,
+       87.28
+      ],
+      [
+       57.5,
+       88.25
+      ],
+      [
+       0.0,
+       87.0
+      ]
+     ],
+     "ink_px": 2122,
      "rule_row": 1,
      "text": "The walls",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -616,6 +986,61 @@
       677,
       148
      ],
+     "region": [
+      [
+       0.0,
+       87.0
+      ],
+      [
+       57.5,
+       88.25
+      ],
+      [
+       58.5,
+       87.28
+      ],
+      [
+       59.5,
+       87.3
+      ],
+      [
+       60.5,
+       86.32
+      ],
+      [
+       62.5,
+       86.36
+      ],
+      [
+       63.5,
+       85.38
+      ],
+      [
+       64.5,
+       86.41
+      ],
+      [
+       66.5,
+       86.45
+      ],
+      [
+       68.5,
+       88.49
+      ],
+      [
+       1135.0,
+       111.74
+      ],
+      [
+       1135.0,
+       169.74
+      ],
+      [
+       0.0,
+       145.0
+      ]
+     ],
+     "ink_px": 3868,
      "rule_row": 2,
      "text": "Collapse, like the seal",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -886,6 +1311,25 @@
       487,
       221
      ],
+     "region": [
+      [
+       0.0,
+       145.0
+      ],
+      [
+       1135.0,
+       169.74
+      ],
+      [
+       1135.0,
+       257.74
+      ],
+      [
+       0.0,
+       233.0
+      ]
+     ],
+     "ink_px": 2740,
      "rule_row": 3,
      "text": "youve sown:",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -1043,6 +1487,41 @@
       378,
       316
      ],
+     "region": [
+      [
+       0.0,
+       233.0
+      ],
+      [
+       1135.0,
+       257.74
+      ],
+      [
+       1135.0,
+       342.74
+      ],
+      [
+       109.5,
+       320.39
+      ],
+      [
+       108.5,
+       319.37
+      ],
+      [
+       106.5,
+       319.32
+      ],
+      [
+       105.5,
+       320.3
+      ],
+      [
+       0.0,
+       318.0
+      ]
+     ],
+     "ink_px": 2028,
      "rule_row": 5,
      "text": "The walls",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -1168,6 +1647,65 @@
       381,
       377
      ],
+     "region": [
+      [
+       0.0,
+       318.0
+      ],
+      [
+       105.5,
+       320.3
+      ],
+      [
+       106.5,
+       319.32
+      ],
+      [
+       108.5,
+       319.37
+      ],
+      [
+       109.5,
+       320.39
+      ],
+      [
+       1135.0,
+       342.74
+      ],
+      [
+       1135.0,
+       400.74
+      ],
+      [
+       89.5,
+       377.95
+      ],
+      [
+       88.5,
+       375.93
+      ],
+      [
+       79.5,
+       375.73
+      ],
+      [
+       78.5,
+       376.71
+      ],
+      [
+       77.5,
+       376.69
+      ],
+      [
+       76.5,
+       377.67
+      ],
+      [
+       0.0,
+       376.0
+      ]
+     ],
+     "ink_px": 2236,
      "rule_row": 6,
      "text": "The walls",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -1306,6 +1844,153 @@
       924,
       446
      ],
+     "region": [
+      [
+       0.0,
+       376.0
+      ],
+      [
+       76.5,
+       377.67
+      ],
+      [
+       77.5,
+       376.69
+      ],
+      [
+       78.5,
+       376.71
+      ],
+      [
+       79.5,
+       375.73
+      ],
+      [
+       88.5,
+       375.93
+      ],
+      [
+       89.5,
+       377.95
+      ],
+      [
+       1135.0,
+       400.74
+      ],
+      [
+       1135.0,
+       458.74
+      ],
+      [
+       391.5,
+       442.53
+      ],
+      [
+       390.5,
+       444.51
+      ],
+      [
+       388.5,
+       444.47
+      ],
+      [
+       387.5,
+       445.45
+      ],
+      [
+       386.5,
+       444.43
+      ],
+      [
+       385.5,
+       441.4
+      ],
+      [
+       338.5,
+       440.38
+      ],
+      [
+       337.5,
+       439.36
+      ],
+      [
+       336.5,
+       439.34
+      ],
+      [
+       335.5,
+       438.31
+      ],
+      [
+       334.5,
+       438.29
+      ],
+      [
+       333.5,
+       437.27
+      ],
+      [
+       316.5,
+       436.9
+      ],
+      [
+       315.5,
+       437.88
+      ],
+      [
+       314.5,
+       437.86
+      ],
+      [
+       312.5,
+       439.81
+      ],
+      [
+       239.5,
+       438.22
+      ],
+      [
+       238.5,
+       443.2
+      ],
+      [
+       237.5,
+       444.18
+      ],
+      [
+       235.5,
+       444.13
+      ],
+      [
+       233.5,
+       442.09
+      ],
+      [
+       232.5,
+       438.07
+      ],
+      [
+       101.5,
+       435.21
+      ],
+      [
+       100.5,
+       434.19
+      ],
+      [
+       97.5,
+       434.13
+      ],
+      [
+       96.5,
+       435.1
+      ],
+      [
+       0.0,
+       433.0
+      ]
+     ],
+     "ink_px": 5607,
      "rule_row": 7,
      "text": "Collapse, and the seal is",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -1622,6 +2307,129 @@
       345,
       501
      ],
+     "region": [
+      [
+       0.0,
+       433.0
+      ],
+      [
+       96.5,
+       435.1
+      ],
+      [
+       97.5,
+       434.13
+      ],
+      [
+       100.5,
+       434.19
+      ],
+      [
+       101.5,
+       435.21
+      ],
+      [
+       232.5,
+       438.07
+      ],
+      [
+       233.5,
+       442.09
+      ],
+      [
+       235.5,
+       444.13
+      ],
+      [
+       237.5,
+       444.18
+      ],
+      [
+       238.5,
+       443.2
+      ],
+      [
+       239.5,
+       438.22
+      ],
+      [
+       312.5,
+       439.81
+      ],
+      [
+       314.5,
+       437.86
+      ],
+      [
+       315.5,
+       437.88
+      ],
+      [
+       316.5,
+       436.9
+      ],
+      [
+       333.5,
+       437.27
+      ],
+      [
+       334.5,
+       438.29
+      ],
+      [
+       335.5,
+       438.31
+      ],
+      [
+       336.5,
+       439.34
+      ],
+      [
+       337.5,
+       439.36
+      ],
+      [
+       338.5,
+       440.38
+      ],
+      [
+       385.5,
+       441.4
+      ],
+      [
+       386.5,
+       444.43
+      ],
+      [
+       387.5,
+       445.45
+      ],
+      [
+       388.5,
+       444.47
+      ],
+      [
+       390.5,
+       444.51
+      ],
+      [
+       391.5,
+       442.53
+      ],
+      [
+       1135.0,
+       458.74
+      ],
+      [
+       1135.0,
+       546.74
+      ],
+      [
+       0.0,
+       522.0
+      ]
+     ],
+     "ink_px": 2355,
      "rule_row": 8,
      "text": "Gone ?",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -1738,6 +2546,25 @@
       898,
       611
      ],
+     "region": [
+      [
+       0.0,
+       522.0
+      ],
+      [
+       1135.0,
+       546.74
+      ],
+      [
+       1135.0,
+       631.74
+      ],
+      [
+       0.0,
+       607.0
+      ]
+     ],
+     "ink_px": 5521,
      "rule_row": 10,
      "text": "A minotaur with no maze",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2034,6 +2861,41 @@
       972,
       682
      ],
+     "region": [
+      [
+       0.0,
+       607.0
+      ],
+      [
+       1135.0,
+       631.74
+      ],
+      [
+       1135.0,
+       689.74
+      ],
+      [
+       703.5,
+       680.34
+      ],
+      [
+       702.5,
+       681.31
+      ],
+      [
+       699.5,
+       681.25
+      ],
+      [
+       698.5,
+       680.23
+      ],
+      [
+       0.0,
+       665.0
+      ]
+     ],
+     "ink_px": 4811,
      "rule_row": 11,
      "text": "to call his home, a life,",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2323,6 +3185,145 @@
       844,
       758
      ],
+     "region": [
+      [
+       0.0,
+       665.0
+      ],
+      [
+       698.5,
+       680.23
+      ],
+      [
+       699.5,
+       681.25
+      ],
+      [
+       702.5,
+       681.31
+      ],
+      [
+       703.5,
+       680.34
+      ],
+      [
+       1135.0,
+       689.74
+      ],
+      [
+       1135.0,
+       747.74
+      ],
+      [
+       844.5,
+       741.41
+      ],
+      [
+       843.5,
+       745.39
+      ],
+      [
+       841.5,
+       747.34
+      ],
+      [
+       825.5,
+       747.0
+      ],
+      [
+       824.5,
+       748.97
+      ],
+      [
+       821.5,
+       751.91
+      ],
+      [
+       820.5,
+       751.89
+      ],
+      [
+       819.5,
+       752.87
+      ],
+      [
+       818.5,
+       752.84
+      ],
+      [
+       817.5,
+       753.82
+      ],
+      [
+       816.5,
+       753.8
+      ],
+      [
+       815.5,
+       754.78
+      ],
+      [
+       813.5,
+       754.73
+      ],
+      [
+       812.5,
+       755.71
+      ],
+      [
+       810.5,
+       755.67
+      ],
+      [
+       809.5,
+       756.65
+      ],
+      [
+       802.5,
+       756.49
+      ],
+      [
+       801.5,
+       757.47
+      ],
+      [
+       800.5,
+       757.45
+      ],
+      [
+       799.5,
+       756.43
+      ],
+      [
+       795.5,
+       756.34
+      ],
+      [
+       794.5,
+       755.32
+      ],
+      [
+       793.5,
+       755.3
+      ],
+      [
+       792.5,
+       753.28
+      ],
+      [
+       791.5,
+       752.25
+      ],
+      [
+       789.5,
+       740.21
+      ],
+      [
+       0.0,
+       723.0
+      ]
+     ],
+     "ink_px": 5309,
      "rule_row": 12,
      "text": "A burden, a stepping",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2549,6 +3550,141 @@
       304,
       774
      ],
+     "region": [
+      [
+       0.0,
+       723.0
+      ],
+      [
+       789.5,
+       740.21
+      ],
+      [
+       791.5,
+       752.25
+      ],
+      [
+       792.5,
+       753.28
+      ],
+      [
+       793.5,
+       755.3
+      ],
+      [
+       794.5,
+       755.32
+      ],
+      [
+       795.5,
+       756.34
+      ],
+      [
+       799.5,
+       756.43
+      ],
+      [
+       800.5,
+       757.45
+      ],
+      [
+       801.5,
+       757.47
+      ],
+      [
+       802.5,
+       756.49
+      ],
+      [
+       809.5,
+       756.65
+      ],
+      [
+       810.5,
+       755.67
+      ],
+      [
+       812.5,
+       755.71
+      ],
+      [
+       813.5,
+       754.73
+      ],
+      [
+       815.5,
+       754.78
+      ],
+      [
+       816.5,
+       753.8
+      ],
+      [
+       817.5,
+       753.82
+      ],
+      [
+       818.5,
+       752.84
+      ],
+      [
+       819.5,
+       752.87
+      ],
+      [
+       820.5,
+       751.89
+      ],
+      [
+       821.5,
+       751.91
+      ],
+      [
+       824.5,
+       748.97
+      ],
+      [
+       825.5,
+       747.0
+      ],
+      [
+       841.5,
+       747.34
+      ],
+      [
+       843.5,
+       745.39
+      ],
+      [
+       844.5,
+       741.41
+      ],
+      [
+       1135.0,
+       747.74
+      ],
+      [
+       1135.0,
+       835.74
+      ],
+      [
+       350.5,
+       818.64
+      ],
+      [
+       349.5,
+       817.62
+      ],
+      [
+       348.5,
+       818.6
+      ],
+      [
+       0.0,
+       811.0
+      ]
+     ],
+     "ink_px": 1993,
      "rule_row": 13,
      "text": "stone.",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2669,6 +3805,101 @@
       472,
       891
      ],
+     "region": [
+      [
+       0.0,
+       811.0
+      ],
+      [
+       348.5,
+       818.6
+      ],
+      [
+       349.5,
+       817.62
+      ],
+      [
+       350.5,
+       818.64
+      ],
+      [
+       1135.0,
+       835.74
+      ],
+      [
+       1135.0,
+       919.74
+      ],
+      [
+       823.5,
+       912.95
+      ],
+      [
+       821.5,
+       908.91
+      ],
+      [
+       820.5,
+       907.89
+      ],
+      [
+       819.5,
+       907.87
+      ],
+      [
+       817.5,
+       909.82
+      ],
+      [
+       816.5,
+       912.8
+      ],
+      [
+       704.5,
+       910.36
+      ],
+      [
+       703.5,
+       909.34
+      ],
+      [
+       675.5,
+       908.73
+      ],
+      [
+       674.5,
+       909.7
+      ],
+      [
+       93.5,
+       897.04
+      ],
+      [
+       91.5,
+       892.99
+      ],
+      [
+       90.5,
+       891.97
+      ],
+      [
+       89.5,
+       891.95
+      ],
+      [
+       88.5,
+       892.93
+      ],
+      [
+       86.5,
+       896.89
+      ],
+      [
+       0.0,
+       895.0
+      ]
+     ],
+     "ink_px": 2628,
      "rule_row": 15,
      "text": "The walls \u2014",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2795,8 +4026,275 @@
       40,
       891,
       1128,
-      968
+      975
      ],
+     "region": [
+      [
+       0.0,
+       895.0
+      ],
+      [
+       86.5,
+       896.89
+      ],
+      [
+       88.5,
+       892.93
+      ],
+      [
+       89.5,
+       891.95
+      ],
+      [
+       90.5,
+       891.97
+      ],
+      [
+       91.5,
+       892.99
+      ],
+      [
+       93.5,
+       897.04
+      ],
+      [
+       674.5,
+       909.7
+      ],
+      [
+       675.5,
+       908.73
+      ],
+      [
+       703.5,
+       909.34
+      ],
+      [
+       704.5,
+       910.36
+      ],
+      [
+       816.5,
+       912.8
+      ],
+      [
+       817.5,
+       909.82
+      ],
+      [
+       819.5,
+       907.87
+      ],
+      [
+       820.5,
+       907.89
+      ],
+      [
+       821.5,
+       908.91
+      ],
+      [
+       823.5,
+       912.95
+      ],
+      [
+       1135.0,
+       919.74
+      ],
+      [
+       1135.0,
+       978.74
+      ],
+      [
+       955.5,
+       974.83
+      ],
+      [
+       954.5,
+       973.81
+      ],
+      [
+       928.5,
+       973.24
+      ],
+      [
+       927.5,
+       969.22
+      ],
+      [
+       926.5,
+       969.2
+      ],
+      [
+       925.5,
+       971.18
+      ],
+      [
+       924.5,
+       971.15
+      ],
+      [
+       922.5,
+       973.11
+      ],
+      [
+       782.5,
+       970.06
+      ],
+      [
+       781.5,
+       969.04
+      ],
+      [
+       780.5,
+       963.01
+      ],
+      [
+       779.5,
+       961.99
+      ],
+      [
+       768.5,
+       961.75
+      ],
+      [
+       767.5,
+       957.73
+      ],
+      [
+       763.5,
+       957.64
+      ],
+      [
+       762.5,
+       958.62
+      ],
+      [
+       761.5,
+       962.6
+      ],
+      [
+       759.5,
+       962.56
+      ],
+      [
+       758.5,
+       963.54
+      ],
+      [
+       755.5,
+       963.47
+      ],
+      [
+       754.5,
+       964.45
+      ],
+      [
+       751.5,
+       964.38
+      ],
+      [
+       750.5,
+       965.36
+      ],
+      [
+       747.5,
+       965.3
+      ],
+      [
+       746.5,
+       966.27
+      ],
+      [
+       745.5,
+       966.25
+      ],
+      [
+       743.5,
+       968.21
+      ],
+      [
+       742.5,
+       968.19
+      ],
+      [
+       741.5,
+       969.16
+      ],
+      [
+       636.5,
+       966.88
+      ],
+      [
+       635.5,
+       967.85
+      ],
+      [
+       510.5,
+       965.13
+      ],
+      [
+       509.5,
+       964.11
+      ],
+      [
+       362.5,
+       960.9
+      ],
+      [
+       361.5,
+       959.88
+      ],
+      [
+       358.5,
+       959.82
+      ],
+      [
+       357.5,
+       960.79
+      ],
+      [
+       220.5,
+       957.81
+      ],
+      [
+       219.5,
+       956.79
+      ],
+      [
+       202.5,
+       956.41
+      ],
+      [
+       201.5,
+       950.39
+      ],
+      [
+       173.5,
+       949.78
+      ],
+      [
+       172.5,
+       948.76
+      ],
+      [
+       171.5,
+       948.74
+      ],
+      [
+       170.5,
+       954.72
+      ],
+      [
+       169.5,
+       956.7
+      ],
+      [
+       0.0,
+       953.0
+      ]
+     ],
+     "ink_px": 7466,
      "rule_row": 16,
      "text": "They were simple, they had grace \u2014",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -2807,15 +4305,15 @@
      "words_alignment": null,
      "n_word_boxes_gap_rule": 6,
      "n_tokens": 7,
-     "glyphs_total": 23,
+     "glyphs_total": 26,
      "letters_total": 26,
      "words": [
       {
        "box": [
         40,
         891,
-        157,
-        948
+        179,
+        950
        ],
        "glyphs": [
         {
@@ -2856,6 +4354,16 @@
           939
          ],
          "ink_px": 58,
+         "components": 1
+        },
+        {
+         "box": [
+          158,
+          911,
+          179,
+          950
+         ],
+         "ink_px": 306,
          "components": 1
         }
        ],
@@ -2967,8 +4475,8 @@
        "box": [
         669,
         908,
-        749,
-        954
+        771,
+        958
        ],
        "glyphs": [
         {
@@ -3000,6 +4508,16 @@
          ],
          "ink_px": 203,
          "components": 2
+        },
+        {
+         "box": [
+          753,
+          935,
+          771,
+          958
+         ],
+         "ink_px": 196,
+         "components": 1
         }
        ],
        "glyphs_aligned": false
@@ -3047,12 +4565,22 @@
       },
       {
        "box": [
-        971,
+        942,
         931,
         1128,
-        960
+        975
        ],
        "glyphs": [
+        {
+         "box": [
+          942,
+          935,
+          960,
+          975
+         ],
+         "ink_px": 261,
+         "components": 1
+        },
         {
          "box": [
           971,
@@ -3125,27 +4653,298 @@
      "index": 13,
      "box": [
       57,
-      911,
+      948,
       990,
-      1017
+      1037
      ],
+     "region": [
+      [
+       0.0,
+       953.0
+      ],
+      [
+       169.5,
+       956.7
+      ],
+      [
+       170.5,
+       954.72
+      ],
+      [
+       171.5,
+       948.74
+      ],
+      [
+       172.5,
+       948.76
+      ],
+      [
+       173.5,
+       949.78
+      ],
+      [
+       201.5,
+       950.39
+      ],
+      [
+       202.5,
+       956.41
+      ],
+      [
+       219.5,
+       956.79
+      ],
+      [
+       220.5,
+       957.81
+      ],
+      [
+       357.5,
+       960.79
+      ],
+      [
+       358.5,
+       959.82
+      ],
+      [
+       361.5,
+       959.88
+      ],
+      [
+       362.5,
+       960.9
+      ],
+      [
+       509.5,
+       964.11
+      ],
+      [
+       510.5,
+       965.13
+      ],
+      [
+       635.5,
+       967.85
+      ],
+      [
+       636.5,
+       966.88
+      ],
+      [
+       741.5,
+       969.16
+      ],
+      [
+       742.5,
+       968.19
+      ],
+      [
+       743.5,
+       968.21
+      ],
+      [
+       745.5,
+       966.25
+      ],
+      [
+       746.5,
+       966.27
+      ],
+      [
+       747.5,
+       965.3
+      ],
+      [
+       750.5,
+       965.36
+      ],
+      [
+       751.5,
+       964.38
+      ],
+      [
+       754.5,
+       964.45
+      ],
+      [
+       755.5,
+       963.47
+      ],
+      [
+       758.5,
+       963.54
+      ],
+      [
+       759.5,
+       962.56
+      ],
+      [
+       761.5,
+       962.6
+      ],
+      [
+       762.5,
+       958.62
+      ],
+      [
+       763.5,
+       957.64
+      ],
+      [
+       767.5,
+       957.73
+      ],
+      [
+       768.5,
+       961.75
+      ],
+      [
+       779.5,
+       961.99
+      ],
+      [
+       780.5,
+       963.01
+      ],
+      [
+       781.5,
+       969.04
+      ],
+      [
+       782.5,
+       970.06
+      ],
+      [
+       922.5,
+       973.11
+      ],
+      [
+       924.5,
+       971.15
+      ],
+      [
+       925.5,
+       971.18
+      ],
+      [
+       926.5,
+       969.2
+      ],
+      [
+       927.5,
+       969.22
+      ],
+      [
+       928.5,
+       973.24
+      ],
+      [
+       954.5,
+       973.81
+      ],
+      [
+       955.5,
+       974.83
+      ],
+      [
+       1135.0,
+       978.74
+      ],
+      [
+       1135.0,
+       1035.74
+      ],
+      [
+       594.5,
+       1023.96
+      ],
+      [
+       592.5,
+       1029.92
+      ],
+      [
+       590.5,
+       1033.87
+      ],
+      [
+       589.5,
+       1034.85
+      ],
+      [
+       588.5,
+       1036.83
+      ],
+      [
+       582.5,
+       1036.7
+      ],
+      [
+       581.5,
+       1035.68
+      ],
+      [
+       580.5,
+       1035.65
+      ],
+      [
+       579.5,
+       1033.63
+      ],
+      [
+       576.5,
+       1030.57
+      ],
+      [
+       574.5,
+       1030.52
+      ],
+      [
+       573.5,
+       1029.5
+      ],
+      [
+       572.5,
+       1023.48
+      ],
+      [
+       233.5,
+       1016.09
+      ],
+      [
+       232.5,
+       1015.07
+      ],
+      [
+       230.5,
+       1015.02
+      ],
+      [
+       229.5,
+       1016.0
+      ],
+      [
+       0.0,
+       1011.0
+      ]
+     ],
+     "ink_px": 7862,
      "rule_row": 17,
      "text": "Stood without your embrace",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
      "author_box_expected_key": "3-2",
      "author_box_best_key": "3-2",
-     "author_box_best_iou": 0.61,
+     "author_box_best_iou": 0.857,
      "ink_x1_minus_author_x1": -0.6,
      "words_alignment": null,
      "n_word_boxes_gap_rule": 4,
      "n_tokens": 4,
-     "glyphs_total": 18,
+     "glyphs_total": 19,
      "letters_total": 23,
      "words": [
       {
        "box": [
         57,
-        911,
+        948,
         227,
         1008
        ],
@@ -3173,11 +4972,11 @@
         {
          "box": [
           119,
-          911,
+          948,
           202,
           1008
          ],
-         "ink_px": 1391,
+         "ink_px": 1085,
          "components": 1
         },
         {
@@ -3256,12 +5055,22 @@
       },
       {
        "box": [
-        607,
+        568,
         983,
         679,
-        1008
+        1037
        ],
        "glyphs": [
+        {
+         "box": [
+          568,
+          985,
+          596,
+          1037
+         ],
+         "ink_px": 558,
+         "components": 1
+        },
         {
          "box": [
           607,
@@ -3288,7 +5097,7 @@
       {
        "box": [
         722,
-        935,
+        957,
         990,
         1017
        ],
@@ -3296,11 +5105,11 @@
         {
          "box": [
           722,
-          935,
+          957,
           781,
           1017
          ],
-         "ink_px": 984,
+         "ink_px": 788,
          "components": 1
         },
         {
@@ -3356,11 +5165,11 @@
         {
          "box": [
           919,
-          935,
+          969,
           990,
           1015
          ],
-         "ink_px": 905,
+         "ink_px": 644,
          "components": 1
         }
        ],
@@ -3375,16 +5184,103 @@
      "index": 14,
      "box": [
       64,
-      985,
+      1012,
       807,
       1073
      ],
+     "region": [
+      [
+       0.0,
+       1011.0
+      ],
+      [
+       229.5,
+       1016.0
+      ],
+      [
+       230.5,
+       1015.02
+      ],
+      [
+       232.5,
+       1015.07
+      ],
+      [
+       233.5,
+       1016.09
+      ],
+      [
+       572.5,
+       1023.48
+      ],
+      [
+       573.5,
+       1029.5
+      ],
+      [
+       574.5,
+       1030.52
+      ],
+      [
+       576.5,
+       1030.57
+      ],
+      [
+       579.5,
+       1033.63
+      ],
+      [
+       580.5,
+       1035.65
+      ],
+      [
+       581.5,
+       1035.68
+      ],
+      [
+       582.5,
+       1036.7
+      ],
+      [
+       588.5,
+       1036.83
+      ],
+      [
+       589.5,
+       1034.85
+      ],
+      [
+       590.5,
+       1033.87
+      ],
+      [
+       592.5,
+       1029.92
+      ],
+      [
+       594.5,
+       1023.96
+      ],
+      [
+       1135.0,
+       1035.74
+      ],
+      [
+       1135.0,
+       1123.74
+      ],
+      [
+       0.0,
+       1099.0
+      ]
+     ],
+     "ink_px": 4649,
      "rule_row": 18,
      "text": "Or the face of others",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
      "author_box_expected_key": "3-3",
      "author_box_best_key": "3-3",
-     "author_box_best_iou": 0.913,
+     "author_box_best_iou": 0.641,
      "ink_x1_minus_author_x1": -0.8,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
@@ -3517,19 +5413,19 @@
       {
        "box": [
         512,
-        985,
-        596,
+        1026,
+        573,
         1063
        ],
        "glyphs": [
         {
          "box": [
           512,
-          985,
-          596,
+          1026,
+          573,
           1063
          ],
-         "ink_px": 1160,
+         "ink_px": 602,
          "components": 1
         }
        ],
@@ -3623,6 +5519,125 @@
       1000,
       1212
      ],
+     "region": [
+      [
+       0.0,
+       1099.0
+      ],
+      [
+       1135.0,
+       1123.74
+      ],
+      [
+       1135.0,
+       1209.74
+      ],
+      [
+       932.5,
+       1205.33
+      ],
+      [
+       931.5,
+       1208.31
+      ],
+      [
+       930.5,
+       1210.28
+      ],
+      [
+       927.5,
+       1210.22
+      ],
+      [
+       926.5,
+       1211.2
+      ],
+      [
+       924.5,
+       1209.15
+      ],
+      [
+       922.5,
+       1209.11
+      ],
+      [
+       920.5,
+       1207.07
+      ],
+      [
+       919.5,
+       1207.05
+      ],
+      [
+       918.5,
+       1205.02
+      ],
+      [
+       917.5,
+       1204.0
+      ],
+      [
+       280.5,
+       1190.11
+      ],
+      [
+       279.5,
+       1188.09
+      ],
+      [
+       278.5,
+       1187.07
+      ],
+      [
+       277.5,
+       1187.05
+      ],
+      [
+       276.5,
+       1186.03
+      ],
+      [
+       274.5,
+       1187.98
+      ],
+      [
+       273.5,
+       1189.96
+      ],
+      [
+       177.5,
+       1187.87
+      ],
+      [
+       175.5,
+       1193.83
+      ],
+      [
+       171.5,
+       1201.74
+      ],
+      [
+       167.5,
+       1201.65
+      ],
+      [
+       163.5,
+       1197.56
+      ],
+      [
+       159.5,
+       1189.48
+      ],
+      [
+       158.5,
+       1188.46
+      ],
+      [
+       0.0,
+       1185.0
+      ]
+     ],
+     "ink_px": 6764,
      "rule_row": 20,
      "text": "A myth that was true, a myth",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -3883,19 +5898,358 @@
       58,
       1186,
       967,
-      1265
+      1278
      ],
+     "region": [
+      [
+       0.0,
+       1185.0
+      ],
+      [
+       158.5,
+       1188.46
+      ],
+      [
+       159.5,
+       1189.48
+      ],
+      [
+       163.5,
+       1197.56
+      ],
+      [
+       167.5,
+       1201.65
+      ],
+      [
+       171.5,
+       1201.74
+      ],
+      [
+       175.5,
+       1193.83
+      ],
+      [
+       177.5,
+       1187.87
+      ],
+      [
+       273.5,
+       1189.96
+      ],
+      [
+       274.5,
+       1187.98
+      ],
+      [
+       276.5,
+       1186.03
+      ],
+      [
+       277.5,
+       1187.05
+      ],
+      [
+       278.5,
+       1187.07
+      ],
+      [
+       279.5,
+       1188.09
+      ],
+      [
+       280.5,
+       1190.11
+      ],
+      [
+       917.5,
+       1204.0
+      ],
+      [
+       918.5,
+       1205.02
+      ],
+      [
+       919.5,
+       1207.05
+      ],
+      [
+       920.5,
+       1207.07
+      ],
+      [
+       922.5,
+       1209.11
+      ],
+      [
+       924.5,
+       1209.15
+      ],
+      [
+       926.5,
+       1211.2
+      ],
+      [
+       927.5,
+       1210.22
+      ],
+      [
+       930.5,
+       1210.28
+      ],
+      [
+       931.5,
+       1208.31
+      ],
+      [
+       932.5,
+       1205.33
+      ],
+      [
+       1135.0,
+       1209.74
+      ],
+      [
+       1135.0,
+       1266.74
+      ],
+      [
+       888.5,
+       1261.37
+      ],
+      [
+       887.5,
+       1259.35
+      ],
+      [
+       886.5,
+       1259.33
+      ],
+      [
+       885.5,
+       1258.3
+      ],
+      [
+       884.5,
+       1259.28
+      ],
+      [
+       883.5,
+       1259.26
+      ],
+      [
+       882.5,
+       1261.24
+      ],
+      [
+       822.5,
+       1259.93
+      ],
+      [
+       820.5,
+       1271.89
+      ],
+      [
+       819.5,
+       1274.87
+      ],
+      [
+       818.5,
+       1276.84
+      ],
+      [
+       817.5,
+       1276.82
+      ],
+      [
+       816.5,
+       1277.8
+      ],
+      [
+       812.5,
+       1277.71
+      ],
+      [
+       811.5,
+       1276.69
+      ],
+      [
+       810.5,
+       1276.67
+      ],
+      [
+       809.5,
+       1275.65
+      ],
+      [
+       808.5,
+       1275.63
+      ],
+      [
+       802.5,
+       1269.49
+      ],
+      [
+       800.5,
+       1265.45
+      ],
+      [
+       799.5,
+       1264.43
+      ],
+      [
+       798.5,
+       1260.41
+      ],
+      [
+       734.5,
+       1259.01
+      ],
+      [
+       733.5,
+       1260.99
+      ],
+      [
+       732.5,
+       1260.97
+      ],
+      [
+       729.5,
+       1263.9
+      ],
+      [
+       724.5,
+       1263.79
+      ],
+      [
+       723.5,
+       1264.77
+      ],
+      [
+       716.5,
+       1264.62
+      ],
+      [
+       715.5,
+       1263.6
+      ],
+      [
+       711.5,
+       1263.51
+      ],
+      [
+       710.5,
+       1262.49
+      ],
+      [
+       709.5,
+       1262.47
+      ],
+      [
+       707.5,
+       1260.42
+      ],
+      [
+       706.5,
+       1258.4
+      ],
+      [
+       705.5,
+       1257.38
+      ],
+      [
+       677.5,
+       1256.77
+      ],
+      [
+       675.5,
+       1254.73
+      ],
+      [
+       673.5,
+       1254.68
+      ],
+      [
+       671.5,
+       1256.64
+      ],
+      [
+       155.5,
+       1245.39
+      ],
+      [
+       154.5,
+       1243.37
+      ],
+      [
+       128.5,
+       1242.8
+      ],
+      [
+       125.5,
+       1239.74
+      ],
+      [
+       123.5,
+       1239.69
+      ],
+      [
+       122.5,
+       1240.67
+      ],
+      [
+       121.5,
+       1244.65
+      ],
+      [
+       73.5,
+       1243.6
+      ],
+      [
+       71.5,
+       1255.56
+      ],
+      [
+       70.5,
+       1256.54
+      ],
+      [
+       68.5,
+       1256.49
+      ],
+      [
+       67.5,
+       1255.47
+      ],
+      [
+       66.5,
+       1253.45
+      ],
+      [
+       65.5,
+       1250.43
+      ],
+      [
+       64.5,
+       1244.41
+      ],
+      [
+       0.0,
+       1243.0
+      ]
+     ],
+     "ink_px": 7346,
      "rule_row": 21,
      "text": "perused, or a passing gaze",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
      "author_box_expected_key": "4-1",
      "author_box_best_key": "4-1",
-     "author_box_best_iou": 0.874,
+     "author_box_best_iou": 0.759,
      "ink_x1_minus_author_x1": 38.3,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
      "n_tokens": 5,
-     "glyphs_total": 16,
+     "glyphs_total": 17,
      "letters_total": 21,
      "words": [
       {
@@ -4079,12 +6433,23 @@
       },
       {
        "box": [
-        833,
+        799,
         1217,
         954,
-        1251
+        1278
        ],
        "glyphs": [
+        {
+         "box": [
+          799,
+          1218,
+          826,
+          1278
+         ],
+         "ink_px": 605,
+         "components": 1,
+         "text": "g"
+        },
         {
          "box": [
           833,
@@ -4093,7 +6458,8 @@
           1250
          ],
          "ink_px": 251,
-         "components": 1
+         "components": 1,
+         "text": "a"
         },
         {
          "box": [
@@ -4103,7 +6469,8 @@
           1244
          ],
          "ink_px": 324,
-         "components": 1
+         "components": 1,
+         "text": "z"
         },
         {
          "box": [
@@ -4113,10 +6480,11 @@
           1251
          ],
          "ink_px": 526,
-         "components": 1
+         "components": 1,
+         "text": "e"
         }
        ],
-       "glyphs_aligned": false,
+       "glyphs_aligned": true,
        "text": "gaze"
       }
      ],
@@ -4165,16 +6533,255 @@
      "index": 17,
      "box": [
       49,
-      1218,
+      1239,
       1006,
       1309
      ],
+     "region": [
+      [
+       0.0,
+       1243.0
+      ],
+      [
+       64.5,
+       1244.41
+      ],
+      [
+       65.5,
+       1250.43
+      ],
+      [
+       66.5,
+       1253.45
+      ],
+      [
+       67.5,
+       1255.47
+      ],
+      [
+       68.5,
+       1256.49
+      ],
+      [
+       70.5,
+       1256.54
+      ],
+      [
+       71.5,
+       1255.56
+      ],
+      [
+       73.5,
+       1243.6
+      ],
+      [
+       121.5,
+       1244.65
+      ],
+      [
+       122.5,
+       1240.67
+      ],
+      [
+       123.5,
+       1239.69
+      ],
+      [
+       125.5,
+       1239.74
+      ],
+      [
+       128.5,
+       1242.8
+      ],
+      [
+       154.5,
+       1243.37
+      ],
+      [
+       155.5,
+       1245.39
+      ],
+      [
+       671.5,
+       1256.64
+      ],
+      [
+       673.5,
+       1254.68
+      ],
+      [
+       675.5,
+       1254.73
+      ],
+      [
+       677.5,
+       1256.77
+      ],
+      [
+       705.5,
+       1257.38
+      ],
+      [
+       706.5,
+       1258.4
+      ],
+      [
+       707.5,
+       1260.42
+      ],
+      [
+       709.5,
+       1262.47
+      ],
+      [
+       710.5,
+       1262.49
+      ],
+      [
+       711.5,
+       1263.51
+      ],
+      [
+       715.5,
+       1263.6
+      ],
+      [
+       716.5,
+       1264.62
+      ],
+      [
+       723.5,
+       1264.77
+      ],
+      [
+       724.5,
+       1263.79
+      ],
+      [
+       729.5,
+       1263.9
+      ],
+      [
+       732.5,
+       1260.97
+      ],
+      [
+       733.5,
+       1260.99
+      ],
+      [
+       734.5,
+       1259.01
+      ],
+      [
+       798.5,
+       1260.41
+      ],
+      [
+       799.5,
+       1264.43
+      ],
+      [
+       800.5,
+       1265.45
+      ],
+      [
+       802.5,
+       1269.49
+      ],
+      [
+       808.5,
+       1275.63
+      ],
+      [
+       809.5,
+       1275.65
+      ],
+      [
+       810.5,
+       1276.67
+      ],
+      [
+       811.5,
+       1276.69
+      ],
+      [
+       812.5,
+       1277.71
+      ],
+      [
+       816.5,
+       1277.8
+      ],
+      [
+       817.5,
+       1276.82
+      ],
+      [
+       818.5,
+       1276.84
+      ],
+      [
+       819.5,
+       1274.87
+      ],
+      [
+       820.5,
+       1271.89
+      ],
+      [
+       822.5,
+       1259.93
+      ],
+      [
+       882.5,
+       1261.24
+      ],
+      [
+       883.5,
+       1259.26
+      ],
+      [
+       884.5,
+       1259.28
+      ],
+      [
+       885.5,
+       1258.3
+      ],
+      [
+       886.5,
+       1259.33
+      ],
+      [
+       887.5,
+       1259.35
+      ],
+      [
+       888.5,
+       1261.37
+      ],
+      [
+       1135.0,
+       1266.74
+      ],
+      [
+       1135.0,
+       1355.74
+      ],
+      [
+       0.0,
+       1331.0
+      ]
+     ],
+     "ink_px": 6871,
      "rule_row": 22,
      "text": "with not a moment wasted.",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
      "author_box_expected_key": "4-2",
      "author_box_best_key": "4-2",
-     "author_box_best_iou": 0.707,
+     "author_box_best_iou": 0.852,
      "ink_x1_minus_author_x1": -0.5,
      "words_alignment": "gap",
      "n_word_boxes_gap_rule": 5,
@@ -4347,7 +6954,7 @@
       {
        "box": [
         758,
-        1218,
+        1258,
         978,
         1307
        ],
@@ -4364,12 +6971,12 @@
         },
         {
          "box": [
-          799,
-          1218,
-          826,
+          803,
+          1277,
+          824,
           1296
          ],
-         "ink_px": 811,
+         "ink_px": 206,
          "components": 1
         },
         {
@@ -4441,6 +7048,113 @@
       519,
       1422
      ],
+     "region": [
+      [
+       0.0,
+       1331.0
+      ],
+      [
+       1135.0,
+       1355.74
+      ],
+      [
+       1135.0,
+       1439.74
+      ],
+      [
+       646.5,
+       1429.09
+      ],
+      [
+       645.5,
+       1428.07
+      ],
+      [
+       644.5,
+       1425.05
+      ],
+      [
+       643.5,
+       1424.03
+      ],
+      [
+       642.5,
+       1424.01
+      ],
+      [
+       641.5,
+       1422.98
+      ],
+      [
+       637.5,
+       1422.9
+      ],
+      [
+       636.5,
+       1421.88
+      ],
+      [
+       635.5,
+       1421.85
+      ],
+      [
+       634.5,
+       1422.83
+      ],
+      [
+       630.5,
+       1422.74
+      ],
+      [
+       629.5,
+       1423.72
+      ],
+      [
+       625.5,
+       1423.64
+      ],
+      [
+       623.5,
+       1425.59
+      ],
+      [
+       622.5,
+       1425.57
+      ],
+      [
+       619.5,
+       1428.51
+      ],
+      [
+       102.5,
+       1417.23
+      ],
+      [
+       101.5,
+       1413.21
+      ],
+      [
+       100.5,
+       1413.19
+      ],
+      [
+       99.5,
+       1412.17
+      ],
+      [
+       97.5,
+       1412.13
+      ],
+      [
+       96.5,
+       1417.1
+      ],
+      [
+       0.0,
+       1415.0
+      ]
+     ],
+     "ink_px": 3613,
      "rule_row": 24,
      "text": "Poor minotaur,",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -4633,6 +7347,225 @@
       1088,
       1493
      ],
+     "region": [
+      [
+       0.0,
+       1415.0
+      ],
+      [
+       96.5,
+       1417.1
+      ],
+      [
+       97.5,
+       1412.13
+      ],
+      [
+       99.5,
+       1412.17
+      ],
+      [
+       100.5,
+       1413.19
+      ],
+      [
+       101.5,
+       1413.21
+      ],
+      [
+       102.5,
+       1417.23
+      ],
+      [
+       619.5,
+       1428.51
+      ],
+      [
+       622.5,
+       1425.57
+      ],
+      [
+       623.5,
+       1425.59
+      ],
+      [
+       625.5,
+       1423.64
+      ],
+      [
+       629.5,
+       1423.72
+      ],
+      [
+       630.5,
+       1422.74
+      ],
+      [
+       634.5,
+       1422.83
+      ],
+      [
+       635.5,
+       1421.85
+      ],
+      [
+       636.5,
+       1421.88
+      ],
+      [
+       637.5,
+       1422.9
+      ],
+      [
+       641.5,
+       1422.98
+      ],
+      [
+       642.5,
+       1424.01
+      ],
+      [
+       643.5,
+       1424.03
+      ],
+      [
+       644.5,
+       1425.05
+      ],
+      [
+       645.5,
+       1428.07
+      ],
+      [
+       646.5,
+       1429.09
+      ],
+      [
+       1135.0,
+       1439.74
+      ],
+      [
+       1135.0,
+       1487.74
+      ],
+      [
+       1133.5,
+       1487.71
+      ],
+      [
+       1132.5,
+       1493.69
+      ],
+      [
+       1131.5,
+       1497.67
+      ],
+      [
+       857.5,
+       1491.69
+      ],
+      [
+       856.5,
+       1492.67
+      ],
+      [
+       393.5,
+       1482.58
+      ],
+      [
+       392.5,
+       1485.56
+      ],
+      [
+       391.5,
+       1485.53
+      ],
+      [
+       390.5,
+       1488.51
+      ],
+      [
+       389.5,
+       1488.49
+      ],
+      [
+       388.5,
+       1489.47
+      ],
+      [
+       387.5,
+       1489.45
+      ],
+      [
+       386.5,
+       1490.43
+      ],
+      [
+       378.5,
+       1490.25
+      ],
+      [
+       377.5,
+       1489.23
+      ],
+      [
+       375.5,
+       1489.19
+      ],
+      [
+       374.5,
+       1488.16
+      ],
+      [
+       373.5,
+       1488.14
+      ],
+      [
+       368.5,
+       1483.03
+      ],
+      [
+       367.5,
+       1481.01
+      ],
+      [
+       84.5,
+       1474.84
+      ],
+      [
+       81.5,
+       1471.78
+      ],
+      [
+       79.5,
+       1471.73
+      ],
+      [
+       78.5,
+       1472.71
+      ],
+      [
+       43.5,
+       1471.95
+      ],
+      [
+       42.5,
+       1472.93
+      ],
+      [
+       41.5,
+       1472.9
+      ],
+      [
+       40.5,
+       1473.88
+      ],
+      [
+       0.0,
+       1473.0
+      ]
+     ],
+     "ink_px": 8396,
      "rule_row": 25,
      "text": "Where are you now? Have you lost",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -4964,6 +7897,213 @@
       342,
       1526
      ],
+     "region": [
+      [
+       0.0,
+       1473.0
+      ],
+      [
+       40.5,
+       1473.88
+      ],
+      [
+       41.5,
+       1472.9
+      ],
+      [
+       42.5,
+       1472.93
+      ],
+      [
+       43.5,
+       1471.95
+      ],
+      [
+       78.5,
+       1472.71
+      ],
+      [
+       79.5,
+       1471.73
+      ],
+      [
+       81.5,
+       1471.78
+      ],
+      [
+       84.5,
+       1474.84
+      ],
+      [
+       367.5,
+       1481.01
+      ],
+      [
+       368.5,
+       1483.03
+      ],
+      [
+       373.5,
+       1488.14
+      ],
+      [
+       374.5,
+       1488.16
+      ],
+      [
+       375.5,
+       1489.19
+      ],
+      [
+       377.5,
+       1489.23
+      ],
+      [
+       378.5,
+       1490.25
+      ],
+      [
+       386.5,
+       1490.43
+      ],
+      [
+       387.5,
+       1489.45
+      ],
+      [
+       388.5,
+       1489.47
+      ],
+      [
+       389.5,
+       1488.49
+      ],
+      [
+       390.5,
+       1488.51
+      ],
+      [
+       391.5,
+       1485.53
+      ],
+      [
+       392.5,
+       1485.56
+      ],
+      [
+       393.5,
+       1482.58
+      ],
+      [
+       856.5,
+       1492.67
+      ],
+      [
+       857.5,
+       1491.69
+      ],
+      [
+       1131.5,
+       1497.67
+      ],
+      [
+       1132.5,
+       1493.69
+      ],
+      [
+       1133.5,
+       1487.71
+      ],
+      [
+       1135.0,
+       1487.74
+      ],
+      [
+       1135.0,
+       1560.74
+      ],
+      [
+       1132.5,
+       1560.69
+      ],
+      [
+       1131.5,
+       1555.67
+      ],
+      [
+       1048.5,
+       1553.86
+      ],
+      [
+       1042.5,
+       1547.73
+      ],
+      [
+       1041.5,
+       1547.7
+      ],
+      [
+       1040.5,
+       1546.68
+      ],
+      [
+       1039.5,
+       1546.66
+      ],
+      [
+       1038.5,
+       1545.64
+      ],
+      [
+       1033.5,
+       1545.53
+      ],
+      [
+       1030.5,
+       1548.46
+      ],
+      [
+       1029.5,
+       1550.44
+      ],
+      [
+       998.5,
+       1549.77
+      ],
+      [
+       997.5,
+       1550.75
+      ],
+      [
+       996.5,
+       1550.72
+      ],
+      [
+       995.5,
+       1552.7
+      ],
+      [
+       385.5,
+       1539.4
+      ],
+      [
+       384.5,
+       1538.38
+      ],
+      [
+       382.5,
+       1538.34
+      ],
+      [
+       381.5,
+       1539.32
+      ],
+      [
+       0.0,
+       1531.0
+      ]
+     ],
+     "ink_px": 2456,
      "rule_row": 26,
      "text": "That frown",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
@@ -5113,6 +8253,101 @@
       1056,
       1600
      ],
+     "region": [
+      [
+       0.0,
+       1531.0
+      ],
+      [
+       381.5,
+       1539.32
+      ],
+      [
+       382.5,
+       1538.34
+      ],
+      [
+       384.5,
+       1538.38
+      ],
+      [
+       385.5,
+       1539.4
+      ],
+      [
+       995.5,
+       1552.7
+      ],
+      [
+       996.5,
+       1550.72
+      ],
+      [
+       997.5,
+       1550.75
+      ],
+      [
+       998.5,
+       1549.77
+      ],
+      [
+       1029.5,
+       1550.44
+      ],
+      [
+       1030.5,
+       1548.46
+      ],
+      [
+       1033.5,
+       1545.53
+      ],
+      [
+       1038.5,
+       1545.64
+      ],
+      [
+       1039.5,
+       1546.66
+      ],
+      [
+       1040.5,
+       1546.68
+      ],
+      [
+       1041.5,
+       1547.7
+      ],
+      [
+       1042.5,
+       1547.73
+      ],
+      [
+       1048.5,
+       1553.86
+      ],
+      [
+       1131.5,
+       1555.67
+      ],
+      [
+       1132.5,
+       1560.69
+      ],
+      [
+       1135.0,
+       1560.74
+      ],
+      [
+       1135.0,
+       1600.0
+      ],
+      [
+       0.0,
+       1600.0
+      ]
+     ],
+     "ink_px": 7811,
      "rule_row": 27,
      "text": "Of that which you were so fond ?",
      "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
