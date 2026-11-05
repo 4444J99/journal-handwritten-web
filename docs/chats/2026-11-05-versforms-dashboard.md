@@ -6,7 +6,7 @@
 | Last activity | 2026-11-05 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` |
 | Basis of this record | transcript excerpt, read 2026-11-05 (chat still active) |
-| Status | Open — PR #73 waiting to merge; Actions runners not starting on the private repo |
+| Status | Open — PR #73 merged 2026-11-05; Actions runners not starting on the private repo |
 
 ## Produced
 - Confirmed the public site is live at https://versforms.pages.dev/ (blank until poem 1).
@@ -16,7 +16,7 @@
 - Reported the site live at versforms.pages.dev.
 
 ## Plan / next steps
-- Merge PR #73 when ready.
+- PR #73 merged 2026-11-05 (studio export: 38 reviews; other collections empty; `site/index.html` already matches merged-piece v4).
 - Fix GitHub Actions not starting runners on the private repo (billing/minutes setting).
 
 ## Exchanges
