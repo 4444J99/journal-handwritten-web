@@ -1,8 +1,8 @@
 # Handwritten journal: plan and state
 
-Working document for the journal-handwritten-web project. Last updated 2026-10-27.
+Working document for the journal-handwritten-web project. Last updated 2026-10-28.
 
-> Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-27. The Project doc is the working copy; this file is versioned here so each revision of the plan is kept.
+> Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-28 (synced 2026-11-05). The Project doc is the working copy; this file is versioned here so each revision of the plan is kept. Per-chat plans and their status: `docs/chats/`.
 
 ## Source
 - 123 scanned journal pages, c. 2014–2015, from github.com/4444J99/etceter4 (commit dfcbf0f, `img/photos/diary/`); 63 two-page spreads scanned September 2015 (`diary_originals.zip`).
@@ -17,7 +17,7 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 | Piece catalog | 126 pieces: 54 complete poems, 4 complete songs, 42 drafts/fragments, 7 prose/letters, 19 note pieces | `archive/data/pieces.json` |
 | Archive bundle | Web images, plain/markdown text, manifest with SHA-256 of originals | `archive/` |
 | Handwriting font | Etceter4 Diary (OTF/WOFF2); weak: X, digits, Q Z V K G ! ; " ( ) & | `font/` |
-| Merged piece | Canvas (12 combos, fresh layouts each visit) + book side (Journal, Study, Revisions, Hand↔Font) + version stacks (17 pieces with several drafts) | artifact `1Pcbgrvp7BqfmcYhzZLEss`; `app/`, `app_build/` |
+| Merged piece | Canvas (12 combos, fresh layouts each visit) + book side (Journal, Study, Revisions, Hand↔Font) + version stacks (17 pieces with several drafts). **Version 4 (2026-10-28): interaction fixes, see below** | artifact `1Pcbgrvp7BqfmcYhzZLEss`; `app/`, `app_build/` |
 | Review studio | Line-by-line verification, decisions, new-version photo inbox, **Release tab (v2, 2026-10-27)**; saves to the page's database | artifact `MVognnZQrtRQ6QCMaF7341`; `review/`, `review_build/` |
 | Font fill-in sheet | 2-page template (Letter/A4) + `ingest_fillin.py`; trial builds go to `font/fillin/test/out/` | `font/fillin/` |
 | Business-model research | Report comparing all monetization routes (2026-10-27) | research report in the chat of that date |
@@ -25,6 +25,20 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 | Earlier prototypes | Reader (`9hrwYckEYpMQFqkbBT4eX4`), canvas test (`1ppNwGfhEi1qMmUWhpKPXA`), research report (`EzChFp1LM3f5jp4ZitWFFF`) | superseded by the merged piece |
 
 Note (2026-10-27): the repository now holds the published outputs. The build folders above (`archive/`, `app_build/`, `review_build/`, `font/`, `release/`) lived in earlier cloud sessions. Their current location on the author's machine is not yet confirmed; the two artifacts hold the published data.
+
+Note (2026-10-28): merged-piece version 4 was edited directly in the published `index.html` (only that file changed; data and images untouched). The repository's `site/index.html` and the `app_build` generator do **not** have these changes yet; copy the artifact's `index.html` into `site/` before the next rebuild or the fixes are lost.
+
+## Merged piece v4 changes (2026-10-28, from the author's screen recording + Gemini review)
+- Controls: hidden at rest; on desktop they appear only when the pointer rests on the bar's own place (not the whole bottom edge), sit 34px above the screen edge (clear of the macOS Dock), hide 2.8s after use; opening a poem hides them.
+- Unfold mode: a focused page's own lines are no longer dimmed with the rest (this was the long dark stretch when tapping a page).
+- Canvas: tiles not yet composed are drawn directly instead of left blank (the notched shapes); theme switch keeps the last frame over the canvas until the new one is complete, then fades.
+- Closest zoom capped at about one line across the screen (was 5 page heights). Close in, pages and lines turn upright where they lie; far views keep their angles. Tap targets follow.
+- Reading a version stack: a poem too long to read whole opens at reading size on its first lines; wheel, drag or arrows scroll it (clamped to the poem). On a tall poem a vertical drag scrolls instead of peeling; versions stay on the strip and [ ] keys.
+- Focus exit: Esc or one tap anywhere outside returns to the arrangement (a tap no longer jumps to another poem).
+- Content/arrangement buttons show their pressed state at once and interrupt a running camera move. The reported dropped Spiral click (1:09 in the recording) did not reproduce in testing.
+- Version strip: each thumbnail labelled with its date when the data has one, else n/N (1 = earliest).
+- Not changed: "Unfold" (third content button) showing whole pages far away and lines close in is its design, not a mode reset.
+- Tested in headless Chromium at 1280×900 and 390×844 (light and dark), no console errors. Not yet tested on a real iPhone.
 
 ## Standing rules (author)
 - No AI-written creative or interpretive text visible in any presentation; creative writing is his. Technical writing may be AI-generated.
@@ -69,12 +83,12 @@ Sections, all saved to the studio database:
 
 Database shape: `release/{pieceKey}` = {pool, order, num, prep{}, exposures[], subs[], at}; `batches/{id}` = {items[], status, filed, sr, reg, eff, created, at}; `rconfig/settings` = {start}. pieceKey is the item id (`p001`…) or the version id for a new poem.
 
-## Waiting on the author (2026-10-27)
+## Waiting on the author (2026-10-28)
+- Try merged-piece v4 (desktop and real iPhone); say whether the upright-when-close behaviour and the reading-size opening feel right.
 - Review in the studio (start with the 58 complete pieces) and the Decisions tab.
 - Release tab → Sort: pick Series / Reserve / Archive; choose a first-post date.
 - Name candidates (then handle/domain availability checks).
 - Fill in and photograph the font sheet.
-- Real-iPhone test of the merged piece.
 - Decide whether the site goes public (Pages sites are public even from a private repo; putting all poems online conflicts with the Reserve).
 - Check why Actions won't start runners on the private repo (billing/minutes setting).
 - Confirm where the local build folders live (or connect that folder) so the rebuild scripts can run.
@@ -90,4 +104,4 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 
 ## Rebuild order (technical)
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
-2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`.
+2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
