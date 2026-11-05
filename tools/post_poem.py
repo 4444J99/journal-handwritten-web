@@ -163,11 +163,15 @@ def gate_verified(src, db, pid):
 
 
 def gate_filed(db, pid):
-    for bid, b in sorted(db["batches"].items()):
-        if pid in (b.get("items") or []):
-            ok = b.get("status") in ("filed", "registered")
-            return ok, f"batch {bid} is {b.get('status')!r}"
-    return False, "not listed in any batch"
+    """Passes when ANY batch listing the piece is filed or registered (a piece may sit in a draft batch and
+    also in a later filed one)."""
+    found = [(bid, b.get("status")) for bid, b in sorted(db["batches"].items()) if pid in (b.get("items") or [])]
+    if not found:
+        return False, "not listed in any batch"
+    for bid, status in found:
+        if status in ("filed", "registered"):
+            return True, f"batch {bid} is {status!r}"
+    return False, "; ".join(f"batch {bid} is {status!r}" for bid, status in found)
 
 
 # ------------------------------------------------------------------ versions and corrections
@@ -487,7 +491,14 @@ def check_output(src, out, effective, published, texts_ok, pieces_expected, scan
         plain = strip_data_uris(html)
         res.append((f"index.html uses the font family {build_public.PUBLIC_FONT_FAMILY}", build_public.PUBLIC_FONT_FAMILY in plain, ""))
     scan = scan if scan is not None else name_scan(out)
-    res.append(("no output file, decoded data URI or decoded font table names the other project (any letter case, ASCII / UTF-16)", not scan["hits"], "; ".join(scan["hits"][:8])))
+    if scan["hits"]:
+        res.append(("no output file, decoded data URI or decoded font table names the other project (any letter case, ASCII / UTF-16)", False, "; ".join(scan["hits"][:8])))
+    elif scan["unchecked"] or scan["undecodable"]:
+        # ok is None: the check did not run on the font, so it is neither a PASS nor a FAIL
+        res.append(("output text and raw bytes name the other project: no hit; but the embedded font was NOT decoded, so its name table and CFF strings are UNCHECKED", None,
+                    "; ".join(scan["unchecked"] + scan["undecodable"])))
+    else:
+        res.append(("no output file, decoded data URI or decoded font table names the other project (any letter case, ASCII / UTF-16)", True, ""))
     hdr = out / "_headers"
     h = hdr.read_text() if hdr.exists() else ""
     res.append(("_headers sets X-Robots-Tag: noindex for /*", bool(re.search(r"^/\*\s*\n\s+X-Robots-Tag:\s*noindex\s*$", h, re.M)), ""))
@@ -571,6 +582,13 @@ def fill_public_repo(repo, build_dir, branch, message):
 
 # ------------------------------------------------------------------ pull request text
 
+CONSOLE_ONLY_AUDIT = ("font file name",)  # name records of the font file can hold personal names: never in public text
+
+
+def word_of(ok):
+    return "UNCHECKED" if ok is None else ("PASS" if ok else "FAIL")
+
+
 def render_pr_body(ctx):
     L = []
     L.append("## What changed")
@@ -591,7 +609,7 @@ def render_pr_body(ctx):
         word = "PASS" if ok else ("FAIL (forced)" if forced else "FAIL")
         L.append(f"- {word} {name} [{pid}]" + (f": {detail}" if detail else ""))
     for name, ok, detail in ctx["checks"]:
-        L.append(f"- {'PASS' if ok else 'FAIL'} {name}" + (f": {detail}" if detail else ""))
+        L.append(f"- {word_of(ok)} {name}" + (f": {detail}" if detail else ""))
     for pid, c in ctx["counts"].items():
         L.append(f"- {pid} lines: {c['confirmed']} confirmed, {c['corrected']} corrected (author text published), {c['unreviewed']} without review")
     L.append(f"- sha256 of data/j.json: `{ctx['sha']}`")
@@ -606,7 +624,11 @@ def render_pr_body(ctx):
         L.append(f"- {w}")
     L.append("- Reader-visible strings (list only; the author decides):")
     for kind, value in ctx["audit"]:
+        if kind in CONSOLE_ONLY_AUDIT:
+            continue  # the pull request text is public; these rows are on the console only
         L.append(f"  - {kind}: {value[:140]}")
+    if any(kind in CONSOLE_ONLY_AUDIT for kind, _ in ctx["audit"]):
+        L.append("  - font file name records: printed on the console of the run, not in this text")
     L.append("")
     L.append("Merging is the author's decision. To undo a post: `git revert` the merge commit in this repository.")
     return "\n".join(L) + "\n"
@@ -788,12 +810,23 @@ def run(a):
     for f in res["fonts"]:
         if f.get("renamed"):
             say(f"font: renamed to {build_public.PUBLIC_FONT_FAMILY} ({f['glyphs']} glyphs, {f['bytes']} -> {f['bytes_out']} bytes, {f['changed']} name/CFF record(s) rewritten)")
+    # the source page names the old family: the embedded font file is then KNOWN to carry the old name
+    known_old_font = bool(build_public.OLD_FONT_RE.search((src.site / "index.html").read_text(encoding="utf-8")))
     if scan["unchecked"]:
         why = ("the embedded font could not be decoded and checked for the other project's name (" + "; ".join(scan["unchecked"]) + "): "
                + (scan["reason"] or res["font_error"] or "no reason given"))
         if res["font_error"] and not scan["reason"]:
             why += f" [{res['font_error']}]"
-        if a.dry_run:
+        if known_old_font:
+            # the font could not be renamed and the page's own CSS names the old family: the file carries the old name,
+            # so the acceptance flag (for a font of unknown content) does not apply
+            msg = ("the embedded font is known to carry the other project's name (the page's font family is that name) and it was not renamed; "
+                   "--accept-embedded-font does not cover this. Install the font venv (VERSFORMS_FONT_PYTHON) and run again")
+            if a.dry_run:
+                say(f"WARN  stop embedded font: {why}. {msg[0].upper() + msg[1:]}. A real run is refused.")
+            else:
+                checks.append(("embedded font is renamed (the source font is known to carry the other project's name)", False, why + ". " + msg))
+        elif a.dry_run:
             say(f"WARN  stop embedded font: {why}. A real run needs --accept-embedded-font.")
         else:
             checks.append(("embedded font unchecked: --accept-embedded-font given", bool(a.accept_embedded_font),
@@ -806,8 +839,8 @@ def run(a):
         checks.append(("every embedded font parses and passes the name check (--accept-embedded-font does not cover this)", False,
                        "; ".join(scan["undecodable"]) + ": " + (scan["reason"] or "no reason given")))
     for name, ok, detail in checks:
-        say(f"{'PASS' if ok else 'FAIL'}  check {name}" + (f": {detail}" if detail else ""))
-    if not all(ok for _, ok, _ in checks):
+        say(f"{word_of(ok)}  check {name}" + (f": {detail}" if detail else ""))
+    if any(ok is False for _, ok, _ in checks):
         say("\nREFUSED: the build output failed its own checks. --force does not override these.")
         return EXIT_STOP
     for pg, ids in sorted(res["shared"].items()):

@@ -283,6 +283,14 @@ class GateTests(Base):
         self.assertEqual(self.go("p001"), 2)
         self.assertIn("not listed in any batch", self.out)
 
+    def test_piece_in_a_draft_batch_and_a_later_filed_batch_passes_gate_c(self):
+        # the draft batch sorts first (b-0) and lists the piece; the filed one (b-1, from ready_db) comes later
+        self.prepare(batches={"b-0": {"items": ["p001"], "status": "draft"}})
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.assertRegex(self.out, "PASS  gate +\\(c\\) in a filed or registered batch \\[p001\\]: batch b-1 is 'filed'")
+        self.assertEqual(post_poem.gate_filed({"batches": {"a": {"items": ["p001"], "status": "draft"}, "b": {"items": ["p001"], "status": "draft"}}}, "p001")[0], False)
+        self.assertIn("batch a is 'draft'", post_poem.gate_filed({"batches": {"a": {"items": ["p001"], "status": "draft"}}}, "p001")[1])
+
     def test_registered_batch_passes(self):
         self.prepare(batches={"b-1": {"items": ["p001"], "status": "registered"}})
         self.assertEqual(self.go("p001"), 0, self.out)
@@ -510,6 +518,7 @@ class HardStopTests(Base):
         self.assertEqual(self.go("p001", public=clone), 3, self.out)
         self.assertIn("does not exist yet [p001]: exists on origin", self.out)
 
+    @needs_venv
     def test_public_repo_results_are_listed_once_in_the_pull_request(self):
         self.prepare()
         clone, _ = make_public(self.tmp)
@@ -522,21 +531,50 @@ class HardStopTests(Base):
         self.prepare()
         self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False), 64, self.out)
 
-    def test_font_that_cannot_be_checked_needs_acceptance_in_a_real_run(self):
-        # the venv is missing: the font cannot be decoded, so the unchecked font needs --accept-embedded-font; --force does not help
+    def test_font_known_to_carry_the_old_name_is_never_published_without_the_venv(self):
+        # the page's font family is the old name, so the font file carries it; with no venv it cannot be renamed.
+        # The acceptance flag is for fonts of unknown content and does not cover this; --force does not either.
         self.prepare()
+        clone, _ = make_public(self.tmp)
+        head = git(clone, "rev-parse", "HEAD")
+        with mock.patch.dict(os.environ, NO_VENV):
+            for extra in ((), ("--force",), ("--accept-embedded-font",), ("--accept-embedded-font", "--force")):
+                with self.subTest(extra=extra):
+                    self.assertEqual(self.go("p001", "--no-pr", *extra, dry=False, public=clone), 3, self.out)
+                    self.assertIn("could not be decoded and checked", self.out)
+                    self.assertIn("font python not found", self.out)
+                    self.assertIn("known to carry the other project's name", self.out)
+                    self.assertIn("does not cover this", self.out)
+                    self.assertNotRegex(self.out, r"PASS  check no output file, decoded data URI")
+                    self.assertEqual(git(clone, "rev-parse", "HEAD"), head)
+                    self.assertEqual(git(clone, "rev-parse", "--abbrev-ref", "HEAD"), "main")
+
+    def test_font_of_unknown_content_that_cannot_be_checked_needs_acceptance_and_is_labelled_unchecked(self):
+        # the venv is missing and the page does not name the old family: the font cannot be decoded, so the name check
+        # on it is UNCHECKED (never PASS), a real run needs --accept-embedded-font, and --force does not help
+        make_private(self.root, extra_public=["p002"])
+        html = re.sub(OLD + r"[ ]?Diary", "Fixture Hand", INDEX_HTML, flags=re.I)
+        self.assertNotRegex(html, "(?i)" + OLD)
+        (self.root / "site" / "index.html").write_text(html)
+        ready_db(self.db, pids=("p001",), _root=self.root)
         clone, _ = make_public(self.tmp)
         head = git(clone, "rev-parse", "HEAD")
         with mock.patch.dict(os.environ, NO_VENV):
             self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 3, self.out)
             self.assertIn("could not be decoded and checked", self.out)
-            self.assertIn("font python not found", self.out)
             self.assertIn("--accept-embedded-font", self.out)
+            self.assertRegex(self.out, r"UNCHECKED +check output text and raw bytes")
+            self.assertNotRegex(self.out, r"PASS  check no output file, decoded data URI")
             self.assertEqual(git(clone, "rev-parse", "HEAD"), head)
             self.assertEqual(self.go("p001", "--no-pr", "--force", dry=False, public=clone), 3)  # force does not help
             self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+            self.assertRegex(self.out, r"UNCHECKED +check output text and raw bytes")
+            self.assertNotRegex(self.out, r"PASS  check no output file, decoded data URI")
         body = (self.work / "pr-body.md").read_text()
         self.assertIn("published it unchecked", body)
+        self.assertRegex(body, r"UNCHECKED output text and raw bytes")
+        self.assertNotRegex(body, r"PASS no output file, decoded data URI")
+        self.assertNotRegex(body, "(?i)" + OLD)
 
     @needs_venv
     def test_checkable_font_needs_no_flag_and_is_renamed(self):
@@ -876,6 +914,8 @@ class DryRunWritesNothing(Base):
 
 class RealRunTests(Base):
     def run_real(self, *extra, **kw):
+        if not HAVE_VENV:
+            self.skipTest("a real run on this fixture needs the font venv: its font carries the old name and must be renamed")
         self.clone, self.bare = make_public(self.tmp)
         return self.go("p001", "--accept-embedded-font", *extra, dry=False, public=self.clone, **kw)
 
@@ -1019,6 +1059,7 @@ class BrandingTests(Base):
         self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
         self.assertEqual((self.root / "site" / "index.html").read_bytes(), before)
 
+    @needs_venv
     def test_pr_body_never_names_the_old_project(self):
         self.prepare()
         clone, _ = make_public(self.tmp)
@@ -1028,6 +1069,17 @@ class BrandingTests(Base):
         self.assertFalse(build_public.OLD_NAME_RE.search(self.out))
         self.assertFalse(build_public.OLD_NAME_RE.search(git(clone, "log", "-1", "--format=%B")))
 
+    @needs_venv
+    def test_pr_body_does_not_list_the_name_records_of_the_font_file(self):
+        self.prepare()
+        clone, _ = make_public(self.tmp)
+        self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 0, self.out)
+        self.assertIn("font file name:", self.out)  # the console lists them for the author
+        body = (self.work / "pr-body.md").read_text()
+        self.assertNotIn("font file name:", body)
+        self.assertIn("font file name records: printed on the console", body)
+
+    @needs_venv
     def test_pr_body_with_the_old_name_is_refused_before_anything_is_committed(self):
         self.prepare()
         clone, _ = make_public(self.tmp)
