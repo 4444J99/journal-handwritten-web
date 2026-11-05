@@ -22,7 +22,7 @@ Exit codes
 
 stdlib and Pillow only. Poem text is never printed, logged, or put in a commit or PR body.
 """
-import argparse, base64, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile
+import argparse, base64, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile, urllib.parse
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
@@ -486,8 +486,25 @@ def leak_check(src, out, published, texts_ok):
         secrets.update(p.get("u") or [])
     secrets = {s for s in secrets if len(s) >= 12 and re.search(r"\s", s) and s != PLACEHOLDER} - texts_ok
     blob = "\n".join(p.read_text(encoding="utf-8", errors="ignore") for p in _text_files(out))
-    bad.update(s for s in secrets if s in blob)
+    # An unpublished line can be a fragment of a longer line that IS published (the same words occur in both).
+    # Such a hit is not a leak: it is excused only where it lies inside an authorised published line, so the
+    # occurrences inside those lines are removed before searching. Any occurrence outside them still counts.
+    authorised = sorted((t for t in texts_ok if t), key=len, reverse=True)
+    for sec in secrets:
+        masked = blob
+        for t in authorised:
+            if len(t) > len(sec) and sec in t:
+                for form in _json_forms(t):
+                    masked = masked.replace(form, "\x00")
+        if any(form in masked for form in _json_forms(sec)):
+            bad.add(sec)
     return sorted(bad)
+
+
+def _json_forms(text):
+    """The ways a string can appear in an output file: as it is, and as it is written inside a JSON string
+    (escaped quotes, backslashes and control characters; with or without non-ASCII escaped)."""
+    return {text, json.dumps(text, ensure_ascii=False)[1:-1], json.dumps(text)[1:-1]}
 
 
 def check_output(src, out, effective, published, texts_ok, pieces_expected, scan=None):
@@ -553,7 +570,32 @@ def git(repo, *args, check=True):
 
 
 def remote_is_public_repo(url):
-    return bool(re.search(r"github\.com[:/]" + re.escape(PUBLIC_REPO_NAME) + r"(\.git)?/?$", url.strip(), re.I))
+    """True only for a remote that IS github.com's 4444J99/versforms: the host exactly github.com and the path
+    exactly the repository (an optional .git and an optional trailing slash). Accepted forms: https, ssh://
+    and the scp-like git@github.com:OWNER/REPO. A look-alike host (notgithub.com, github.com.example, a path that
+    merely contains github.com/4444J99/versforms, github.com used as the user name) is not the repository.
+    Case is ignored for host and repository, as GitHub does."""
+    u = url.strip()
+    if not u or re.search(r"[\s\\]", u):
+        return False
+    scp = re.fullmatch(r"(?:[A-Za-z0-9._-]+@)?github\.com:([^/:?#]+/[^/:?#]+)", u, re.I)
+    if scp:
+        path = scp.group(1)
+    else:
+        try:
+            parts = urllib.parse.urlsplit(u)
+            port = parts.port
+        except ValueError:
+            return False
+        scheme = parts.scheme.lower()
+        if scheme not in ("https", "ssh") or (parts.hostname or "").lower() != "github.com":
+            return False
+        if port not in (None, 443 if scheme == "https" else 22) or parts.query or parts.fragment:
+            return False
+        path = parts.path.lstrip("/")
+    path = path[:-1] if path.endswith("/") else path
+    path = path[:-4] if path.lower().endswith(".git") else path
+    return path.lower() == PUBLIC_REPO_NAME.lower()
 
 
 def check_public_repo(path, branch):

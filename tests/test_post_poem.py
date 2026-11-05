@@ -833,6 +833,105 @@ class BuildTests(Base):
         (out / "data" / "extra.bin").write_bytes(OLD.lower().encode("utf-16-le"))
         self.assertFalse(run()[name])
 
+    # ---- leak_check: an unpublished line that is only a FRAGMENT of a longer published line is not a leak
+
+    FRAGMENT = "shared words here"            # unpublished line (p001 V0, pg1 block 0 line 0); synthetic text
+    QUOTED = 'say "hello there" friend'        # another unpublished line, with quotes
+
+    def fragment_case(self):
+        """Same relationship as the real p002 (an unpublished block's line contained in a longer published line), synthetic text.
+        p001's default version is V1 (pg2 block 0). Its V0 (pg1 block 0) is not published."""
+        make_private(self.root, extra_public=["p002"])
+        jp, rp = self.root / "site" / "data" / "j.json", self.root / "studio" / "data" / "review.json"
+        j, r = json.loads(jp.read_text()), json.loads(rp.read_text())
+        def put(pg, bi, li, text):
+            next(x for x in j["pages"] if x["id"] == pg)["B"][bi]["L"][li] = text
+            next(x for x in r["pages"] if x["id"] == pg)["blocks"][bi]["lines"][li]["tx"] = text
+        put("pg1", 0, 0, self.FRAGMENT)
+        put("pg1", 0, 1, self.QUOTED)
+        put("pg2", 0, 0, "before " + self.FRAGMENT + " after")
+        jp.write_text(json.dumps(j))
+        rp.write_text(json.dumps(r))
+        ready_db(self.db, pids=("p001",), _root=self.root)
+
+    def built_output(self):
+        """Run the dry run and return (src, build dir, published blocks, authorised texts) exactly as the run computed them."""
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        src, out = post_poem.Source(self.root), self.work / "build"
+        pub = json.loads((out / "data" / "j.json").read_text())
+        published = {(pg["id"], bi) for pg in pub["pages"] for bi, b in enumerate(pg["B"]) if any(b["L"])}
+        texts_ok = {t for (pg, bi) in published for t in src.jpages[pg]["B"][bi]["L"]}
+        return src, out, published, texts_ok
+
+    def test_unpublished_line_that_is_a_fragment_of_a_published_line_is_not_a_leak(self):
+        self.fragment_case()
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        self.assertRegex(self.out, r"PASS  check no line of an unpublished block appears in the output")
+        # and the unpublished block itself is empty in the output: the structural check is still the authority
+        src, out, published, texts_ok = self.built_output()
+        self.assertNotIn(("pg1", 0), published)
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
+
+    def test_a_fragment_found_anywhere_outside_a_published_line_is_still_a_leak(self):
+        self.fragment_case()
+        src, out, published, texts_ok = self.built_output()
+        # the same words, but in a file and not inside the published line: flagged, although they ALSO occur inside the published line
+        (out / "data" / "extra.txt").write_text("x " + self.FRAGMENT + " y")
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [self.FRAGMENT])
+        (out / "data" / "extra.txt").unlink()
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
+        # inside a second copy of the published line is fine (the author's own text); next to it is not
+        (out / "data" / "extra.txt").write_text("before " + self.FRAGMENT + " after")
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
+        (out / "data" / "extra.txt").write_text("before " + self.FRAGMENT + " after " + self.FRAGMENT)
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [self.FRAGMENT])
+
+    def test_an_unpublished_line_that_is_in_no_published_line_is_a_leak_in_plain_and_in_json_escaped_form(self):
+        self.fragment_case()
+        src, out, published, texts_ok = self.built_output()
+        (out / "data" / "extra.txt").write_text("x " + self.QUOTED + " y")
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [self.QUOTED])
+        # as it would be written inside a JSON string (quotes escaped): found as well; before, such a line was never matched
+        (out / "data" / "extra.txt").write_text(json.dumps({"k": self.QUOTED}))
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [self.QUOTED])
+        (out / "data" / "extra.txt").write_text(json.dumps({"k": self.QUOTED}, ensure_ascii=True))
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [self.QUOTED])
+
+    # ---- the public clone must be github.com's 4444J99/versforms, not something whose URL merely contains that text
+
+    def test_remote_identity_accepts_the_repository_and_nothing_that_only_looks_like_it(self):
+        ok = ["https://github.com/4444J99/versforms.git", "https://github.com/4444J99/versforms", "https://github.com/4444J99/versforms/",
+              "git@github.com:4444J99/versforms.git", "git@github.com:4444J99/versforms", "ssh://git@github.com/4444J99/versforms.git",
+              "ssh://git@github.com:22/4444J99/versforms.git", "https://github.com:443/4444J99/versforms.git",
+              "HTTPS://GitHub.com/4444j99/Versforms.git", "https://x-access-token:token@github.com/4444J99/versforms.git"]
+        bad = ["https://notgithub.com/4444J99/versforms.git", "https://example.invalid/github.com/4444J99/versforms.git",
+               "https://github.com.example.invalid/4444J99/versforms.git", "https://github.com@example.invalid/4444J99/versforms.git",
+               "git@notgithub.com:4444J99/versforms.git", "git@github.com.example.invalid:4444J99/versforms.git", "notgithub.com:4444J99/versforms.git",
+               "https://github.com/4444J99/versforms.git/extra", "https://github.com/4444J99/versforms-other.git", "https://github.com/x/4444J99/versforms.git",
+               "https://github.com/4444J99//versforms.git", "http://github.com/4444J99/versforms.git", "git://github.com/4444J99/versforms.git",
+               "https://github.com/4444J99/versforms.git?x=1", "https://github.com/4444J99/versforms.git#f", "https://github.com:8443/4444J99/versforms.git",
+               "ssh://git@github.com:2222/4444J99/versforms.git", "https://github.com\\@example.invalid/4444J99/versforms.git",
+               "/local/path/github.com/4444J99/versforms", "", "   "]
+        for u in ok:
+            self.assertTrue(post_poem.remote_is_public_repo(u), u)
+        for u in bad:
+            self.assertFalse(post_poem.remote_is_public_repo(u), u)
+
+    def test_a_clone_whose_origin_only_looks_like_the_repository_is_refused_before_anything_else(self):
+        # the look-alike URL is redirected to a real local bare repository, so a clone that is clean and level with ITS OWN origin
+        # passes every other precondition: only the identity check stops it
+        self.prepare()
+        for lookalike in ("https://notgithub.com/4444J99/versforms.git", "https://example.invalid/github.com/4444J99/versforms.git"):
+            with self.subTest(lookalike=lookalike):
+                clone, bare = make_public(self.tmp / ("clone-" + str(abs(hash(lookalike)))))
+                git(clone, "remote", "set-url", "origin", lookalike)
+                git(clone, "config", f"url.{bare}.insteadOf", lookalike)
+                before = git(clone, "for-each-ref")
+                self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+                self.assertRegex(self.out, r"FAIL.*remote origin is 4444J99/versforms")
+                self.assertEqual(git(clone, "for-each-ref"), before)
+                self.assertEqual(git(clone, "status", "--porcelain"), "")
+
     def test_correction_without_text_does_not_pass_gate_b(self):
         self.prepare(reviews={"pg2-0-1": {"status": "corrected", "original": line_text("p001", 1, 0, 1)}})
         self.assertEqual(self.go("p001"), 2, self.out)
