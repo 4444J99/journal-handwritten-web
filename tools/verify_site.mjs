@@ -35,7 +35,7 @@ import crypto from "node:crypto";
 import os from "node:os";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { CDP, writeThenExit } from "./cdp_client.mjs";
+import { CDP, withBrowser, writeThenExit } from "./cdp_client.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, "..");
@@ -428,26 +428,28 @@ async function main() {
   const html = await fsp.readFile(path.join(SITE, "index.html"));
   const server = await startServer();
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
-  const { proc, wsUrl } = await launchChrome();
-  const cdp = await CDP.connect(wsUrl);
   let rep;
   try {
-    const ver = await cdp.send("Browser.getVersion");
-    const cells = [];
-    for (const vp of VIEWPORTS) for (const scheme of SCHEMES) {
-      const cell = makeCell(vp, scheme);
-      try { await runCell(cdp, baseUrl, cell); } catch (e) { cell.exceptions.push("verifier error: " + e.message); }
-      cell.reasons = summarize(cell);
-      cells.push(cell);
-    }
-    rep = {
-      date: new Date().toISOString(), node: process.version, baseUrl, scratch: SCRATCH,
-      chrome: { product: ver.product, userAgent: ver.userAgent, protocol: ver.protocolVersion },
-      site: { bytes: html.length, sha256: crypto.createHash("sha256").update(html).digest("hex") },
-      cells, ok: cells.every(c => c.reasons.length === 0),
-    };
+    // launching, connecting and the work are one cleanup scope: a browser that was launched is stopped even when
+    // the connection to it cannot be made (see withBrowser in cdp_client.mjs)
+    await withBrowser({ launch: launchChrome, connect: CDP.connect }, async (cdp) => {
+      const ver = await cdp.send("Browser.getVersion");
+      const cells = [];
+      for (const vp of VIEWPORTS) for (const scheme of SCHEMES) {
+        const cell = makeCell(vp, scheme);
+        try { await runCell(cdp, baseUrl, cell); } catch (e) { cell.exceptions.push("verifier error: " + e.message); }
+        cell.reasons = summarize(cell);
+        cells.push(cell);
+      }
+      rep = {
+        date: new Date().toISOString(), node: process.version, baseUrl, scratch: SCRATCH,
+        chrome: { product: ver.product, userAgent: ver.userAgent, protocol: ver.protocolVersion },
+        site: { bytes: html.length, sha256: crypto.createHash("sha256").update(html).digest("hex") },
+        cells, ok: cells.every(c => c.reasons.length === 0),
+      };
+    });
   } finally {
-    cdp.close(); proc.kill("SIGTERM"); server.close();
+    server.close();
   }
   const md = markdown(rep);
   const json = JSON.stringify(rep, null, 2);

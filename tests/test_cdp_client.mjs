@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { CDP, writeThenExit } from '../tools/cdp_client.mjs';
+import { CDP, withBrowser, writeThenExit } from '../tools/cdp_client.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const MODULE = join(here, '..', 'tools', 'cdp_client.mjs');
@@ -121,4 +121,45 @@ test('writeThenExit calls exit exactly once, with the code, also when write thro
   const bad = { write() { throw new Error('closed'); } };
   writeThenExit(bad, 'x', 5, c => calls.push(c));
   return new Promise(res => setTimeout(() => { assert.deepEqual(calls.sort(), [3, 5]); res(); }, 30));
+});
+
+// ---- withBrowser: a launched browser is always stopped
+
+const fakeLaunch = () => { const proc = { kills: [], kill(sig) { this.kills.push(sig); } }; return { proc, wsUrl: 'ws://x', launch: async () => ({ proc, wsUrl: 'ws://x' }) }; };
+
+test('withBrowser stops the browser when the connection cannot be made, and the error reaches the caller', async () => {
+  const f = fakeLaunch();
+  await assert.rejects(withBrowser({ launch: f.launch, connect: async () => { throw new Error('websocket error'); } }, async () => 'unreachable'), /websocket error/);
+  assert.deepEqual(f.proc.kills, ['SIGTERM']);
+});
+
+test('withBrowser stops the browser and closes the connection when the work throws', async () => {
+  const f = fakeLaunch(); const conn = { closed: 0, close() { this.closed++; } };
+  await assert.rejects(withBrowser({ launch: f.launch, connect: async () => conn }, async () => { throw new Error('boom'); }), /boom/);
+  assert.deepEqual(f.proc.kills, ['SIGTERM']);
+  assert.equal(conn.closed, 1);
+});
+
+test('withBrowser returns the result of the work and stops the browser once', async () => {
+  const f = fakeLaunch(); const conn = { closed: 0, close() { this.closed++; } };
+  const r = await withBrowser({ launch: f.launch, connect: async (url) => { assert.equal(url, 'ws://x'); return conn; } }, async (cdp, launched) => {
+    assert.equal(cdp, conn); assert.equal(launched.wsUrl, 'ws://x'); return 42;
+  });
+  assert.equal(r, 42);
+  assert.deepEqual(f.proc.kills, ['SIGTERM']);
+  assert.equal(conn.closed, 1);
+});
+
+test('withBrowser does not try to stop a browser that never launched', async () => {
+  let connected = false;
+  await assert.rejects(withBrowser({ launch: async () => { throw new Error('Chrome exited early'); }, connect: async () => { connected = true; } }, async () => {}), /Chrome exited early/);
+  assert.equal(connected, false);
+});
+
+test('withBrowser still stops the browser when closing the connection or killing throws', async () => {
+  const proc = { killed: 0, kill() { this.killed++; throw new Error('already gone'); } };
+  const conn = { close() { throw new Error('socket gone'); } };
+  const r = await withBrowser({ launch: async () => ({ proc, wsUrl: 'ws://x' }), connect: async () => conn }, async () => 'ok');
+  assert.equal(r, 'ok');
+  assert.equal(proc.killed, 1);
 });

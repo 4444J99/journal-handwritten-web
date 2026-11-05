@@ -74,6 +74,24 @@ export class CDP {
   close() { try { this.ws.close(); } catch {} }
 }
 
+// Launch a browser, connect to it, run `work(cdp, launched)`, and stop the browser whatever happens: when the
+// connection cannot be made, when the work throws, and when it succeeds. A browser that was launched is a process of
+// its own (it does not end when this one does) and it holds the profile directory, so every step after the launch
+// belongs inside the cleanup scope.
+//   launch():       -> { proc, wsUrl }       (proc has kill())
+//   connect(wsUrl): -> a CDP (or anything with close())
+export async function withBrowser({ launch, connect }, work) {
+  let launched = null, cdp = null;
+  try {
+    launched = await launch();
+    cdp = await connect(launched.wsUrl);
+    return await work(cdp, launched);
+  } finally {
+    if (cdp) { try { cdp.close(); } catch {} }
+    if (launched && launched.proc) { try { launched.proc.kill("SIGTERM"); } catch {} }
+  }
+}
+
 // Write `text` to `stream` and exit with `code` only once the data has been handed to the operating system.
 // process.exit() straight after process.stdout.write() can cut a large report short when stdout is a pipe.
 export function writeThenExit(stream, text, code, exit = process.exit) {
