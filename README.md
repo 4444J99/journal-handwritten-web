@@ -25,6 +25,7 @@ studio/                   review studio (runs as a Claude artifact; see below)
   img/thumbs/             thumbnails                              123
                           full scans and spreads are shared from site/img/p, site/img/s
 docs/plan.md              project plan, versioned copy of the Project doc
+claude/                   the claude.ai Project's text documents: plan.md (the Project doc), 12 research reports, 5 PDFs
 tools/check.py            integrity check: every referenced file present + checksums
 tools/studio_files.py     file map for republishing the studio artifact
 tools/build_public.py     builds the public site (released pieces only) for 4444J99/versforms
