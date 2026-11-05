@@ -1,0 +1,11 @@
+{
+  "name": "versforms-studio",
+  "private": true,
+  "type": "module",
+  "description": "Review studio on Cloudflare Pages Functions, D1 and R2. No runtime dependencies; wrangler is used from the system install.",
+  "scripts": {
+    "test:unit": "node --test tests/auth.unit.test.mjs tests/adapter.unit.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:py": "python3 -m unittest discover -s tests -p 'test_*.py'"
+  }
+}
