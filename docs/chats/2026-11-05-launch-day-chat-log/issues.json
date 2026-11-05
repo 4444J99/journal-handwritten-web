@@ -1,0 +1,111 @@
+[
+ {
+  "nn": "01",
+  "file": "01-log-every-chat.md",
+  "title": "[2026-11-05-launch-day-chat-log] 01 · Log every chat with a plan",
+  "plan": [
+   {
+    "text": "Every chat logged with a plan",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true
+ },
+ {
+  "nn": "02",
+  "file": "02-cloudflare-site-live.md",
+  "title": "[2026-11-05-launch-day-chat-log] 02 · Host on Cloudflare; site live",
+  "plan": [
+   {
+    "text": "Site live at versforms.pages.dev (confirmed 2026-11-05, blank until poem 1)",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true
+ },
+ {
+  "nn": "03",
+  "file": "03-public-private-split.md",
+  "title": "[2026-11-05-launch-day-chat-log] 03 · Split public and private repos",
+  "plan": [
+   {
+    "text": "Tag pushes v2026.10.27 / v2026.11.05 refused by the session proxy — push from a local clone",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Check whether etceter4's `img/photos/diary/` scans are public; make private or remove if the split should hold",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Review the 14 GitHub Apps connected to `versforms` by the repo-creation default",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false
+ },
+ {
+  "nn": "04",
+  "file": "04-why-manual-steps.md",
+  "title": "[2026-11-05-launch-day-chat-log] 04 · Why the author had to sign in",
+  "plan": [],
+  "close": true
+ },
+ {
+  "nn": "05",
+  "file": "05-chrome-cloudflare-prompt.md",
+  "title": "[2026-11-05-launch-day-chat-log] 05 · Prompt for Claude in Chrome",
+  "plan": [
+   {
+    "text": "Pages project created and deployed (reported live in the Versforms dashboard chat)",
+    "who": "author",
+    "done": true
+   }
+  ],
+  "close": true
+ },
+ {
+  "nn": "06",
+  "file": "06-confirm-logging.md",
+  "title": "[2026-11-05-launch-day-chat-log] 06 · Confirm every chat is logged",
+  "plan": [],
+  "close": true
+ },
+ {
+  "nn": "07",
+  "file": "07-per-chat-prompts.md",
+  "title": "[2026-11-05-launch-day-chat-log] 07 · Prompt per chat: documents, plan, issues",
+  "plan": [],
+  "close": true
+ },
+ {
+  "nn": "08",
+  "file": "08-run-for-every-chat.md",
+  "title": "[2026-11-05-launch-day-chat-log] 08 · Run the breakdown for every chat",
+  "plan": [
+   {
+    "text": "Every exchange of the 22 chats has a document and an issue",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true
+ },
+ {
+  "nn": "09",
+  "file": "09-count-24-chats.md",
+  "title": "[2026-11-05-launch-day-chat-log] 09 · Count is 24, not 22",
+  "plan": [
+   {
+    "text": "All 24 chats broken down",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true
+ }
+]
