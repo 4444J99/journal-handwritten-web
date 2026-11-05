@@ -1,0 +1,26 @@
+[
+ {
+  "nn": "01",
+  "file": "01-do-now-list.md",
+  "title": "[2026-11-05-local-claude-code-handoff] 01 · Do-now list from the handoff",
+  "plan": [
+   {
+    "text": "Merge PR #73",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Any change to etceter4, GitHub App removals, poem 1 release, Cloudflare changes",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fix billing, then re-run the check workflow",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 90
+ }
+]
