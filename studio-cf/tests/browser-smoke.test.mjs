@@ -78,13 +78,16 @@ test('owner: page connects, confirms a piece\'s lines through the adapter, state
     await p.ev(`document.querySelector('#confirm-rest').click()`);
     await waitFor(p.ev, `/^[1-9]\\d* \\/ \\d+ lines/.test(document.querySelector('#prog').textContent)`);
     await waitFor(p.ev, `document.querySelector('#save').textContent === 'Saved'`);
-    const n = Number((await p.ev(`document.querySelector('#prog').textContent`)).match(/^(\d+)/)[1]);
-    assert.ok(n >= 1);
-    // the server holds exactly those documents
+    // the server holds exactly the documents the page wrote
     const r = await fetch(srv.base + '/api/db/reviews', { headers: { 'Cf-Access-Jwt-Assertion': tok(OWNER) } });
     const body = await r.json();
-    assert.equal(body.docs.length, n);
+    const n = body.docs.length;
+    assert.ok(n >= 1);
     assert.equal(body.rev, n);
+    // The page renders its progress line on the next animation frame, after 'Saved' is already shown.
+    // Reading it once straight away raced under load (one full run in four on a busy machine, off by one),
+    // so wait, bounded, for it to catch up with what the server holds.
+    await waitFor(p.ev, `new RegExp('^' + ${n} + ' / ').test(document.querySelector('#prog').textContent)`);
     // photo upload through window.claude.use('assets') and the /_blob/ URL the page builds from the id
     const up = await p.ev(`(async () => {
       const bytes = new Uint8Array(2048); bytes.set([0xff, 0xd8, 0xff, 0xe0]);
