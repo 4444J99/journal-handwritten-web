@@ -31,6 +31,8 @@ PUBLIC_REPO_NAME = "4444J99/versforms"
 COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
 POOLS = ("series", "reserve", "archive")
 PLACEHOLDER = "[[quoted passage:]]"
+# the author's music: no vers.forms artifact may name it. Built from parts so this file is not itself a hit.
+OLD_NAME_RE = re.compile("etceter" + "4", re.I)
 EXIT_OK, EXIT_PARTIAL, EXIT_GATE, EXIT_STOP, EXIT_USAGE = 0, 1, 2, 3, 64
 
 
@@ -257,6 +259,14 @@ def shared_scan(src, db, pid, indices, public_ids, accepted):
 FONT_RE = re.compile(r"@font-face\s*\{[^}]*?font-family\s*:\s*[\"']?([^\"';}]+)[\"']?[^}]*?src\s*:\s*url\(\s*data:font/([a-z0-9]+);base64,([A-Za-z0-9+/=]+)", re.I | re.S)
 
 
+def _importable(name):
+    import importlib.util
+    try:
+        return importlib.util.find_spec(name) is not None
+    except (ImportError, ValueError):
+        return False
+
+
 def find_embedded_fonts(html):
     return [dict(family=m.group(1).strip(), kind=m.group(2), bytes=len(m.group(3)) * 3 // 4) for m in FONT_RE.finditer(html)]
 
@@ -279,9 +289,9 @@ def audit_strings(out_dir):
     for v in sorted(set(re.findall(r"\balt=\"([^\"]*)\"", plain))):
         rows.append(("alt", v))
     for f in find_embedded_fonts(html):
-        rows.append(("font embedded", f"{f['family']} ({f['kind']}, about {f['bytes']} bytes, downloadable)"))
+        rows.append(("font embedded", f"{f['family']} ({f['kind']}, about {f['bytes']} bytes, downloadable; internal name table unchanged)"))
     seen = set()
-    for m in re.finditer(r"etceter4", plain, re.I):
+    for m in OLD_NAME_RE.finditer(plain):
         ctx = re.sub(r"\s+", " ", plain[max(0, m.start() - 30):m.end() + 30]).strip()
         if ctx not in seen:
             seen.add(ctx)
@@ -342,6 +352,17 @@ def check_output(src, out, effective, published, texts_ok, pieces_expected):
     res = []
     html = (out / "index.html").read_text(encoding="utf-8")
     res.append(("index.html has <meta name=\"robots\" content=\"noindex\">", build_public.NOINDEX_META in html, ""))
+    res.append((f"index.html title is {build_public.PUBLIC_TITLE}", f"<title>{build_public.PUBLIC_TITLE}</title>" in html, ""))
+    plain = strip_data_uris(html)
+    res.append(("index.html uses the font family " + build_public.PUBLIC_FONT_FAMILY, build_public.PUBLIC_FONT_FAMILY in plain, ""))
+    named = []
+    for p in _text_files(out):
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        if p.name == "index.html":
+            text = strip_data_uris(text)  # the font bytes are not text; their name table is reported separately
+        if OLD_NAME_RE.search(text):
+            named.append(p.relative_to(out).as_posix())
+    res.append(("no text file in the output names the other project (any letter case)", not named, ", ".join(named)))
     hdr = out / "_headers"
     h = hdr.read_text() if hdr.exists() else ""
     res.append(("_headers sets X-Robots-Tag: noindex for /*", bool(re.search(r"^/\*\s*\n\s+X-Robots-Tag:\s*noindex\s*$", h, re.M)), ""))
@@ -451,7 +472,7 @@ def render_pr_body(ctx):
     L.append("- Rendering on a real phone or other device")
     L.append("- A Cloudflare Pages preview deploy of this branch")
     L.append("- Author sign-off on the shared scans listed here: " + (", ".join(f"{f['id']} on {f['page']} ({f['status']})" for f in ctx["shared"]) or "none found"))
-    L.append("- Author sign-off on the embedded font (font file and its name become downloadable): " + (", ".join(ctx["fonts"]) or "none embedded"))
+    L.append("- Author sign-off on the embedded font (the file stays downloadable; its internal name table still carries the old name until the font is re-issued): " + (", ".join(ctx["fonts"]) or "none embedded"))
     for w in ctx["warnings"]:
         L.append(f"- {w}")
     L.append("- Reader-visible strings (list only; the author decides):")
@@ -472,7 +493,7 @@ def parse_args(argv):
     ap.add_argument("--include-versions", action="store_true", help="publish the whole version stack (needs the author's approval)")
     ap.add_argument("--force", action="store_true", help="override the three gates only")
     ap.add_argument("--accept-shared-scan", action="append", default=[], metavar="IDS", help="ids of Series pieces / other-line items whose writing may show in a shared scan")
-    ap.add_argument("--accept-embedded-font", action="store_true", help="accept that index.html embeds a downloadable font whose name becomes public")
+    ap.add_argument("--accept-embedded-font", action="store_true", help="accept that index.html embeds a downloadable font file whose internal name table still carries the old name")
     ap.add_argument("--dry-run", action="store_true", help="run every gate and hard stop, build into scratch, write nothing in the public repo")
     ap.add_argument("--no-pr", action="store_true", help="commit the branch in the public clone but do not push or open a PR")
     ap.add_argument("--workdir", help="scratch directory for the build (default: a new temporary directory)")
@@ -584,9 +605,14 @@ def run(a):
     # --- embedded font
     html_src = (src.site / "index.html").read_text(encoding="utf-8")
     fonts = find_embedded_fonts(html_src)
-    font_names = [f"{f['family']} ({f['bytes']} bytes)" for f in fonts]
+    # the build renames the CSS family; the file's own name table keeps the old name
+    font_names = [f"{build_public.PUBLIC_FONT_FAMILY} ({f['bytes']} bytes)" for f in fonts]
     if fonts:
-        why = "index.html embeds " + ", ".join(font_names) + ": the font file becomes downloadable from the public site and its name becomes public"
+        say("font: the CSS family is renamed to " + build_public.PUBLIC_FONT_FAMILY + " in the built index.html. The embedded font file's internal name table "
+            "still carries the old name and the font remains downloadable; the bytes are untouched. fontTools importable: "
+            f"{_importable('fontTools')}; brotli importable: {_importable('brotli')} (nothing installed).")
+        why = ("index.html embeds " + ", ".join(font_names) + ": the font file stays downloadable from the public site and its internal name table still carries the "
+               "old name until the author re-issues the font")
         if a.dry_run:
             say(f"WARN  stop embedded font: {why}. A real run needs --accept-embedded-font.")
         else:
@@ -624,8 +650,6 @@ def run(a):
     say(f"\nbuild: {len(listing)} files, {sum(listing.values())} bytes, {len(res['pages'])} page(s), {res['applied']} correction(s) applied")
     say(f"data/j.json sha256 {sha}")
     audit = audit_strings(out)
-    title = next((v for k, v in audit if k == "title"), "")
-    say(f"WARNING  visible title is {title!r}; the author's decision on the title is pending and this script does not change it.")
     say("reader-visible strings (list only):")
     for kind, value in audit:
         say(f"  {kind}: {value[:140]}")
