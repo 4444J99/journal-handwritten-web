@@ -3,7 +3,7 @@
   "repository": "4444J99/journal-handwritten-web",
   "visibility": "private",
   "initial_main": "d830d2a8f0556c50917d34528ab0b19cf7e0579a",
-  "refreshed_main": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+  "refreshed_main": "d74df372ace00c8a7544ab3b5302cb05418d672c",
   "dependency": {
     "pr": 101,
     "head": "e5ae157ef556690e73047e30225cad61c5484cf9",
@@ -248,6 +248,18 @@
       "sha": "3eadec631816d40766dbe28c1f2a32e893c8e422",
       "observed_at": "2026-11-05 23:13:08 UTC",
       "role": "PR117 launch-lanes session record; runtime prefixes independently compared, unchanged"
+    },
+    {
+      "observed_at": "2026-11-05T23:33:42Z",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "previous_revision": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+      "pull_request": 118,
+      "changes": [
+        "tools/cdp_client.mjs",
+        "tests/test_cdp_client.mjs",
+        "docs/chats/2026-11-05-local-session-finish-and-launch.md"
+      ],
+      "assessment": "Shared CDP verifier cleanup/handshake regression fixes and a correction that issue #115 had already been fixed. No release, site, studio, export or CLAUDE.md changes. T03 uses its separate bounded Playwright verifier; this latest main delta is observed, not merged into or claimed tested by the PR #101 stack. PR #101 remains open at e5ae157ef556690e73047e30225cad61c5484cf9."
     }
   ],
   "dependency_baseline": {

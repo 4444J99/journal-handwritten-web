@@ -1,0 +1,1780 @@
+{
+  "piece_id": "p001",
+  "selected_indices": [
+    0,
+    1
+  ],
+  "selected_version_ids": [
+    "p001-diary1-0",
+    "p001-diary62a-0"
+  ],
+  "review_counts_for_selected_versions": {
+    "confirmed": 33,
+    "corrected": 5,
+    "unreviewed": 0,
+    "withheld": 0
+  },
+  "corrected_lines_on_withheld_versions": 0,
+  "pages": [
+    "diary1",
+    "diary62a"
+  ],
+  "files": [
+    {
+      "path": "_headers",
+      "bytes": 27,
+      "sha256": "1798f78f5e48ce125506274988d5555f052d762afcb096ab9e4b8b15c766269a"
+    },
+    {
+      "path": "data/j.json",
+      "bytes": 3556,
+      "sha256": "a62ce097b6dcf90b0316f3b85ecb21754c11ab54bfcf20339eba39ee98c28cf1"
+    },
+    {
+      "path": "img/a/k0.jpg",
+      "bytes": 52130,
+      "sha256": "33c65770f5d8f7f6d918f22e228dadac2e1d5008d0356a81446fa03d29242536"
+    },
+    {
+      "path": "img/a/t0.jpg",
+      "bytes": 60965,
+      "sha256": "8045bd426de8e0e16034359ba3de0b94356f4a42e1aed77294a0387b0a7a815c"
+    },
+    {
+      "path": "img/i/diary1.jpg",
+      "bytes": 69878,
+      "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371"
+    },
+    {
+      "path": "img/i/diary62a.jpg",
+      "bytes": 88127,
+      "sha256": "5b1fd823ca2c422555b455f77231a1f652d000d77d69ef4d09ca886b4d98356d"
+    },
+    {
+      "path": "img/m/diary1.jpg",
+      "bytes": 31312,
+      "sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c"
+    },
+    {
+      "path": "img/m/diary62a.jpg",
+      "bytes": 37379,
+      "sha256": "fbcc0cc828f91bedd91ea8805a63873cf9d9699dbcd0c20afa4d9af68740f6af"
+    },
+    {
+      "path": "img/p/diary1.jpg",
+      "bytes": 200203,
+      "sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5"
+    },
+    {
+      "path": "img/p/diary62a.jpg",
+      "bytes": 234202,
+      "sha256": "082bcffa12b4be68510d055b6e0a2e9ffaba87983578aadfe1a1ff0a7dfb5dff"
+    },
+    {
+      "path": "index.html",
+      "bytes": 230037,
+      "sha256": "50bd7de0fd6e68aafca6d05bc5f359a56b26bbf29d5af1dea142295c53e7f0ec"
+    }
+  ],
+  "images": [
+    {
+      "path": "img/a/k0.jpg",
+      "bytes": 52130,
+      "sha256": "33c65770f5d8f7f6d918f22e228dadac2e1d5008d0356a81446fa03d29242536",
+      "width": 2048,
+      "height": 300,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version"
+      ],
+      "exif_tags": {}
+    },
+    {
+      "path": "img/a/t0.jpg",
+      "bytes": 60965,
+      "sha256": "8045bd426de8e0e16034359ba3de0b94356f4a42e1aed77294a0387b0a7a815c",
+      "width": 2048,
+      "height": 300,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version"
+      ],
+      "exif_tags": {}
+    },
+    {
+      "path": "img/i/diary1.jpg",
+      "bytes": 69878,
+      "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371",
+      "width": 851,
+      "height": 1200,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/i/diary1.jpg",
+      "source_sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371",
+      "byte_identical_to_source": true
+    },
+    {
+      "path": "img/i/diary62a.jpg",
+      "bytes": 88127,
+      "sha256": "5b1fd823ca2c422555b455f77231a1f652d000d77d69ef4d09ca886b4d98356d",
+      "width": 982,
+      "height": 1200,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/i/diary62a.jpg",
+      "source_sha256": "5b1fd823ca2c422555b455f77231a1f652d000d77d69ef4d09ca886b4d98356d",
+      "byte_identical_to_source": true
+    },
+    {
+      "path": "img/m/diary1.jpg",
+      "bytes": 31312,
+      "sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c",
+      "width": 426,
+      "height": 600,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/m/diary1.jpg",
+      "source_sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c",
+      "byte_identical_to_source": true
+    },
+    {
+      "path": "img/m/diary62a.jpg",
+      "bytes": 37379,
+      "sha256": "fbcc0cc828f91bedd91ea8805a63873cf9d9699dbcd0c20afa4d9af68740f6af",
+      "width": 491,
+      "height": 600,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/m/diary62a.jpg",
+      "source_sha256": "fbcc0cc828f91bedd91ea8805a63873cf9d9699dbcd0c20afa4d9af68740f6af",
+      "byte_identical_to_source": true
+    },
+    {
+      "path": "img/p/diary1.jpg",
+      "bytes": 200203,
+      "sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5",
+      "width": 1135,
+      "height": 1600,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/p/diary1.jpg",
+      "source_sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5",
+      "byte_identical_to_source": true
+    },
+    {
+      "path": "img/p/diary62a.jpg",
+      "bytes": 234202,
+      "sha256": "082bcffa12b4be68510d055b6e0a2e9ffaba87983578aadfe1a1ff0a7dfb5dff",
+      "width": 1310,
+      "height": 1600,
+      "metadata_keys": [
+        "jfif",
+        "jfif_density",
+        "jfif_unit",
+        "jfif_version",
+        "progression",
+        "progressive"
+      ],
+      "exif_tags": {},
+      "source": "site/img/p/diary62a.jpg",
+      "source_sha256": "082bcffa12b4be68510d055b6e0a2e9ffaba87983578aadfe1a1ff0a7dfb5dff",
+      "byte_identical_to_source": true
+    }
+  ],
+  "exposure": {
+    "selection": {
+      "p001": [
+        "p001-diary1-0",
+        "p001-diary62a-0"
+      ]
+    },
+    "pages": [
+      {
+        "page_id": "diary1",
+        "page_sequence": 1,
+        "via": "selected page",
+        "source_atlas_region": [
+          0,
+          0,
+          0,
+          213,
+          300
+        ],
+        "files": [
+          "img/p/diary1.jpg",
+          "img/i/diary1.jpg",
+          "img/m/diary1.jpg",
+          "img/a/t0.jpg",
+          "img/a/k0.jpg"
+        ],
+        "blocks": [
+          {
+            "block": 0,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 1,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 2,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 3,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 4,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 5,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary1-0",
+                "version_index": 0,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          }
+        ]
+      },
+      {
+        "page_id": "diary62a",
+        "page_sequence": 121,
+        "via": "selected page",
+        "source_atlas_region": [
+          1,
+          964,
+          906,
+          246,
+          300
+        ],
+        "files": [
+          "img/p/diary62a.jpg",
+          "img/i/diary62a.jpg",
+          "img/m/diary62a.jpg",
+          "img/a/t0.jpg",
+          "img/a/k0.jpg"
+        ],
+        "blocks": [
+          {
+            "block": 0,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary62a-0",
+                "version_index": 1,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 1,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary62a-0",
+                "version_index": 1,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 2,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p001",
+                "version_id": "p001-diary62a-0",
+                "version_index": 1,
+                "selected_version": true
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": true,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": false
+          },
+          {
+            "block": 3,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p126",
+                "version_id": "p126-diary62a-3",
+                "version_index": 0,
+                "selected_version": false
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": false,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": true
+          },
+          {
+            "block": 4,
+            "type": "text",
+            "occupants": [
+              {
+                "piece_id": "p126",
+                "version_id": "p126-diary62a-3",
+                "version_index": 0,
+                "selected_version": false
+              }
+            ],
+            "other_item_ids": [],
+            "selected_text": false,
+            "writing_visible_in_image": true,
+            "withheld_writing_visible": true
+          }
+        ]
+      }
+    ],
+    "withheld_blocks_visible": [
+      {
+        "page_id": "diary62a",
+        "block": 3,
+        "type": "text",
+        "occupants": [
+          {
+            "piece_id": "p126",
+            "version_id": "p126-diary62a-3",
+            "version_index": 0,
+            "selected_version": false
+          }
+        ],
+        "other_item_ids": [],
+        "selected_text": false,
+        "writing_visible_in_image": true,
+        "withheld_writing_visible": true
+      },
+      {
+        "page_id": "diary62a",
+        "block": 4,
+        "type": "text",
+        "occupants": [
+          {
+            "piece_id": "p126",
+            "version_id": "p126-diary62a-3",
+            "version_index": 0,
+            "selected_version": false
+          }
+        ],
+        "other_item_ids": [],
+        "selected_text": false,
+        "writing_visible_in_image": true,
+        "withheld_writing_visible": true
+      }
+    ],
+    "limit": "Catalog and derivative audit; inspect the actual scans for uncatalogued marks and metadata."
+  },
+  "checks": [
+    {
+      "check": "index.html has <meta name=\"robots\" content=\"noindex\"> (or a stricter robots tag that includes noindex)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "index.html title element is exactly versforms",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "index.html uses the font family ajp-scribbles",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no output file, decoded data URI or decoded font table names the other project (any letter case, ASCII / UTF-16)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "_headers sets X-Robots-Tag: noindex for /*",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "data/j.json has no prov.repo, prov.commit, prov.path",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "data/j.json lists exactly the expected pieces",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "every image the data asks for is in the output",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no line of an unpublished block appears in the output",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "exact file whitelist, including images, spreads and plates",
+      "pass": true,
+      "detail": {
+        "extra": [],
+        "missing": []
+      }
+    },
+    {
+      "check": "no catalogued withheld block visible in any included image",
+      "pass": false,
+      "detail": [
+        {
+          "page": "diary62a",
+          "block": 3
+        },
+        {
+          "page": "diary62a",
+          "block": 4
+        }
+      ]
+    },
+    {
+      "check": "atlas bytes reconstruct from only declared page regions",
+      "pass": true,
+      "detail": [
+        {
+          "path": "img/a/t0.jpg",
+          "regions": [
+            {
+              "page_id": "diary1",
+              "source_region": [
+                0,
+                0,
+                0,
+                213,
+                300
+              ],
+              "output_region": [
+                0,
+                0,
+                0,
+                213,
+                300
+              ]
+            },
+            {
+              "page_id": "diary62a",
+              "source_region": [
+                1,
+                964,
+                906,
+                246,
+                300
+              ],
+              "output_region": [
+                0,
+                213,
+                0,
+                246,
+                300
+              ]
+            }
+          ],
+          "sha256_from_only_declared_regions": "8045bd426de8e0e16034359ba3de0b94356f4a42e1aed77294a0387b0a7a815c",
+          "pass": true
+        },
+        {
+          "path": "img/a/k0.jpg",
+          "regions": [
+            {
+              "page_id": "diary1",
+              "source_region": [
+                0,
+                0,
+                0,
+                213,
+                300
+              ],
+              "output_region": [
+                0,
+                0,
+                0,
+                213,
+                300
+              ]
+            },
+            {
+              "page_id": "diary62a",
+              "source_region": [
+                1,
+                964,
+                906,
+                246,
+                300
+              ],
+              "output_region": [
+                0,
+                213,
+                0,
+                246,
+                300
+              ]
+            }
+          ],
+          "sha256_from_only_declared_regions": "33c65770f5d8f7f6d918f22e228dadac2e1d5008d0356a81446fa03d29242536",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "check": "no withheld page identifiers remain in reader engine metadata",
+      "pass": false,
+      "detail": {
+        "path": "index.html",
+        "literals": {
+          "PAL": "[\n  {id:\"rev-13\", witnesses:[[[\"diary13\",\"all\"]], [[\"diary13a\",\"all\"],[\"diary14\",\"all\"],[\"diary14a\",\"all\"]]]},\n  {id:\"rev-53\", witnesses:[[[\"diary53\",\"all\"]], [[\"diary53a\",[1]]], [[\"diary53a\",[2]]], [[\"diary54\",[0]]]]},\n  {id:\"rev-3\", witnesses:[[[\"diary3\",[0]]], [[\"diary3\",[1]]], [[\"diary3\",[2]]]]},\n  {id:\"rev-8\", witnesses:[[[\"diary8\",\"all\"]], [[\"diary8a\",\"all\"]]]}\n]",
+          "HF": "[\"diary21a\", \"diary63\", \"diary26\"]"
+        },
+        "withheld_page_ids": [
+          "diary13",
+          "diary13a",
+          "diary14",
+          "diary14a",
+          "diary21a",
+          "diary26",
+          "diary3",
+          "diary53",
+          "diary53a",
+          "diary54",
+          "diary63",
+          "diary8",
+          "diary8a"
+        ],
+        "piece_ids_on_named_pages": [
+          "p004",
+          "p012",
+          "p020",
+          "p032",
+          "p040",
+          "p068",
+          "p096",
+          "p097"
+        ],
+        "clearance": "awaiting author rule or T04/builder removal and re-verification",
+        "limit": "Identifier/block structure remains; this does not imply that those pages' text or images is bundled."
+      }
+    }
+  ],
+  "font_metadata": [
+    {
+      "mime": "font/woff2",
+      "bytes": 30484,
+      "sha256": "096df13d6955fbcfeaf363c2e7c76c69566dc6d6807f71451697c7059024208d",
+      "metadata": {
+        "flavor": "woff2",
+        "glyph_count": 126,
+        "glyph_order": [
+          ".notdef",
+          "space",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "M",
+          "N",
+          "O",
+          "P",
+          "Q",
+          "R",
+          "S",
+          "T",
+          "U",
+          "V",
+          "W",
+          "X",
+          "Y",
+          "Z",
+          "a",
+          "a.alt1",
+          "a.alt2",
+          "ampersand",
+          "b",
+          "b.alt1",
+          "b.alt2",
+          "c",
+          "c.alt1",
+          "c.alt2",
+          "colon",
+          "comma",
+          "d",
+          "d.alt1",
+          "d.alt2",
+          "e",
+          "e.alt1",
+          "e.alt2",
+          "eight",
+          "emdash",
+          "exclam",
+          "f",
+          "f.alt1",
+          "f.alt2",
+          "five",
+          "four",
+          "g",
+          "g.alt1",
+          "g.alt2",
+          "h",
+          "h.alt1",
+          "h.alt2",
+          "hyphen",
+          "i",
+          "i.alt1",
+          "i.alt2",
+          "j",
+          "j.alt1",
+          "j.alt2",
+          "k",
+          "k.alt1",
+          "k.alt2",
+          "l",
+          "l.alt1",
+          "l.alt2",
+          "m",
+          "m.alt1",
+          "m.alt2",
+          "n",
+          "n.alt1",
+          "n.alt2",
+          "nine",
+          "o",
+          "o.alt1",
+          "o.alt2",
+          "one",
+          "p",
+          "p.alt1",
+          "p.alt2",
+          "parenleft",
+          "parenright",
+          "period",
+          "q",
+          "q.alt1",
+          "q.alt2",
+          "question",
+          "quotedbl",
+          "quotesingle",
+          "r",
+          "r.alt1",
+          "r.alt2",
+          "s",
+          "s.alt1",
+          "s.alt2",
+          "semicolon",
+          "seven",
+          "six",
+          "slash",
+          "t",
+          "t.alt1",
+          "t.alt2",
+          "three",
+          "two",
+          "u",
+          "u.alt1",
+          "u.alt2",
+          "v",
+          "v.alt1",
+          "v.alt2",
+          "w",
+          "w.alt1",
+          "w.alt2",
+          "x",
+          "x.alt1",
+          "y",
+          "y.alt1",
+          "z",
+          "zero"
+        ],
+        "cmap": {
+          "32": "space",
+          "33": "exclam",
+          "34": "quotedbl",
+          "38": "ampersand",
+          "39": "quotesingle",
+          "40": "parenleft",
+          "41": "parenright",
+          "44": "comma",
+          "45": "hyphen",
+          "46": "period",
+          "47": "slash",
+          "48": "zero",
+          "49": "one",
+          "50": "two",
+          "51": "three",
+          "52": "four",
+          "53": "five",
+          "54": "six",
+          "55": "seven",
+          "56": "eight",
+          "57": "nine",
+          "58": "colon",
+          "59": "semicolon",
+          "63": "question",
+          "65": "A",
+          "66": "B",
+          "67": "C",
+          "68": "D",
+          "69": "E",
+          "70": "F",
+          "71": "G",
+          "72": "H",
+          "73": "I",
+          "74": "J",
+          "75": "K",
+          "76": "L",
+          "77": "M",
+          "78": "N",
+          "79": "O",
+          "80": "P",
+          "81": "Q",
+          "82": "R",
+          "83": "S",
+          "84": "T",
+          "85": "U",
+          "86": "V",
+          "87": "W",
+          "88": "X",
+          "89": "Y",
+          "90": "Z",
+          "97": "a",
+          "98": "b",
+          "99": "c",
+          "100": "d",
+          "101": "e",
+          "102": "f",
+          "103": "g",
+          "104": "h",
+          "105": "i",
+          "106": "j",
+          "107": "k",
+          "108": "l",
+          "109": "m",
+          "110": "n",
+          "111": "o",
+          "112": "p",
+          "113": "q",
+          "114": "r",
+          "115": "s",
+          "116": "t",
+          "117": "u",
+          "118": "v",
+          "119": "w",
+          "120": "x",
+          "121": "y",
+          "122": "z",
+          "160": "space",
+          "8212": "emdash"
+        },
+        "hmtx": {
+          ".notdef": [
+            500,
+            50
+          ],
+          "space": [
+            300,
+            0
+          ],
+          "A": [
+            627,
+            54
+          ],
+          "B": [
+            574,
+            53
+          ],
+          "C": [
+            801,
+            51
+          ],
+          "D": [
+            614,
+            53
+          ],
+          "E": [
+            847,
+            52
+          ],
+          "F": [
+            661,
+            53
+          ],
+          "G": [
+            651,
+            52
+          ],
+          "H": [
+            604,
+            51
+          ],
+          "I": [
+            687,
+            53
+          ],
+          "J": [
+            1037,
+            52
+          ],
+          "K": [
+            634,
+            52
+          ],
+          "L": [
+            537,
+            51
+          ],
+          "M": [
+            941,
+            52
+          ],
+          "N": [
+            681,
+            54
+          ],
+          "O": [
+            891,
+            52
+          ],
+          "P": [
+            461,
+            54
+          ],
+          "Q": [
+            914,
+            53
+          ],
+          "R": [
+            954,
+            52
+          ],
+          "S": [
+            474,
+            52
+          ],
+          "T": [
+            711,
+            52
+          ],
+          "U": [
+            677,
+            55
+          ],
+          "V": [
+            691,
+            54
+          ],
+          "W": [
+            857,
+            52
+          ],
+          "X": [
+            911,
+            52
+          ],
+          "Y": [
+            637,
+            53
+          ],
+          "Z": [
+            614,
+            52
+          ],
+          "a": [
+            654,
+            53
+          ],
+          "a.alt1": [
+            771,
+            52
+          ],
+          "a.alt2": [
+            694,
+            52
+          ],
+          "ampersand": [
+            414,
+            51
+          ],
+          "b": [
+            497,
+            52
+          ],
+          "b.alt1": [
+            581,
+            53
+          ],
+          "b.alt2": [
+            424,
+            53
+          ],
+          "c": [
+            474,
+            52
+          ],
+          "c.alt1": [
+            424,
+            53
+          ],
+          "c.alt2": [
+            374,
+            52
+          ],
+          "colon": [
+            159,
+            31
+          ],
+          "comma": [
+            172,
+            32
+          ],
+          "d": [
+            677,
+            52
+          ],
+          "d.alt1": [
+            664,
+            53
+          ],
+          "d.alt2": [
+            587,
+            52
+          ],
+          "e": [
+            551,
+            52
+          ],
+          "e.alt1": [
+            591,
+            52
+          ],
+          "e.alt2": [
+            461,
+            52
+          ],
+          "eight": [
+            491,
+            52
+          ],
+          "emdash": [
+            1404,
+            52
+          ],
+          "exclam": [
+            373,
+            36
+          ],
+          "f": [
+            621,
+            53
+          ],
+          "f.alt1": [
+            1067,
+            52
+          ],
+          "f.alt2": [
+            647,
+            53
+          ],
+          "five": [
+            734,
+            51
+          ],
+          "four": [
+            667,
+            53
+          ],
+          "g": [
+            627,
+            51
+          ],
+          "g.alt1": [
+            471,
+            52
+          ],
+          "g.alt2": [
+            501,
+            53
+          ],
+          "h": [
+            431,
+            52
+          ],
+          "h.alt1": [
+            381,
+            51
+          ],
+          "h.alt2": [
+            451,
+            51
+          ],
+          "hyphen": [
+            674,
+            52
+          ],
+          "i": [
+            271,
+            54
+          ],
+          "i.alt1": [
+            214,
+            54
+          ],
+          "i.alt2": [
+            277,
+            51
+          ],
+          "j": [
+            714,
+            51
+          ],
+          "j.alt1": [
+            741,
+            52
+          ],
+          "j.alt2": [
+            587,
+            54
+          ],
+          "k": [
+            771,
+            52
+          ],
+          "k.alt1": [
+            854,
+            53
+          ],
+          "k.alt2": [
+            794,
+            52
+          ],
+          "l": [
+            224,
+            54
+          ],
+          "l.alt1": [
+            241,
+            52
+          ],
+          "l.alt2": [
+            274,
+            52
+          ],
+          "m": [
+            891,
+            52
+          ],
+          "m.alt1": [
+            997,
+            52
+          ],
+          "m.alt2": [
+            717,
+            52
+          ],
+          "n": [
+            601,
+            53
+          ],
+          "n.alt1": [
+            617,
+            51
+          ],
+          "n.alt2": [
+            587,
+            52
+          ],
+          "nine": [
+            654,
+            52
+          ],
+          "o": [
+            394,
+            51
+          ],
+          "o.alt1": [
+            587,
+            51
+          ],
+          "o.alt2": [
+            574,
+            53
+          ],
+          "one": [
+            214,
+            51
+          ],
+          "p": [
+            504,
+            52
+          ],
+          "p.alt1": [
+            561,
+            53
+          ],
+          "p.alt2": [
+            557,
+            53
+          ],
+          "parenleft": [
+            520,
+            43
+          ],
+          "parenright": [
+            697,
+            42
+          ],
+          "period": [
+            146,
+            32
+          ],
+          "q": [
+            457,
+            54
+          ],
+          "q.alt1": [
+            487,
+            52
+          ],
+          "q.alt2": [
+            444,
+            52
+          ],
+          "question": [
+            617,
+            52
+          ],
+          "quotedbl": [
+            572,
+            33
+          ],
+          "quotesingle": [
+            172,
+            33
+          ],
+          "r": [
+            484,
+            52
+          ],
+          "r.alt1": [
+            527,
+            52
+          ],
+          "r.alt2": [
+            597,
+            53
+          ],
+          "s": [
+            451,
+            52
+          ],
+          "s.alt1": [
+            421,
+            52
+          ],
+          "s.alt2": [
+            431,
+            52
+          ],
+          "semicolon": [
+            282,
+            31
+          ],
+          "seven": [
+            547,
+            52
+          ],
+          "six": [
+            624,
+            52
+          ],
+          "slash": [
+            471,
+            53
+          ],
+          "t": [
+            337,
+            52
+          ],
+          "t.alt1": [
+            354,
+            52
+          ],
+          "t.alt2": [
+            404,
+            52
+          ],
+          "three": [
+            577,
+            52
+          ],
+          "two": [
+            624,
+            53
+          ],
+          "u": [
+            564,
+            52
+          ],
+          "u.alt1": [
+            854,
+            52
+          ],
+          "u.alt2": [
+            671,
+            52
+          ],
+          "v": [
+            504,
+            53
+          ],
+          "v.alt1": [
+            417,
+            53
+          ],
+          "v.alt2": [
+            404,
+            52
+          ],
+          "w": [
+            867,
+            53
+          ],
+          "w.alt1": [
+            787,
+            53
+          ],
+          "w.alt2": [
+            674,
+            53
+          ],
+          "x": [
+            601,
+            52
+          ],
+          "x.alt1": [
+            417,
+            54
+          ],
+          "y": [
+            777,
+            53
+          ],
+          "y.alt1": [
+            497,
+            53
+          ],
+          "z": [
+            694,
+            54
+          ],
+          "zero": [
+            644,
+            54
+          ]
+        },
+        "tables": [
+          "CFF ",
+          "GSUB",
+          "OS/2",
+          "cmap",
+          "head",
+          "hhea",
+          "hmtx",
+          "maxp",
+          "name",
+          "post"
+        ],
+        "name_records": {
+          "0/1/0/0": "Handwriting by Anthony (ajp-scribbles); built from personal journal scans.",
+          "1/1/0/0": "ajp-scribbles",
+          "2/1/0/0": "Regular",
+          "3/1/0/0": "ajp-scribbles-Regular-1.0",
+          "4/1/0/0": "ajp-scribbles Regular",
+          "5/1/0/0": "Version 1.000",
+          "6/1/0/0": "ajp-scribbles-Regular",
+          "10/1/0/0": "Handwriting font built from scans of the author's journal.",
+          "0/3/1/1033": "Handwriting by Anthony (ajp-scribbles); built from personal journal scans.",
+          "1/3/1/1033": "ajp-scribbles",
+          "2/3/1/1033": "Regular",
+          "3/3/1/1033": "ajp-scribbles-Regular-1.0",
+          "4/3/1/1033": "ajp-scribbles Regular",
+          "5/3/1/1033": "Version 1.000",
+          "6/3/1/1033": "ajp-scribbles-Regular",
+          "10/3/1/1033": "Handwriting font built from scans of the author's journal."
+        },
+        "cff_font_names": [
+          "ajp-scribbles-Regular"
+        ],
+        "head_modified": 3875724615
+      },
+      "name_check": {
+        "ok": true,
+        "hits": [],
+        "glyphs": 126,
+        "flavor": "woff2"
+      }
+    }
+  ],
+  "engine_metadata_exposure": {
+    "path": "index.html",
+    "literals": {
+      "PAL": "[\n  {id:\"rev-13\", witnesses:[[[\"diary13\",\"all\"]], [[\"diary13a\",\"all\"],[\"diary14\",\"all\"],[\"diary14a\",\"all\"]]]},\n  {id:\"rev-53\", witnesses:[[[\"diary53\",\"all\"]], [[\"diary53a\",[1]]], [[\"diary53a\",[2]]], [[\"diary54\",[0]]]]},\n  {id:\"rev-3\", witnesses:[[[\"diary3\",[0]]], [[\"diary3\",[1]]], [[\"diary3\",[2]]]]},\n  {id:\"rev-8\", witnesses:[[[\"diary8\",\"all\"]], [[\"diary8a\",\"all\"]]]}\n]",
+      "HF": "[\"diary21a\", \"diary63\", \"diary26\"]"
+    },
+    "withheld_page_ids": [
+      "diary13",
+      "diary13a",
+      "diary14",
+      "diary14a",
+      "diary21a",
+      "diary26",
+      "diary3",
+      "diary53",
+      "diary53a",
+      "diary54",
+      "diary63",
+      "diary8",
+      "diary8a"
+    ],
+    "piece_ids_on_named_pages": [
+      "p004",
+      "p012",
+      "p020",
+      "p032",
+      "p040",
+      "p068",
+      "p096",
+      "p097"
+    ],
+    "clearance": "awaiting author rule or T04/builder removal and re-verification",
+    "limit": "Identifier/block structure remains; this does not imply that those pages' text or images is bundled."
+  },
+  "content_exclusion_pass": false,
+  "metadata_exclusion_pass": false,
+  "reader_visible_audit": [
+    [
+      "title",
+      "versforms"
+    ],
+    [
+      "aria-label",
+      "${other === "
+    ],
+    [
+      "aria-label",
+      "${title}"
+    ],
+    [
+      "aria-label",
+      "2015 spread"
+    ],
+    [
+      "aria-label",
+      "Arrangement"
+    ],
+    [
+      "aria-label",
+      "Author's hand"
+    ],
+    [
+      "aria-label",
+      "By poem"
+    ],
+    [
+      "aria-label",
+      "Close"
+    ],
+    [
+      "aria-label",
+      "Close search"
+    ],
+    [
+      "aria-label",
+      "Content"
+    ],
+    [
+      "aria-label",
+      "Controls"
+    ],
+    [
+      "aria-label",
+      "Display"
+    ],
+    [
+      "aria-label",
+      "Draft"
+    ],
+    [
+      "aria-label",
+      "Draft ${i + 1}"
+    ],
+    [
+      "aria-label",
+      "Earlier version"
+    ],
+    [
+      "aria-label",
+      "Hand to font"
+    ],
+    [
+      "aria-label",
+      "Information"
+    ],
+    [
+      "aria-label",
+      "Journal"
+    ],
+    [
+      "aria-label",
+      "Later version"
+    ],
+    [
+      "aria-label",
+      "Light or dark"
+    ],
+    [
+      "aria-label",
+      "Lines"
+    ],
+    [
+      "aria-label",
+      "Mode"
+    ],
+    [
+      "aria-label",
+      "More"
+    ],
+    [
+      "aria-label",
+      "Next step"
+    ],
+    [
+      "aria-label",
+      "Open the journal"
+    ],
+    [
+      "aria-label",
+      "Outline lines"
+    ],
+    [
+      "aria-label",
+      "Page"
+    ],
+    [
+      "aria-label",
+      "Page ${esc(label(id))}"
+    ],
+    [
+      "aria-label",
+      "Page ${esc(label(p.id))}"
+    ],
+    [
+      "aria-label",
+      "Page ${label(id)}"
+    ],
+    [
+      "aria-label",
+      "Page ${v.pages.map(p => label(p.id)).join("
+    ],
+    [
+      "aria-label",
+      "Pages"
+    ],
+    [
+      "aria-label",
+      "Pages to lines"
+    ],
+    [
+      "aria-label",
+      "Play"
+    ],
+    [
+      "aria-label",
+      "Poem"
+    ],
+    [
+      "aria-label",
+      "Poem ${PAL.indexOf(s) + 1}"
+    ],
+    [
+      "aria-label",
+      "Previous step"
+    ],
+    [
+      "aria-label",
+      "Retry"
+    ],
+    [
+      "aria-label",
+      "Return to the constellation"
+    ],
+    [
+      "aria-label",
+      "Revisions"
+    ],
+    [
+      "aria-label",
+      "Scan"
+    ],
+    [
+      "aria-label",
+      "Scattered"
+    ],
+    [
+      "aria-label",
+      "Search"
+    ],
+    [
+      "aria-label",
+      "Show revisions"
+    ],
+    [
+      "aria-label",
+      "Spiral of time"
+    ],
+    [
+      "aria-label",
+      "Step"
+    ],
+    [
+      "aria-label",
+      "Study"
+    ],
+    [
+      "aria-label",
+      "Typeface"
+    ],
+    [
+      "aria-label",
+      "Version"
+    ],
+    [
+      "aria-label",
+      "Version ${vi + 1} of ${pc.n}${V.d ? "
+    ],
+    [
+      "aria-label",
+      "Versions"
+    ],
+    [
+      "aria-label",
+      "View"
+    ],
+    [
+      "aria-label",
+      "Whole view"
+    ],
+    [
+      "aria-label",
+      "Words"
+    ],
+    [
+      "aria-label",
+      "dropped"
+    ],
+    [
+      "aria-label",
+      "illegible"
+    ],
+    [
+      "alt",
+      "Page ${esc(label(id))}"
+    ],
+    [
+      "alt",
+      "Page ${esc(label(p.id))}"
+    ],
+    [
+      "alt",
+      "Page ${esc(label(pg.id))}"
+    ],
+    [
+      "alt",
+      "Spread"
+    ],
+    [
+      "font embedded",
+      "ajp-scribbles (woff2, about 30486 bytes, downloadable)"
+    ],
+    [
+      "font file name",
+      "Handwriting by Anthony (ajp-scribbles); built from personal journal scans."
+    ],
+    [
+      "font file name",
+      "Handwriting font built from scans of the author's journal."
+    ],
+    [
+      "font file name",
+      "Regular"
+    ],
+    [
+      "font file name",
+      "Version 1.000"
+    ],
+    [
+      "font file name",
+      "ajp-scribbles"
+    ],
+    [
+      "font file name",
+      "ajp-scribbles Regular"
+    ],
+    [
+      "font file name",
+      "ajp-scribbles-Regular"
+    ],
+    [
+      "font file name",
+      "ajp-scribbles-Regular-1.0"
+    ],
+    [
+      "prov keys",
+      "tdate, verified"
+    ],
+    [
+      "block notes",
+      "page reading notes: 0; blocks carrying a note flag: 0"
+    ],
+    [
+      "info panel (from prov)",
+      "Machine transcription (2026-10-24), not yet checked by the author. Spelling and line breaks kept."
+    ],
+    [
+      "info panel (from prov)",
+      "Scans: line renders with an empty link, empty commit and empty path (source repository keys removed)"
+    ]
+  ],
+  "technical_exclusion_pass": false,
+  "release_clearance": false
+}

@@ -10,6 +10,8 @@
 - Sourced release/Reserve policy and all 13 issue dispositions, an author-decision packet, PR #101 review evidence, a disposable database-backed studio receipt and release-clearance/integrator contracts. The local D1 receipt has 12 passing checks and a narrow desktop 390-pixel viewport, not touch/phone acceptance. The release-browser receipt separately uses touch emulation. No physical-phone pass is claimed.
 - Both `docs/plan.md` and restored `claude/plan.md` carry the current addendum. The older `claude-plan-addendum.patch` has already been applied and is retained as a reproducible historical handoff, not a pending patch.
 
+Final independent review corrected a report-count error before delivery: diary62a has 16 reviewed lines (11 confirmed and five corrected), while diary1 has 22 confirmed lines. Issue #113's five corrections agrees with the export. The private report now derives counts from audit data; public preview bytes are unchanged.
+
 ## Author decisions
 
 The current instruction authorizes technical preparation in an isolated branch with a draft PR or handoff package. It does not authorize merge, deployment, publication, spending, account changes, external messages, issue closure, repository restructuring, filing or release approval.
