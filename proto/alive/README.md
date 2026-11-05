@@ -18,7 +18,9 @@ Anything else is a 404; `..`, encoded separators, NUL bytes and symlinks leaving
 Unlike the brief's "site/data" wording it does not serve `site/data/j.json` or `studio/data/review.json`: the page does not
 need them (the boxes it uses were extracted into the two JSON files below).
 
-`python3 proto/alive/build_data.py` regenerates `rules-diary1.json` and `city-all58.json` (reads `site/` and `studio/`,
+`python3 -B proto/alive/build_atoms.py --out proto/alive/atoms-p001.json` regenerates the p001 atoms (segmentation, seam
+partition, regions); `atoms-p001.json` is never edited by hand. Author seam constraints, if any, are data in
+`seam-waypoints-diary1.json` (none yet). `python3 proto/alive/build_data.py` regenerates `rules-diary1.json` and `city-all58.json` (reads `site/` and `studio/`,
 writes only those two files; no line text is written to them).
 
 ## Query parameters
@@ -36,7 +38,8 @@ writes only those two files; no line text is written to them).
 `ready` (true once every piece's atlas is built; `document.body.dataset.ready` is set too), `setView(v)`,
 `setUnit(u|null)`, `setSpiralUnit('line'|'page')`, `setTime(t)` (freezes and re-simulates from 0), `state()`, `sourcesUsed()`,
 plus helpers used by the verifier: `spriteGeoms()`, `regionsRead()`, `allowedBoxes()`, `zoomToFloorPx(px)`, `setCamera(x,y,z)`,
-`focus(id)`, `fit()`, `buildings()`, `tap(x,y)`, `render()`.
+`focus(id)`, `fit()`, `buildings()`, `tap(x,y)`, `render()`, `atlasLeak()` (per p001 line: atlas pixels with non-zero alpha
+outside the line's region, which must be 0, and inside it) and `lineRegions()` (the region polygons as loaded).
 
 - `state()` returns `{view, city, pinned, unit, zoom, floorPx, cam, selectorOpen, time, frozen, reduced, animating, frames,
   dark, sprites:[{piece:'p001', source:'line'|'word'|'glyph', blockId, lineIndex}], spriteCount, spriteSources:{line,word,glyph}, keepOut,
@@ -49,7 +52,8 @@ plus helpers used by the verifier: `spriteGeoms()`, `regionsRead()`, `allowedBox
 
 ## Data sources
 
-- **p001**: `atoms-p001.json` (spike output): 22 line boxes, 86 word boxes, 301 glyph boxes, marks, 6 stanzas, poem box;
+- **p001**: `atoms-p001.json` (`build_atoms.py` output): 22 line boxes and 22 line `region` polygons, 86 word boxes, 306 glyph boxes,
+  marks, 6 stanzas, poem box;
   pixels from `site/img/p/diary1.jpg` (1135x1600). Only V[0] of p001 (page `diary1`). The page holds nothing else.
 - **all58**: `city-all58.json`, from `studio/data/review.json` (author review boxes) with `versions[0]` of each piece, boxes
   clipped so that none intersects a box of another item on the same page. Pixels from `site/img/i/<page>.jpg` (851x1200,
@@ -58,8 +62,18 @@ plus helpers used by the verifier: `spriteGeoms()`, `regionsRead()`, `allowedBox
 - Ink treatment (all JS, in the page): luminance to alpha (smoothstep 236..95), tinted with the theme ink. p001 additionally
   has the ruled lines removed (`rules-diary1.json`: slope, pad and rule centres from `segment.py`; the spike's rule:
   clear +-2.5 px around each rule unless there is ink 5 px above or below; samples outside the box count as ink, so nothing
-  is removed near a box edge) and each line crop is masked to its own glyph and mark boxes (+2 px), which removes most ink
-  that a loose box picked up from a neighbouring line. The `i` tier needs no rule removal.
+  is removed near a box edge); each line crop is masked to its own glyph and mark boxes (+2 px) and then to the line's
+  `region` polygon (below). The `i` tier needs no rule removal.
+- **Seam regions (p001).** Adjacent handwritten lines overlap vertically, so a line's rectangle holds strokes of its
+  neighbours. `segment.py` therefore partitions the ink of the page: one seam per adjacent line pair (a min-cost path, one
+  boundary row per column), every ink pixel owned by exactly one line. `atoms-p001.json` stores per line the polygon between
+  its two seams in page pixels (`region`). `processLine()` keeps an atlas pixel only if its centre lies inside the polygon
+  (even-odd crossings of the vertical through the pixel-column centre, half-open on y), so a crop of line N cannot carry
+  pixels of line N-1 or N+1 whatever its rectangle: line, word, glyph, mark, reading sprites and spiral tiles are all read from
+  that atlas. The polygon only restricts further; the rule-4 rectangle guard below is unchanged. Regions do not overlap by
+  construction (seams strictly ordered); line rectangles still do. `window.__alive.atlasLeak()` reports 0 pixels outside.
+  What the seam does not guarantee: it separates ink, it does not decide whose stroke a crossing stroke is. Three descender
+  loops of one line (the line above line 13) are cut at the neck and land on line 13 (see DATA.md).
 - The handwriting font is never used. Every picture on screen is a crop of the scans. No text is generated.
 
 ## Rule 4 mechanism
@@ -76,6 +90,11 @@ reads against the atoms boxes in p001, and every read in all58 against `city-all
 64 world units high and as wide as the line box is wide (a page pixel is a world unit), centred on the building axis; the first
 line is the top floor, the last the base floor. A stanza break is a 34 unit setback with a ledge. Unboxed lines are omitted
 (never replaced by stand-in pixels). A skyline is the buildings in a row.
+A crop may overflow its floor, top and bottom, by half of the excess of the tallest line box over the floor (p001: 92 px box,
+so 14 units; capped at 16; the 57 other pieces keep 8), so no ink of the line is cut; the crop holds only the line's own
+region ink, so no neighbour ink appears. Floors are drawn in three passes (fills, crops, outlines) so that an overflow is not
+painted over by the next floor's fill. The stanza unit uses the same overflow for p001 (it was 0). Scale-to-fit was not used:
+it would shrink six lines (box heights 84 to 92 px) by up to 30 percent against the others.
 Units, chosen by the on-screen height of one floor (`floorPx`): `poem` < 4 px, `stanza` < 10, `line` < 48, `word` < 110,
 `glyph` above. Drawing per unit: poem = one solid silhouette (floors and setbacks filled) with the line crops in it; stanza =
 each stanza a solid slab (floors contiguous) with an outline; line = each floor outlined, ledges at setbacks; word = word
@@ -122,8 +141,10 @@ Keys: `s` selector, `a` architecture, `b` spiral, `Enter` open READING, `Escape`
 
 ## Limits (checked or not, see the report)
 
-- Word crops in p001 carry some ink of a neighbouring line's descenders (stanzas 3 and 4); word text is never used.
-  Glyph crops are ink-component groups, not letters. `atoms-p001.json` still contains the spike's transcription text; this
+- Word crops in p001 no longer carry a neighbouring line's ink across a seam, but where the seam cuts a stroke the wrong way
+  the stroke sits on the wrong line: 3 sites on the pair (line 12, line 13) hold about 1500 ink pixels of descender loops
+  that belong to line 12 and are owned by line 13 (the first and the fourth word crop of line 13 show them). Word text is
+  never used. Glyph crops are ink-component groups, not letters. `atoms-p001.json` still contains the spike's transcription text; this
   page never reads it.
 - all58 crops come from loose author boxes (clipped against other items' boxes) on the 0.75 tier: strokes are thinner or broken
   in places, rule stubs show at box edges that touch the page margin, and lines of other items that have no box cannot be
