@@ -135,6 +135,9 @@ def run_font_tool(mode, data, *args):
         raise FontToolError(f"font python not found: {py} (set VERSFORMS_FONT_PYTHON to a python with fontTools and brotli)")
     try:
         r = subprocess.run([py, str(FONT_TOOL), mode, *args], input=data, capture_output=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        # the tool ran and did not answer: nothing vouches for the font, which is a hard stop, not "cannot run here"
+        raise FontDecodeError("font tool timed out after 120 s")
     except (OSError, subprocess.SubprocessError) as e:
         raise FontToolError(f"font tool could not run: {e}")
     try:
@@ -271,8 +274,8 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
             for bi, b in enumerate(p["B"]):
                 own = owner.get((p["id"], bi))
                 if own is None:
-                    # not published: no text, no link to a piece or version, no reading note
-                    b["L"] = ["" for _ in b["L"]]
+                    # not published: no text, no number of lines, no link to a piece or version, no reading note
+                    b["L"] = []
                     for key in ("g", "v", "u"):
                         b.pop(key, None)
                     continue
@@ -282,10 +285,14 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                     b["v"] = own[1]
                 for li in range(len(b["L"])):
                     text = corrections.pop((p["id"], bi, li), None)
+                    if b.get("t") == 4:
+                        continue  # a quotation block stays as it is (withheld); a correction on it is dropped, never published
                     if text is not None:
                         b["L"][li] = text
                         applied += 1
             p["u"] = []
+            # per-line boxes of unpublished blocks are geometry of lines that are not published: keep only the published blocks'
+            p["x"] = [e for e in p.get("x", []) if (p["id"], e[0]) in owner]
             new_pages.append(p)
             for sub in ("p", "i", "m"):
                 (out / "img" / sub).mkdir(parents=True, exist_ok=True)
@@ -330,6 +337,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
         # the engine needs at least one page; until poem 1 posts, serve blank paper only
         shutil.rmtree(out / "data")
         (out / "index.html").write_text(SHELL)
+        (out / "_headers").write_text(HEADERS)
 
     return {"want": want, "pages": [p["id"] for p in pages], "shared": shared, "siblings": siblings,
             "applied": applied, "published": sorted(owner), "chosen": chosen, "fonts": fonts, "font_error": font_error}

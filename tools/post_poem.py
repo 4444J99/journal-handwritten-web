@@ -36,6 +36,7 @@ POOLS = ("series", "reserve", "archive")
 PLACEHOLDER = "[[quoted passage:]]"
 OLD_NAME_RE = build_public.OLD_NAME_RE  # the author's music; no vers.forms artifact may name it
 DEFAULT_SCRATCH = ".post-poem-work"
+WORKDIR_MARK = ".post-poem-workdir"
 EXIT_OK, EXIT_PARTIAL, EXIT_GATE, EXIT_STOP, EXIT_USAGE = 0, 1, 2, 3, 64
 
 
@@ -65,9 +66,18 @@ class Source:
         self.items = {i["id"]: i for i in self.review["items"]}
         self.rpages = {p["id"]: p for p in self.review["pages"]}
         self.release_path = self.root / "release" / "public.json"
-        rel = build_public.load_release(self.release_path)
-        self.public = list(dict.fromkeys(rel.get("pieces", [])))
-        self.all_versions = list(dict.fromkeys(rel.get("all_versions", [])))
+        try:
+            rel = build_public.load_release(self.release_path)
+        except (OSError, ValueError) as e:
+            raise Stop(f"cannot read release/public.json under {self.root}: {e}")
+        pub, allv = (rel.get("pieces", []), rel.get("all_versions", [])) if isinstance(rel, dict) else (None, None)
+        if not (isinstance(pub, list) and isinstance(allv, list) and all(isinstance(x, str) for x in pub + allv)):
+            raise Stop("release/public.json must be an object whose 'pieces' (and optional 'all_versions') are lists of piece id strings")
+        self.public = list(dict.fromkeys(pub))
+        self.all_versions = list(dict.fromkeys(allv))
+        unknown = [x for x in self.public + self.all_versions if x not in self.pieces]
+        if unknown:
+            raise Stop(f"release/public.json names piece id(s) that are not in site/data/j.json: {', '.join(unknown[:8])}")
 
     def item_line_ids(self, pid):
         """Every line id of every version block of the piece, per the review data (None: no item)."""
@@ -83,24 +93,57 @@ class Source:
     def pages_of(self, pid, indices):
         return sorted({pg for i in indices for pg, _ in self.pieces[pid]["V"][i]["P"]})
 
-    def spread_mates(self, pages):
-        """Pages whose scan shares a spread image file with one of `pages`.
+    def scan_twins(self):
+        """{page id: {other page ids whose p, i or m scan file is byte-identical}}. Cached. Files are compared by
+        size first, so only files that could be equal are hashed."""
+        if getattr(self, "_twins", None) is not None:
+            return self._twins
+        by_size = {}
+        for q in self.j["pages"]:
+            for sub in ("p", "i", "m"):
+                f = self.site / "img" / sub / f"{q['id']}.jpg"
+                try:
+                    by_size.setdefault((sub, f.stat().st_size), []).append((q["id"], f))
+                except OSError:
+                    continue
+        twins = {}
+        for group in by_size.values():
+            if len(group) < 2:
+                continue
+            by_hash = {}
+            for pid_, f in group:
+                by_hash.setdefault(hashlib.sha256(f.read_bytes()).hexdigest(), set()).add(pid_)
+            for same in by_hash.values():
+                for pid_ in same:
+                    twins.setdefault(pid_, set()).update(same - {pid_})
+        self._twins = twins
+        return twins
 
-        The build copies img/s/{sp.f}.jpg for every published page that has sp.f. That file is the
-        whole two-page spread, so whatever is written on the other page of the spread is in the
-        downloaded image. The spread file of a page is its sp.f; the other page of the spread is
-        found by the same sp.k (spread key) or the same sp.f, or by being the page the file is named after."""
+    def spread_mates(self, pages):
+        """Pages whose writing is visible in the scan files the build copies for `pages`.
+
+        * A page with sp.f: the build copies img/s/{sp.f}.jpg, the whole two-page spread, so the other page of the
+          spread (the same sp.k or sp.f, or the page the file is named after) is in the downloaded image. If no such
+          page can be identified the facing page is unknown, and that is a hard stop (Stop), not "no mates".
+        * A page whose own scan IS the whole spread (sp.s == 'whole spread', or no crop box): the page's p/i/m files show
+          both halves, so every other page with the same sp.k is a mate.
+        * Belt and braces: any page whose p, i or m scan file is byte-identical to one of these pages' files."""
         pages = set(pages)
         mates = set()
         for pg in pages:
             sp = self.jpages[pg].get("sp") or {}
             f, k = sp.get("f"), sp.get("k")
-            if not f:
-                continue
-            for q in self.j["pages"]:
-                s2 = q.get("sp") or {}
-                if q["id"] != pg and ((k and s2.get("k") == k) or s2.get("f") == f or q["id"] == f):
-                    mates.add(q["id"])
+            if f:
+                found = {q["id"] for q in self.j["pages"]
+                         if q["id"] != pg and ((k and (q.get("sp") or {}).get("k") == k) or (q.get("sp") or {}).get("f") == f or q["id"] == f)}
+                if not found:
+                    raise Stop(f"page {pg}: its spread image ({f}.jpg) is copied into the public site, but no facing page can be identified "
+                               f"(no other page shares sp.k {k!r} or sp.f {f!r}, and no page record is named {f!r}), so what is written on the other half cannot be checked")
+                mates |= found
+            elif sp.get("s") == "whole spread" or sp.get("cb") is None:
+                if k:
+                    mates |= {q["id"] for q in self.j["pages"] if q["id"] != pg and (q.get("sp") or {}).get("k") == k}
+            mates |= self.scan_twins().get(pg, set())
         return sorted(mates - pages)
 
     def published_blocks(self, pid, indices):
@@ -108,6 +151,9 @@ class Source:
 
 
 def find_db_root(path):
+    """The export directory: --db itself when it holds collection folders, else the ONE exports/* directory that does.
+    Zero or several candidates are a hard stop: guessing would load nothing (or the wrong export), and every piece
+    would then read as 'unsorted', which is only a gate that --force overrides."""
     base = Path(path)
     if not base.is_dir():
         raise Stop(f"--db {path} is not a directory")
@@ -116,11 +162,14 @@ def find_db_root(path):
     nested = sorted(p for p in base.glob("exports/*") if any((p / c).is_dir() for c in COLLECTIONS))
     if len(nested) == 1:
         return nested[0]
-    return base  # an export whose collections are all empty has no folders
+    if not nested:
+        raise Stop(f"--db {path} holds no studio export: none of the folders {', '.join(COLLECTIONS)} here or in exports/*")
+    raise Stop(f"--db {path} holds {len(nested)} exports ({', '.join(p.name for p in nested)}); name the one to use with --db")
 
 
-def load_db(path):
-    """{collection: {doc id: doc}} from EXPORT_DIR/COLLECTION/DOCID.json."""
+def load_db_with_root(path):
+    """-> (export directory, {collection: {doc id: doc}}) from EXPORT_DIR/COLLECTION/DOCID.json.
+    A document that is not a JSON object, and an export with no release documents at all, are hard stops."""
     root = find_db_root(path)
     db = {c: {} for c in COLLECTIONS}
     for c in COLLECTIONS:
@@ -132,9 +181,16 @@ def load_db(path):
                 doc = json.loads(f.read_text())
             except ValueError as e:
                 raise Stop(f"{f}: not valid JSON ({e})")
-            if isinstance(doc, dict):
-                db[c][f.stem] = doc
-    return db
+            if not isinstance(doc, dict):
+                raise Stop(f"{f}: not a JSON object ({type(doc).__name__}); a studio document is always an object, so this export is damaged")
+            db[c][f.stem] = doc
+    if not db["release"]:
+        raise Stop(f"the export {root} has no release documents, so no piece has a pool and every piece would read as unsorted; this is the wrong folder or a damaged export")
+    return root, db
+
+
+def load_db(path):
+    return load_db_with_root(path)[1]
 
 
 # ------------------------------------------------------------------ gates
@@ -165,13 +221,21 @@ def gate_verified(src, db, pid):
 def gate_filed(db, pid):
     """Passes when ANY batch listing the piece is filed or registered (a piece may sit in a draft batch and
     also in a later filed one)."""
-    found = [(bid, b.get("status")) for bid, b in sorted(db["batches"].items()) if pid in (b.get("items") or [])]
+    found, malformed = [], 0
+    for bid, b in sorted(db["batches"].items()):
+        items = b.get("items")
+        if not isinstance(items, list):
+            malformed += 1  # a string would make `pid in items` a substring match ('p0010 p0099' contains 'p001')
+            continue
+        if pid in items:
+            found.append((bid, b.get("status")))
+    note = f" ({malformed} batch document(s) whose items are not a list were ignored)" if malformed else ""
     if not found:
-        return False, "not listed in any batch"
+        return False, "not listed in any batch" + note
     for bid, status in found:
-        if status in ("filed", "registered"):
+        if isinstance(status, str) and status in ("filed", "registered"):
             return True, f"batch {bid} is {status!r}"
-    return False, "; ".join(f"batch {bid} is {status!r}" for bid, status in found)
+    return False, "; ".join(f"batch {bid} is {status!r}" for bid, status in found) + note
 
 
 # ------------------------------------------------------------------ versions and corrections
@@ -217,8 +281,11 @@ def select_versions(src, db, pid, include_versions):
 def load_corrections(src, db, pid, indices):
     """-> (corrections {(page, block, line): text}, counts, stale line ids) for the published blocks."""
     corr, stale = {}, []
-    counts = {"confirmed": 0, "corrected": 0, "unreviewed": 0}
+    counts = {"confirmed": 0, "corrected": 0, "unreviewed": 0, "withheld": 0}
     for pg, bi in src.published_blocks(pid, indices):
+        if src.jpages[pg]["B"][bi].get("t") == 4:
+            counts["withheld"] += len(src.jpages[pg]["B"][bi]["L"])  # quotation block: its lines stay withheld, reviews on them are not used
+            continue
         for li, current in enumerate(src.jpages[pg]["B"][bi]["L"]):
             lid = f"{pg}-{bi}-{li}"
             doc = db["reviews"].get(lid)
@@ -260,11 +327,22 @@ def unpublished_corrections(src, db, pid, indices):
 # ------------------------------------------------------------------ shared scan
 
 def pool_of(db, other):
+    """'series' | 'reserve' | 'archive' | 'unsorted' (no release document) | 'unknown' (any other value:
+    'Reserve', ' reserve', a list, a number, null...). Only the studio's exact values count; a value that merely
+    looks like Reserve is never read as 'not Reserve'."""
     doc = db["release"].get(other)
     if doc is None:
         return "unsorted"
     pool = doc.get("pool")
-    return pool if pool in POOLS else "unknown"
+    return pool if isinstance(pool, str) and pool in POOLS else "unknown"
+
+
+def pool_note(db, other):
+    """What the release document says, for a message (never the document's other fields)."""
+    doc = db["release"].get(other) or {}
+    raw = doc.get("pool")
+    like = raw.strip().lower() if isinstance(raw, str) else None
+    return f"pool is {raw!r}" + (f", which reads like {like!r} but is not the exact value the studio writes" if like in POOLS and raw != like else "")
 
 
 def shared_scan(src, db, pid, indices, public_ids, accepted):
@@ -436,7 +514,7 @@ def audit_strings(out_dir):
         for n in sorted(names):
             rows.append(("font file name", n))
     except build_public.FontToolError:
-        pass
+        rows.append(("font name records", "not listed: the font tool failed"))
     jpath = out / "data" / "j.json"
     if jpath.exists():
         j = json.loads(jpath.read_text())
@@ -570,32 +648,46 @@ def git(repo, *args, check=True):
 
 
 def remote_is_public_repo(url):
-    """True only for a remote that IS github.com's 4444J99/versforms: the host exactly github.com and the path
-    exactly the repository (an optional .git and an optional trailing slash). Accepted forms: https, ssh://
-    and the scp-like git@github.com:OWNER/REPO. A look-alike host (notgithub.com, github.com.example, a path that
-    merely contains github.com/4444J99/versforms, github.com used as the user name) is not the repository.
-    Case is ignored for host and repository, as GitHub does."""
+    """True only for https://github.com/4444J99/versforms (an optional .git, an optional trailing slash): scheme https,
+    host exactly github.com, no user name or password in the URL, no port but 443, no query or fragment, and the path
+    exactly the repository. Case is ignored for host and repository, as GitHub does. ssh forms, file: paths,
+    credentials and look-alike hosts (notgithub.com, github.com.example, a path or a user name that merely contains
+    github.com/4444J99/versforms) are refused."""
     u = url.strip()
     if not u or re.search(r"[\s\\]", u):
         return False
-    scp = re.fullmatch(r"(?:[A-Za-z0-9._-]+@)?github\.com:([^/:?#]+/[^/:?#]+)", u, re.I)
-    if scp:
-        path = scp.group(1)
-    else:
-        try:
-            parts = urllib.parse.urlsplit(u)
-            port = parts.port
-        except ValueError:
-            return False
-        scheme = parts.scheme.lower()
-        if scheme not in ("https", "ssh") or (parts.hostname or "").lower() != "github.com":
-            return False
-        if port not in (None, 443 if scheme == "https" else 22) or parts.query or parts.fragment:
-            return False
-        path = parts.path.lstrip("/")
+    try:
+        parts = urllib.parse.urlsplit(u)
+        port = parts.port
+    except ValueError:
+        return False
+    if parts.scheme.lower() != "https" or (parts.hostname or "").lower() != "github.com" or "@" in parts.netloc:
+        return False
+    if port not in (None, 443) or parts.query or parts.fragment:
+        return False
+    if not parts.path.startswith("/") or parts.path.startswith("//"):
+        return False
+    path = parts.path[1:]
     path = path[:-1] if path.endswith("/") else path
     path = path[:-4] if path.lower().endswith(".git") else path
     return path.lower() == PUBLIC_REPO_NAME.lower()
+
+
+def effective_url_ok(url):
+    """Judges the EFFECTIVE fetch and push URLs (after url.*.insteadOf, pushInsteadOf and pushurl). In a production run this
+    is exactly remote_is_public_repo. It is a module-level function so that the tests, which redirect the public repository
+    to a local bare repository, can replace it; it cannot be reached from the command line or the environment."""
+    return remote_is_public_repo(url)
+
+
+def _redact(url):
+    """A URL for a message: any user name or password is replaced (it may be a token)."""
+    return re.sub(r"(?<=//)[^/@\s]*@", "***@", url)
+
+
+def remote_main_sha(path):
+    ls = git(path, "ls-remote", "origin", "refs/heads/main", check=False)
+    return ls.stdout.split()[0] if ls.returncode == 0 and ls.stdout.split() else ""
 
 
 def check_public_repo(path, branch):
@@ -605,14 +697,20 @@ def check_public_repo(path, branch):
     if not (p / ".git").exists():
         return [("public repo is a git checkout", False, str(path))]
     url = git(p, "config", "--get", "remote.origin.url", check=False).stdout.strip()
-    res.append((f"remote origin is {PUBLIC_REPO_NAME}", remote_is_public_repo(url), url or "no origin"))
+    res.append((f"remote origin is {PUBLIC_REPO_NAME} (https://github.com, no credentials in the URL)", remote_is_public_repo(url), _redact(url) or "no origin"))
+    fetch_eff = git(p, "remote", "get-url", "origin", check=False).stdout.strip()
+    push_eff = git(p, "remote", "get-url", "--push", "origin", check=False).stdout.strip()
+    res.append(("effective fetch and push URL are the same (after insteadOf, pushInsteadOf and pushurl)", bool(fetch_eff) and fetch_eff == push_eff,
+                "" if fetch_eff == push_eff and fetch_eff else f"fetch {_redact(fetch_eff) or '(none)'}, push {_redact(push_eff) or '(none)'}"))
+    res.append((f"effective URL is {PUBLIC_REPO_NAME} on github.com", bool(fetch_eff) and effective_url_ok(fetch_eff) and effective_url_ok(push_eff), _redact(push_eff) or "no push URL"))
+    push_cfg = git(p, "config", "--get-all", "remote.origin.push", check=False).stdout.strip()
+    res.append(("remote.origin.push is not set (it would change what a push sends)", not push_cfg, f"remote.origin.push = {push_cfg}" if push_cfg else ""))
     cur = git(p, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip()
     res.append(("on branch main", cur == "main", f"on {cur!r}"))
     dirty = git(p, "--no-optional-locks", "status", "--porcelain", check=False).stdout.strip()  # does not refresh .git/index
     res.append(("working tree clean", not dirty, f"{len(dirty.splitlines())} changed or untracked path(s)" if dirty else ""))
     head = git(p, "rev-parse", "HEAD", check=False).stdout.strip()
-    ls = git(p, "ls-remote", "origin", "refs/heads/main", check=False)
-    remote = ls.stdout.split()[0] if ls.returncode == 0 and ls.stdout.split() else ""
+    remote = remote_main_sha(p)
     res.append(("main is fetched (local HEAD equals origin/main)", bool(remote) and remote == head, "cannot reach origin" if not remote else f"origin/main is {remote[:7]}, HEAD is {head[:7]}"))
     local_b = git(p, "rev-parse", "--verify", "--quiet", f"refs/heads/{branch}", check=False)
     remote_b = git(p, "ls-remote", "--heads", "origin", f"refs/heads/{branch}", check=False)
@@ -621,17 +719,70 @@ def check_public_repo(path, branch):
     return res
 
 
-def fill_public_repo(repo, build_dir, branch, message):
-    """Branch from main, replace site/ with exactly the build output, commit. Returns commit sha."""
+def commit_in_worktree(repo, build_dir, branch, message, scratch):
+    """Create `branch` from main and commit exactly the build output as site/, in a TEMPORARY WORKTREE: the clone's own
+    checkout (on main) is never touched, so a failure leaves nothing half-written in it. The commit is then compared with
+    the build listing (paths and sizes). On success the worktree is removed and the branch stays; on failure both are
+    removed and the RuntimeError says what is left. -> commit sha."""
     repo = Path(repo)
-    git(repo, "checkout", "-b", branch)
-    site = repo / "site"
-    if site.exists():
-        shutil.rmtree(site)
-    shutil.copytree(build_dir, site)
-    git(repo, "add", "-A", "site")
-    git(repo, "commit", "-m", message)
-    return git(repo, "rev-parse", "HEAD")
+    wt_root = Path(tempfile.mkdtemp(prefix="post-poem-wt-", dir=str(scratch)))
+    target = wt_root / "tree"
+    created = False
+    try:
+        git(repo, "worktree", "add", "-b", branch, str(target), "main")
+        created = True
+        site = target / "site"
+        if site.exists():
+            shutil.rmtree(site)
+        shutil.copytree(build_dir, site)
+        git(target, "add", "-A", "-f", "site")  # -f: a .gitignore in the public clone must not silently drop a file
+        git(target, "commit", "-m", message)
+        sha = git(target, "rev-parse", "HEAD")
+        committed = {}
+        for line in git(target, "ls-tree", "-r", "-l", "HEAD", "--", "site").splitlines():
+            meta, path = line.split("\t", 1)
+            committed[path[len("site/"):]] = int(meta.split()[3])
+        built = tree_listing(build_dir)
+        if committed != built:
+            diff = sorted(set(committed) ^ set(built)) or sorted(k for k in built if committed.get(k) != built[k])
+            raise RuntimeError(f"the committed site/ differs from the build output ({len(diff)} path(s), first: {', '.join(diff[:5])})")
+        return sha
+    except (RuntimeError, OSError) as e:
+        left = []
+        try:
+            git(repo, "worktree", "remove", "--force", str(target), check=False)
+        except OSError:
+            pass
+        if created:
+            r = git(repo, "branch", "-D", branch, check=False)
+            left.append(f"branch {branch} " + ("removed again" if r.returncode == 0 else f"COULD NOT be removed ({r.stderr.strip()}); delete it by hand"))
+        left.append(f"the checkout of {repo} was not touched (still on main, clean)")
+        raise RuntimeError(f"{e}. State left: " + "; ".join(left)) from e
+    finally:
+        git(repo, "worktree", "remove", "--force", str(target), check=False)
+        git(repo, "worktree", "prune", check=False)
+        shutil.rmtree(wt_root, ignore_errors=True)
+
+
+def public_changes(public_site, out):
+    """Compare the public clone's current site/data/j.json with the new build.
+    -> (piece ids new in the public site, already-public piece ids whose published data changed). Page placement in the
+    scan atlas ('a') moves whenever the page set changes, so it does not count as a change."""
+    new = json.loads((Path(out) / "data" / "j.json").read_text())
+    try:
+        old = json.loads((Path(public_site) / "data" / "j.json").read_text())
+    except (OSError, ValueError):
+        old = None
+    new_pieces = {pc["id"]: pc for pc in new["pieces"]}
+    if old is None:
+        return list(new_pieces), []
+    old_pieces = {pc["id"]: pc for pc in old["pieces"]}
+    strip = lambda pg: {k: v for k, v in pg.items() if k != "a"}
+    new_pages, old_pages = {pg["id"]: strip(pg) for pg in new["pages"]}, {pg["id"]: strip(pg) for pg in old["pages"]}
+    added = [pid for pid in new_pieces if pid not in old_pieces]
+    changed = [pid for pid, pc in new_pieces.items() if pid in old_pieces and (
+        pc != old_pieces[pid] or any(new_pages.get(pg) != old_pages.get(pg) for v in pc["V"] for pg, _ in v["P"]))]
+    return added, changed
 
 
 # ------------------------------------------------------------------ pull request text
@@ -646,7 +797,9 @@ def word_of(ok):
 def render_pr_body(ctx):
     L = []
     L.append("## What changed")
-    L.append(f"- Piece(s): {', '.join(ctx['pids'])}")
+    L.append(f"- Piece(s) requested: {', '.join(ctx['pids'])}")
+    L.append("- New in the public site: " + (", ".join(ctx["new_pieces"]) or "none"))
+    L.append("- Already public and rebuilt with changed published data: " + (", ".join(ctx["changed_pieces"]) or "none"))
     for pid in ctx["pids"]:
         v = ctx["versions"][pid]
         L.append(f"- {pid}: {v['how']}; version(s) published: {', '.join('V[%d]' % i for i in v['indices'])} of {v['total']}; "
@@ -665,13 +818,16 @@ def render_pr_body(ctx):
     for name, ok, detail in ctx["checks"]:
         L.append(f"- {word_of(ok)} {name}" + (f": {detail}" if detail else ""))
     for pid, c in ctx["counts"].items():
-        L.append(f"- {pid} lines: {c['confirmed']} confirmed, {c['corrected']} corrected (author text published), {c['unreviewed']} without review")
+        L.append(f"- {pid} lines: {c['confirmed']} confirmed, {c['corrected']} corrected (author text published), {c['unreviewed']} without review"
+                 + (f"; {c['withheld']} quotation line(s) withheld" if c.get("withheld") else ""))
     L.append(f"- sha256 of data/j.json: `{ctx['sha']}`")
     L.append("")
     L.append("## Not verified")
     L.append("- Rendering on a real phone or other device")
     L.append("- A Cloudflare Pages preview deploy of this branch")
-    L.append("- Author sign-off on the shared scans listed here: " + (", ".join(f"{f['id']} on {f['page']} ({f['status']})" for f in ctx["shared"]) or "none found"))
+    pg_shared = sorted({f["page"] for f in ctx["shared"]})
+    L.append("- Author sign-off on shared scans: " + (f"other writing is visible in the scan of {len(pg_shared)} page(s) ({', '.join(pg_shared)}); "
+                                                      "which pieces or items is in the console log of the run, not in this text" if pg_shared else "none found"))
     for note in ctx["font_notes"]:
         L.append(f"- {note}")
     for w in ctx["warnings"]:
@@ -690,8 +846,16 @@ def render_pr_body(ctx):
 
 # ------------------------------------------------------------------ main flow
 
+class _Parser(argparse.ArgumentParser):
+    def error(self, message):
+        """argparse exits 2 on a usage error; here 2 means 'a gate failed'. Usage errors are 64, as documented."""
+        self.print_usage(sys.stderr)
+        sys.stderr.write(f"{self.prog}: error: {message}\n")
+        sys.exit(EXIT_USAGE)
+
+
 def parse_args(argv):
-    ap = argparse.ArgumentParser(description="Gate, build and prepare a pull request for posting a poem.")
+    ap = _Parser(description="Gate, build and prepare a pull request for posting a poem.")
     ap.add_argument("pieces", nargs="+", metavar="PIECE_ID")
     ap.add_argument("--db", required=True, help="studio database export directory (COLLECTION/DOCID.json)")
     ap.add_argument("--public-repo", help="clone of 4444J99/versforms (required unless --dry-run)")
@@ -718,10 +882,11 @@ def run(a):
 
     try:
         src = Source(root)
-        db = load_db(a.db)
+        db_root, db = load_db_with_root(a.db)
     except Stop as e:
         say(f"FAIL  stop cannot load inputs: {e}")
         return EXIT_STOP
+    say(f"export: {db_root} ({', '.join(f'{c} {len(db[c])}' for c in COLLECTIONS)})")
     unknown = [p for p in pids if p not in src.pieces]
     for p in unknown:
         record("stop", p, "piece id exists in site/data/j.json", False, "unknown piece id")
@@ -738,11 +903,15 @@ def run(a):
         if own in ("reserve", "archive"):
             # --force overrides the gates only: a Reserve or Archive piece never goes online in any form
             record("stop", pid, "requested piece is not in Reserve or Archive", False, f"pool is {own}; --force does not override this")
+        elif own == "unknown":
+            # a value that is not exactly series/reserve/archive ('Reserve', ' reserve', a list...) cannot be shown to be "not Reserve"
+            record("stop", pid, "requested piece has a recognised release pool", False, f"{pool_note(db, pid)}; the studio writes exactly 'series', 'reserve' or 'archive'. --force does not override this")
         record("gate", pid, "(b) every line confirmed or corrected", *gate_verified(src, db, pid))
         record("gate", pid, "(c) in a filed or registered batch", *gate_filed(db, pid))
 
     # --- versions, corrections, stale transcript, shared scan
     versions, corrections, counts, warnings, shared_all = {}, {}, {}, [], []
+    console_notes = []  # shown on the console only: they can name pieces that are not posted
     select = {}
     try:
         for pid in effective:
@@ -763,10 +932,10 @@ def run(a):
     for pid in src.public:
         if pid not in pids:
             pool = pool_of(db, pid)
-            if pool in ("reserve", "archive"):
-                # a piece posted earlier and since moved to Reserve/Archive must not be rebuilt into a new public site
+            if pool in ("reserve", "archive", "unknown"):
+                # a piece posted earlier and since moved to Reserve/Archive (or whose pool reads as neither Series nor Reserve) must not be rebuilt into a new public site
                 record("stop", pid, "already-public piece is not in Reserve or Archive", False,
-                       f"pool is {pool}; it is in release/public.json and would be rebuilt and published again. Take it out of release/public.json (and decide how to retire it publicly) first; --force does not override this")
+                       f"{pool_note(db, pid) if pool == 'unknown' else 'pool is ' + pool}; it is in release/public.json and would be rebuilt and published again. Take it out of release/public.json (and decide how to retire it publicly) first; --force does not override this")
             elif pool != "series":
                 warnings.append(f"{pid} is already in release/public.json and is rebuilt into this site, but its release pool is {pool}. Its gates are not rechecked here; decide whether it should stay public")
     for pid in effective:
@@ -809,13 +978,24 @@ def run(a):
         for f in finds:
             if f["status"] == "accepted":
                 say(f"  accepted shared scan: {f['id']} on {f['page']}")
-        sib = {pg for pg in src.pages_of(pid, select[pid]) for q in [src.pieces[pid]]
+        # the scans copied for the published pages, and for their facing pages (spread image, whole-spread scans, identical files),
+        # also show whatever other versions of the SAME piece are written there
+        direct = src.pages_of(pid, select[pid])
+        seen_pages = set(direct) | set(src.spread_mates(direct))
+        sib = {pg for pg in seen_pages for q in [src.pieces[pid]]
                for vi, v in enumerate(q["V"]) if vi not in select[pid] for p2, _ in v["P"] if p2 == pg}
         if sib:
             warnings.append(f"{pid}: the scan of {', '.join(sorted(sib))} also shows writing of its unpublished version(s)")
+        # an already-public piece that shares the scan: its own unpublished versions on that page show too
+        for f in finds:
+            if f["status"] == "ok" and f["id"] in select and f["id"] != pid:
+                hidden = sorted({f["page"]} & {pg for vi, v in enumerate(src.pieces[f["id"]]["V"]) if vi not in select[f["id"]] for pg, _ in v["P"]})
+                if hidden:
+                    warnings.append(f"{f['id']} (already public) has unpublished version(s) written on {', '.join(hidden)}, whose scan is in this site")
     extra = sorted(accepted - used_ids)
     if extra:
-        warnings.append(f"--accept-shared-scan named ids that share no scan with any rebuilt piece: {', '.join(extra)}")
+        # ids of pieces that are not posted yet stay out of the pull request text: console only
+        console_notes.append(f"--accept-shared-scan named ids that share no scan with any rebuilt piece: {', '.join(extra)}")
     for vdoc in db["versions"].values():
         if vdoc.get("pieceId") in pids:
             warnings.append(f"{vdoc.get('pieceId')}: the studio holds a new-version photo for this piece that is not in site/data/j.json yet")
@@ -850,12 +1030,25 @@ def run(a):
     if a.workdir:
         workdir = Path(a.workdir)
         workdir.mkdir(parents=True, exist_ok=True)
+        # build/ is deleted and rebuilt on every run: only ever one this script made (it leaves a marker next to it)
+        if (workdir / "build").exists() and not (workdir / WORKDIR_MARK).exists():
+            say(f"FAIL  usage {workdir / 'build'} already exists and was not made by this script; it would be deleted. "
+                "Name an empty directory with --workdir (or leave --workdir out), or remove that folder yourself")
+            return EXIT_USAGE
     else:
         scratch = root / DEFAULT_SCRATCH  # inside the repository, git-ignored; never a sibling directory of the repository
         scratch.mkdir(parents=True, exist_ok=True)
         workdir = Path(tempfile.mkdtemp(prefix="post-poem-", dir=str(scratch)))
+    (workdir / WORKDIR_MARK).write_text("made by tools/post_poem.py; build/ here is replaced by every run\n")
     out = workdir / "build"
-    res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True)
+    try:
+        res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True)
+    except SystemExit as e:
+        say(f"FAIL  stop the build was refused: {e.code if isinstance(e.code, str) else 'exit status ' + str(e.code)}")
+        return EXIT_STOP
+    except (ValueError, OSError) as e:
+        say(f"FAIL  stop the build failed: {e}")
+        return EXIT_STOP
     published = set(res["published"])
     texts_ok = {s for (pg, bi) in published for s in src.jpages[pg]["B"][bi]["L"]} | set(corrections.values())
     scan = name_scan(out)
@@ -886,8 +1079,6 @@ def run(a):
         font_notes.append("The embedded font could not be decoded and checked here; --accept-embedded-font published it unchecked: " + "; ".join(scan["unchecked"]))
     elif scan["fonts_checked"]:
         font_notes.append(f"Embedded font(s) decoded and checked: {scan['fonts_checked']} (name table records, CFF strings, glyph names, raw table bytes); renamed in the build to {build_public.PUBLIC_FONT_FAMILY}")
-        # the font is downloadable and its other name records can hold personal names; they are on the console only
-        font_notes.append("Author sign-off on the embedded font file's own metadata (its name records are downloadable with the font; they were listed to the author on the console and are not repeated here)")
     if scan["undecodable"]:
         # the venv ran and the font did not parse: a compressed WOFF2 cannot be searched as raw bytes, so nothing vouches for it
         checks.append(("every embedded font parses and passes the name check (--accept-embedded-font does not cover this)", False,
@@ -904,6 +1095,12 @@ def run(a):
     say(f"\nbuild: {len(listing)} files, {sum(listing.values())} bytes, {len(res['pages'])} page(s), {res['applied']} correction(s) applied")
     say(f"data/j.json sha256 {sha}")
     audit = audit_strings(out)
+    if scan["fonts_checked"]:
+        # the font is downloadable and its other name records can hold personal names; they are on the console only
+        listed = any(k == "font file name" for k, _ in audit)
+        font_notes.append("Author sign-off on the embedded font file's own metadata (its name records are downloadable with the font; "
+                          + ("they were listed to the author on the console and are not repeated here)" if listed else
+                             "they could NOT be listed here because the font tool failed, so nobody has looked at them)"))
     say("reader-visible strings (list only):")
     for kind, value in audit:
         say(f"  {kind}: {value[:140]}")
@@ -912,6 +1109,8 @@ def run(a):
             warnings.append(f"info panel text produced from prov: {value}")
     for w in warnings:
         say(f"WARNING  {w}")
+    for n in console_notes:
+        say(f"NOTE  {n}")
 
     if a.dry_run:
         say("\nfile list:")
@@ -921,46 +1120,66 @@ def run(a):
         say("would write release/public.json pieces: " + ", ".join(effective))
         return EXIT_OK
 
-    # --- public repository: branch, replace site/, commit
+    # --- public repository: branch, replace site/, commit (in a temporary worktree: the clone's checkout is never touched)
     before = tree_hashes(Path(a.public_repo) / "site")
     after = tree_hashes(out)
     diff = dict(added=[k for k in after if k not in before], changed=[k for k in after if k in before and after[k] != before[k]],
-                removed=[k for k in before if k not in after], bytes=sum(s for s, _ in after.values()))
+                removed=[k for k in before if k not in after], bytes=sum(sz for sz, _ in after.values()))
+    new_pieces, changed_pieces = public_changes(Path(a.public_repo) / "site", out)
     # the pull request text is public: it is rendered and checked BEFORE anything is committed
     ctx = dict(pids=pids, versions=versions, pages=res["pages"], diff=diff, results=results, checks=checks,
-               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, font_notes=font_notes, warnings=warnings, audit=audit)
+               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, font_notes=font_notes, warnings=warnings, audit=audit,
+               new_pieces=new_pieces, changed_pieces=changed_pieces)
     body = render_pr_body(ctx)
     if OLD_NAME_RE.search(body):
         say("FAIL  stop the pull request text names the other project; nothing was committed. --force does not override this")
         return EXIT_STOP
     (workdir / "pr-body.md").write_text(body)
     try:
-        sha_commit = fill_public_repo(a.public_repo, out, branch, "Post " + ", ".join(pids))
-    except RuntimeError as e:
+        sha_commit = commit_in_worktree(a.public_repo, out, branch, "Post " + ", ".join(pids), workdir)
+    except (RuntimeError, OSError) as e:
         say(f"ERROR  {e}")
         return EXIT_PARTIAL
-    say(f"committed {sha_commit[:7]} on branch {branch} in {a.public_repo}")
-    if not a.no_pr:
-        try:
-            git(a.public_repo, "push", "-u", "origin", branch)
-            r = subprocess.run(["gh", "pr", "create", "--repo", PUBLIC_REPO_NAME, "--base", "main", "--head", branch,
-                                "--title", "Post " + ", ".join(pids), "--body-file", str(workdir / "pr-body.md")],
-                               capture_output=True, text=True)
-            if r.returncode != 0:
-                raise RuntimeError(f"gh pr create failed: {r.stderr.strip()}")
-            say(f"pull request: {r.stdout.strip()}")
-        except (RuntimeError, OSError) as e:
-            say(f"ERROR  {e}\nThe branch is committed locally in {a.public_repo}; private release/public.json is NOT updated. PR text: {workdir / 'pr-body.md'}")
-            return EXIT_PARTIAL
-    else:
+    say(f"committed {sha_commit[:7]} on branch {branch} in {a.public_repo} (the clone's checkout is still on main)")
+    if a.no_pr:
         say(f"--no-pr: branch not pushed. PR text is in {workdir / 'pr-body.md'}")
+        update_release_list(src, pids, all_versions, write=False)
+        return EXIT_OK
 
-    # --- private release list (not committed)
-    update_release_list(src, pids, all_versions)
+    main_before = remote_main_sha(a.public_repo)
+    pushed = False
+    try:
+        # the fully qualified refspec: what is sent does not depend on remote.origin.push or push.default
+        git(a.public_repo, "push", "origin", f"refs/heads/{branch}:refs/heads/{branch}")
+        pushed = True
+        on_origin = git(a.public_repo, "ls-remote", "origin", f"refs/heads/{branch}", check=False).stdout.split()
+        if not on_origin or on_origin[0] != sha_commit:
+            raise RuntimeError(f"after the push origin does not have {branch} at {sha_commit[:7]}")
+        if remote_main_sha(a.public_repo) != main_before:
+            raise RuntimeError("main of the public repository CHANGED during the push; this must never happen. Look at the public repository now")
+        r = subprocess.run(["gh", "pr", "create", "--repo", PUBLIC_REPO_NAME, "--base", "main", "--head", branch,
+                            "--title", "Post " + ", ".join(pids), "--body-file", str(workdir / "pr-body.md")],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"gh pr create failed: {r.stderr.strip()}")
+        say(f"pull request: {r.stdout.strip()}")
+    except (RuntimeError, OSError) as e:
+        if pushed:
+            say(f"ERROR  {e}\nThe branch {branch} IS pushed to origin; no pull request was created. Create it with:\n"
+                f"  gh pr create --repo {PUBLIC_REPO_NAME} --base main --head {branch} --title \"Post {', '.join(pids)}\" --body-file {workdir / 'pr-body.md'}\n"
+                f"Private release/public.json is NOT updated.")
+        else:
+            say(f"ERROR  {e}\nThe branch {branch} is committed locally in {a.public_repo} and NOT pushed; private release/public.json is NOT updated. PR text: {workdir / 'pr-body.md'}")
+        return EXIT_PARTIAL
+
+    # --- private release list (not committed): only now that the branch is pushed AND the pull request exists
+    update_release_list(src, pids, all_versions, write=True)
     return EXIT_OK
 
 
-def update_release_list(src, pids, all_versions):
+def update_release_list(src, pids, all_versions, write=True):
+    """Add the posted pieces to the private release/public.json. With write=False nothing is written: the intended change
+    is printed instead. The write is atomic (a temporary file in the same directory, flushed, then os.replace)."""
     path = src.release_path
     old = path.read_text() if path.exists() else ""
     cur = json.loads(old) if old.strip() else {"pieces": []}
@@ -968,14 +1187,27 @@ def update_release_list(src, pids, all_versions):
     if all_versions:
         cur["all_versions"] = [p for p in cur["pieces"] if p in all_versions]
     new = json.dumps(cur, indent=2) + "\n"
+    change = "".join(difflib.unified_diff(old.splitlines(True), new.splitlines(True), "release/public.json", "release/public.json")).rstrip()
+    if not write:
+        say("release/public.json was NOT changed (--no-pr). Intended change, to apply by hand once the pull request exists:")
+        say(change)
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(new)
+    fd, tmp = tempfile.mkstemp(prefix=".public.json.", dir=str(path.parent))
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write(new)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
     say(f"updated {path} (not committed):")
-    r = subprocess.run(["git", "-C", str(path.parent), "diff", "--", str(path)], capture_output=True, text=True)
-    if r.returncode == 0 and r.stdout.strip():
-        say(r.stdout.rstrip())
-    else:
-        say("".join(difflib.unified_diff(old.splitlines(True), new.splitlines(True), "release/public.json", "release/public.json")).rstrip())
+    say(change)
 
 
 def main(argv=None):
