@@ -30,15 +30,15 @@ Work was done in separate git worktrees beside the clone (`journal-handwritten-w
 
 ## Plan / next steps
 - Independent re-check of #101 at `e5ae157`, then merge — **lead session** (`local_9165db05-b6a9-4522-ba69-750bc4c7156f`), open. A squash merge keeps the subject of the old commit `c62fd92` (it names a font family that is not used) off `main`.
-- `wrangler login`; create the Pages project `versforms-studio`; create the Access application with a policy for his email only; set `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, `OWNER_EMAILS`; the studio README lists each step — **author**, open. Nothing is attached to a route before he confirms the policy.
+- **Done after this record was first written** (details in `2026-11-05-local-session-finish-and-launch.md`): the author ran `wrangler login` and created the Access application with a policy for his email only; the Pages project, the three variables and the deployment were then done by the lead session and read back signed in. Only the Pages runtime setting "Fail closed" remains his click (issue #104).
 - The lead session created the `vf_` tables in `object-lessons-submissions` and imported the 38 reviews and 2 derived decisions (the lead session reported this; no confirmation of the Access policy had reached this session, and the README and the importer's printed command say to wait for it; the rows can be removed with `DELETE FROM vf_docs` / `vf_revs`) — **author**: confirm this order was acceptable, open.
-- Run `gh auth refresh -h github.com -s workflow`, then push the local-only commit `bf9b061` (`.github/workflows/pages.yml` confirmation guard) — **author**, then **Claude**, open.
-- Fix GitHub billing so Actions can run — **author**, open.
+- **Done:** the author ran `gh auth refresh -h github.com -s workflow`; the `pages.yml` confirmation guard was pushed and merged as #93.
+- Fix GitHub billing so Actions can run — **author**, open (issue #111; `tools/ci_local.py` stands in).
 - Decide what happens to the journal scans in the two public repositories (rule 5 forbids deletions and history rewrites; pages in those repositories reference the images) — **author**, open.
-- Name poem 1 and the first-post date; then `python3 tools/post_poem.py p001 ...` — **author** names the piece, open.
+- Sort `p001` to `p010` and name the first-post date; then `python3 tools/post_poem.py p001 ...` — **author**, open (issues #105 and #113).
 - Copy the custody originals off the drive — **author / Claude**, open.
 - A later v5 of `site/index.html` has to be reconciled with the posting script's edits (title, font family, `noindex`) — **Claude**, later.
-- Rulings the author is asked for, all stated in the #101 description: gate (c) accepts `registered` as well as `filed` (the brief says `filed`); `--accept-shared-scan` lets a not-yet-posted Series piece be readable in the scan of a published page, which sits in tension with the rule that only posted poems are online; the page ids hard-coded in the engine (`PAL`, `HF`); the info panel's "not yet checked by the author" line; sign-off on the font file's own name records (free-text copyright and description) — **author**, open.
+- Rulings the author is asked for, all stated in the #101 description: gate (c) accepts `registered` as well as `filed` (the brief says `filed`); `--accept-shared-scan` lets a not-yet-posted Series piece be readable in the scan of a published page, which sits in tension with the rule that only posted poems are online; the page ids hard-coded in the engine (`PAL`, `HF`); the info panel's "not yet checked by the author" line; sign-off on the font file's own name records (free-text copyright and description) — **author**, open (issue #108).
 - Suggestion (Claude): keep the approvals given with `--accept-shared-scan` somewhere durable so a later post does not ask again; the verifier raised this as a minor.
 
 ## Status
