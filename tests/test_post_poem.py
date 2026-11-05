@@ -30,6 +30,7 @@ try:
 except (OSError, subprocess.SubprocessError):
     pass
 needs_venv = unittest.skipUnless(HAVE_VENV, f"font venv python not usable at {VENV_PY} (needs fontTools and brotli); font tests skipped")
+FIXED_MODIFIED = 3300000000  # head.modified of the fixture font, see tests/make_test_font.py
 NO_VENV = {"VERSFORMS_FONT_PYTHON": "/nonexistent/font-python"}  # makes the font step unable to run
 
 
@@ -216,17 +217,17 @@ class Base(unittest.TestCase):
         make_private(self.root, other_items=other_items, extra_public=public)
         ready_db(self.db, pids=pids, _root=self.root, **dbkw)
 
-    def skip_without_font_venv(self):
-        """The fixture page names the old font family, so its embedded font is known to carry the old name.
-        Without the font venv it cannot be renamed and every run, dry or real, is refused (by design; covered by
-        the tests that set NO_VENV on purpose). A test that expects a successful run cannot run in that case."""
-        page = self.root / "site" / "index.html"
+    def skip_if_refused_for_want_of_venv(self, out):
+        """Without the font venv a run on the standard fixture page is refused (by design): the page names the old
+        font family, so its embedded font is known to carry the old name and cannot be renamed. A test that expected
+        a different outcome cannot run in that configuration, so it is skipped, with a message, but only when the run
+        it just made was refused for exactly that reason. Tests that stop earlier (a failing gate, an unknown piece)
+        or that set NO_VENV on purpose keep running and keep their meaning."""
         if (not HAVE_VENV and os.environ.get("VERSFORMS_FONT_PYTHON") != NO_VENV["VERSFORMS_FONT_PYTHON"]
-                and page.is_file() and build_public.OLD_FONT_RE.search(page.read_text(encoding="utf-8"))):
+                and "embedded font is renamed (the source font is known to carry" in out):
             self.skipTest(f"font venv python not usable at {VENV_PY}: a run on a page that names the old font family is refused without it")
 
     def go(self, *args, dry=True, public=None, db=None):
-        self.skip_without_font_venv()
         argv = list(args) + ["--db", str(db or self.db), "--source", str(self.root), "--workdir", str(self.work)]
         if dry:
             argv.append("--dry-run")
@@ -236,6 +237,7 @@ class Base(unittest.TestCase):
         with contextlib.redirect_stdout(buf):
             code = post_poem.main(argv)
         self.out = buf.getvalue()
+        self.skip_if_refused_for_want_of_venv(self.out)
         return code
 
     def pubjson(self):
@@ -640,9 +642,13 @@ class HardStopTests(Base):
         (out / "data" / ("notes-" + OLD.lower() + ".txt")).write_text("plain")
         (out / ("dir-" + OLD.upper())).mkdir()
         (out / ("dir-" + OLD.upper()) / "inner.txt").write_text("plain")
+        (out / ("empty-" + OLD.title())).mkdir()  # no file inside: only the directory name can give it away
         scan = post_poem.name_scan(out)
-        names = [h for h in scan["hits"] if "its path" in h]
-        self.assertEqual(len(names), 2, scan["hits"])
+        self.assertEqual(len([h for h in scan["hits"] if "its path" in h]), 2, scan["hits"])  # the notes file and inner.txt
+        self.assertEqual(len([h for h in scan["hits"] if "its name" in h]), 2, scan["hits"])  # both directories
+        for ordinary in ("etceter", "4-etc", "etceter-4"):
+            (out / "data" / (ordinary + ".txt")).write_text("plain")
+        self.assertEqual(len(post_poem.name_scan(out)["hits"]), len(scan["hits"]), "ordinary names are not hits")
         self.assertFalse(any(build_public.OLD_NAME_RE.search(h) for h in scan["hits"]), scan["hits"])
 
     def test_old_name_in_any_output_file_is_a_hard_stop_even_with_force(self):
@@ -789,11 +795,12 @@ class BuildTests(Base):
 
     def test_default_workdir_is_inside_the_repository_scratch_not_beside_it(self):
         self.prepare()
-        self.skip_without_font_venv()
         argv = ["p001", "--db", str(self.db), "--source", str(self.root), "--dry-run"]
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            self.assertEqual(post_poem.main(argv), 0, buf.getvalue())
+            code = post_poem.main(argv)
+        self.skip_if_refused_for_want_of_venv(buf.getvalue())
+        self.assertEqual(code, 0, buf.getvalue())
         self.assertEqual(sorted(p.name for p in self.tmp.glob("post-poem-*")), [])  # nothing next to the repository
         made = sorted(p.name for p in (self.root / ".post-poem-work").glob("post-poem-*"))
         self.assertEqual(len(made), 1, made)
@@ -1198,8 +1205,11 @@ class FontTests(Base):
         self.assertEqual(a["hmtx"], b["hmtx"])  # advance widths and side bearings
         self.assertEqual(a["tables"], b["tables"])
         self.assertTrue(new[:4] == b"wOF2" and new != FONT_BYTES)
-        # the build must not stamp the current time into the font: same input, same bytes, on every run
-        self.assertEqual(a["head_modified"], b["head_modified"])
+        # the build must not stamp the current time into the font: same input, same bytes, on every run.
+        # The fixture font carries a fixed time long in the past (tests/make_test_font.py FIXED_MODIFIED), so a build that
+        # set the time to "now" would fail here whenever it runs.
+        self.assertEqual(a["head_modified"], FIXED_MODIFIED)
+        self.assertEqual(b["head_modified"], FIXED_MODIFIED)
         names = b["name_records"]
         for key, rec in names.items():
             nid = int(key.split("/")[0])

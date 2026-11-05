@@ -10,7 +10,11 @@ be tested without the real font. Glyph outlines are plain boxes of different wid
 import argparse, io, sys
 
 from fontTools.fontBuilder import FontBuilder
+from fontTools.ttLib import TTFont
 from fontTools.pens.t2CharStringPen import T2CharStringPen
+
+
+FIXED_MODIFIED = 3300000000  # head.modified of every font made here (the tests compare against this number)
 
 
 def build(name, flavor):
@@ -40,7 +44,13 @@ def build(name, flavor):
         fb.font.flavor = flavor
     buf = io.BytesIO()
     fb.save(buf)
-    return buf.getvalue()
+    # Stamp a fixed time in the past (seconds since 1904) so a test can tell "kept" from "set to now".
+    font = TTFont(io.BytesIO(buf.getvalue()), recalcTimestamp=False)
+    font["head"].created = FIXED_MODIFIED - 86400
+    font["head"].modified = FIXED_MODIFIED
+    out = io.BytesIO()
+    font.save(out)
+    return out.getvalue()
 
 
 if __name__ == "__main__":

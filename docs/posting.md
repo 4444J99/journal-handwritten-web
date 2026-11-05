@@ -73,7 +73,7 @@ Branch `post/PIECE_ID` (several ids are joined with `-`), one commit `Post PIECE
 
 - **What changed**: piece, version published, newest version, top of the stack, corrections on unpublished versions, page ids, files added / changed / removed, bytes.
 - **How verified**: every gate and hard-stop outcome once (a forced gate is marked), the output checks, line counts, the sha256 of `data/j.json`.
-- **Not verified**: real-device rendering, a Cloudflare preview deploy, the author's sign-off on shared scans, warnings, and the reader-visible strings list.
+- **Not verified**: real-device rendering, a Cloudflare preview deploy, the author's sign-off on shared scans, the author's sign-off on the embedded font file's own metadata, font notes (a font that could not be decoded and was accepted unchecked), warnings, and the reader-visible strings list.
 
 No poem text goes into the body, the commit message or the log, and the body never contains the other project's name (it is rendered and checked before the branch is committed; a hit refuses the post). Details about the old font name stay on the console. The name records of the font file (which can hold personal names and a description of where the font comes from) are listed on the console only, as `font file name` rows; the body says so and does not list them. The body marks a check that did not run as `UNCHECKED`.
 
@@ -89,4 +89,4 @@ In the public repository: `git revert -m 1 MERGE_COMMIT` (or `git revert COMMIT`
 
 ## Tests
 
-`python3 -m unittest discover -s tests -v` (synthetic fixtures only; set `TMPDIR` if scratch files must stay on the external drive). Tests that need the font venv are skipped with a message when it is missing.
+`python3 -m unittest discover -s tests -v` (synthetic fixtures only; set `TMPDIR` if scratch files must stay on the external drive). Without the font venv a run on the standard fixture page is refused (its font is known to carry the old name and cannot be renamed), so a test that expected a different outcome is skipped, with a message, when the run it just made was refused for that reason; tests that stop earlier (a failing gate, an unknown piece) and tests that set `NO_VENV` on purpose run either way.

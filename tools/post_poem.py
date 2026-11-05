@@ -382,8 +382,13 @@ def name_scan(out):
             checked += 1
             hits.extend(f"{label}: font {h}" for h in doc["hits"])
 
-    n_file = 0
+    n_file = n_dir = 0
     for p in sorted(out.rglob("*")):
+        if p.is_dir():
+            n_dir += 1
+            if OLD_NAME_RE.search(p.name):
+                hits.append(f"output directory {n_dir}: its name")  # an empty directory has no file to carry the finding
+            continue
         if not p.is_file():
             continue
         n_file += 1
