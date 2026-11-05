@@ -4,9 +4,9 @@ Status: technical preparation only. No release has been approved, posted, deploy
 
 ## What the preserved inputs support
 
-`exports/studio-db-2026-11-05/` contains 38 reviews: 22 confirmed lines on `diary1` and 16 corrected lines on `diary62a`. Its decisions, versions, release, batches and rconfig collections are empty. The separate derived-decision export is preserved as evidence and is not silently combined with the studio export. A historical record says those defaults were imported to D1; this preparation has not re-exported that live database.
+`exports/studio-db-2026-11-05/` contains 38 reviews: 22 confirmed lines on `diary1` and 16 reviewed lines on `diary62a` (11 confirmed, five corrected). Its decisions, versions, release, batches and rconfig collections are empty. The separate derived-decision export is preserved as evidence and is not silently combined with the studio export. A historical record says those defaults were imported to D1; this preparation has not re-exported that live database.
 
-The source catalog describes 126 pieces. Its 54 complete poems and four complete song lyrics remain recorded classifications, not author-approved release selections. `p001` is the derived first candidate because its first page is `diary1`. Both its candidacy and final version require author confirmation. The current builder chooses `p001-diary1-0` (`V[0]`, configured top) in the absence of a final decision. `p001-diary62a-0` (`V[1]`, last chronological array entry) carries the 16 corrected lines and shares a page with `p126`. Do not silently substitute the last version for the configured top.
+The source catalog describes 126 pieces. Its 54 complete poems and four complete song lyrics remain recorded classifications, not author-approved release selections. `p001` is the derived first candidate because its first page is `diary1`. Both its candidacy and final version require author confirmation. The current builder chooses `p001-diary1-0` (`V[0]`, configured top) in the absence of a final decision. `p001-diary62a-0` (`V[1]`, last chronological array entry) carries 16 reviewed lines (11 confirmed, five corrected) and shares a page with `p126`. Do not silently substitute the last version for the configured top.
 
 ## Run the preparation
 

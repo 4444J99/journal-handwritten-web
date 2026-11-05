@@ -348,9 +348,12 @@ def private_report(out, packet, queue, candidates, comparison):
     candidate = esc(packet["candidate"])
     selected = esc(", ".join(packet["preview"]["selected_version_ids"]))
     metadata_ids = ", ".join(packet["preview"]["engine_metadata_exposure"]["withheld_page_ids"])
-    version_caveat = ("V[1] contains 16 corrected lines and shares a scan with p126."
-                      if packet["candidate"] == "p001" else
-                      "Inspect every proposed version and its image exposure before choosing it.")
+    version_caveat = "Inspect every proposed version and its image exposure before choosing it."
+    if packet["candidate"] == "p001" and comparison:
+        reviewed = comparison["review_counts_for_selected_versions"]
+        version_caveat = (f"Across both versions, {reviewed['confirmed'] + reviewed['corrected']} lines are reviewed "
+                          f"({reviewed['confirmed']} confirmed, {reviewed['corrected']} corrected). "
+                          "V[1] shares a scan with p126.")
     checks = "".join(f"<tr><td>{esc(c['check'])}</td><td>{'PASS' if c['pass'] else 'FAIL / unresolved'}</td></tr>" for c in packet["preview"]["checks"])
     rows = "".join(f"<tr><td>{esc(r['piece_id'])}</td><td>{esc(r['first_page'])}</td><td>{r['reviewed_lines']}/{r['total_lines']}</td><td>{esc(r['pool'] or 'unsorted')}</td><td>Pending</td></tr>" for r in candidates[:4])
     comparison_html = ""

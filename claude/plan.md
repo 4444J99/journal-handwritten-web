@@ -4,7 +4,7 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 
 ## T03 preparation addendum — 2026-11-05
 
-The [T03 release procedure](../docs/releases/t03-release-procedure.md), [author-decision packet](../docs/releases/t03-author-decisions.md), [sourced policy](../docs/releases/t03-policy-and-disposition.md) and [clearance contract](../docs/releases/release-clearance-contract.md) now use PR #101 head `e5ae157ef556690e73047e30225cad61c5484cf9`. The original `5d111c1` / `e0177fa` eight-file rehearsal is preserved at `release/packets/2026-11-05-t03-baseline/`; current output is at `release/packets/2026-11-05-t03/`. Baseline counts and hashes are not current acceptance.
+The [T03 release procedure](../docs/releases/t03-release-procedure.md), [author-decision packet](../docs/releases/t03-author-decisions.md), [sourced policy](../docs/releases/t03-policy-and-disposition.md) and [clearance contract](../docs/releases/release-clearance-contract.md) now use PR #101 head `e5ae157ef556690e73047e30225cad61c5484cf9`. The original `5d111c1` / `e0177fa` eight-file rehearsal is preserved at `release/packets/2026-11-05-t03-baseline/`; current output is at `release/packets/2026-11-05-t03-current/`. Baseline counts and hashes are not current acceptance.
 
 The bounded private preview selects `p001-diary1-0`; both p001 and that version remain derived candidates awaiting the author. Journal-page order is preserved; `as-posted` and participation `around` remain derived defaults. The author-selected title and font are versforms and ajp-scribbles.
 
