@@ -1246,7 +1246,7 @@ const EXPO_LABEL = Object.fromEntries(EXPO.map(e => [e[0], e[1]]));
 const EXPO_PUB = Object.fromEntries(EXPO.map(e => [e[0], e[2]]));
 const SUB_ST = [['sent', 'Sent'], ['accepted', 'Accepted'], ['declined', 'Declined'], ['withdrawn', 'Withdrawn']];
 const RSUBS = [['sort', 'Sort'], ['calendar', 'Calendar'], ['copyright', 'Copyright'], ['exposure', 'Exposure'], ['subs', 'Submissions']];
-const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {}, pd: {} };
+const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', account: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {}, pd: {} };
 
 function cget(coll, id) { const p = S.pending[coll].get(id); if (p) return p.data; return S.server[coll].get(id) || null; }
 function call(coll) { const m = new Map(S.server[coll]); for (const [k, p] of S.pending[coll]) if (p.data) m.set(k, p.data); else m.delete(k); return m; }
@@ -1283,6 +1283,26 @@ function checkPostUrl(s) {
 function postedEntry(f, date, at) {
   const c = checkPostUrl(f.url);
   return { type: 'social', where: String(f.where == null ? '' : f.where).trim(), account: String(f.account == null ? '' : f.account).trim(), date, url: c.ok ? c.url : '', ver: 'final', at };
+}
+// Exposure log quick choices: the site and the Instagram account are both choices.
+const EXPO_CHOICES = [
+  { id: 'site', label: 'Site', note: POST_DEFAULTS.where, type: 'site', where: POST_DEFAULTS.where, account: '' },
+  { id: 'instagram', label: 'Instagram', note: POST_DEFAULTS.account, type: 'social', where: 'Instagram', account: POST_DEFAULTS.account },
+];
+function expoChoice(e, id) {
+  const c = EXPO_CHOICES.find(x => x.id === id);
+  return c ? { ...e, type: c.type, where: c.where, account: c.account } : e;
+}
+function expoChoiceId(e) {
+  const w = String(e.where == null ? '' : e.where).trim(), a = String(e.account == null ? '' : e.account).trim();
+  const c = EXPO_CHOICES.find(x => x.type === e.type && x.where === w && x.account === a);
+  return c ? c.id : null;
+}
+function exposureEntry(e, today, at) {
+  const s = v => String(v == null ? '' : v).trim();
+  const o = { type: e.type, where: s(e.where), date: e.date || today, url: s(e.url), ver: s(e.ver), at };
+  if (s(e.account)) o.account = s(e.account);
+  return o;
 }
 /* mark-posted helpers end */
 function seriesList() {
@@ -1529,12 +1549,21 @@ function rExposure(body) {
   const sel = h('select', { id: 'ex-type' }); for (const [k, l] of EXPO) sel.append(h('option', { value: k, selected: e.type === k }, l));
   sel.addEventListener('change', () => { e.type = sel.value; });
   const inp = (k, l, t) => { const i = h('input', { type: t, id: 'ex-' + k, value: e[k] || '' }); i.addEventListener('input', () => { e[k] = i.value; }); return h('div', { class: 'field' }, h('label', { for: 'ex-' + k }, l), i); };
-  form.append(h('div', { class: 'grid2' }, h('div', { class: 'field' }, h('label', { for: 'ex-type' }, 'Type'), sel), inp('date', 'Date', 'date'), inp('where', 'Where', 'text'), inp('ver', 'Version shown (final, draft, scan…)', 'text'), inp('url', 'Link', 'url')));
+  form.append(h('div', { class: 'grid2' }, h('div', { class: 'field' }, h('label', { for: 'ex-type' }, 'Type'), sel), inp('date', 'Date', 'date'), inp('where', 'Where', 'text'), inp('account', 'Account', 'text'), inp('ver', 'Version shown (final, draft, scan…)', 'text'), inp('url', 'Link', 'url')));
+  const choices = h('div', { class: 'choices tight', role: 'group', 'aria-label': 'Where it appeared' }, EXPO_CHOICES.map(c => h('button', { type: 'button', class: 'choice', 'data-choice': c.id, 'aria-pressed': 'false', onclick: () => {
+    Object.assign(e, expoChoice(e, c.id));
+    sel.value = e.type;
+    for (const k of ['where', 'account']) { const i = form.querySelector('#ex-' + k); if (i) i.value = e[k]; }
+    syncChoices();
+  } }, c.label, h('small', null, c.note))));
+  const syncChoices = () => { for (const b of choices.children) b.setAttribute('aria-pressed', expoChoiceId(e) === b.dataset.choice ? 'true' : 'false'); };
+  form.addEventListener('input', syncChoices); form.addEventListener('change', syncChoices);
+  form.append(choices); syncChoices();
   const key = RF.expoKey;
   if (key && rel(key).pool === 'reserve') form.append(h('p', { class: 'err' }, 'This is a Reserve piece. Logging an appearance means strict journals will treat it as published.'));
   form.append(h('button', { type: 'button', class: 'btn primary', disabled: !canWrite() || !key, onclick: () => {
-    relSet(key, { exposures: [...exposures(key), { type: e.type, where: e.where.trim(), date: e.date || new Date().toISOString().slice(0, 10), url: e.url.trim(), ver: e.ver.trim(), at: nowISO() }] });
-    RF.expo = { type: e.type, where: '', date: '', url: '', ver: '' };
+    relSet(key, { exposures: [...exposures(key), exposureEntry(e, new Date().toISOString().slice(0, 10), nowISO())] });
+    RF.expo = { type: e.type, where: '', account: '', date: '', url: '', ver: '' };
   } }, 'Log appearance'));
   body.append(form);
   const cm = candMap(); const all = [];

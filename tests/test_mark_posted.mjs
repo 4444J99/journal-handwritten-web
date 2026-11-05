@@ -19,8 +19,8 @@ assert.ok(i >= 0 && j > i, 'helper block markers not found in studio/index.html'
 assert.equal(html.indexOf(begin, i + 1), -1, 'helper block appears more than once');
 
 const ctx = vm.createContext({ URL });
-vm.runInContext(html.slice(i + begin.length, j) + '\nthis.POST_DEFAULTS = POST_DEFAULTS; this.checkPostUrl = checkPostUrl; this.postedEntry = postedEntry;', ctx);
-const { POST_DEFAULTS, checkPostUrl, postedEntry } = ctx;
+vm.runInContext(html.slice(i + begin.length, j) + '\nthis.POST_DEFAULTS = POST_DEFAULTS; this.checkPostUrl = checkPostUrl; this.postedEntry = postedEntry; this.EXPO_CHOICES = EXPO_CHOICES; this.expoChoice = expoChoice; this.expoChoiceId = expoChoiceId; this.exposureEntry = exposureEntry;', ctx);
+const { POST_DEFAULTS, checkPostUrl, postedEntry, EXPO_CHOICES, expoChoice, expoChoiceId, exposureEntry } = ctx;
 
 test('defaults', () => {
   assert.equal(POST_DEFAULTS.where, 'versforms.pages.dev');
@@ -75,4 +75,49 @@ test('entry trims fields, stores the post url, tolerates missing fields', () => 
   assert.equal(e.type, 'social');
   const g = postedEntry({}, 'D', 'T');
   assert.equal(g.where, ''); assert.equal(g.account, ''); assert.equal(g.url, '');
+});
+
+// ---- Exposure log: the site and the Instagram account are both choices ----
+
+test('exactly two exposure choices: the site and the Instagram account', () => {
+  assert.deepEqual([...EXPO_CHOICES].map(c => c.id), ['site', 'instagram']);
+  const site = EXPO_CHOICES[0], ig = EXPO_CHOICES[1];
+  assert.deepEqual({ type: site.type, where: site.where, account: site.account }, { type: 'site', where: 'versforms.pages.dev', account: '' });
+  assert.deepEqual({ type: ig.type, where: ig.where, account: ig.account }, { type: 'social', where: 'Instagram', account: 'vers.forms' });
+});
+
+test('a choice sets type, where and account and keeps the other fields; it never mutates the draft', () => {
+  const draft = { type: 'journal', where: 'x', account: 'y', date: '2026-11-05', url: 'https://example.org/', ver: 'draft' };
+  const before = JSON.stringify(draft);
+  const s = expoChoice(draft, 'site');
+  assert.equal(JSON.stringify(draft), before);
+  assert.deepEqual({ ...s }, { type: 'site', where: 'versforms.pages.dev', account: '', date: '2026-11-05', url: 'https://example.org/', ver: 'draft' });
+  const g = expoChoice(draft, 'instagram');
+  assert.deepEqual({ type: g.type, where: g.where, account: g.account, ver: g.ver }, { type: 'social', where: 'Instagram', account: 'vers.forms', ver: 'draft' });
+  assert.equal(expoChoice(draft, 'nope'), draft);
+});
+
+test('the pressed choice follows the draft: set by a choice, cleared by any edit', () => {
+  const blank = { type: 'social', where: '', account: '', date: '', url: '', ver: '' };
+  assert.equal(expoChoiceId(blank), null);
+  for (const id of ['site', 'instagram']) assert.equal(expoChoiceId(expoChoice(blank, id)), id);
+  const edited = { ...expoChoice(blank, 'instagram'), where: 'Instagram stories' };
+  assert.equal(expoChoiceId(edited), null);
+  assert.equal(expoChoiceId({ ...expoChoice(blank, 'site'), type: 'social' }), null);
+  assert.equal(expoChoiceId({ type: 'site', where: ' versforms.pages.dev ' }), 'site');
+});
+
+test('exposure entry without an account keeps the old shape exactly', () => {
+  const e = exposureEntry({ type: 'journal', where: ' Some Review ', date: '', url: ' https://example.org/a ', ver: ' final ' }, '2026-11-05', 'T');
+  assert.deepEqual({ ...e }, { type: 'journal', where: 'Some Review', date: '2026-11-05', url: 'https://example.org/a', ver: 'final', at: 'T' });
+  assert.equal('account' in e, false);
+  assert.equal('account' in exposureEntry({ type: 'social', where: 'w', account: '   ', date: 'D', url: '', ver: '' }, 'X', 'T'), false);
+});
+
+test('exposure entry from each choice carries the account only when there is one', () => {
+  const draft = { type: 'social', where: '', account: '', date: '2026-11-04', url: '', ver: 'final' };
+  const site = exposureEntry(expoChoice(draft, 'site'), 'X', 'T');
+  assert.deepEqual({ ...site }, { type: 'site', where: 'versforms.pages.dev', date: '2026-11-04', url: '', ver: 'final', at: 'T' });
+  const ig = exposureEntry(expoChoice(draft, 'instagram'), 'X', 'T');
+  assert.deepEqual({ ...ig }, { type: 'social', where: 'Instagram', account: 'vers.forms', date: '2026-11-04', url: '', ver: 'final', at: 'T' });
 });
