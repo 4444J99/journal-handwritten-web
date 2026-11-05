@@ -22,7 +22,7 @@ Exit codes
 
 stdlib and Pillow only. Poem text is never printed, logged, or put in a commit or PR body.
 """
-import argparse, base64, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile, urllib.parse
+import argparse, base64, difflib, hashlib, json, os, re, shutil, subprocess, sys, tempfile, unicodedata, urllib.parse
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
@@ -167,10 +167,40 @@ def find_db_root(path):
     raise Stop(f"--db {path} holds {len(nested)} exports ({', '.join(p.name for p in nested)}); name the one to use with --db")
 
 
+RELEASE_DOC_NAME_RE = re.compile(r"p[0-9]+\.json")  # exactly: lowercase p, ASCII digits, .json
+
+
+def _fold(name):
+    """A name as a human would read it: compatibility-normalised, format and control characters dropped, outer spaces
+    and dots stripped, lower case. Used only to recognise look-alikes, never to accept one."""
+    kept = "".join(ch for ch in unicodedata.normalize("NFKC", name) if unicodedata.category(ch) not in ("Cf", "Cc"))
+    return kept.strip().strip(".").strip().lower()
+
+
+def check_export_names(root):
+    """Every release document is named exactly p<digits>.json, and no folder only RESEMBLES a collection folder.
+    A document whose name merely looks right (P001.json, p001.JSON, 'p001 .json', fullwidth digits) or a stray
+    file would otherwise be ignored: its piece would then read as 'unsorted' (a gate that --force overrides) while
+    a Reserve document sits next to it. A hard stop, naming the entry; --force does not override it."""
+    for entry in sorted(os.listdir(root)):
+        if entry not in COLLECTIONS and _fold(entry) in COLLECTIONS:
+            raise Stop(f"{root}/{entry!r} looks like the collection {_fold(entry)!r} but is not named exactly that, so its documents would be ignored. Rename or remove it")
+    folder = Path(root) / "release"
+    if folder.is_dir():
+        for entry in sorted(os.listdir(folder)):
+            if not RELEASE_DOC_NAME_RE.fullmatch(entry):
+                raise Stop(f"release/{entry!r} is not a release document name: they are exactly p<digits>.json (lowercase, ASCII digits, no spaces). "
+                           "A file that only resembles one would be ignored and its piece would read as unsorted, even if it says Reserve. Rename or remove it")
+            if (folder / entry).is_symlink() or not (folder / entry).is_file():
+                raise Stop(f"release/{entry!r} is not a regular file (a directory or a link); a release document must be a plain file")
+
+
 def load_db_with_root(path):
     """-> (export directory, {collection: {doc id: doc}}) from EXPORT_DIR/COLLECTION/DOCID.json.
-    A document that is not a JSON object, and an export with no release documents at all, are hard stops."""
+    A document that is not a JSON object, a release entry or a collection folder whose name only resembles the
+    right one, and an export with no release documents at all, are hard stops."""
     root = find_db_root(path)
+    check_export_names(root)
     db = {c: {} for c in COLLECTIONS}
     for c in COLLECTIONS:
         folder = root / c
@@ -1031,6 +1061,9 @@ def run(a):
         workdir = Path(a.workdir)
         workdir.mkdir(parents=True, exist_ok=True)
         # build/ is deleted and rebuilt on every run: only ever one this script made (it leaves a marker next to it)
+        if (workdir / "build").is_symlink():
+            say(f"FAIL  usage {workdir / 'build'} is a symbolic link; this script replaces build/ and will not follow or delete a link. Remove the link or choose another --workdir")
+            return EXIT_USAGE
         if (workdir / "build").exists() and not (workdir / WORKDIR_MARK).exists():
             say(f"FAIL  usage {workdir / 'build'} already exists and was not made by this script; it would be deleted. "
                 "Name an empty directory with --workdir (or leave --workdir out), or remove that folder yourself")

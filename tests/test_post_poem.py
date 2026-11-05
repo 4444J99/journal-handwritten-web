@@ -1523,6 +1523,105 @@ class HardenedPostingTests(Base):
         ready_db(one / "exports" / "only", pids=("p001",), _root=self.root)
         self.assertEqual(self.go("p001", db=one), 0, self.out)  # exactly one nested export is found
 
+    # ---- B1. a release file whose name only RESEMBLES a piece id must not hide a Reserve document
+    RESEMBLING_NAMES = ["P001.json", "p001.JSON", "p001 .json", " p001.json", "p001.json ", "p001.json.bak", "p001.json~", "p001", "p001.txt",
+                        "\uff50\uff10\uff10\uff11.json",            # fullwidth p001
+                        "p\u0660\u0660\u0661.json",                  # Arabic-Indic digits
+                        "p0\u200b01.json",                            # zero-width space
+                        "p001\u202f.json", "notes.txt", ".DS_Store", "README.md", "x-diary2.json", "b-1.json", "p.json", "p-1.json"]
+
+    def hidden_reserve_case(self, name, as_dir=False):
+        """The export has release documents, a Series one for another piece, none named exactly for p001, and a Reserve
+        document for p001 under a name that only looks like p001's."""
+        self.prepare(release={"p050": {"pool": "series"}})
+        (self.db / "release" / "p001.json").unlink()
+        target = self.db / "release" / name
+        if as_dir:
+            target.mkdir()
+        else:
+            target.write_text(json.dumps({"pool": "reserve"}))
+        return target
+
+    def test_a_release_entry_not_named_exactly_p_digits_json_is_a_hard_stop_that_force_cannot_override(self):
+        for name in self.RESEMBLING_NAMES:
+            with self.subTest(name=name):
+                self.fresh()
+                self.hidden_reserve_case(name)
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-shared-scan", "p002,p003,p004,p006,p007"), 3, self.out)
+                self.assertIn("is not a release document name", self.out)
+                self.assertIn(repr(name), self.out)  # the message names the file
+
+    def test_a_directory_or_a_symlink_in_the_release_folder_is_a_hard_stop(self):
+        self.hidden_reserve_case("p001.json", as_dir=True)  # a DIRECTORY called p001.json
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a regular file", self.out)
+        self.fresh()
+        self.prepare(release={"p050": {"pool": "series"}})
+        (self.tmp / "elsewhere.json").write_text('{"pool": "reserve"}')
+        (self.db / "release" / "p001.json").unlink()
+        (self.db / "release" / "p001.json").symlink_to(self.tmp / "elsewhere.json")
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a regular file", self.out)
+
+    def test_a_reserve_document_under_a_resembling_name_never_reaches_a_push(self):
+        target = self.hidden_reserve_case("P001.json")
+        self.fake_gh()
+        self.clone, self.bare = make_public(self.tmp)
+        before_refs = git(self.bare, "for-each-ref")
+        self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", dry=False, public=self.clone), 3, self.out)
+        self.assertEqual(git(self.bare, "for-each-ref"), before_refs)  # nothing was pushed
+        self.assertEqual(git(self.clone, "branch", "--list", "post/p001"), "")
+        self.assertTrue(target.exists())
+
+    def test_the_resembling_name_check_covers_the_already_public_rebuild_path_too(self):
+        self.prepare()  # p002 is already public and has no release document of its own here
+        (self.db / "release" / "P002.json").write_text('{"pool": "reserve"}')  # ... except one under a name that only resembles p002's
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a release document name", self.out)
+
+    def test_a_folder_that_only_resembles_a_collection_name_is_a_hard_stop(self):
+        for look_alike in ("release ", " release", "Release.", "\uff52elease", "reviews "):
+            with self.subTest(folder=look_alike):
+                self.fresh()
+                self.prepare(release={"p050": {"pool": "series"}})
+                (self.db / look_alike).mkdir()
+                (self.db / look_alike / "p001.json").write_text('{"pool": "reserve"}')
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertIn("looks like the collection", self.out)
+
+    def test_a_legitimate_release_folder_still_passes_and_a_missing_document_is_still_the_forceable_gate(self):
+        self.prepare(release={"p050": {"pool": "series"}, "p003": {"pool": "series"}})
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.fresh()
+        self.prepare(release={"p050": {"pool": "series"}})
+        (self.db / "release" / "p001.json").unlink()  # NO document for p001: unsorted, a gate, forceable (the brief's design)
+        self.assertEqual(self.go("p001"), 2, self.out)
+        self.assertEqual(self.go("p001", "--force"), 0, self.out)
+        self.assertIn("no release document (unsorted)", self.out)
+
+    def test_pool_values_series_with_other_case_or_a_trailing_space_are_refused_not_accepted(self):
+        for value in ("Series", "SERIES", "series ", " series"):
+            with self.subTest(pool=value):
+                self.fresh()
+                self.prepare(release={"p001": {"pool": value}})
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+
+    def test_a_build_folder_that_is_a_symlink_gets_a_readable_message(self):
+        self.prepare()
+        work = self.tmp / "w"
+        work.mkdir()
+        (work / ".post-poem-workdir").write_text("x")  # a marker from an earlier run
+        (self.tmp / "target").mkdir()
+        (work / "build").symlink_to(self.tmp / "target")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = post_poem.main(["p001", "--db", str(self.db), "--source", str(self.root), "--workdir", str(work), "--dry-run"])
+        self.assertEqual(code, 64, buf.getvalue())
+        self.assertIn("is a symbolic link", buf.getvalue())
+        self.assertTrue((self.tmp / "target").is_dir())
+
     def test_the_resolved_export_and_its_counts_are_printed(self):
         self.prepare()
         self.assertEqual(self.go("p001"), 0, self.out)
