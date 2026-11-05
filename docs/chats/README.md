@@ -37,7 +37,7 @@ Conventions
 | 2026-11-03 | [Cut-up technique research report](2026-11-03-cut-up-technique-research.md) | Research only. |
 | 2026-11-04 | [Profile picture edit](2026-11-04-profile-picture-edit.md) | Open — handle/domain checks outstanding. |
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
-| 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Done in this session. |
+| 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | In progress — Cloudflare link pending |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `957584e` (docs: record the repository in the plan).
