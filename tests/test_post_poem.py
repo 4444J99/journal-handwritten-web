@@ -20,15 +20,12 @@ GIT_ENV = {
     "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0",
 }
 
-OLD_FAMILY = "Etceter" + "4 Diary"  # the family name the private engine uses; the public build renames it
 INDEX_HTML = (
     '<!doctype html><html><head><meta charset=utf8>'
     '<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">'
-    '<style>:root{--a:1}</style>\n<title>Fixture Title – old</title>\n'
-    '<style>@font-face{font-family:"' + OLD_FAMILY + '";src:url(data:font/woff2;base64,' + "QUJD" * 40 + ')}\n'
-    ':root{--f-hand:"' + OLD_FAMILY.upper() + '","Segoe Print"}</style>'
-    '</head><body><canvas id="cv" aria-label="Fixture canvas"></canvas><p>set in ' + OLD_FAMILY + '</p>'
-    '<script>ctx.font = `${fs}px "' + OLD_FAMILY + '"`;</script></body></html>\n'
+    '<style>:root{--a:1}</style>\n<title>Fixture Title</title>\n'
+    '<style>@font-face{font-family:"Test Diary";src:url(data:font/woff2;base64,' + "QUJD" * 40 + ')}</style>'
+    '</head><body><canvas id="cv" aria-label="Fixture canvas"></canvas><p>set in Test Diary</p></body></html>\n'
 )
 
 # page -> list of (block owner piece id or None); piece -> versions as [(page, [blocks])]
@@ -372,9 +369,8 @@ class HardStopTests(Base):
         clone, _ = make_public(self.tmp)
         head = git(clone, "rev-parse", "HEAD")
         self.assertEqual(self.go("p001", "--no-pr", dry=False, public=clone), 3, self.out)
-        self.assertIn("VF Diary", self.out)
+        self.assertIn("Test Diary", self.out)
         self.assertIn("downloadable", self.out)
-        self.assertIn("internal name table", self.out)
         self.assertEqual(git(clone, "rev-parse", "HEAD"), head)
         self.assertEqual(self.go("p001", "--no-pr", "--force", dry=False, public=clone), 3)  # force does not help
         self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
@@ -454,48 +450,8 @@ class BuildTests(Base):
         vp = html.index("<meta name=viewport")
         self.assertEqual(html.index('<meta name="robots"'), html.index(">", vp) + 1)
         self.assertEqual((self.work / "build" / "_headers").read_text(), "/*\n  X-Robots-Tag: noindex\n")
-        self.assertEqual(re.findall(r"<title>.*?</title>", html), ["<title>vers.forms</title>"])
-        self.assertNotIn("visible title is", self.out)
-
-    def test_font_family_renamed_and_no_text_file_names_the_other_project(self):
-        self.prepare(release={"p004": {"pool": "series"}})
-        self.assertEqual(self.go("p001", "--include-versions", "--accept-shared-scan", "p004"), 0, self.out)
-        build = self.work / "build"
-        html = (build / "index.html").read_text()
-        self.assertIn('@font-face{font-family:"VF Diary"', html)
-        self.assertIn('--f-hand:"VF Diary"', html)
-        self.assertIn('px "VF Diary"', html)
-        self.assertIn("set in VF Diary", html)
-        self.assertEqual(html.count("VF Diary"), 4)
-        self.assertIn("QUJD" * 40, html)  # font bytes untouched
-        needle = re.compile("etceter" + "4", re.I)
-        seen = []
-        for f in ("index.html", "data/j.json", "_headers"):
-            self.assertTrue((build / f).is_file(), f)
-            self.assertIsNone(needle.search((build / f).read_text()), f)
-            seen.append(f)
-        for p in build.rglob("*"):  # file names too
-            self.assertIsNone(needle.search(p.name), p)
-        # every text file in the tree, not just the three named
-        for p in build.rglob("*"):
-            if p.is_file() and p.suffix != ".jpg":
-                self.assertIsNone(needle.search(p.read_text(errors="ignore")), p)
-        self.assertEqual(seen, ["index.html", "data/j.json", "_headers"])
-        self.assertIn("internal name table", self.out)
-        self.assertIn("fontTools importable:", self.out)
-
-    def test_output_check_fails_if_a_text_file_names_the_other_project(self):
-        self.prepare()
-        self.assertEqual(self.go("p001"), 0, self.out)
-        build = self.work / "build"
-        src = post_poem.Source(self.root)
-        j = json.loads((build / "data" / "j.json").read_text())
-        j["prov"]["repo"] = "https://example.invalid/" + "etceter" + "4"
-        (build / "data" / "j.json").write_text(json.dumps(j))
-        checks = post_poem.check_output(src, build, ["p002", "p001"], {("pg2", 0), ("pg2", 1)}, set(), ["p002", "p001"])
-        failed = [n for n, ok, _ in checks if not ok]
-        self.assertIn("no text file in the output names the other project (any letter case)", failed)
-        self.assertIn("data/j.json has no prov.repo, prov.commit, prov.path", failed)
+        self.assertIn("<title>Fixture Title</title>", html)  # title untouched
+        self.assertIn("WARNING  visible title is 'Fixture Title'", self.out)
 
     def test_prov_source_keys_removed(self):
         self.prepare()
@@ -562,11 +518,10 @@ class BuildTests(Base):
         rows = post_poem.audit_strings(self.work / "build")
         kinds = {k for k, _ in rows}
         self.assertTrue({"title", "aria-label", "font embedded", "prov keys", "block notes"} <= kinds)
-        self.assertIn(("title", "vers.forms"), rows)
+        self.assertIn(("title", "Fixture Title"), rows)
         self.assertIn(("aria-label", "Fixture canvas"), rows)
         self.assertIn(("prov keys", "tdate, verified"), rows)
-        self.assertTrue(any(k == "font embedded" and "VF Diary" in v for k, v in rows))
-        self.assertFalse(any(k == "name mention" for k, _ in rows))
+        self.assertTrue(any(k == "font embedded" and "Test Diary" in v for k, v in rows))
 
     def test_dry_run_prints_file_list_with_sizes(self):
         self.prepare()
@@ -674,12 +629,6 @@ class BuildPublicCompat(Base):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn("released pieces: 1; pages: 1", r.stdout)
         self.assertIn('content="noindex"', (out / "index.html").read_text())
-
-    def test_rebrand_sets_title_and_renames_family_only(self):
-        out = build_public.rebrand("<head><title>A – B</title></head>" + OLD_FAMILY + "|" + OLD_FAMILY.lower())
-        self.assertEqual(out, "<head><title>vers.forms</title></head>VF Diary|VF Diary")
-        with self.assertRaises(ValueError):
-            build_public.rebrand("<head></head>")
 
     def test_add_noindex_variants(self):
         n = build_public.NOINDEX_META

@@ -20,8 +20,7 @@ A non-empty build also
     X-Robots-Tag: noindex,
   - drops prov.repo, prov.commit and prov.path from data/j.json (the engine only prints
     them in the info panel and tolerates their absence),
-  - renumbers the piece links of published blocks to the published piece list,
-  - sets the title to "vers.forms" and renames the CSS font family to "VF Diary".
+  - renumbers the piece links of published blocks to the published piece list.
 
 An empty release list builds the engine with no pages.
 
@@ -35,8 +34,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
 
 NOINDEX_META = '<meta name="robots" content="noindex">'
-PUBLIC_TITLE = "vers.forms"
-PUBLIC_FONT_FAMILY = "VF Diary"
 HEADERS = "/*\n  X-Robots-Tag: noindex\n"
 PROV_KEEP = ("tdate", "verified")  # prov.repo / commit / path name the source repository and stay private
 
@@ -80,17 +77,6 @@ def add_noindex(html):
     if head:
         return html[:head.end()] + NOINDEX_META + html[head.end():]
     raise ValueError("index.html has no viewport meta and no <head>: cannot place the noindex tag")
-
-
-def rebrand(html):
-    """Public-site identity for index.html: title element "vers.forms", and the CSS font family
-    renamed to "VF Diary" in every place it appears (CSS, canvas font strings, text).
-    Only identifiers change: the embedded font bytes are untouched, so the font file's internal
-    name table still carries the old name (see docs/posting.md)."""
-    if not re.search(r"<title>.*?</title>", html, re.S | re.I):
-        raise ValueError("index.html has no <title> element")
-    html = re.sub(r"<title>.*?</title>", f"<title>{PUBLIC_TITLE}</title>", html, count=1, flags=re.S | re.I)
-    return re.sub(r"Etceter4 Diary", PUBLIC_FONT_FAMILY, html, flags=re.I)
 
 
 def load_release(path):
@@ -221,7 +207,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True):
     (out / "data" / "j.json").write_text(json.dumps(pub, ensure_ascii=False, separators=(",", ":")))
 
     if want:
-        (out / "index.html").write_text(add_noindex(rebrand((site / "index.html").read_text(encoding="utf-8"))), encoding="utf-8")
+        (out / "index.html").write_text(add_noindex((site / "index.html").read_text(encoding="utf-8")), encoding="utf-8")
         (out / "_headers").write_text(HEADERS)
     else:
         # the engine needs at least one page; until poem 1 posts, serve blank paper only
