@@ -3,6 +3,7 @@
 import { test, before, after, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import http from 'node:http';
 import { makeKey, signRS256, unsigned, signHS256WithPublicKey, claims, startJwks } from './helpers/jwt.mjs';
 import { startPagesDev } from './helpers/wrangler.mjs';
 
@@ -243,10 +244,40 @@ describe('owner token', () => {
     assert.equal((await call('/_blob/' + id + '/extra', { token: owner() })).status, 404);
   });
 
+  test('unusual paths: 403 without a token, a clean 404 (never 502) with one', async () => {
+    const rawGet = (path, token) => new Promise((resolve, reject) => {
+      const u = new URL(BASE);
+      const req = http.request({ host: u.hostname, port: u.port, path, method: 'GET', headers: hdr(token) }, res => {
+        const chunks = []; res.on('data', d => chunks.push(d)); res.on('end', () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString() }));
+      });
+      req.on('error', reject); req.end();
+    });
+    const cases = ['/%00', '/a%00b.jpg', '/' + 'x'.repeat(300), '/' + 'x'.repeat(3000), '/index.html/', '/index.html//', '/data/review.json/', '/cf-adapter.js/', '/%01', '/a/%1f'];
+    for (const p of cases) {
+      const anon = await rawGet(p);
+      assert.equal(anon.status, 403, 'no token ' + p.slice(0, 30));
+      assert.equal(anon.body.length, 0);
+      const bad = await rawGet(p, tok(STRANGER));
+      assert.equal(bad.status, 403, 'wrong user ' + p.slice(0, 30));
+      const ok = await rawGet(p, owner());
+      assert.equal(ok.status, 404, 'owner ' + p.slice(0, 30));
+      assert.ok(!/wrangler|Could not serve|ENOTDIR|ENAMETOOLONG|\/Volumes\//.test(ok.body), 'no simulator or path detail in the body');
+    }
+    // ordinary odd-but-valid paths still behave
+    for (const p of ['/%zz', '//', '/..%2f..%2fetc/passwd', '/a%20b']) assert.ok([200, 404].includes((await rawGet(p, owner())).status), p);
+  });
+
   test('asset validation', async () => {
     const post = (type, body) => call('/api/assets', { method: 'POST', token: owner(), headers: type ? { 'content-type': type } : {}, body });
     assert.equal((await post('text/html', '<script>1</script>')).status, 415);
-    assert.equal((await post('image/gif', fakeJpeg(10))).status, 415);
+    // the page can send gif (studio/index.html toUploadable): accepted when the bytes are a GIF
+    assert.equal((await post('image/gif', fakeJpeg(10))).status, 415, 'gif type with jpeg bytes');
+    for (const sig of ['GIF89a', 'GIF87a']) {
+      const g = await post('image/gif', Buffer.concat([Buffer.from(sig), crypto.randomBytes(64)]));
+      assert.equal(g.status, 201, sig);
+      const back = await call('/_blob/' + (await g.json()).id, { token: owner() });
+      assert.equal(back.headers.get('content-type'), 'image/gif');
+    }
     assert.equal((await post('image/svg+xml', '<svg/>')).status, 415);
     assert.equal((await post('image/jpeg', Buffer.from('this is not a jpeg at all'))).status, 415, 'signature must match the declared type');
     assert.equal((await post('image/jpeg', Buffer.alloc(0))).status, 400);

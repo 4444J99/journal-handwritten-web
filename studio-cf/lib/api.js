@@ -6,7 +6,10 @@ export const DOC_ID_RE = /^[A-Za-z0-9_.-]{1,128}$/;
 export const ASSET_ID_RE = /^[a-f0-9]{32}$/;
 export const MAX_DOC_BYTES = 64 * 1024;
 export const MAX_ASSET_BYTES = 15 * 1024 * 1024;
-export const ASSET_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp', 'image/heic']);
+// The page (studio/index.html toUploadable) sends jpeg, png, webp and gif untouched
+// (under 6 MiB) and re-encodes everything else to jpeg, so those four are required.
+// heic stays accepted for direct API clients.
+export const ASSET_TYPES = Object.freeze(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic']);
 
 const JSON_HEADERS = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
 
@@ -110,6 +113,7 @@ function hasSignature(type, b) {
   if (type === 'image/jpeg') return b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
   if (type === 'image/png') return b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
   if (type === 'image/webp') return b.length > 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50;
+  if (type === 'image/gif') return b.length > 6 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38 && (b[4] === 0x37 || b[4] === 0x39) && b[5] === 0x61;
   if (type === 'image/heic') return b.length > 12 && b[4] === 0x66 && b[5] === 0x74 && b[6] === 0x79 && b[7] === 0x70;
   return false;
 }

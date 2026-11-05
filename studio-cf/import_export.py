@@ -163,6 +163,8 @@ def run_local(args, sql_path, persist):
     cmd = wrangler_cmd(args, ["--local", "--persist-to", str(persist), "--cwd", str(HERE), "--file", str(sql_path)])
     env = dict(os.environ)
     env.setdefault("WRANGLER_SEND_METRICS", "false")
+    # keep miniflare from fetching workers.cloudflare.com/cf.json and caching it in the repo
+    env.setdefault("CLOUDFLARE_CF_FETCH_ENABLED", "false")
     env.setdefault("WRANGLER_LOG_PATH", str(persist.parent / "wrangler-logs"))
     env.setdefault("XDG_CONFIG_HOME", str(persist.parent / "wrangler-xdg"))
     env.setdefault("CI", "1")

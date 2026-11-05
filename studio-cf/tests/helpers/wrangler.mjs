@@ -16,6 +16,11 @@ export function wranglerEnv() {
     WRANGLER_SEND_METRICS: 'false',
     WRANGLER_LOG_PATH: path.join(SCRATCH, 'logs'),
     XDG_CONFIG_HOME: path.join(SCRATCH, 'xdg'),
+    // Miniflare would otherwise fetch https://workers.cloudflare.com/cf.json (the only
+    // network call of `pages dev`) and cache it in .wrangler/cache. Documented switch:
+    // https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+    CLOUDFLARE_CF_FETCH_ENABLED: 'false',
+    MINIFLARE_CACHE_DIR: path.join(SCRATCH, 'mf-cache'),
     CI: '1',
   };
 }
