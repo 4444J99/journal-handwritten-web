@@ -1,5 +1,10 @@
 # Changelog
 
+## v2026.11.05 — merged piece v4
+
+- `site/index.html` replaced with merged-piece artifact `1Pcbgrvp7BqfmcYhzZLEss` version `1793184934-ad80` (v4 interaction fixes, listed in `docs/plan.md`). Data and images unchanged.
+- `docs/chats/`: plan record for every Project chat; `CLAUDE.md`.
+
 ## v2026.10.27 — repository seeded
 
 - Seeded from the published artifacts:

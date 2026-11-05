@@ -26,7 +26,7 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 
 Note (2026-10-27): the repository now holds the published outputs. The build folders above (`archive/`, `app_build/`, `review_build/`, `font/`, `release/`) lived in earlier cloud sessions. Their current location on the author's machine is not yet confirmed; the two artifacts hold the published data.
 
-Note (2026-10-28): merged-piece version 4 was edited directly in the published `index.html` (only that file changed; data and images untouched). The repository's `site/index.html` and the `app_build` generator do **not** have these changes yet; copy the artifact's `index.html` into `site/` before the next rebuild or the fixes are lost.
+Note (2026-10-28, updated 2026-11-05): merged-piece version 4 was edited directly in the published `index.html`. On 2026-11-05 it was copied into the repository's `site/index.html` (tag `v2026.11.05`). The `app_build` generator still lacks the changes; rebuild from `site/index.html`.
 
 ## Merged piece v4 changes (2026-10-28, from the author's screen recording + Gemini review)
 - Controls: hidden at rest; on desktop they appear only when the pointer rests on the bar's own place (not the whole bottom edge), sit 34px above the screen edge (clear of the macOS Dock), hide 2.8s after use; opening a poem hides them.
