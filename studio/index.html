@@ -1246,7 +1246,7 @@ const EXPO_LABEL = Object.fromEntries(EXPO.map(e => [e[0], e[1]]));
 const EXPO_PUB = Object.fromEntries(EXPO.map(e => [e[0], e[2]]));
 const SUB_ST = [['sent', 'Sent'], ['accepted', 'Accepted'], ['declined', 'Declined'], ['withdrawn', 'Withdrawn']];
 const RSUBS = [['sort', 'Sort'], ['calendar', 'Calendar'], ['copyright', 'Copyright'], ['exposure', 'Exposure'], ['subs', 'Submissions']];
-const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {} };
+const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {}, pd: {} };
 
 function cget(coll, id) { const p = S.pending[coll].get(id); if (p) return p.data; return S.server[coll].get(id) || null; }
 function call(coll) { const m = new Map(S.server[coll]); for (const [k, p] of S.pending[coll]) if (p.data) m.set(k, p.data); else m.delete(k); return m; }
@@ -1270,6 +1270,18 @@ function candidates() {
 function candMap() { const m = new Map(); for (const c of candidates()) m.set(c.key, c); return m; }
 function batchOf(key) { for (const [id, b] of call('batches')) if ((b.items || []).includes(key)) return { id, ...b }; return null; }
 function exposures(key) { return (rel(key).exposures || []); }
+/* mark-posted helpers begin */
+const POST_DEFAULTS = { where: 'versforms.pages.dev', account: 'vers.forms' };
+function checkPostUrl(s) {
+  const t = String(s == null ? '' : s).trim();
+  if (!t) return { ok: true, url: '' };
+  let u; try { u = new URL(t); } catch (e) { return { ok: false, url: t }; }
+  return { ok: u.protocol === 'http:' || u.protocol === 'https:', url: t };
+}
+function postedEntry(f, date, at) {
+  return { type: 'social', where: String(f.where == null ? '' : f.where).trim(), account: String(f.account == null ? '' : f.account).trim(), date, url: checkPostUrl(f.url).url, ver: 'final', at };
+}
+/* mark-posted helpers end */
 function seriesList() {
   const cm = candMap();
   const xs = [];
@@ -1376,6 +1388,7 @@ function rCalendar(body) {
         chip(b ? `GRUW ${b.status}` : 'no GRUW batch', b && b.status !== 'draft' ? 'ok' : 'warn'),
         chip(`prep ${pdone}/${PREP.length}`, pdone === PREP.length ? 'ok' : ''),
         posted ? chip('posted', 'ok') : ready ? chip('ready', 'ok') : null),
+      posted && posted.url && checkPostUrl(posted.url).ok ? h('div', { class: 'rmeta' }, h('a', { href: posted.url, target: '_blank', rel: 'noopener', class: 'rlink' }, 'post link')) : null,
       open ? calDetail(c, r, b, ready, posted) : null));
     row.append(h('div', { class: 'rside col' },
       h('button', { type: 'button', class: 'btn small', onclick: () => { RF.open = open ? null : c.key; renderRelease(); } }, open ? 'Close' : 'Open'),
@@ -1398,21 +1411,31 @@ function calDetail(c, r, b, ready, posted) {
   d.append(cl);
   if (!c.verified) d.append(h('p', { class: 'note' }, 'Verify every line in Review before posting.'));
   if (!b) d.append(h('p', { class: 'note' }, 'Add it to a GRUW batch (Copyright) and file before posting — once posted it may no longer qualify as unpublished.'));
-  if (posted) d.append(h('p', { class: 'note' }, `Posted ${posted.date || ''}${posted.where ? ' · ' + posted.where : ''}`));
+  if (posted) d.append(h('p', { class: 'note' }, `Posted ${posted.date || ''}${posted.where ? ' · ' + posted.where : ''}${posted.account ? ' · ' + posted.account : ''}`));
   else {
-    const where = h('input', { type: 'text', id: `pw-${c.key}`, placeholder: 'Where (account / link)' });
+    const dr = RF.pd[c.key] || (RF.pd[c.key] = { where: POST_DEFAULTS.where, account: POST_DEFAULTS.account, url: '' });
+    const where = h('input', { type: 'text', id: `pw-${c.key}`, value: dr.where, placeholder: 'Where', 'aria-label': 'Where' });
+    const acct = h('input', { type: 'text', id: `pa-${c.key}`, value: dr.account, placeholder: 'Account', 'aria-label': 'Account' });
+    const purl = h('input', { type: 'url', id: `pu-${c.key}`, value: dr.url, placeholder: 'https://versforms.pages.dev/', 'aria-label': 'Post URL' });
+    const perr = h('p', { class: 'err', hidden: true });
+    where.addEventListener('input', () => { dr.where = where.value; });
+    acct.addEventListener('input', () => { dr.account = acct.value; });
+    purl.addEventListener('input', () => { dr.url = purl.value; perr.hidden = true; });
     const armed = RF.arm === c.key;
     const go = h('button', { type: 'button', class: 'btn primary small' + (armed ? ' arm' : ''), disabled: !canWrite() }, ready ? 'Mark posted' : armed ? 'Not ready — tap again to confirm' : 'Mark posted anyway');
     go.addEventListener('click', () => {
+      const chk = checkPostUrl(purl.value);
+      if (!chk.ok) { perr.textContent = 'Post URL must start with http:// or https://'; perr.hidden = false; return; }
       if (!ready && RF.arm !== c.key) { RF.arm = c.key; go.classList.add('arm'); go.textContent = 'Not ready — tap again to confirm'; return; }
       RF.arm = null;
+      delete RF.pd[c.key];
       const mode = numberingMode();
       let num = r.num;
       if (mode === 'as-posted' && !num) { let mx = 0; for (const [, x] of call('release')) if (x.num) mx = Math.max(mx, x.num); num = mx + 1; }
       const today = new Date().toISOString().slice(0, 10);
-      relSet(c.key, { num: num || null, exposures: [...exposures(c.key), { type: 'social', where: where.value.trim(), date: today, url: '', ver: 'final', at: nowISO() }] });
+      relSet(c.key, { num: num || null, exposures: [...exposures(c.key), postedEntry({ where: where.value, account: acct.value, url: purl.value }, today, nowISO())] });
     });
-    d.append(h('div', { class: 'up-row' }, where, go));
+    d.append(h('div', { class: 'up-row' }, where, acct, purl, go), perr);
   }
   return d;
 }
@@ -1518,7 +1541,7 @@ function rExposure(body) {
   if (!all.length) body.append(h('p', { class: 'empty-note' }, 'Nothing logged yet.'));
   for (const { c, x, i, pool } of all) {
     body.append(h('div', { class: 'rrow slim' },
-      h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, `${x.date || ''} · ${EXPO_LABEL[x.type] || x.type}${x.where ? ' · ' + x.where : ''}${x.ver ? ' · ' + x.ver : ''}`, x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener', class: 'rlink' }, ' link') : null)),
+      h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, `${x.date || ''} · ${EXPO_LABEL[x.type] || x.type}${x.where ? ' · ' + x.where : ''}${x.account ? ' · ' + x.account : ''}${x.ver ? ' · ' + x.ver : ''}`, x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener', class: 'rlink' }, ' link') : null)),
       h('div', { class: 'rside' }, pool === 'reserve' ? chip('reserve', 'warn') : null, EXPO_PUB[x.type] ? chip('copyright: published', 'warn') : null,
         h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: () => relSet(c.key, { exposures: exposures(c.key).filter((_, j) => j !== i) }) }, 'Remove'))));
   }
