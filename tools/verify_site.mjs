@@ -2,7 +2,7 @@
 // Headless-Chrome verifier for the published piece in site/ (merged piece v4).
 //
 //   node tools/verify_site.mjs [--out REPORT.md] [--json-out REPORT.json]
-//                              [--scratch DIR] [--chrome PATH] [--ready-timeout MS]
+//                              [--scratch DIR] [--chrome PATH] [--ready-timeout MS] [--connect-timeout MS]
 //
 // The scratch directory (Chrome profile, screenshots) defaults to $VERIFY_SITE_SCRATCH, else
 // a verify-site folder under the system temporary directory.
@@ -49,6 +49,7 @@ const CHROME = opt("--chrome", "/Applications/Google Chrome.app/Contents/MacOS/G
 const OUT_MD = opt("--out", null);
 const OUT_JSON = opt("--json-out", null);
 const READY_TIMEOUT = Number(opt("--ready-timeout", "30000"));
+const CONNECT_TIMEOUT = Number(opt("--connect-timeout", String(CDP.DEFAULT_CONNECT_TIMEOUT_MS))); // DevTools WebSocket handshake
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ---------------------------------------------------------------- static server
@@ -432,7 +433,7 @@ async function main() {
   try {
     // launching, connecting and the work are one cleanup scope: a browser that was launched is stopped even when
     // the connection to it cannot be made (see withBrowser in cdp_client.mjs)
-    await withBrowser({ launch: launchChrome, connect: CDP.connect }, async (cdp) => {
+    await withBrowser({ launch: launchChrome, connect: (url) => CDP.connect(url, { connectTimeoutMs: CONNECT_TIMEOUT }) }, async (cdp) => {
       const ver = await cdp.send("Browser.getVersion");
       const cells = [];
       for (const vp of VIEWPORTS) for (const scheme of SCHEMES) {

@@ -1,9 +1,10 @@
 // Tests for tools/cdp_client.mjs: no Chrome needed.
 //
 //   node --test tests/test_cdp_client.mjs
-import { test } from 'node:test';
+import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import net from 'node:net';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { CDP, withBrowser, writeThenExit } from '../tools/cdp_client.mjs';
@@ -162,4 +163,79 @@ test('withBrowser still stops the browser when closing the connection or killing
   const r = await withBrowser({ launch: async () => ({ proc, wsUrl: 'ws://x' }), connect: async () => conn }, async () => 'ok');
   assert.equal(r, 'ok');
   assert.equal(proc.killed, 1);
+});
+
+// ---- connect: a DevTools endpoint that accepts the connection and never completes the WebSocket handshake
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// A TCP server that accepts connections and never answers: what a stuck browser looks like to a client.
+async function silentServer() {
+  const sockets = []; const state = { accepted: 0, closed: 0 };
+  const server = net.createServer(sock => {
+    state.accepted++; sockets.push(sock);
+    sock.on('close', () => { state.closed++; }); sock.on('error', () => {}); sock.resume();
+  });
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  return { port: server.address().port, state, stop: async () => { sockets.forEach(x => x.destroy()); await new Promise(r => server.close(r)); } };
+}
+
+test('connect gives up when the endpoint accepts the connection but never completes the handshake, and closes the socket', { timeout: 8000 }, async () => {
+  const srv = await silentServer();
+  const t0 = Date.now();
+  try {
+    await assert.rejects(CDP.connect(`ws://127.0.0.1:${srv.port}/devtools/browser/x`, { connectTimeoutMs: 300 }), /no WebSocket handshake within 300 ms/);
+    assert.ok(Date.now() - t0 < 4000, 'rejected promptly');
+    for (let i = 0; i < 40 && srv.state.closed === 0; i++) await sleep(50);
+    assert.equal(srv.state.accepted, 1);
+    assert.equal(srv.state.closed, 1, 'the half-open socket was closed by the client');
+  } finally { await srv.stop(); }
+});
+
+test('withBrowser stops the launched browser when the handshake never completes', { timeout: 8000 }, async () => {
+  const srv = await silentServer();
+  const proc = { kills: [], kill(sig) { this.kills.push(sig); } };
+  try {
+    await assert.rejects(
+      withBrowser({ launch: async () => ({ proc, wsUrl: `ws://127.0.0.1:${srv.port}/x` }), connect: url => CDP.connect(url, { connectTimeoutMs: 300 }) }, async () => 'unreachable'),
+      /no WebSocket handshake within 300 ms/);
+    assert.deepEqual(proc.kills, ['SIGTERM']);
+  } finally { await srv.stop(); }
+});
+
+test('connect: the default time limit is 15 s and it is overridable', () => {
+  assert.equal(CDP.DEFAULT_CONNECT_TIMEOUT_MS, 15000);
+});
+
+// A socket that opens when told to, to test the timer without a server.
+class OpeningSocket extends EventTarget {
+  constructor() { super(); this.closed = false; this.sent = []; }
+  send(t) { this.sent.push(t); }
+  close() { this.closed = true; }
+  open() { this.dispatchEvent(new Event('open')); }
+}
+
+test('connect: the time limit is cleared once the socket opens, so it cannot close a working connection later', async () => {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const ws = new OpeningSocket();
+    const p = CDP.connect('ws://x', { connectTimeoutMs: 1000, WebSocketImpl: function () { return ws; } });
+    ws.open();
+    const cdp = await p;
+    mock.timers.tick(60000);
+    assert.equal(ws.closed, false, 'a timer that outlived the handshake closed the connection');
+    assert.ok(cdp instanceof CDP);
+  } finally { mock.timers.reset(); }
+});
+
+test('connect: the time limit is cleared when the socket reports an error first', async () => {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const ws = new OpeningSocket();
+    const p = CDP.connect('ws://x', { connectTimeoutMs: 1000, WebSocketImpl: function () { return ws; } });
+    ws.dispatchEvent(new Event('error'));
+    await assert.rejects(p, /websocket error/);
+    mock.timers.tick(60000);
+    assert.equal(ws.closed, false, 'the timer fired after the error and closed the socket again');
+  } finally { mock.timers.reset(); }
 });
