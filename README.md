@@ -27,6 +27,9 @@ studio/                   review studio (runs as a Claude artifact; see below)
 docs/plan.md              project plan, versioned copy of the Project doc
 tools/check.py            integrity check: every referenced file present + checksums
 tools/studio_files.py     file map for republishing the studio artifact
+tools/build_public.py     builds the public site (released pieces only) for 4444J99/versforms
+release/public.json       the released pieces — the only content that leaves this repository
+docs/chats/               one plan record per Project chat
 MANIFEST.sha256           SHA-256 of every file in site/ and studio/
 CHANGELOG.md              one entry per tagged version
 .github/workflows/        check (every push), pages (deploy site/, manual for now)
@@ -102,3 +105,18 @@ and `tools/`; otherwise the tooling is rebuilt here against `site/data/j.json`.
 All poems, journal pages, handwriting and the handwriting font: © Anthony James Padavano.
 All rights reserved. No license is granted for reuse, redistribution or model training.
 Quoted reading notes in the journal belong to their authors and are recorded by source only.
+
+## Public and private
+
+This repository is **private** and holds everything: all scans, transcripts, the studio,
+plans and chat records. The public site lives in **`4444J99/versforms`** and is deployed by
+Cloudflare Pages. Only pieces listed in `release/public.json` go there:
+
+```
+python3 tools/build_public.py ../versforms/site     # then commit and push versforms
+```
+
+The build copies only the pages those pieces sit on, a fresh atlas holding only those pages,
+and data for those pieces. Other pieces' text on a shared page is withheld, but the page scan
+shows the whole page; the build lists such pages. With an empty list the public site is blank
+paper.
