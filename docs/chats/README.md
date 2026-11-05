@@ -41,22 +41,24 @@ Conventions
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
-| 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Open — PRs #96 (studio on Cloudflare) and #97 (v4 verification) open; posting-script branch awaiting re-check; nothing deployed or imported |
+| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 |
+| 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Open — #96 and #97 merged by the lead session; #101 (posting script, round 2) pushed and awaiting independent re-check; nothing posted publicly |
 
 ## Repository state (checked 2026-11-05)
-- `main` at `957584e` (docs: record the repository in the plan).
+- `main` at `b2199a0` (headless check of the v4 page, #97, on top of the integrity-check fix #114), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
-- CI check workflow runs (last success 2026-11-01).
-- Open issue #1 and PR #2 (not from a chat) ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
+- GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
+- Issue #1 closed by #114; draft PR #2 closed as superseded.
 - `site/index.html` is merged-piece v4 (since 2744d7a).
-- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages).
+- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages): the blank page, title `versforms`, `noindex`. Nothing is posted.
+- Review studio live at https://versforms-studio.pages.dev/ (Pages project `versforms-studio`, direct upload), behind a Cloudflare Access login for the owner's email only. `claude/` holds the claude.ai Project's text documents; the full download is on the archive volume.
 
 ## Launch list (consolidated from the open plans above)
 Owner in brackets. Order follows the 2026-11-05 advisory.
-1. [Claude] Copy merged-piece v4 `index.html` from the artifact into `site/`, refresh the manifest, commit, tag.
-2. [Claude + author] Back up the scans and spreads outside the artifact store (R2 / Dropbox / local).
+1. [Claude] Copy merged-piece v4 `index.html` from the artifact into `site/`, refresh the manifest, commit, tag. **Done** (tag `v2026.11.05`).
+2. [Claude + author] Back up the scans and spreads outside the artifact store (R2 / Dropbox / local). **Done locally** (`Archives/versforms/journal-originals-2026-11-05/` and `claude-project-artifacts-2026-11-05/`, both hashed); an offsite copy is still open.
 3. [author] Confirm the name (`vers.forms`); [Claude] check handle and domain availability.
-4. [author] Verify the first poems in the review studio; sort them into Series.
-5. [author] Decide GRUW: file one batch before posting, or post without (both were Claude suggestions; no decision yet).
-6. [author] Pick poem 1 and the first-post date; [Claude] build the Instagram template from his material.
+4. [author] Verify the first poems in the review studio (now live behind Access); sort them into Series (issue #105).
+5. [author] Decide GRUW: file one batch before posting, or post without (both views are on issue #106; no decision yet).
+6. [author] Pick poem 1 (`p001`, journal page order) and the first-post date (runbook: issue #113); [Claude] build the Instagram template from his material.
 7. [author] Post.

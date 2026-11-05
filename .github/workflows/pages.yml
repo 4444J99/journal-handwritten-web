@@ -8,6 +8,11 @@
 name: pages
 on:
   workflow_dispatch:
+    inputs:
+      confirm_public:
+        description: "Type publish-private-site-publicly to proceed. This publishes the private site/ on a public URL."
+        required: true
+        type: string
 permissions:
   contents: read
   pages: write
@@ -17,6 +22,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
+    # Guard: the whole private site/ would go public (archive scans, unverified transcripts,
+    # Reserve pieces). A dispatch without the exact confirmation text is a skipped job.
+    if: ${{ inputs.confirm_public == 'publish-private-site-publicly' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
