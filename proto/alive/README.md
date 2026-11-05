@@ -39,7 +39,7 @@ plus helpers used by the verifier: `spriteGeoms()`, `regionsRead()`, `allowedBox
 `focus(id)`, `fit()`, `buildings()`, `tap(x,y)`, `render()`.
 
 - `state()` returns `{view, city, pinned, unit, zoom, floorPx, cam, selectorOpen, time, frozen, reduced, animating, frames,
-  dark, sprites:[{source:'line'|'word'|'glyph', blockId, lineIndex}], spriteCount, spriteSources:{line,word,glyph}, keepOut,
+  dark, sprites:[{piece:'p001', source:'line'|'word'|'glyph', blockId, lineIndex}], spriteCount, spriteSources:{line,word,glyph}, keepOut,
   viewport, pieces, readyPieces, failed}`. `unit` is the effective unit (the pinned one, else the zoom-driven one, clamped to
   what the nearest building has). `frames` counts requestAnimationFrame callbacks.
 - `sourcesUsed()` lists the distinct line ids (`diary1-<block>-<line>`) the live sprites were cut from.
@@ -56,7 +56,7 @@ plus helpers used by the verifier: `spriteGeoms()`, `regionsRead()`, `allowedBox
   the keyed tier: rules already removed, 0.75 of the page frame). p001 inside all58 uses the atoms boxes, not review.json,
   because review.json has the same block-2 key shift as j.json (see DATA.md).
 - Ink treatment (all JS, in the page): luminance to alpha (smoothstep 236..95), tinted with the theme ink. p001 additionally
-  has the ruled lines removed (`rules-diary1.json`: slope, pad and rule centres from `segment.py`; the spike's rule rule:
+  has the ruled lines removed (`rules-diary1.json`: slope, pad and rule centres from `segment.py`; the spike's rule:
   clear +-2.5 px around each rule unless there is ink 5 px above or below; samples outside the box count as ink, so nothing
   is removed near a box edge) and each line crop is masked to its own glyph and mark boxes (+2 px), which removes most ink
   that a loose box picked up from a neighbouring line. The `i` tier needs no rule removal.
@@ -105,7 +105,9 @@ fade-out over the last 45%; `multiply` on light, `screen` on dark; newer sprites
 paper, ramp (smoothstep) to a target of 400 live sprites over 12 s, then churn at that density (spawn replaces expiry; at most
 3 spawns per 1/30 s step). Simulation uses a fixed 1/30 s step driven by `dt` (clamped to 0.1 s, so a hidden tab resumes
 without a jump); it pauses while `document.hidden`. `prefers-reduced-motion: reduce` renders one static frame (simulated to
-14 s) and never animates. Mean-luminance steps are small (see the verification notes), no strobing.
+14 s) and never animates. Measured on the canvas (seed 7, 1280x800, light and dark): the mean luminance moves by at most 0.04 of 255 per 1/30 s step
+and at most 0.3 over 1/3 s in the t=10..11.5 s window, and by at most about 1.1 between samples 0.5 s apart over t=0..30 s
+(the ramp); total drift from empty to dense is about 12 of 255 (light) and 13 of 255 (dark). No strobing.
 Escape or a tap on dead space returns to the previous view; a tap on the column does nothing.
 
 Only p001 has reading content in this prototype. Other buildings never open READING.

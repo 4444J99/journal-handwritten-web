@@ -135,9 +135,10 @@ async function fetchBitmap(url) {
   return createImageBitmap(await r.blob());
 }
 
-function recolor(p) {                                    // alpha is kept, colour becomes the theme ink; mips rebuilt
-  const c = p.atlas, x = c.getContext("2d");
-  x.globalCompositeOperation = "source-in"; x.fillStyle = TH.ink; x.fillRect(0, 0, c.width, c.height); x.globalCompositeOperation = "source-over";
+function recolor(p) {                                    // atlas = theme ink with the stored alpha master (exact on every switch); mips rebuilt
+  const c = p.atlas, x = c.getContext("2d"), rgb = hexRgb(TH.ink), img = x.createImageData(c.width, c.height), m = p.master, d = img.data;
+  for (let i = 0; i < m.length; i++) { d[i * 4] = rgb[0]; d[i * 4 + 1] = rgb[1]; d[i * 4 + 2] = rgb[2]; d[i * 4 + 3] = m[i]; }
+  x.putImageData(img, 0, 0);
   p.mips = [{ c, k: 1 }];
   for (const k of [0.5, 0.25]) {
     const m = document.createElement("canvas"); m.width = Math.max(1, Math.ceil(c.width * k)); m.height = Math.max(1, Math.ceil(c.height * k));
@@ -160,7 +161,7 @@ async function buildPiece(p) {
     L.ax = x; L.ay = y; x += L.aw + 2; rowH = Math.max(rowH, L.ah); maxW = Math.max(maxW, x);
   }
   const atlas = document.createElement("canvas"); atlas.width = Math.max(maxW, 4); atlas.height = Math.max(y + rowH + 2, 4);
-  const ax = atlas.getContext("2d");
+  p.master = new Uint8ClampedArray(atlas.width * atlas.height);
   const tmp = document.createElement("canvas"), tx = tmp.getContext("2d", { willReadFrequently: true });
   for (const L of p.lines) {
     readRegion(p.page, [L.sx0 / sc, L.sy0 / sc, (L.sx0 + L.aw) / sc, (L.sy0 + L.ah) / sc]);
@@ -168,9 +169,7 @@ async function buildPiece(p) {
     tx.drawImage(bmp, L.sx0, L.sy0, L.aw, L.ah, 0, 0, L.aw, L.ah);
     const img = tx.getImageData(0, 0, L.aw, L.ah);
     const al = processLine(img, L.aw, L.ah, L, p.hasAtoms && p.tier === "p");
-    const out = ax.createImageData(L.aw, L.ah);
-    for (let i = 0; i < al.length; i++) out.data[i * 4 + 3] = Math.round(al[i] * 255);
-    ax.putImageData(out, L.ax, L.ay);
+    for (let yy = 0; yy < L.ah; yy++) for (let xx = 0; xx < L.aw; xx++) p.master[(L.ay + yy) * atlas.width + L.ax + xx] = Math.round(al[yy * L.aw + xx] * 255);
   }
   bmp.close && bmp.close();
   p.atlas = atlas;
@@ -645,7 +644,7 @@ function resize() {
 window.addEventListener("resize", resize);
 
 // ------------------------------------------------------------------ hooks
-function spriteList() { return sim.live.map(s => ({ source: s.kind, blockId: s.L.b, lineIndex: s.L.l })); }
+function spriteList() { return sim.live.map(s => ({ piece: s.L.piece.id, source: s.kind, blockId: s.L.b, lineIndex: s.L.l })); }
 window.__alive = {
   ready: false,
   setView(v) { setView(v); render(); return VIEW; },
