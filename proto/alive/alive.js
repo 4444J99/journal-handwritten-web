@@ -3,7 +3,9 @@
    Rule 4 (data): every pixel read from a page image goes through readRegion(), which refuses any
    rectangle that is not inside one of the registered line boxes (p001: atoms-p001.json; city=all58:
    city-all58.json). Words, glyphs and marks are sub-rectangles of a line box; sprites in READING only
-   ever come from p001's lines on diary1. */
+   ever come from p001's lines on diary1. Each p001 line also carries a `region` polygon (the area between its two
+   seams, see segment.py partition()); the atlas keeps only that line's pixels inside it, so a crop of line N cannot
+   carry pixels of line N-1 or N+1 whatever its rectangle. The polygon only restricts the rectangle further. */
 (() => {
 "use strict";
 
@@ -70,7 +72,8 @@ function pieceFromAtoms(a) {
     const S = { block: st.block, lines: [] };
     for (const ln of st.lines) {
       const L = mkLine("diary1-" + st.block + "-" + ln.line, st.block, ln.line, ln.box.slice(), {
-        gi: ln.index, words: (ln.words || []).map(w => ({ box: w.box.slice(), glyphs: (w.glyphs || []).map(g => g.box.slice()) })),
+        gi: ln.index, region: Array.isArray(ln.region) && ln.region.length >= 3 ? ln.region.map(q => [q[0], q[1]]) : null,
+        words: (ln.words || []).map(w => ({ box: w.box.slice(), glyphs: (w.glyphs || []).map(g => g.box.slice()) })),
         marks: (ln.marks || []).map(m => m.box.slice()), piece: p });
       S.lines.push(L); p.lines.push(L);
       allow("diary1", L.box);
@@ -102,6 +105,27 @@ function availUnits(p) { return UNITS.slice(0, finest(p) + 1); }
 function lumOf(d, i) { return 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; }
 function inkAlpha(l) { const a = Math.min(1, Math.max(0, (236 - l) / (236 - 95))); return a * a * (3 - 2 * a); }
 
+// Pixels of the line rectangle whose centre lies inside the line's region polygon (page pixels): even-odd
+// crossings of the vertical line through each pixel-column centre, half-open on y (top <= y < bottom). Regions
+// of different lines never overlap by construction, so the masks of neighbouring lines are disjoint.
+function regionMask(L, w, h) {
+  const poly = L.region, sc = L.piece.sc, m = new Uint8Array(w * h), n = poly.length, ys = [];
+  for (let xx = 0; xx < w; xx++) {
+    const px = (L.sx0 + xx + 0.5) / sc;
+    ys.length = 0;
+    for (let i = 0; i < n; i++) {
+      const a = poly[i], b = poly[i + 1 === n ? 0 : i + 1];
+      if ((a[0] <= px) !== (b[0] <= px)) ys.push(a[1] + (px - a[0]) * (b[1] - a[1]) / (b[0] - a[0]));
+    }
+    ys.sort((p, q) => p - q);
+    for (let k = 0; k + 1 < ys.length; k += 2) {
+      const y0 = Math.max(0, Math.ceil(ys[k] * sc - 0.5 - L.sy0)), y1 = Math.min(h, Math.ceil(ys[k + 1] * sc - 0.5 - L.sy0));
+      for (let yy = y0; yy < y1; yy++) m[yy * w + xx] = 1;
+    }
+  }
+  return m;
+}
+
 function processLine(img, w, h, L, useRules) {           // img: ImageData of the line box; returns alpha array
   const d = img.data, n = w * h, lum = new Uint8Array(n), al = new Float32Array(n);
   for (let i = 0; i < n; i++) { const l = lumOf(d, i * 4); lum[i] = l; al[i] = inkAlpha(l); }
@@ -125,6 +149,12 @@ function processLine(img, w, h, L, useRules) {           // img: ImageData of th
     for (const wd of L.words) for (const g of wd.glyphs) fill(g);
     for (const mk of L.marks) fill(mk);
     for (let i = 0; i < n; i++) if (!m[i]) al[i] = 0;
+  }
+  if (L.region) {                                        // bake the seam region in: nothing outside it is ever drawn
+    const rm = regionMask(L, w, h);
+    let before = 0, after = 0;
+    for (let i = 0; i < n; i++) { if (al[i] > 0) before++; if (!rm[i]) al[i] = 0; if (al[i] > 0) after++; }
+    L.rmask = rm; L.clip = { inkBefore: before, inkAfter: after };
   }
   return al;
 }
@@ -419,7 +449,7 @@ function spiralHit(wx, wy) {
 
 // ------------------------------------------------------------------ reading + animation
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const PB = [40, 15, 1128, 1600];                          // p001 poem box (atoms-p001.json "box")
+let PB = [40, 15, 1128, 1600];                            // p001 poem box; replaced by atoms-p001.json "box" at boot
 let RG = null;                                            // reading geometry
 function readingGeom() {
   const pw = PB[2] - PB[0], ph = PB[3] - PB[1];
@@ -673,6 +703,20 @@ window.__alive = {
     });
   },
   regionsRead() { return READS.slice(); },
+  // per p001 line: atlas pixels with non-zero alpha outside the line's region (must be 0), those inside, and how many
+  // ink pixels the region clip removed from the glyph-box mask (the partition's own cut, not a leak)
+  atlasLeak() {
+    const p = P001; if (!p || !p.ready) return null;
+    return p.lines.map(L => {
+      let outside = 0, inside = 0; const aw = p.atlas.width;
+      for (let yy = 0; yy < L.ah; yy++) for (let xx = 0; xx < L.aw; xx++) {
+        if (!p.master[(L.ay + yy) * aw + L.ax + xx]) continue;
+        if (L.rmask && !L.rmask[yy * L.aw + xx]) outside++; else inside++;
+      }
+      return { id: L.id, region: !!L.region, outside, inside, clipRemoved: L.clip ? L.clip.inkBefore - L.clip.inkAfter : null };
+    });
+  },
+  lineRegions() { return P001 ? P001.lines.map(L => ({ id: L.id, box: L.box.slice(), region: L.region ? L.region.map(q => q.slice()) : null })) : null; },
   allowedBoxes() { const o = {}; ALLOWED.forEach((v, k) => { o[k] = v.length; }); return o; },
   zoomToFloorPx(fh, wx) { cam.z = Math.min(archLimits().zmax, Math.max(archLimits().zmin, fh / FH)); if (wx !== undefined) cam.x = wx; clampCam(); invalidate(); render(); return cam.z; },
   setCamera(x, y, z) { const c = curCam(); c.x = x; c.y = y; c.z = z; clampCam(); invalidate(); render(); },
@@ -691,6 +735,7 @@ async function boot() {
   const [atoms, rules] = await Promise.all([j("/atoms-p001.json"), j("/rules-diary1.json")]);
   RULES = rules;
   P001 = pieceFromAtoms(atoms);
+  if (Array.isArray(atoms.box) && atoms.box.length === 4) PB = atoms.box.slice();
   if (CITY === "p001") PIECES = [P001];
   else {
     const city = await j("/city-all58.json");
