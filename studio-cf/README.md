@@ -83,6 +83,21 @@ python3 studio-cf/build_dist.py          # writes studio-cf/dist/ (git-ignored)
 `wrangler pages dev dist` (run from `studio-cf/`) was checked locally: full scans
 and thumbnails are served with a valid token and refused without one.
 
+### The one network call of `wrangler pages dev`
+
+Besides the local D1/R2 simulation, `wrangler pages dev` (through Miniflare) makes one
+anonymous request to `https://workers.cloudflare.com/cf.json` to fill `request.cf`,
+and caches the answer in `.wrangler/cache/cf.json` under the directory it runs in
+(git-ignored here). `wrangler pages dev --help` (4.104) has no flag for it. The
+supported switch is the environment variable `CLOUDFLARE_CF_FETCH_ENABLED=false`
+(<https://developers.cloudflare.com/workers/wrangler/system-environment-variables/>):
+nothing is fetched or cached and a built-in placeholder is used. To keep any cache
+out of the repository when fetching stays on, set `MINIFLARE_CACHE_DIR` to a
+directory elsewhere. The test helper and `import_export.py --local` set
+`CLOUDFLARE_CF_FETCH_ENABLED=false`; for hand-run sessions use
+`env CLOUDFLARE_CF_FETCH_ENABLED=false wrangler pages dev`. The studio does not read
+`request.cf`, so the placeholder changes nothing.
+
 ## Environment variables
 
 | Name | Meaning |
@@ -98,6 +113,14 @@ every request with 503 and no body. A missing, invalid, expired or wrongly
 signed token, a wrong `iss`, `aud` or `kid`, an email on no list, or a service
 token (no email) answers 403 and no body. Only the signed token matters; nothing
 in the request can bypass it.
+
+Unusual paths: the Access check always comes first, so a stranger gets 403 for any
+path. For an authenticated caller, a static path no file can have (a NUL or control
+character, a segment over 255 bytes, a path over 2048 characters) is answered 404 by the
+middleware, and a 502 from the static-file layer (under `wrangler pages dev`, a file used
+as a directory such as `/index.html/` made the local simulator answer 502 with a
+path-bearing error text; the studio itself never returns 502) is also turned into a
+bodyless 404. Covered by the "unusual paths" test in `tests/server.test.mjs`.
 
 Token rules: exactly three segments; header `alg` must be `RS256` (so `none`
 and `HS256` are refused before any key lookup); `kid` required; signature
@@ -117,7 +140,7 @@ All responses are `application/json`, `Cache-Control: no-store`.
 | `GET /api/db/COLLECTION/DOCID` | `{id, data}` or 404 |
 | `PUT /api/db/COLLECTION/DOCID` | body = a JSON object up to 64 KiB (counted in bytes); replaces the document; `{ok, rev}` |
 | `DELETE /api/db/COLLECTION/DOCID` | `{ok, rev}` |
-| `POST /api/assets` | raw image body, `Content-Type` `image/jpeg`, `image/png`, `image/webp` or `image/heic`, up to 15 MiB; the first bytes must match the type; `201 {id}` |
+| `POST /api/assets` | raw image body, `Content-Type` `image/jpeg`, `image/png`, `image/webp`, `image/gif` or `image/heic`, up to 15 MiB; the first bytes must match the type; `201 {id}` |
 | `GET /_blob/ID` | the stored photo, stored content type, `Cache-Control: private, max-age=31536000, immutable` |
 
 Collections: `reviews decisions versions release batches rconfig`. Document ids
@@ -127,9 +150,13 @@ as every write; a deleted document also bumps it, so polling needs no tombstones
 Writes need `canWrite`, and a browser write must be same-origin
 (`Sec-Fetch-Site` / `Origin` are checked when present).
 
-Known gap against the artifact: the page's `toUploadable()` passes `image/gif`
-through unchanged, and the allow-list above has no GIF, so a GIF upload is now
-refused (`unsupported_type`, "Unsupported image type.").
+Upload types follow the page's own code: the file inputs use `accept="image/*"`, and
+`toUploadable()` in `studio/index.html` sends `image/jpeg`, `image/png`, `image/webp`
+and `image/gif` unchanged (when under 6 MiB) and re-encodes anything else (and
+anything larger) to `image/jpeg`. The server allow-list therefore contains those four
+(GIF must start with `GIF87a` or `GIF89a`); `image/heic` is kept for direct API
+clients, the page never sends it. Anything else answers 415, which the adapter maps to
+the page's "Unsupported image type." message.
 
 ## The adapter
 
@@ -241,9 +268,14 @@ The Cloudflare account work below is the author's; nothing was run.
    deploy, set each with `wrangler pages secret put NAME --project-name
    versforms-studio` instead (secrets are not part of the config file). Do not
    put the owner's address in `wrangler.toml`. Never set `ACCESS_JWKS_URL_TEST`.
-8. Do **not** switch on the Pages project's "Enable access policy" toggle. It
-   creates its own, separate Access application with a different AUD, so one of
-   the hostnames would then carry a token the middleware rejects (403).
+8. Do **not** switch on the Pages project's "Enable access policy" toggle. Per
+   Cloudflare's documentation it creates its own Access policy/application for the
+   preview deployments (see "What the Pages Access toggle covers"). That it has a
+   different AUD from the application in step 4, so that a token issued for one is
+   refused (403) by the middleware under the other's hostname, is
+   **UNVERIFIED**: no Cloudflare documentation page found states it, and no
+   account was touched. The step stays because the self-hosted application in
+   step 4 already covers the preview hostnames.
 9. Only now deploy: `python3 studio-cf/build_dist.py`, then from `studio-cf/`
    `wrangler pages deploy dist --project-name versforms-studio`.
 10. Import the data: `python3 studio-cf/import_export.py EXPORT_DIR --sql-out import.sql --remote`,
@@ -266,7 +298,10 @@ General > Enable access policy** protects **only preview deployments**
 domain or custom domain" — <https://developers.cloudflare.com/pages/configuration/preview-deployments/>.
 Extending it to the production `*.pages.dev` hostname needs the manual steps in
 <https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain>.
-That is why steps 4 and 5 make one self-hosted application covering both
+The same pages describe the toggle as creating an Access policy for the preview
+deployments, and the known-issues page tells you to edit the application it creates
+under **Access > Applications**; they do not say what AUD that application has
+(UNVERIFIED). That is why steps 4 and 5 make one self-hosted application covering both
 hostnames. The middleware is a second line of defence and stays either way.
 
 ## Tests
