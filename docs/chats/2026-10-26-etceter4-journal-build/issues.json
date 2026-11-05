@@ -1,0 +1,330 @@
+[
+ {
+  "nn": "01",
+  "file": "01-journal-on-etceter4-site.md",
+  "title": "[2026-10-26-etceter4-journal-build] 01 · Handwriting font idea; locate the journal scans",
+  "plan": [
+   {
+    "text": "Build a handwriting font from the journal pages",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 5
+ },
+ {
+  "nn": "02",
+  "file": "02-three-paths-pipeline-start.md",
+  "title": "[2026-10-26-etceter4-journal-build] 02 · Three paths: font, full-text preservation, dynamic presentation",
+  "plan": [
+   {
+    "text": "Transcribe all 123 pages",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Build preservation archive",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Build handwriting font",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Research dynamic presentation and prototype the presentation",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Decide which personal pages may be public",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Do not change the etceter4 repo until the author says so",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 6
+ },
+ {
+  "nn": "03",
+  "file": "03-publish-research-report.md",
+  "title": "[2026-10-26-etceter4-journal-build] 03 · Publish the research report as an artifact",
+  "plan": [
+   {
+    "text": "Publish the report as a private artifact",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 7
+ },
+ {
+  "nn": "04",
+  "file": "04-whats-next-archive-font.md",
+  "title": "[2026-10-26-etceter4-journal-build] 04 · Next steps; archive bundle, font v1, cut-off text recovery",
+  "plan": [
+   {
+    "text": "Build archive bundle",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Recover writing outside the published crops",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Fill in one handwritten sheet of weak characters for the font",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Review flagged pages before any public release",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build the three-mode prototype",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 8
+ },
+ {
+  "nn": "05",
+  "file": "05-private-prototype-publish.md",
+  "title": "[2026-10-26-etceter4-journal-build] 05 · Publish the full private prototype",
+  "plan": [
+   {
+    "text": "Author reactions to each mode",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Fill in the font sheet (X, digits, ! ? & ( ))",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide public/private for flagged pages before release",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 9
+ },
+ {
+  "nn": "06",
+  "file": "06-immersive-redesign-poem-count.md",
+  "title": "[2026-10-26-etceter4-journal-build] 06 · Remove AI text, chrome-on-tap reader; count of complete poems",
+  "plan": [
+   {
+    "text": "Redesign reader to the author's rules",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Catalog pieces and count complete poems",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Settle borderline calls (\"Nothing shines\" final, two possible pairs, lines that may echo other sources)",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 10
+ },
+ {
+  "nn": "07",
+  "file": "07-infinite-canvas-test.md",
+  "title": "[2026-10-26-etceter4-journal-build] 07 · Infinite canvas test with 12 content/arrangement combos",
+  "plan": [
+   {
+    "text": "Build canvas test with all 12 combinations",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Author picks which combinations feel right",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 11
+ },
+ {
+  "nn": "08",
+  "file": "08-merge-harden-mobile.md",
+  "title": "[2026-10-26-etceter4-journal-build] 08 · Merge canvas and reader; harden, smooth, fix mobile; fresh layouts",
+  "plan": [
+   {
+    "text": "Merge, harden, fix mobile, fresh seeds",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Roots-and-glyphs phase with linguistics repos (e.g. LingFrame)",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 12
+ },
+ {
+  "nn": "09",
+  "file": "09-include-study-version.md",
+  "title": "[2026-10-26-etceter4-journal-build] 09 · Fold in all three versions; publish merged piece",
+  "plan": [
+   {
+    "text": "Include study view and publish merged piece",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Test the merged piece on a real iPhone",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Measure and fix arrangement-switch stutter on real phones",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 13
+ },
+ {
+  "nn": "10",
+  "file": "10-next-steps-review.md",
+  "title": "[2026-10-26-etceter4-journal-build] 10 · Next steps after reviewing other project chats",
+  "plan": [
+   {
+    "text": "Name the new identity",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Build a transcript review page and author verifies transcripts",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Build the versions layer",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Register first batch before posting; keep a reserve of unposted poems",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Real-iPhone test of the merged piece",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Font fill-in sheet",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Save plan and decisions to the project",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 14
+ },
+ {
+  "nn": "11",
+  "file": "11-proceed-all-suggestions.md",
+  "title": "[2026-10-26-etceter4-journal-build] 11 · Build review studio, versions layer, font sheet, copyright prep, plan doc",
+  "plan": [
+   {
+    "text": "Review studio, versions layer, font sheet, copyright script, plan doc",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Review transcripts in the studio (complete pieces first) and answer the Decisions tab",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fill in and photograph the font sheet",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Real-iPhone test of the merged piece, including peeling a stack",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Provide name candidates; then check handle/domain availability",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Remove the folded transcriber-notes section from the studio if the author asks",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 15
+ },
+ {
+  "nn": "12",
+  "file": "12-read-tracking-next-prev.md",
+  "title": "[2026-10-26-etceter4-journal-build] 12 · Proposals: read-progress tracking and next/previous navigation",
+  "plan": [
+   {
+    "text": "Answer: what \"next\" means, whether completion unlocks anything, per-device vs cross-device progress",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build subtle read-progress tracking across all modes",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Build next/previous navigation on focused items",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Pull studio corrections into the archive when the author asks",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Continue transcript review in the studio",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 16
+ }
+]

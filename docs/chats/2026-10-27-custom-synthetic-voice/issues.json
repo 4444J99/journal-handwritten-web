@@ -1,0 +1,79 @@
+[
+ {
+  "nn": "01",
+  "file": "01-voice-synth-concept.md",
+  "title": "[2026-10-27-custom-synthetic-voice] 01 · Synthetic voice concept: diphone concatenation and backward bank",
+  "plan": [
+   {
+    "text": "Choose forward, backward or both banks (answered in 02: both)",
+    "who": "author",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 22
+ },
+ {
+  "nn": "02",
+  "file": "02-voice-bank-research.md",
+  "title": "[2026-10-27-custom-synthetic-voice] 02 · Research: forward and backward concatenative voice banks",
+  "plan": [
+   {
+    "text": "Deliver research report on forward and backward voice banks",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Re-check tool licence and version details before the build starts",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 23
+ },
+ {
+  "nn": "03",
+  "file": "03-buildout-spec.md",
+  "title": "[2026-10-27-custom-synthetic-voice] 03 · Voice Banks buildout spec (Claude Docs)",
+  "plan": [
+   {
+    "text": "Make the nine reserved decisions in the spec (read style, carrier phrase, pronunciation authority, vowel split, performed scope, Red Room captions, eSpeak NG fallback, voice licence/masters, mic)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Phase 1 pilot: script generator, prompter, alignment, cutter, minimal engine; record 50 prompts",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Phase 2: record forward bank, 3-4 sessions (2.5-4 h)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Phase 3: engine v1 passing acceptance tests",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Phase 4: record performed Red Room supplement (1-3 h plus practice)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Phase 5: integrate into merged piece and studio voice tab",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Phase 6: release voicebank-anthony-v1.0.0 and pin in the journal project",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 24
+ }
+]

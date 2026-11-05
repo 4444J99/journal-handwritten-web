@@ -1,0 +1,70 @@
+[
+ {
+  "nn": "01",
+  "file": "01-release-research-report.md",
+  "title": "[2026-10-24-release-methods-and-standards] 01 · Research report: release standards, growth, protection, precedents",
+  "plan": [
+   {
+    "text": "Decide public n/100 vs held-back pool for journals/contests; write a short release policy",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Scan archival masters with web derivatives and 3-2-1 backups; privacy pass per page",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Register unpublished batches with the US Copyright Office before posting",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Per-poem repo structure (scans, transcriptions, metadata, version tags); AI-crawler opt-outs and rights page",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Site MVP (grid of 100, chrome-free deep zoom, tap-to-reveal), email list, release schedule, milestone deposits",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Numbered print/zine prototype; phase-two variorum view; grant/residency applications",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 3
+ },
+ {
+  "nn": "02",
+  "file": "02-separate-identity-for-work.md",
+  "title": "[2026-10-24-release-methods-and-standards] 02 · Separate identity for the handwriting work",
+  "plan": [
+   {
+    "text": "Choose own name vs separate name (resolved: vers.forms, 2026-11-04)",
+    "who": "author",
+    "done": true
+   },
+   {
+    "text": "Claim matching handles across platforms and a domain in one sitting",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Move the site's home off etceter4 to the new domain; separate email and newsletter",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Feed shows only the pages, no branding",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 4
+ }
+]

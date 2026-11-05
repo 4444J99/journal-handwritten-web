@@ -1,0 +1,137 @@
+[
+ {
+  "nn": "01",
+  "file": "01-quiet-posts-concern.md",
+  "title": "[2026-11-03-fear-of-unseen-posts] 01 · Concern about posts getting no response",
+  "plan": [
+   {
+    "text": "Add a 'first 12 poems: no analytics' rule to the plan (offered, unanswered)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Find a small group of real readers",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 57
+ },
+ {
+  "nn": "02",
+  "file": "02-distribution-vs-content.md",
+  "title": "[2026-11-03-fear-of-unseen-posts] 02 · Diagnosing low response: distribution vs content",
+  "plan": [
+   {
+    "text": "Use the three-case diagnosis at review time (carried into SOP B8)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Format test: same poem in another format before judging the poem",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 58
+ },
+ {
+  "nn": "03",
+  "file": "03-muse-agent-identification.md",
+  "title": "[2026-11-03-fear-of-unseen-posts] 03 · Using the Muse agent: first answer and agent functions",
+  "plan": [
+   {
+    "text": "Scheduled tasks for numbers gatekeeper and weekly nudge (offered; superseded by Meta Muse direction)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Pre-post technical checklist incl. GRUW and Reserve gates",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 59
+ },
+ {
+  "nn": "04",
+  "file": "04-meta-muse-instagram-fit.md",
+  "title": "[2026-11-03-fear-of-unseen-posts] 04 · Meta Muse and Instagram: fit and limits",
+  "plan": [
+   {
+    "text": "Use Muse for Instagram mechanics/strategy only; captions, end notes, replies stay the author's",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Write a brief for Muse's Goals settings (offered, not written)",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 60
+ },
+ {
+  "nn": "05",
+  "file": "05-muse-instagram-sop.md",
+  "title": "[2026-11-03-fear-of-unseen-posts] 05 · Primary-source research and SOP for Muse with Instagram",
+  "plan": [
+   {
+    "text": "Research primary sources and produce SOP (artifact compass_artifact_wf-2007fbab-...)",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Choose domain and a new email not linked to existing Meta accounts (handle vers.forms chosen 2026-11-04)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Choose Accounts Center option A or B",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fix caption template and hashtag list (0-5)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Set numeric thresholds for low reach, low response, intensity signal before poem 1",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Fix weekly posting slot (ET) and reply window",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Policy for an accidentally posted unregistered or Reserve poem",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Re-check Instagram Terms licence clause at the 2027-01-20 update; decide on full scans",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether to pursue a Meta opt-out for AI training on public posts",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether to use Muse at all",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 61
+ }
+]

@@ -1,0 +1,113 @@
+[
+ {
+  "nn": "01",
+  "file": "01-numbered-release-plan.md",
+  "title": "[2026-11-03-poetry-release-plan] 01 · Numbered n/100 release plan",
+  "plan": [
+   {
+    "text": "Build a 100-row release tracker (number, piece, status, post date, links)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide order, possible merged pairs, multi-draft final version; check possibly borrowed lines",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 62
+ },
+ {
+  "nn": "02",
+  "file": "02-hundred-full-poems-versions.md",
+  "title": "[2026-11-03-poetry-release-plan] 02 · Goal of 100 full poems with versions",
+  "plan": [
+   {
+    "text": "Decide numbering: fixed in advance vs assigned as posted",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide ordering: interleaved vs journal first",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Bank about 10-15 ready pieces before #1",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Build the tracker once numbering is decided",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 63
+ },
+ {
+  "nn": "03",
+  "file": "03-participation-from-others.md",
+  "title": "[2026-11-03-poetry-release-plan] 03 · Participation from others",
+  "plan": [
+   {
+    "text": "Choose participation type(s)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Keep participation as a separate layer around the 100",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Set contributor permission/credit terms and a reviewed submission route before inviting",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 64
+ },
+ {
+  "nn": "04",
+  "file": "04-next-steps-all-avenues.md",
+  "title": "[2026-11-03-poetry-release-plan] 04 · Next steps and all avenues",
+  "plan": [
+   {
+    "text": "Lock the project name",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Pick poem #1, bank more, set first-post date",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide copyright registration approach before #1",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Copy merged-piece v4 into repo site/ and test on a real iPhone — copy done 2026-11-05 (2744d7a); iPhone test still open",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Fold avenues and tensions into plan.md",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Exclude Reserve poems from public site builds",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 65
+ }
+]

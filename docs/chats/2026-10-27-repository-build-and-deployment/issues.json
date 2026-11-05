@@ -1,0 +1,46 @@
+[
+ {
+  "nn": "01",
+  "file": "01-repo-build-and-push.md",
+  "title": "[2026-10-27-repository-build-and-deployment] 01 · Build the repository from the artifacts and push it",
+  "plan": [
+   {
+    "text": "Push tag v2026.10.27 (refused by proxy; still absent on GitHub as of 2026-11-05) or add a workflow that tags from the changelog",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Check why Actions would not start runners on the private repo (check workflow succeeded 2026-11-01)",
+    "who": "author",
+    "done": true
+   },
+   {
+    "text": "Confirm whether the first sessions' build folders exist on the author's machine and connect that folder",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "If not recoverable, rebuild the tooling (transcripts, archive, font, ingest/deposit scripts) against site/data/j.json",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide whether and when the site goes public via the manual Pages workflow",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build-step load-time improvements: separate cached font, WebP/AVIF scans, content-hashed names, service worker",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Export studio database collections into the repo before any studio change that alters their keys",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 29
+ }
+]

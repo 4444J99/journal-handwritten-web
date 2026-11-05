@@ -1,0 +1,45 @@
+[
+ {
+  "nn": "01",
+  "file": "01-circle-safe-avatar-crop.md",
+  "title": "[2026-11-04-profile-picture-edit] 01 · Circle-safe square avatar from scanned drawing",
+  "plan": [
+   {
+    "text": "Tighter crop so the words read at small sizes (superseded: words removed in 02)",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 69
+ },
+ {
+  "nn": "02",
+  "file": "02-remove-words-extend-arms.md",
+  "title": "[2026-11-04-profile-picture-edit] 02 · Remove words, extend arms, avatar and handle feedback",
+  "plan": [
+   {
+    "text": "Confirm the arm extension matches intent, or mirror the legs' spread upward instead",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether the slang reading of the name is acceptable",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Check domain and handle availability, including versforms without the dot",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Move the removed phrase to the bio if wanted",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 70
+ }
+]

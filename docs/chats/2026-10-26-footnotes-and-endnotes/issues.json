@@ -1,0 +1,55 @@
+[
+ {
+  "nn": "01",
+  "file": "01-notes-layers-proposal.md",
+  "title": "[2026-10-26-footnotes-and-endnotes] 01 · Notes layers: footnotes, endnotes, critical apparatus",
+  "plan": [
+   {
+    "text": "Build private, interpretation-free reference file of copied reading notes and citations",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Add notes layer to piece catalog (anchor version/line/word, type, author), review-studio authoring tab, tap-to-reveal marks",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide whether the critical layer is author-only or open to invited writers",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 17
+ },
+ {
+  "nn": "02",
+  "file": "02-dated-reflection-notes.md",
+  "title": "[2026-10-26-footnotes-and-endnotes] 02 · Personal reflection notes and dual dating",
+  "plan": [
+   {
+    "text": "Dual-date every note (poem date + note date), visible on tap",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Version notes so reflections can accrue over time",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Place reflections in endnotes; keep footnotes short and word/line-anchored",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide whether reflections on new poems are written immediately or after a deliberate gap",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 18
+ }
+]

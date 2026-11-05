@@ -1,0 +1,30 @@
+[
+ {
+  "nn": "01",
+  "file": "01-forms-verse-reading.md",
+  "title": "[2026-10-31-handle-and-title-meaning] 01 · Reading of candidate handle forms_verse",
+  "plan": [
+   {
+    "text": "If forms_verse is used, state in bio/first posts that the work is handwritten (superseded: account became vers.forms on 2026-11-04)",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 36
+ },
+ {
+  "nn": "02",
+  "file": "02-verse-forms-comparison.md",
+  "title": "[2026-10-31-handle-and-title-meaning] 02 · Comparison: verse_forms vs forms_verse",
+  "plan": [
+   {
+    "text": "Choose the handle (resolved: vers.forms, 2026-11-04)",
+    "who": "author",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 37
+ }
+]

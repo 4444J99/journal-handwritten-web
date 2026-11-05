@@ -1,0 +1,36 @@
+[
+ {
+  "nn": "01",
+  "file": "01-image-processing-options.md",
+  "title": "[2026-10-27-image-upscaling-methods] 01 · Image processing and upscaling options for page scans",
+  "plan": [
+   {
+    "text": "Keep three image tiers per page (checksummed master, cleaned, display) with recipe in manifest",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Restrict AI super-resolution (Real-ESRGAN/SwinIR) to display images only",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Side-by-side three-tier trial on sample clean and hard pages from the etceter4 repo (offered, not run)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Run HTR (Transkribus/TrOCR) on cleaned images as second opinion on the 306 uncertain readings",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide whether the notebook can be rescanned at 600 dpi or more",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 25
+ }
+]

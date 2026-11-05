@@ -1,0 +1,60 @@
+[
+ {
+  "nn": "01",
+  "file": "01-cipher-puzzle-research.md",
+  "title": "[2026-11-03-cipher-puzzles-and-handwriting] 01 · Research: ciphers, codes and puzzle mechanics",
+  "plan": [
+   {
+    "text": "Produce the cipher/puzzle research report",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Answer the report's eight open questions (locks, key sheet source, true-crime references, metameta reveal, clue style, solver credit/hints, enciphering published poems, off-limits strike-throughs)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Start with the Key Sheet and the page:line:word book cipher",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 52
+ },
+ {
+  "nn": "02",
+  "file": "02-incorporating-puzzles.md",
+  "title": "[2026-11-03-cipher-puzzles-and-handwriting] 02 · How to incorporate the puzzle layer",
+  "plan": [
+   {
+    "text": "Build the Key Sheet and book cipher into the merged piece",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Supply one test sentence and the page to crop its glyphs from",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Provide a veto list of private strike-throughs before any revisions dig",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Add \"puzzle\" to the Release tab's prep checklist",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Rules: locks auto-open after a few weeks; no prizes, leaderboards or Zodiac imagery",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 53
+ }
+]

@@ -1,0 +1,84 @@
+[
+ {
+  "nn": "01",
+  "file": "01-business-model-question.md",
+  "title": "[2026-10-27-product-business-model] 01 · Business model question and scoping",
+  "plan": [
+   {
+    "text": "Answer the three scoping questions (what is sold, main goal, what is off the table)",
+    "who": "author",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 26
+ },
+ {
+  "nn": "02",
+  "file": "02-business-model-research.md",
+  "title": "[2026-10-27-product-business-model] 02 · Business-model research report",
+  "plan": [
+   {
+    "text": "Post the 100 poems free; hold a reserve of 15-30 poems never posted, for journals",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Register each 10-poem batch via GRUW before posting",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Later income: membership for version/notes layers, numbered print editions, Kickstarter for collected/facsimile edition",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Keep the font exclusive for now; keep the web piece free; skip NFTs as a core model",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Attorney review of font license and contributor terms",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 27
+ },
+ {
+  "nn": "03",
+  "file": "03-release-tab-build.md",
+  "title": "[2026-10-27-product-business-model] 03 · Release plan and studio Release tab",
+  "plan": [
+   {
+    "text": "Add Release tab to review studio, test, republish MVognnZQrtRQ6QCMaF7341, update plan.md and project docs",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Sort pieces into Series/Reserve/Archive and set a first-post date in the Release tab",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Choose a numbering option in Decisions to fix n/100 numbers",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Connect or locate the local build folder so the deposit script can run",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Submit Reserve poems to journals; file the first GRUW batch before posting",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 28
+ }
+]

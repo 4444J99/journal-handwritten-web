@@ -1,0 +1,239 @@
+[
+ {
+  "nn": "01",
+  "file": "01-launch-approach-and-accounts.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 01 · Launch approach and account structure",
+  "plan": [
+   {
+    "text": "Settle name, handles, domain",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Pick the Reserve",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Replace pre-post gates with post-hoc layers",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Open only journal + personal accounts at first",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 40
+ },
+ {
+  "nn": "02",
+  "file": "02-cadence-gruw-accounts.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 02 · Cadence, GRUW and account count",
+  "plan": [
+   {
+    "text": "Settle name, handles, domain",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Skip GRUW (not explicitly accepted; conflicts with Release tab/advisory)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Reserve handles on all platforms; post on two",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Rewrite Release tab as lanes; weekly calendar (offered)",
+    "who": "Claude",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 41
+ },
+ {
+  "nn": "03",
+  "file": "03-gatekeepers-and-reserve.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 03 · Clarifying gatekeepers and the Reserve",
+  "plan": [
+   {
+    "text": "Keep a small Reserve via a ten-minute sort",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 42
+ },
+ {
+  "nn": "04",
+  "file": "04-press-versus-journals.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 04 · Press versus journal publication",
+  "plan": [
+   {
+    "text": "Write a short project description in his own words",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Pitch press at poem 10 or 25",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 43
+ },
+ {
+  "nn": "05",
+  "file": "05-motivation-discussion.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 05 · Motivation discussion",
+  "plan": [],
+  "close": true,
+  "number": 44
+ },
+ {
+  "nn": "06",
+  "file": "06-social-versus-artifact.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 06 · Social posts versus the artifact",
+  "plan": [
+   {
+    "text": "Fix one consistent post frame; keep process posts quick",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 45
+ },
+ {
+  "nn": "07",
+  "file": "07-launch-week-month-plan.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 07 · Launch day, week and month plan",
+  "plan": [
+   {
+    "text": "Name/handle, poems 1-4, bio, post frame, poem 1 transcription check",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Post poem 1 on Nov 1",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Weekly poems Nov 8/15/22 with one new lane each",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Keep site private until a posted-only filter exists",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Rewrite Release tab; add posted-only filter (offered)",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Copy published v4 index.html into site/",
+    "who": "Claude suggestion",
+    "done": true
+   }
+  ],
+  "close": false,
+  "number": 46
+ },
+ {
+  "nn": "08",
+  "file": "08-collab-and-grid-frame.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 08 · Collab posting and consistent grid frame",
+  "plan": [
+   {
+    "text": "Post poems as Collab with personal account",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Fixed 4:5 carousel frame; separate process-post format",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Mock up three cover tiles and compare as a grid",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 47
+ },
+ {
+  "nn": "09",
+  "file": "09-scan-frame-and-handle.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 09 · Page scan frame and handle forms_verse",
+  "plan": [
+   {
+    "text": "Crop scans to paper; cover crop for 4:5",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Run say-aloud and availability checks on the handle",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 48
+ },
+ {
+  "nn": "10",
+  "file": "10-handle-intended-meaning.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 10 · Intended meaning of the handle",
+  "plan": [
+   {
+    "text": "Compare spellings; check availability before first post",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 49
+ },
+ {
+  "nn": "11",
+  "file": "11-forms-vs-vers.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 11 · Comparing forms.vs and forms.vers",
+  "plan": [
+   {
+    "text": "Check forms.vers and forms.verse availability on platforms and as domains",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 50
+ },
+ {
+  "nn": "12",
+  "file": "12-name-accounts-and-roots.md",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 12 · Name accounts, verse.us and word roots",
+  "plan": [
+   {
+    "text": "Choose the name; apply tests; check verse.us availability",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 51
+ }
+]

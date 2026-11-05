@@ -5,7 +5,7 @@
 | Chat | [03b984b6-53f3-4346-ae82-ef0a7c6c8bab](https://claude.ai/chat/03b984b6-53f3-4346-ae82-ef0a7c6c8bab) |
 | Last activity | 2026-10-27 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` |
-| Basis of this record | claude.ai model-written chat summary, read 2026-11-05 (transcript not re-read; a summary may merge Claude's suggestion and the author's reaction) |
+| Basis of this record | full transcript read 2026-11-05 (per-exchange documents below); summary lines above written earlier the same day |
 | Status | Built; decisions open. |
 
 ## Produced
@@ -19,3 +19,11 @@
 ## Plan / next steps
 - Open for him: name, numbering (fixed vs as posted), sorting pieces into Series/Reserve/Archive.
 - Local build folders (incl. `make_deposit.py`) not connected; must be reconnected before deposit scripts can run.
+
+## Exchanges
+
+| # | Exchange | Issue | |
+|---|---|---|---|
+| [01](2026-10-27-product-business-model/01-business-model-question.md) | Business model question and scoping | #26 | closed |
+| [02](2026-10-27-product-business-model/02-business-model-research.md) | Business-model research report | #27 | open |
+| [03](2026-10-27-product-business-model/03-release-tab-build.md) | Release plan and studio Release tab | #28 | open |

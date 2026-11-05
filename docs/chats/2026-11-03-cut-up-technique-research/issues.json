@@ -1,0 +1,84 @@
+[
+ {
+  "nn": "01",
+  "file": "01-cut-up-research-report.md",
+  "title": "[2026-11-03-cut-up-technique-research] 01 · Research report: cut-up technique and related methods",
+  "plan": [
+   {
+    "text": "Answer the report's framing questions: chance vs rule per poem, crediting borrowed lines, publishing version history, when to stop using the method",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 54
+ },
+ {
+  "nn": "02",
+  "file": "02-incorporation-into-project.md",
+  "title": "[2026-11-03-cut-up-technique-research] 02 · Incorporating cut-up methods into tools and web piece",
+  "plan": [
+   {
+    "text": "Add per-version method field and line-level provenance (source line ids) to the review studio",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Add Cut tab to the review studio (shuffle/strike/keep own lines, no language model, saves new version)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Release-tab warning when Series poems reuse Reserve lines",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Web piece: fold-in view, erasure version type on scans, tap line to see source page (hidden until tapped)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Credit-style choice for echo lines (open item 6) in the Decisions tab",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Decide whether a corpus-only Markov generator is allowed under the no-AI-text rule",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 55
+ },
+ {
+  "nn": "03",
+  "file": "03-structural-cut-up-ideas.md",
+  "title": "[2026-11-03-cut-up-technique-research] 03 · Structural cut-up ideas for the whole series",
+  "plan": [
+   {
+    "text": "Decide on idea 2 (new poems limited to journal vocabulary) and idea 4 (poem 100 from poems 1-99)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether machine-misread uncertain readings count under the no-AI-text rule",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Count the journal's vocabulary for the idea 2 constraint",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Exclude Reserve poems from any reader-cut pool if reader cut-ups are built",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 56
+ }
+]

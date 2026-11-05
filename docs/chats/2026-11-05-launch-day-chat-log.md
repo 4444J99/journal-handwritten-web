@@ -19,6 +19,8 @@
 - Today is launch day; every chat in the Project gets a plan and is logged in this repository.
 
 ## Plan / next steps
+- Done: every exchange of the 22 earlier chats broken out from the full transcripts — 70 documents in `docs/chats/<record>/`, GitHub issues #3–#72 (11 closed as done or nothing to act on), labels `chat` and `author`. Corrections applied to records (GRUW was a Claude suggestion; release-methods artifact id; review-feedback decisions; start dates).
+- `docs/chats/PROMPTS.md` / `PROCESS.md` kept for re-running a chat's breakdown from inside that chat.
 - Done: merged piece v4 into `site/` (commit 2744d7a); `tools/build_public.py` + `release/public.json` (empty) (commit 1a6f8bc); public repo `4444J99/versforms` created and seeded with the blank site.
 - Next: Cloudflare Pages project `versforms` linked to `4444J99/versforms`, output dir `site`, no build command; then point the domain when chosen.
 - To release a poem: add its id to `release/public.json`, run `tools/build_public.py ../versforms/site`, push `versforms`.

@@ -7,7 +7,7 @@ text about the poems belongs in this folder.
 Conventions
 - One file per chat: `YYYY-MM-DD-<slug>.md`, date = the chat's last activity (America/New_York).
 - "Author decisions" holds only what Anthony stated. Claude's suggestions go under "Plan" and are labelled.
-- Records written on 2026-11-05 were made from claude.ai chat summaries or excerpts, not full transcripts.
+- Each record now has an Exchanges table: one document per exchange in `docs/chats/<record>/` and one GitHub issue each (#3–#72), made from the full transcripts on 2026-11-05.
   Correct a record by editing it in a new commit; history keeps the earlier wording.
 - New chats: add a record before the session ends (see `CLAUDE.md` at the repo root).
 - Per-exchange breakdown: each chat runs its prompt from `PROMPTS.md`, which follows `PROCESS.md` and writes `docs/chats/<record>/NN-*.md` plus one GitHub issue per exchange.
@@ -44,7 +44,7 @@ Conventions
 - `main` at `957584e` (docs: record the repository in the plan).
 - Tag `v2026.10.27` from the seeding chat is **not** on GitHub.
 - CI check workflow runs (last success 2026-11-01).
-- Open issue #1 and PR #2 ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
+- Open issue #1 and PR #2 (not from a chat) ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
 - `site/index.html` predates merged-piece v4 (artifact `1Pcbgrvp7BqfmcYhzZLEss`).
 
 ## Launch list (consolidated from the open plans above)
@@ -53,6 +53,6 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 2. [Claude + author] Back up the scans and spreads outside the artifact store (R2 / Dropbox / local).
 3. [author] Confirm the name (`vers.forms`); [Claude] check handle and domain availability.
 4. [author] Verify the first poems in the review studio; sort them into Series.
-5. [author] Decide GRUW: file one batch before posting, or post without (conflicting notes from 2026-10-31 and 2026-11-05).
+5. [author] Decide GRUW: file one batch before posting, or post without (both were Claude suggestions; no decision yet).
 6. [author] Pick poem 1 and the first-post date; [Claude] build the Instagram template from his material.
 7. [author] Post.

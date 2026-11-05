@@ -1,0 +1,74 @@
+[
+ {
+  "nn": "01",
+  "file": "01-recording-ux-review.md",
+  "title": "[2026-10-27-application-feedback-review] 01 · UX review of a screen recording of the merged piece",
+  "plan": [
+   {
+    "text": "Fix the two bugs, then auto-hiding toolbar, then reading view",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Test the merged piece on a real iPhone",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 19
+ },
+ {
+  "nn": "02",
+  "file": "02-gemini-review-comparison.md",
+  "title": "[2026-10-27-application-feedback-review] 02 · Cross-check of Gemini's review and merged priority list",
+  "plan": [
+   {
+    "text": "Implement combined priorities 1-7 in the merged piece",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Decide final version vs. drafts-as-layers for loosely shown drafts (plan item 4)",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 20
+ },
+ {
+  "nn": "03",
+  "file": "03-merged-piece-v4-fixes.md",
+  "title": "[2026-10-27-application-feedback-review] 03 · Merged piece v4: all seven fixes implemented and published",
+  "plan": [
+   {
+    "text": "Implement and publish the seven fixes as artifact 1Pcbgrvp7BqfmcYhzZLEss version 4",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Update claude/plan.md with v4 change list and rebuild warning",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Copy v4 index.html into site/ (or port changes into app_build generator) before any rebuild",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Test v4 on a real iPhone",
+    "who": "author",
+    "done": true
+   },
+   {
+    "text": "Confirm on device whether the dropped Spiral click is gone",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 21
+ }
+]

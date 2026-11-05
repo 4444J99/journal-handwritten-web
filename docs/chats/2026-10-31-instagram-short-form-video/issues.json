@@ -1,0 +1,60 @@
+[
+ {
+  "nn": "01",
+  "file": "01-reel-content-template.md",
+  "title": "[2026-10-31-instagram-short-form-video] 01 · Reel content template",
+  "plan": [
+   {
+    "text": "Build the repeatable text-free Reel template (version-animation shot)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Pair each Reel with a same-day carousel from the same assets",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Film only Series poems; Reserve stays off camera",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Choose the first poem to film, then Claude lays out its shots",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 38
+ },
+ {
+  "nn": "02",
+  "file": "02-journal-unavailable-scans.md",
+  "title": "[2026-10-31-instagram-short-form-video] 02 · Physical journal unavailable; use scans",
+  "plan": [
+   {
+    "text": "Source the original layer of each short from existing scans, animated digitally",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Film a newly handwritten version on fresh paper as the live element; route the photo into the new-version pipeline",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Check web-size scan sharpness at phone resolution on a single line",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Confirm whether diary_originals.zip is reachable locally",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 39
+ }
+]

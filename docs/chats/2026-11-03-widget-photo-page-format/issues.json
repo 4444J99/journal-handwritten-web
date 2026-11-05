@@ -1,0 +1,94 @@
+[
+ {
+  "nn": "01",
+  "file": "01-widget-screenshot-review.md",
+  "title": "[2026-11-03-widget-photo-page-format] 01 · Review of home-screen widget screenshots as a post format",
+  "plan": [
+   {
+    "text": "Keep copied reading notes and widely circulated sayings out of any rotation or post",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "No photos of other people without consent; decide the flagged letter page separately",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Sort Series vs Reserve before any page appears in a post",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Limit any downloadable kit to pieces already registered for copyright",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 66
+ },
+ {
+  "nn": "02",
+  "file": "02-post-and-kit-mockups.md",
+  "title": "[2026-11-03-widget-photo-page-format] 02 · Mockups of first-post layouts and a widget participation kit",
+  "plan": [
+   {
+    "text": "Publish design canvas with first-post layouts and participation kit (artifact 9YjDdZ6pSUdA21V164fr1y)",
+    "who": "Claude",
+    "done": true
+   },
+   {
+    "text": "Open the canvas and report what is off",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether numerals are fixed in advance or assigned at posting",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Check each mocked page against the Series/Reserve sort before posting",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Test whether the Photos widget can point at a shared album",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Cut a real kit from the scans rather than screenshots",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 67
+ },
+ {
+  "nn": "03",
+  "file": "03-kinetic-story-format.md",
+  "title": "[2026-11-03-widget-photo-page-format] 03 · Kinetic 9:16 story format with three moving layers",
+  "plan": [
+   {
+    "text": "Send the Live Photo or video originals behind one screen",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build one 9:16 test with write-on page plus two looping layers (waiting on clips)",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Check how target journals treat Stories before relying on 24-hour expiry for Reserve pages",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 68
+ }
+]

@@ -1,0 +1,99 @@
+[
+ {
+  "nn": "01",
+  "file": "01-mentor-style-project-review.md",
+  "title": "[2026-11-05-project-advisory] 01 · Mentor-style project review",
+  "plan": [
+   {
+    "text": "Back up the scans in three places (R2, Dropbox, local)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Copy v4 from the artifact into the repo and commit",
+    "who": "Claude suggestion",
+    "done": true
+   },
+   {
+    "text": "Locate the local build folders and commit the generator scripts",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Pick the name; claim handles and domain in one sitting; move the site off etceter4",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Verify the transcription of the first five poems to post",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Add an email signup to the site",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Build a reusable Instagram story template",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "File one GRUW copyright batch for the first ten poems",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Post poem 1 with a personal-profile message and direct messages to a seed list",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Shrink the Reserve to 5-6 new poems",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Number poems as posted; sort only the first ten into Series",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Move hosting to Cloudflare Pages",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Export the studio review database to the repo regularly",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Include transcriptions as page text for search and accessibility",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Set a privacy rule for real people (initials unless consent)",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Define success metrics before poem 1",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 71
+ },
+ {
+  "nn": "02",
+  "file": "02-advisory-tldr-summary.md",
+  "title": "[2026-11-05-project-advisory] 02 · Advisory TL;DR summary",
+  "plan": [],
+  "close": true,
+  "number": 72
+ }
+]

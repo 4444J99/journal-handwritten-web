@@ -1,0 +1,31 @@
+[
+ {
+  "nn": "01",
+  "file": "01-world-scripts-research-report.md",
+  "title": "[2026-10-28-learning-world-scripts] 01 · Research report: learning world scripts via the poem series",
+  "plan": [
+   {
+    "text": "Pick one deep language (Greek suggested) and follow the weekly practice cycle aligned to one poem per week",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Model script renderings as an axis separate from edit versions, tied to source version, with publicStatus blocking Reserve export",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Extend handwriting font to Greek, Cyrillic, Hebrew first",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Verify journal self-translation policies and grant deadlines directly",
+    "who": "author",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 33
+ }
+]

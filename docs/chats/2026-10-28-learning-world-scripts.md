@@ -5,7 +5,7 @@
 | Chat | [e2eeb2e1-d30a-4d6f-ac84-3ef45548ea86](https://claude.ai/chat/e2eeb2e1-d30a-4d6f-ac84-3ef45548ea86) |
 | Last activity | 2026-10-28 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` |
-| Basis of this record | claude.ai model-written chat summary, read 2026-11-05 (transcript not re-read; a summary may merge Claude's suggestion and the author's reaction) |
+| Basis of this record | full transcript read 2026-11-05 (per-exchange documents below); summary lines above written earlier the same day |
 | Status | Research only; no build. |
 
 ## Produced
@@ -17,3 +17,9 @@
 ## Plan / next steps
 - Claude suggestion: Greek as the one deep language; weekly practice fitted to the poem cadence.
 - Technical: model script layers as an axis separate from edit versions, each tied to the version it was made from.
+
+## Exchanges
+
+| # | Exchange | Issue | |
+|---|---|---|---|
+| [01](2026-10-28-learning-world-scripts/01-world-scripts-research-report.md) | Research report: learning world scripts via the poem series | #33 | open |

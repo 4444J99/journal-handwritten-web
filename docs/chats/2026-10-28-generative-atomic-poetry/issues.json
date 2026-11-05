@@ -1,0 +1,41 @@
+[
+ {
+  "nn": "01",
+  "file": "01-generative-living-layer-research.md",
+  "title": "[2026-10-28-generative-atomic-poetry] 01 · Research: atomic units, context sensing, tap animations",
+  "plan": [
+   {
+    "text": "Answer the seven open questions (Markov/n-gram status; viewer vs. authored context; stroke reconstruction; scan crop vs. font; struck-through/inserted words as atoms; revised versions in blooms; participation tier)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build the atom graph first: extend journal.json with stand-off units and scan regions; forced alignment below line level",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Ship the permission-free variation tier (seed, time/season, touch, dwell, return visits) before opt-in sensors",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Prototype concordance blooms from scan-crop sprite atlases",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Enforce the Reserve at build time: atom extraction only over a published whitelist",
+    "who": "Claude suggestion",
+    "done": false
+   },
+   {
+    "text": "Test on a real iPhone (motion permission, 60 fps cap, Low Power Mode)",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 32
+ }
+]

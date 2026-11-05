@@ -1,0 +1,65 @@
+[
+ {
+  "nn": "01",
+  "file": "01-voice-audio-research.md",
+  "title": "[2026-10-29-generative-audio-from-voice] 01 · Research: generative audio from voice phonemes",
+  "plan": [
+   {
+    "text": "Turn the research into an implementation plan (exchange 02)",
+    "who": "Claude",
+    "done": true
+   }
+  ],
+  "close": true,
+  "number": 34
+ },
+ {
+  "nn": "02",
+  "file": "02-audio-implementation-plan.md",
+  "title": "[2026-10-29-generative-audio-from-voice] 02 · Six-phase audio implementation plan",
+  "plan": [
+   {
+    "text": "Record the ~30-minute pilot phoneme set (Phase 0)",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Build audio_build/render.py and the hidden listening page once pilot files are available",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Decide the sound palette after the Phase 0 listening test",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether sound respects the iPhone silent switch or plays through it once enabled",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide whether the raw phoneme library stays private",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Decide how struck and illegible words sound, or whether they stay silent",
+    "who": "author",
+    "done": false
+   },
+   {
+    "text": "Phases 1-5: session processing, audio.js, pronunciation pipeline and Sound check, version/revision layers, weekly workflow",
+    "who": "Claude",
+    "done": false
+   },
+   {
+    "text": "Add this plan to docs/plan.md and the project plan",
+    "who": "Claude suggestion",
+    "done": false
+   }
+  ],
+  "close": false,
+  "number": 35
+ }
+]
