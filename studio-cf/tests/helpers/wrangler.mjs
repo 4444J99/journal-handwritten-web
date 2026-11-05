@@ -24,7 +24,7 @@ export function wranglerEnv() {
 // this host's Node (observed with wrangler 4.104.0), so we stop it once it has
 // reported success. A failure makes it exit on its own with an error.
 export function d1Execute(persist, extraArgs) {
-  const args = ['d1', 'execute', 'versforms-studio', '--local', '--persist-to', persist, '--cwd', STUDIO_CF, ...extraArgs];
+  const args = ['d1', 'execute', 'object-lessons-submissions', '--local', '--persist-to', persist, '--cwd', STUDIO_CF, ...extraArgs];
   return new Promise((resolve, reject) => {
     const child = spawn(WRANGLER, args, { env: wranglerEnv(), stdio: ['ignore', 'pipe', 'pipe'] });
     let out = '', done = false;

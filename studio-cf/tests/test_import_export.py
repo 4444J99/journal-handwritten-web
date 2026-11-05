@@ -167,10 +167,10 @@ class EscapingTests(unittest.TestCase):
             self.assertNotIn("\r", line)
         conn = sqlite3.connect(":memory:")
         self.load(conn, sql)
-        row = conn.execute("SELECT data FROM docs WHERE collection='reviews' AND id='nasty'").fetchone()
+        row = conn.execute("SELECT data FROM vf_docs WHERE collection='reviews' AND id='nasty'").fetchone()
         self.assertEqual(json.loads(row[0]), self.NASTY)
-        self.assertEqual(conn.execute("SELECT count(*) FROM docs").fetchone()[0], 2)
-        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM revs").fetchall()), {"reviews": 1, "decisions": 1})
+        self.assertEqual(conn.execute("SELECT count(*) FROM vf_docs").fetchone()[0], 2)
+        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM vf_revs").fetchall()), {"reviews": 1, "decisions": 1})
 
     def test_idempotent_and_bumps_each_collection_once_per_run(self):
         docs = {c: {} for c in ie.COLLECTIONS}
@@ -180,28 +180,28 @@ class EscapingTests(unittest.TestCase):
         sql = ie.build_sql(docs, "2026-11-05T00:00:00Z")
         conn = sqlite3.connect(":memory:")
         self.load(conn, sql)
-        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM revs").fetchall()), {"reviews": 1, "batches": 1})
-        self.assertEqual(conn.execute("SELECT count(*) FROM docs").fetchone()[0], 6)
+        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM vf_revs").fetchall()), {"reviews": 1, "batches": 1})
+        self.assertEqual(conn.execute("SELECT count(*) FROM vf_docs").fetchone()[0], 6)
         self.load(conn, sql)  # second run: same rows, rev bumped once more
-        self.assertEqual(conn.execute("SELECT count(*) FROM docs").fetchone()[0], 6)
-        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM revs").fetchall()), {"reviews": 2, "batches": 2})
-        self.assertEqual(set(r[0] for r in conn.execute("SELECT rev FROM docs WHERE collection='reviews'")), {2})
+        self.assertEqual(conn.execute("SELECT count(*) FROM vf_docs").fetchone()[0], 6)
+        self.assertEqual(dict(conn.execute("SELECT collection, rev FROM vf_revs").fetchall()), {"reviews": 2, "batches": 2})
+        self.assertEqual(set(r[0] for r in conn.execute("SELECT rev FROM vf_docs WHERE collection='reviews'")), {2})
 
     def test_existing_docs_are_replaced_not_merged(self):
         conn = sqlite3.connect(":memory:")
         conn.executescript(SCHEMA)
-        conn.execute("INSERT INTO docs VALUES ('reviews','d1','{\"old\":1,\"keep\":2}','t',1)")
-        conn.execute("INSERT INTO revs VALUES ('reviews',7)")
+        conn.execute("INSERT INTO vf_docs VALUES ('reviews','d1','{\"old\":1,\"keep\":2}','t',1)")
+        conn.execute("INSERT INTO vf_revs VALUES ('reviews',7)")
         docs = {c: {} for c in ie.COLLECTIONS}; docs["reviews"]["d1"] = {"new": 1}
         conn.executescript(ie.build_sql(docs, "t2", include_schema=False))
-        self.assertEqual(json.loads(conn.execute("SELECT data FROM docs WHERE id='d1'").fetchone()[0]), {"new": 1})
-        self.assertEqual(conn.execute("SELECT rev FROM revs WHERE collection='reviews'").fetchone()[0], 8)
+        self.assertEqual(json.loads(conn.execute("SELECT data FROM vf_docs WHERE id='d1'").fetchone()[0]), {"new": 1})
+        self.assertEqual(conn.execute("SELECT rev FROM vf_revs WHERE collection='reviews'").fetchone()[0], 8)
 
     def test_empty_import_changes_nothing(self):
         docs = {c: {} for c in ie.COLLECTIONS}
         conn = sqlite3.connect(":memory:")
         conn.executescript(ie.build_sql(docs, "t"))
-        self.assertEqual(conn.execute("SELECT count(*) FROM revs").fetchone()[0], 0)
+        self.assertEqual(conn.execute("SELECT count(*) FROM vf_revs").fetchone()[0], 0)
 
     def test_full_cli_to_sql_for_the_expected_export(self):
         with tmpdir() as d:
@@ -211,9 +211,9 @@ class EscapingTests(unittest.TestCase):
             self.assertEqual(code, 0)
             conn = sqlite3.connect(":memory:")
             conn.executescript(out_sql.read_text())
-            self.assertEqual(conn.execute("SELECT count(*) FROM docs WHERE collection='reviews'").fetchone()[0], 38)
-            self.assertEqual(conn.execute("SELECT count(*) FROM docs WHERE collection<>'reviews'").fetchone()[0], 0)
-            self.assertEqual(dict(conn.execute("SELECT collection, rev FROM revs").fetchall()), {"reviews": 1})
+            self.assertEqual(conn.execute("SELECT count(*) FROM vf_docs WHERE collection='reviews'").fetchone()[0], 38)
+            self.assertEqual(conn.execute("SELECT count(*) FROM vf_docs WHERE collection<>'reviews'").fetchone()[0], 0)
+            self.assertEqual(dict(conn.execute("SELECT collection, rev FROM vf_revs").fetchall()), {"reviews": 1})
             out_sql.unlink()
 
 
@@ -227,7 +227,7 @@ class RemoteAndLocalTests(unittest.TestCase):
                 code, out, _ = run_main([d, "--sql-out", str(sql), "--remote"])
             self.assertEqual(code, 0)
             self.assertIn("NOT executed", out)
-            self.assertIn("wrangler d1 execute versforms-studio --remote", out)
+            self.assertIn("wrangler d1 execute object-lessons-submissions --remote", out)
             self.assertIn(str(sql.resolve()), out)
             sql.unlink()
 
@@ -256,7 +256,7 @@ class RemoteAndLocalTests(unittest.TestCase):
             code, out, err = run_main([d, "--local", str(persist), "--wrangler", str(fake), "--timeout", "20"])
             self.assertEqual(code, 0, err)
             argv = json.loads(argv_log.read_text())
-            self.assertEqual(argv[:3], ["d1", "execute", "versforms-studio"])
+            self.assertEqual(argv[:3], ["d1", "execute", "object-lessons-submissions"])
             self.assertIn("--local", argv)
             self.assertNotIn("--remote", argv)
             self.assertEqual(argv[argv.index("--persist-to") + 1], str(persist.resolve()))

@@ -20,6 +20,10 @@ the document's data object exactly as the page stored it; the file name (minus
 --remote    only PRINTS the command for the author to run; it is never executed
             by this script.
 
+The target database (object-lessons-submissions) is shared with another project, so all
+studio tables are prefixed vf_ and sqlguard.py refuses to emit, write or apply any SQL
+that touches a non-vf_ object (checked in build_sql, before --sql-out/--local/--remote).
+
 Nothing here talks to Cloudflare. Rejects (bad collection, bad id, too large,
 not a JSON object, ...) are listed and block writing unless --skip-rejects.
 """
@@ -36,10 +40,13 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import sqlguard  # noqa: E402
+
 COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024
-DB_NAME = "versforms-studio"
+DB_NAME = "object-lessons-submissions"
 DEFAULT_WRANGLER = "/opt/homebrew/bin/wrangler"
 
 
@@ -115,15 +122,18 @@ def build_sql(docs, now, include_schema=True):
         if not items:
             continue
         c = sql_string(coll)
-        parts.append(f"INSERT INTO revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
+        parts.append(f"INSERT INTO vf_revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
         for doc_id in sorted(items):
             # ensure_ascii keeps the statement pure ASCII with no raw newlines
             text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"))
             parts.append(
-                "INSERT OR REPLACE INTO docs (collection, id, data, updated_at, rev) VALUES "
-                f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM revs WHERE collection = {c}));"
+                "INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES "
+                f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}));"
             )
-    return "\n".join(parts) + "\n"
+    sql = "\n".join(parts) + "\n"
+    # The database is shared with another project: refuse anything that is not a vf_ object.
+    sqlguard.check(sql)
+    return sql
 
 
 def report(docs, rejects, out):
@@ -216,7 +226,11 @@ def main(argv=None):
         return 1
 
     now = args.now or time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    sql = build_sql(docs, now, include_schema=not args.no_schema)
+    try:
+        sql = build_sql(docs, now, include_schema=not args.no_schema)
+    except sqlguard.SqlGuardError as e:
+        print(str(e), file=sys.stderr)
+        return 1
 
     sql_path = None
     if args.sql_out:

@@ -54,8 +54,10 @@ function storageError(e) {
   return fail(503, 'unavailable');
 }
 
-const SQL_BUMP = 'INSERT INTO revs (collection, rev) VALUES (?1, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1';
-const SQL_REV = 'SELECT rev FROM revs WHERE collection = ?1';
+// The D1 database is shared with another project: every table here is vf_-prefixed
+// and no statement may reference anything else (tests/test_sqlguard.py scans this file).
+const SQL_BUMP = 'INSERT INTO vf_revs (collection, rev) VALUES (?1, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1';
+const SQL_REV = 'SELECT rev FROM vf_revs WHERE collection = ?1';
 
 async function listCollection(env, coll, since) {
   if (since !== null) {
@@ -66,7 +68,7 @@ async function listCollection(env, coll, since) {
   }
   const [revRes, docsRes] = await env.DB.batch([
     env.DB.prepare(SQL_REV).bind(coll),
-    env.DB.prepare('SELECT id, data FROM docs WHERE collection = ?1 ORDER BY id').bind(coll),
+    env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind(coll),
   ]);
   const rev = revRes.results.length ? revRes.results[0].rev : 0;
   const docs = docsRes.results.map(r => ({ id: r.id, data: JSON.parse(r.data) }));
@@ -74,7 +76,7 @@ async function listCollection(env, coll, since) {
 }
 
 async function getDoc(env, coll, id) {
-  const row = await env.DB.prepare('SELECT data FROM docs WHERE collection = ?1 AND id = ?2').bind(coll, id).first();
+  const row = await env.DB.prepare('SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2').bind(coll, id).first();
   if (!row) return fail(404, 'not_found');
   return json({ id, data: JSON.parse(row.data) });
 }
@@ -89,7 +91,7 @@ async function putDoc(env, request, coll, id) {
   const now = new Date().toISOString();
   const res = await env.DB.batch([
     env.DB.prepare(SQL_BUMP).bind(coll),
-    env.DB.prepare('INSERT OR REPLACE INTO docs (collection, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, (SELECT rev FROM revs WHERE collection = ?1))').bind(coll, id, text, now),
+    env.DB.prepare('INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, (SELECT rev FROM vf_revs WHERE collection = ?1))').bind(coll, id, text, now),
     env.DB.prepare(SQL_REV).bind(coll),
   ]);
   return json({ ok: true, rev: res[2].results[0].rev });
@@ -97,7 +99,7 @@ async function putDoc(env, request, coll, id) {
 
 async function deleteDoc(env, coll, id) {
   const res = await env.DB.batch([
-    env.DB.prepare('DELETE FROM docs WHERE collection = ?1 AND id = ?2').bind(coll, id),
+    env.DB.prepare('DELETE FROM vf_docs WHERE collection = ?1 AND id = ?2').bind(coll, id),
     env.DB.prepare(SQL_BUMP).bind(coll),
     env.DB.prepare(SQL_REV).bind(coll),
   ]);
