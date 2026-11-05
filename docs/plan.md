@@ -4,6 +4,16 @@ Working document for the journal-handwritten-web project. Last updated 2026-10-2
 
 > Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-28 (synced 2026-11-05). The Project doc is the working copy; this file is versioned here so each revision of the plan is kept. Per-chat plans and their status: `docs/chats/`.
 
+## T03 preparation addendum — 2026-11-05
+
+The [T03 first-release procedure](releases/t03-release-procedure.md), [author-decision packet](releases/t03-author-decisions.md) and [clearance contract](releases/release-clearance-contract.md) reconcile the release work against PR #101 head `5d111c13764655312c32ddf1b55390198bc7f70c`. The bounded private preview selects only `p001-diary1-0`; p001 itself and this version remain derived candidates awaiting the author. The recorded page order is preserved. `as-posted` numbering and participation `around` remain derived defaults, not author confirmations.
+
+The existing gate accepts a batch status of `filed` or `registered`; retain it while distinguishing workflow, author confirmation and actual filing evidence. The preserved export has no release or batch documents, so the real posting dry run refuses. An older suggestion to skip filing is not adopted. Reserve-size and launch-bank recommendations remain unresolved; no creative classification has been assigned. Weekly cadence and existing-resource/no-spend constraints remain. The elapsed November 1 launch date is history; the current proposal is to choose a confirmed start after clearance, then repeat weekly, without a committed future date.
+
+The preparation reuses existing reader/build code, inventories all output bytes and carries a private image-exposure comparison: diary62a includes p001's other version and p126. Exclusion checks include versions, page tiers, spreads, plates, atlases and font metadata. No shared-scan flag supplies author clearance. Studio changes go through T01's integrator; source/deposit and physical-phone acceptance remain T02/T04 interfaces. No live state or whitelist is changed.
+
+PR #103 subsequently restored the historical `claude/plan.md` to main at `04168b1f68bc4579fae245f8411b0b337d064369`. This T03 branch is stacked on the still-open PR #101, where that file is absent. The matching [claude/plan addendum patch](releases/claude-plan-addendum.patch) is staged against the inspected restored file for the integrator; it does not replace the historical plan or claim to update an unseen project document. The shared private memory packet remains inaccessible.
+
 ## Source
 - 123 scanned journal pages, c. 2014–2015, from github.com/4444J99/etceter4 (commit dfcbf0f, `img/photos/diary/`); 63 two-page spreads scanned September 2015 (`diary_originals.zip`).
 - The published page crops cut off writing on 8 pages (37, 37a, 43, 48, 53a, 59, 59a, 60a). That text was recovered from the 2015 spreads.
