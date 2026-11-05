@@ -1,0 +1,5358 @@
+{
+ "meta": {
+  "poem": "p001",
+  "version_index": 0,
+  "version_id": "p001-diary1-0",
+  "source_page": {
+   "id": "diary1",
+   "image": "site/img/p/diary1.jpg",
+   "size": [
+    1135,
+    1600
+   ]
+  },
+  "frame": "pixels of site/img/p/diary1.jpg, [x0,y0,x1,y1], x1/y1 exclusive, origin top-left; analysis runs in a sheared frame and is mapped back (about +-1 px)",
+  "parameters": {
+   "skew_slope_dy_per_dx": 0.0218,
+   "rule_period_px": 57.7,
+   "rules_found": 28,
+   "ink_threshold_gray": 171,
+   "threshold_method": "Otsu split of the sheared page histogram outside the rule bands",
+   "x_height_px": 23.7,
+   "x_height_source": "median of field 7 of pages[].x (author line records) * ih",
+   "gap_rule": "fixed:1.25",
+   "gap_rule_chosen_by": "best word-line match on these same 22 lines (optimistic; not held out)",
+   "speck_px": 8,
+   "rule_residue": "components <=3 px tall centred on a rule are dropped",
+   "mark_rule": "dot/period: area<=0.12*xh^2 and size<=0.5*xh; comma-like: area<=0.45*xh^2, centroid at/below the rule, w<=0.7*xh, h<=1.1*xh",
+   "glyph_merge": "marks merge into a host they sit over/under; nested or near-touching (<=3 px) fragments merge",
+   "row_assignment": "ink-mass centroid vs rule rows (band up to rule + 0.3*period)"
+  },
+  "counts": {
+   "stanzas": 6,
+   "lines": 22,
+   "ink_rows": 22
+  },
+  "match": {
+   "lines": 22,
+   "word_lines_equal_gap_rule": 18,
+   "word_line_rate_gap_rule": 0.818,
+   "word_lines_count_equal_but_withdrawn_by_eye_review": 1,
+   "word_lines_guided_verified": 0,
+   "word_lines_unaligned": 4,
+   "glyph_lines_equal_whole_line": 4,
+   "glyph_line_rate": 0.182,
+   "letters_total": 340,
+   "letters_in_count_equal_words_gap_tier": 112,
+   "letters_in_count_equal_words_guided_tier": 0,
+   "letter_alignment_rate_gap_tier": 0.329,
+   "letter_alignment_rate_incl_guided": 0.329,
+   "boxes_total": 87,
+   "tokens_total": 90,
+   "glyphs_total": 302
+  },
+  "viable": {
+   "stanza": {
+    "viable": true,
+    "basis": "stanza = block order in j.json; setbacks need only line boxes"
+   },
+   "line": {
+    "viable": true,
+    "basis": "22 ink rows = 22 lines; line boxes from ink; some boxes are contaminated by neighbouring descenders"
+   },
+   "word": {
+    "viable": true,
+    "basis": "word boxes are usable crops; text is attached only on lines whose box count equals the token count and that passed eye review"
+   },
+   "glyph": {
+    "viable": true,
+    "basis": "ink-component crops are usable pictures; they are NOT letters (counts do not match)"
+   },
+   "word_part": {
+    "viable": false,
+    "basis": "letters cannot be honestly aligned to glyph boxes: whole-line letter/glyph counts match on 4 of 22 lines"
+   }
+  },
+  "eye_review": {
+   "withdrawn_lines": [
+    13
+   ],
+   "reason": "box count equals token count but the word boxes hold the wrong ink; text withdrawn"
+  },
+  "sweep": [
+   {
+    "thresh": 110,
+    "gap_rule": "fixed:0.8",
+    "rows": 22,
+    "word_line_rate": 0.318,
+    "glyph_line_rate": 0.227,
+    "boxes": 106,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.097
+   },
+   {
+    "thresh": 110,
+    "gap_rule": "fixed:1",
+    "rows": 22,
+    "word_line_rate": 0.591,
+    "glyph_line_rate": 0.227,
+    "boxes": 95,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.215
+   },
+   {
+    "thresh": 110,
+    "gap_rule": "fixed:1.25",
+    "rows": 22,
+    "word_line_rate": 0.727,
+    "glyph_line_rate": 0.227,
+    "boxes": 87,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.279
+   },
+   {
+    "thresh": 110,
+    "gap_rule": "fixed:1.5",
+    "rows": 22,
+    "word_line_rate": 0.682,
+    "glyph_line_rate": 0.227,
+    "boxes": 83,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.274
+   },
+   {
+    "thresh": 110,
+    "gap_rule": "fixed:2",
+    "rows": 22,
+    "word_line_rate": 0.455,
+    "glyph_line_rate": 0.227,
+    "boxes": 67,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.135
+   },
+   {
+    "thresh": 110,
+    "gap_rule": "ratio",
+    "rows": 22,
+    "word_line_rate": 0.545,
+    "glyph_line_rate": 0.227,
+    "boxes": 92,
+    "tokens": 90,
+    "glyphs": 322,
+    "letter_alignment_rate": 0.171
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "fixed:0.8",
+    "rows": 22,
+    "word_line_rate": 0.364,
+    "glyph_line_rate": 0.227,
+    "boxes": 103,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.129
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "fixed:1",
+    "rows": 22,
+    "word_line_rate": 0.636,
+    "glyph_line_rate": 0.227,
+    "boxes": 94,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.253
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "fixed:1.25",
+    "rows": 22,
+    "word_line_rate": 0.773,
+    "glyph_line_rate": 0.227,
+    "boxes": 86,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.3
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "fixed:1.5",
+    "rows": 22,
+    "word_line_rate": 0.682,
+    "glyph_line_rate": 0.227,
+    "boxes": 83,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.262
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "fixed:2",
+    "rows": 22,
+    "word_line_rate": 0.455,
+    "glyph_line_rate": 0.227,
+    "boxes": 67,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.126
+   },
+   {
+    "thresh": 130,
+    "gap_rule": "ratio",
+    "rows": 22,
+    "word_line_rate": 0.591,
+    "glyph_line_rate": 0.227,
+    "boxes": 93,
+    "tokens": 90,
+    "glyphs": 314,
+    "letter_alignment_rate": 0.194
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "fixed:0.8",
+    "rows": 22,
+    "word_line_rate": 0.5,
+    "glyph_line_rate": 0.182,
+    "boxes": 101,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.174
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "fixed:1",
+    "rows": 22,
+    "word_line_rate": 0.727,
+    "glyph_line_rate": 0.182,
+    "boxes": 91,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.256
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "fixed:1.25",
+    "rows": 22,
+    "word_line_rate": 0.818,
+    "glyph_line_rate": 0.182,
+    "boxes": 85,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.303
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "fixed:1.5",
+    "rows": 22,
+    "word_line_rate": 0.727,
+    "glyph_line_rate": 0.182,
+    "boxes": 81,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.265
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "fixed:2",
+    "rows": 22,
+    "word_line_rate": 0.5,
+    "glyph_line_rate": 0.182,
+    "boxes": 66,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.153
+   },
+   {
+    "thresh": 150,
+    "gap_rule": "ratio",
+    "rows": 22,
+    "word_line_rate": 0.636,
+    "glyph_line_rate": 0.182,
+    "boxes": 92,
+    "tokens": 90,
+    "glyphs": 306,
+    "letter_alignment_rate": 0.262
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "fixed:0.8",
+    "rows": 22,
+    "word_line_rate": 0.5,
+    "glyph_line_rate": 0.182,
+    "boxes": 102,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.165
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "fixed:1",
+    "rows": 22,
+    "word_line_rate": 0.773,
+    "glyph_line_rate": 0.182,
+    "boxes": 90,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.294
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "fixed:1.25",
+    "rows": 22,
+    "word_line_rate": 0.818,
+    "glyph_line_rate": 0.182,
+    "boxes": 87,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.329
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "fixed:1.5",
+    "rows": 22,
+    "word_line_rate": 0.727,
+    "glyph_line_rate": 0.182,
+    "boxes": 83,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.291
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "fixed:2",
+    "rows": 22,
+    "word_line_rate": 0.5,
+    "glyph_line_rate": 0.182,
+    "boxes": 67,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.156
+   },
+   {
+    "thresh": 171,
+    "gap_rule": "ratio",
+    "rows": 22,
+    "word_line_rate": 0.682,
+    "glyph_line_rate": 0.182,
+    "boxes": 94,
+    "tokens": 90,
+    "glyphs": 302,
+    "letter_alignment_rate": 0.3
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "fixed:0.8",
+    "rows": 22,
+    "word_line_rate": 0.591,
+    "glyph_line_rate": 0.227,
+    "boxes": 99,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.247
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "fixed:1",
+    "rows": 22,
+    "word_line_rate": 0.818,
+    "glyph_line_rate": 0.227,
+    "boxes": 88,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.326
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "fixed:1.25",
+    "rows": 22,
+    "word_line_rate": 0.818,
+    "glyph_line_rate": 0.227,
+    "boxes": 86,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.329
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "fixed:1.5",
+    "rows": 22,
+    "word_line_rate": 0.727,
+    "glyph_line_rate": 0.227,
+    "boxes": 82,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.291
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "fixed:2",
+    "rows": 22,
+    "word_line_rate": 0.5,
+    "glyph_line_rate": 0.227,
+    "boxes": 66,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.156
+   },
+   {
+    "thresh": 190,
+    "gap_rule": "ratio",
+    "rows": 22,
+    "word_line_rate": 0.773,
+    "glyph_line_rate": 0.227,
+    "boxes": 92,
+    "tokens": 90,
+    "glyphs": 298,
+    "letter_alignment_rate": 0.35
+   }
+  ],
+  "notes": [
+   "glyph = ink component group, not a letter; letters are spaced widely and some join or split",
+   "marks (commas, periods, dots) are listed per line in 'marks' and never form words",
+   "text appears only where a count check passed; 'text_basis' documents the line-level mapping",
+   "match rates are optimistic: the gap rule and threshold were picked on these same 22 lines",
+   "author line boxes for block 2: keys 2-1 and 2-2 hold the boxes of lines 2 and 3; line 1 has none (see author_box_* fields)"
+  ]
+ },
+ "stanzas": [
+  {
+   "stanza": 0,
+   "block": 0,
+   "lines": [
+    {
+     "stanza": 0,
+     "line": 0,
+     "index": 0,
+     "box": [
+      48,
+      15,
+      371,
+      77
+     ],
+     "rule_row": 1,
+     "text": "The walls",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "0-0",
+     "author_box_best_key": "0-0",
+     "author_box_best_iou": 0.848,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 11,
+     "letters_total": 8,
+     "words": [
+      {
+       "box": [
+        48,
+        15,
+        165,
+        77
+       ],
+       "glyphs": [
+        {
+         "box": [
+          48,
+          15,
+          92,
+          69
+         ],
+         "ink_px": 380,
+         "components": 1
+        },
+        {
+         "box": [
+          94,
+          24,
+          116,
+          70
+         ],
+         "ink_px": 320,
+         "components": 1
+        },
+        {
+         "box": [
+          129,
+          50,
+          151,
+          77
+         ],
+         "ink_px": 204,
+         "components": 1
+        },
+        {
+         "box": [
+          152,
+          64,
+          165,
+          73
+         ],
+         "ink_px": 44,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "The"
+      },
+      {
+       "box": [
+        214,
+        30,
+        371,
+        77
+       ],
+       "glyphs": [
+        {
+         "box": [
+          214,
+          54,
+          221,
+          76
+         ],
+         "ink_px": 77,
+         "components": 1
+        },
+        {
+         "box": [
+          224,
+          60,
+          241,
+          76
+         ],
+         "ink_px": 99,
+         "components": 1
+        },
+        {
+         "box": [
+          247,
+          54,
+          262,
+          75
+         ],
+         "ink_px": 95,
+         "components": 1
+        },
+        {
+         "box": [
+          262,
+          52,
+          288,
+          76
+         ],
+         "ink_px": 254,
+         "components": 1
+        },
+        {
+         "box": [
+          305,
+          30,
+          319,
+          73
+         ],
+         "ink_px": 191,
+         "components": 1
+        },
+        {
+         "box": [
+          324,
+          30,
+          340,
+          77
+         ],
+         "ink_px": 213,
+         "components": 1
+        },
+        {
+         "box": [
+          340,
+          46,
+          371,
+          77
+         ],
+         "ink_px": 197,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "walls"
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 0,
+     "line": 1,
+     "index": 1,
+     "box": [
+      47,
+      85,
+      677,
+      148
+     ],
+     "rule_row": 2,
+     "text": "Collapse, like the seal",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "0-1",
+     "author_box_best_key": "0-1",
+     "author_box_best_iou": 0.859,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 4,
+     "n_tokens": 4,
+     "glyphs_total": 16,
+     "letters_total": 19,
+     "words": [
+      {
+       "box": [
+        47,
+        85,
+        271,
+        148
+       ],
+       "glyphs": [
+        {
+         "box": [
+          47,
+          85,
+          73,
+          129
+         ],
+         "ink_px": 298,
+         "components": 1,
+         "text": "C"
+        },
+        {
+         "box": [
+          67,
+          103,
+          104,
+          129
+         ],
+         "ink_px": 296,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          112,
+          91,
+          125,
+          130
+         ],
+         "ink_px": 189,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          139,
+          96,
+          149,
+          128
+         ],
+         "ink_px": 149,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          157,
+          110,
+          173,
+          127
+         ],
+         "ink_px": 139,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          181,
+          113,
+          212,
+          148
+         ],
+         "ink_px": 371,
+         "components": 1,
+         "text": "p"
+        },
+        {
+         "box": [
+          213,
+          109,
+          247,
+          135
+         ],
+         "ink_px": 288,
+         "components": 2,
+         "text": "s"
+        },
+        {
+         "box": [
+          250,
+          118,
+          271,
+          133
+         ],
+         "ink_px": 105,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Collapse,"
+      },
+      {
+       "box": [
+        348,
+        104,
+        440,
+        137
+       ],
+       "glyphs": [
+        {
+         "box": [
+          348,
+          105,
+          355,
+          135
+         ],
+         "ink_px": 137,
+         "components": 1
+        },
+        {
+         "box": [
+          378,
+          104,
+          409,
+          136
+         ],
+         "ink_px": 303,
+         "components": 1
+        },
+        {
+         "box": [
+          412,
+          116,
+          440,
+          137
+         ],
+         "ink_px": 184,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "like"
+      },
+      {
+       "box": [
+        484,
+        104,
+        554,
+        140
+       ],
+       "glyphs": [
+        {
+         "box": [
+          484,
+          104,
+          508,
+          132
+         ],
+         "ink_px": 203,
+         "components": 1
+        },
+        {
+         "box": [
+          509,
+          108,
+          554,
+          140
+         ],
+         "ink_px": 359,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "the"
+      },
+      {
+       "box": [
+        590,
+        109,
+        677,
+        141
+       ],
+       "glyphs": [
+        {
+         "box": [
+          590,
+          114,
+          607,
+          141
+         ],
+         "ink_px": 184,
+         "components": 1
+        },
+        {
+         "box": [
+          606,
+          120,
+          657,
+          137
+         ],
+         "ink_px": 333,
+         "components": 1
+        },
+        {
+         "box": [
+          659,
+          109,
+          677,
+          137
+         ],
+         "ink_px": 160,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "seal"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        302,
+        131,
+        309,
+        145
+       ],
+       "ink_px": 55
+      },
+      {
+       "box": [
+        361,
+        119,
+        367,
+        126
+       ],
+       "ink_px": 22
+      },
+      {
+       "box": [
+        362,
+        128,
+        367,
+        136
+       ],
+       "ink_px": 27
+      }
+     ]
+    },
+    {
+     "stanza": 0,
+     "line": 2,
+     "index": 2,
+     "box": [
+      67,
+      148,
+      487,
+      221
+     ],
+     "rule_row": 3,
+     "text": "youve sown:",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "0-2",
+     "author_box_best_key": "0-2",
+     "author_box_best_iou": 0.714,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 8,
+     "letters_total": 9,
+     "words": [
+      {
+       "box": [
+        67,
+        148,
+        244,
+        221
+       ],
+       "glyphs": [
+        {
+         "box": [
+          67,
+          164,
+          108,
+          221
+         ],
+         "ink_px": 588,
+         "components": 1,
+         "text": "y"
+        },
+        {
+         "box": [
+          110,
+          174,
+          138,
+          197
+         ],
+         "ink_px": 336,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          139,
+          148,
+          177,
+          194
+         ],
+         "ink_px": 258,
+         "components": 2,
+         "text": "u"
+        },
+        {
+         "box": [
+          176,
+          170,
+          224,
+          190
+         ],
+         "ink_px": 336,
+         "components": 1,
+         "text": "v"
+        },
+        {
+         "box": [
+          229,
+          178,
+          244,
+          189
+         ],
+         "ink_px": 49,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "youve"
+      },
+      {
+       "box": [
+        311,
+        166,
+        453,
+        201
+       ],
+       "glyphs": [
+        {
+         "box": [
+          311,
+          166,
+          358,
+          193
+         ],
+         "ink_px": 474,
+         "components": 1
+        },
+        {
+         "box": [
+          366,
+          173,
+          395,
+          191
+         ],
+         "ink_px": 190,
+         "components": 1
+        },
+        {
+         "box": [
+          409,
+          171,
+          453,
+          201
+         ],
+         "ink_px": 310,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "sown:"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        476,
+        184,
+        487,
+        204
+       ],
+       "ink_px": 106
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "stanza": 1,
+   "block": 1,
+   "lines": [
+    {
+     "stanza": 1,
+     "line": 0,
+     "index": 3,
+     "box": [
+      60,
+      265,
+      378,
+      316
+     ],
+     "rule_row": 5,
+     "text": "The walls",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "1-0",
+     "author_box_best_key": "1-0",
+     "author_box_best_iou": 0.868,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 7,
+     "letters_total": 8,
+     "words": [
+      {
+       "box": [
+        60,
+        265,
+        161,
+        314
+       ],
+       "glyphs": [
+        {
+         "box": [
+          60,
+          273,
+          92,
+          307
+         ],
+         "ink_px": 307,
+         "components": 1
+        },
+        {
+         "box": [
+          105,
+          265,
+          161,
+          314
+         ],
+         "ink_px": 610,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "The"
+      },
+      {
+       "box": [
+        234,
+        266,
+        378,
+        316
+       ],
+       "glyphs": [
+        {
+         "box": [
+          234,
+          289,
+          275,
+          310
+         ],
+         "ink_px": 260,
+         "components": 1,
+         "text": "w"
+        },
+        {
+         "box": [
+          278,
+          285,
+          299,
+          300
+         ],
+         "ink_px": 165,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          305,
+          274,
+          314,
+          305
+         ],
+         "ink_px": 152,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          330,
+          266,
+          340,
+          301
+         ],
+         "ink_px": 173,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          352,
+          277,
+          378,
+          316
+         ],
+         "ink_px": 324,
+         "components": 2,
+         "text": "s"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "walls"
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 1,
+     "line": 1,
+     "index": 4,
+     "box": [
+      47,
+      319,
+      381,
+      377
+     ],
+     "rule_row": 6,
+     "text": "The walls",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "1-1",
+     "author_box_best_key": "1-1",
+     "author_box_best_iou": 0.885,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 8,
+     "letters_total": 8,
+     "words": [
+      {
+       "box": [
+        47,
+        319,
+        161,
+        377
+       ],
+       "glyphs": [
+        {
+         "box": [
+          47,
+          322,
+          99,
+          377
+         ],
+         "ink_px": 429,
+         "components": 1,
+         "text": "T"
+        },
+        {
+         "box": [
+          105,
+          319,
+          132,
+          364
+         ],
+         "ink_px": 389,
+         "components": 1,
+         "text": "h"
+        },
+        {
+         "box": [
+          133,
+          345,
+          161,
+          374
+         ],
+         "ink_px": 272,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "The"
+      },
+      {
+       "box": [
+        228,
+        324,
+        381,
+        372
+       ],
+       "glyphs": [
+        {
+         "box": [
+          228,
+          341,
+          262,
+          364
+         ],
+         "ink_px": 254,
+         "components": 1,
+         "text": "w"
+        },
+        {
+         "box": [
+          270,
+          342,
+          289,
+          365
+         ],
+         "ink_px": 204,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          310,
+          324,
+          318,
+          365
+         ],
+         "ink_px": 197,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          327,
+          326,
+          338,
+          368
+         ],
+         "ink_px": 200,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          352,
+          334,
+          381,
+          372
+         ],
+         "ink_px": 291,
+         "components": 2,
+         "text": "s"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "walls"
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 1,
+     "line": 2,
+     "index": 5,
+     "box": [
+      62,
+      375,
+      924,
+      446
+     ],
+     "rule_row": 7,
+     "text": "Collapse, and the seal is",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "1-2",
+     "author_box_best_key": "1-2",
+     "author_box_best_iou": 0.884,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 5,
+     "n_tokens": 5,
+     "glyphs_total": 20,
+     "letters_total": 20,
+     "words": [
+      {
+       "box": [
+        62,
+        375,
+        336,
+        445
+       ],
+       "glyphs": [
+        {
+         "box": [
+          62,
+          375,
+          101,
+          418
+         ],
+         "ink_px": 366,
+         "components": 2,
+         "text": "C"
+        },
+        {
+         "box": [
+          104,
+          397,
+          132,
+          426
+         ],
+         "ink_px": 403,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          142,
+          384,
+          154,
+          424
+         ],
+         "ink_px": 239,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          162,
+          387,
+          170,
+          425
+         ],
+         "ink_px": 203,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          193,
+          398,
+          212,
+          424
+         ],
+         "ink_px": 266,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          228,
+          397,
+          258,
+          445
+         ],
+         "ink_px": 464,
+         "components": 1,
+         "text": "p"
+        },
+        {
+         "box": [
+          272,
+          393,
+          293,
+          423
+         ],
+         "ink_px": 314,
+         "components": 1,
+         "text": "s"
+        },
+        {
+         "box": [
+          298,
+          398,
+          336,
+          424
+         ],
+         "ink_px": 324,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Collapse,"
+      },
+      {
+       "box": [
+        422,
+        393,
+        515,
+        427
+       ],
+       "glyphs": [
+        {
+         "box": [
+          422,
+          398,
+          444,
+          424
+         ],
+         "ink_px": 256,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          451,
+          407,
+          471,
+          427
+         ],
+         "ink_px": 186,
+         "components": 1,
+         "text": "n"
+        },
+        {
+         "box": [
+          478,
+          393,
+          515,
+          427
+         ],
+         "ink_px": 453,
+         "components": 1,
+         "text": "d"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "and"
+      },
+      {
+       "box": [
+        552,
+        391,
+        637,
+        433
+       ],
+       "glyphs": [
+        {
+         "box": [
+          552,
+          394,
+          574,
+          433
+         ],
+         "ink_px": 259,
+         "components": 1,
+         "text": "t"
+        },
+        {
+         "box": [
+          585,
+          391,
+          609,
+          428
+         ],
+         "ink_px": 249,
+         "components": 1,
+         "text": "h"
+        },
+        {
+         "box": [
+          612,
+          409,
+          637,
+          433
+         ],
+         "ink_px": 232,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "the"
+      },
+      {
+       "box": [
+        694,
+        399,
+        805,
+        440
+       ],
+       "glyphs": [
+        {
+         "box": [
+          694,
+          409,
+          721,
+          440
+         ],
+         "ink_px": 294,
+         "components": 1,
+         "text": "s"
+        },
+        {
+         "box": [
+          728,
+          412,
+          756,
+          435
+         ],
+         "ink_px": 200,
+         "components": 1,
+         "text": "e"
+        },
+        {
+         "box": [
+          766,
+          415,
+          784,
+          431
+         ],
+         "ink_px": 171,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          798,
+          399,
+          805,
+          429
+         ],
+         "ink_px": 153,
+         "components": 1,
+         "text": "l"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "seal"
+      },
+      {
+       "box": [
+        870,
+        406,
+        924,
+        439
+       ],
+       "glyphs": [
+        {
+         "box": [
+          870,
+          406,
+          881,
+          439
+         ],
+         "ink_px": 122,
+         "components": 2,
+         "text": "i"
+        },
+        {
+         "box": [
+          902,
+          407,
+          924,
+          439
+         ],
+         "ink_px": 262,
+         "components": 2,
+         "text": "s"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "is"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        386,
+        422,
+        394,
+        446
+       ],
+       "ink_px": 112
+      }
+     ]
+    },
+    {
+     "stanza": 1,
+     "line": 3,
+     "index": 6,
+     "box": [
+      79,
+      434,
+      345,
+      501
+     ],
+     "rule_row": 8,
+     "text": "Gone ?",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "1-3",
+     "author_box_best_key": "1-3",
+     "author_box_best_iou": 0.848,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 5,
+     "letters_total": 4,
+     "words": [
+      {
+       "box": [
+        79,
+        434,
+        258,
+        485
+       ],
+       "glyphs": [
+        {
+         "box": [
+          79,
+          434,
+          122,
+          477
+         ],
+         "ink_px": 638,
+         "components": 1,
+         "text": "G"
+        },
+        {
+         "box": [
+          140,
+          451,
+          163,
+          478
+         ],
+         "ink_px": 352,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          178,
+          455,
+          206,
+          485
+         ],
+         "ink_px": 291,
+         "components": 1,
+         "text": "n"
+        },
+        {
+         "box": [
+          212,
+          454,
+          258,
+          485
+         ],
+         "ink_px": 460,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Gone"
+      },
+      {
+       "box": [
+        306,
+        436,
+        345,
+        501
+       ],
+       "glyphs": [
+        {
+         "box": [
+          306,
+          436,
+          345,
+          501
+         ],
+         "ink_px": 605,
+         "components": 2
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "?"
+      }
+     ],
+     "marks": []
+    }
+   ]
+  },
+  {
+   "stanza": 2,
+   "block": 2,
+   "lines": [
+    {
+     "stanza": 2,
+     "line": 0,
+     "index": 7,
+     "box": [
+      57,
+      550,
+      898,
+      611
+     ],
+     "rule_row": 10,
+     "text": "A minotaur with no maze",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "2-0",
+     "author_box_best_key": "2-0",
+     "author_box_best_iou": 0.926,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 5,
+     "n_tokens": 5,
+     "glyphs_total": 18,
+     "letters_total": 19,
+     "words": [
+      {
+       "box": [
+        57,
+        550,
+        101,
+        596
+       ],
+       "glyphs": [
+        {
+         "box": [
+          57,
+          550,
+          101,
+          596
+         ],
+         "ink_px": 495,
+         "components": 1,
+         "text": "A"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "A"
+      },
+      {
+       "box": [
+        145,
+        560,
+        397,
+        600
+       ],
+       "glyphs": [
+        {
+         "box": [
+          145,
+          570,
+          193,
+          594
+         ],
+         "ink_px": 392,
+         "components": 1
+        },
+        {
+         "box": [
+          220,
+          571,
+          241,
+          600
+         ],
+         "ink_px": 233,
+         "components": 1
+        },
+        {
+         "box": [
+          244,
+          574,
+          268,
+          598
+         ],
+         "ink_px": 258,
+         "components": 1
+        },
+        {
+         "box": [
+          283,
+          560,
+          308,
+          598
+         ],
+         "ink_px": 276,
+         "components": 1
+        },
+        {
+         "box": [
+          309,
+          573,
+          328,
+          597
+         ],
+         "ink_px": 248,
+         "components": 1
+        },
+        {
+         "box": [
+          335,
+          573,
+          360,
+          597
+         ],
+         "ink_px": 238,
+         "components": 1
+        },
+        {
+         "box": [
+          371,
+          572,
+          397,
+          594
+         ],
+         "ink_px": 195,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "minotaur"
+      },
+      {
+       "box": [
+        450,
+        556,
+        572,
+        605
+       ],
+       "glyphs": [
+        {
+         "box": [
+          450,
+          577,
+          483,
+          597
+         ],
+         "ink_px": 327,
+         "components": 1,
+         "text": "w"
+        },
+        {
+         "box": [
+          500,
+          567,
+          509,
+          597
+         ],
+         "ink_px": 133,
+         "components": 2,
+         "text": "i"
+        },
+        {
+         "box": [
+          517,
+          556,
+          539,
+          597
+         ],
+         "ink_px": 293,
+         "components": 1,
+         "text": "t"
+        },
+        {
+         "box": [
+          544,
+          568,
+          572,
+          605
+         ],
+         "ink_px": 304,
+         "components": 2,
+         "text": "h"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "with"
+      },
+      {
+       "box": [
+        625,
+        581,
+        679,
+        604
+       ],
+       "glyphs": [
+        {
+         "box": [
+          625,
+          582,
+          650,
+          604
+         ],
+         "ink_px": 210,
+         "components": 1,
+         "text": "n"
+        },
+        {
+         "box": [
+          657,
+          581,
+          679,
+          604
+         ],
+         "ink_px": 318,
+         "components": 1,
+         "text": "o"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "no"
+      },
+      {
+       "box": [
+        735,
+        582,
+        898,
+        611
+       ],
+       "glyphs": [
+        {
+         "box": [
+          735,
+          582,
+          788,
+          608
+         ],
+         "ink_px": 482,
+         "components": 1,
+         "text": "m"
+        },
+        {
+         "box": [
+          791,
+          586,
+          808,
+          611
+         ],
+         "ink_px": 224,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          819,
+          584,
+          851,
+          608
+         ],
+         "ink_px": 350,
+         "components": 1,
+         "text": "z"
+        },
+        {
+         "box": [
+          856,
+          586,
+          898,
+          609
+         ],
+         "ink_px": 378,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "maze"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        204,
+        570,
+        211,
+        579
+       ],
+       "ink_px": 38
+      },
+      {
+       "box": [
+        204,
+        580,
+        212,
+        591
+       ],
+       "ink_px": 46
+      }
+     ]
+    },
+    {
+     "stanza": 2,
+     "line": 1,
+     "index": 8,
+     "box": [
+      59,
+      612,
+      972,
+      682
+     ],
+     "rule_row": 11,
+     "text": "to call his home, a life,",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "2-1",
+     "author_box_best_key": "2-1",
+     "author_box_best_iou": 0.083,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 6,
+     "n_tokens": 6,
+     "glyphs_total": 16,
+     "letters_total": 18,
+     "words": [
+      {
+       "box": [
+        59,
+        612,
+        117,
+        650
+       ],
+       "glyphs": [
+        {
+         "box": [
+          59,
+          612,
+          117,
+          650
+         ],
+         "ink_px": 669,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "to"
+      },
+      {
+       "box": [
+        193,
+        620,
+        270,
+        656
+       ],
+       "glyphs": [
+        {
+         "box": [
+          193,
+          626,
+          216,
+          656
+         ],
+         "ink_px": 289,
+         "components": 1,
+         "text": "c"
+        },
+        {
+         "box": [
+          222,
+          632,
+          241,
+          653
+         ],
+         "ink_px": 237,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          250,
+          620,
+          258,
+          653
+         ],
+         "ink_px": 149,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          263,
+          620,
+          270,
+          649
+         ],
+         "ink_px": 143,
+         "components": 1,
+         "text": "l"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "call"
+      },
+      {
+       "box": [
+        357,
+        618,
+        424,
+        656
+       ],
+       "glyphs": [
+        {
+         "box": [
+          357,
+          618,
+          384,
+          656
+         ],
+         "ink_px": 329,
+         "components": 1,
+         "text": "h"
+        },
+        {
+         "box": [
+          394,
+          635,
+          403,
+          650
+         ],
+         "ink_px": 67,
+         "components": 1,
+         "text": "i"
+        },
+        {
+         "box": [
+          407,
+          627,
+          424,
+          653
+         ],
+         "ink_px": 215,
+         "components": 1,
+         "text": "s"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "his"
+      },
+      {
+       "box": [
+        511,
+        624,
+        638,
+        661
+       ],
+       "glyphs": [
+        {
+         "box": [
+          511,
+          624,
+          535,
+          659
+         ],
+         "ink_px": 329,
+         "components": 1
+        },
+        {
+         "box": [
+          548,
+          637,
+          568,
+          660
+         ],
+         "ink_px": 275,
+         "components": 1
+        },
+        {
+         "box": [
+          572,
+          633,
+          638,
+          661
+         ],
+         "ink_px": 611,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "home,"
+      },
+      {
+       "box": [
+        737,
+        642,
+        758,
+        664
+       ],
+       "glyphs": [
+        {
+         "box": [
+          737,
+          642,
+          758,
+          664
+         ],
+         "ink_px": 267,
+         "components": 1,
+         "text": "a"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "a"
+      },
+      {
+       "box": [
+        811,
+        631,
+        932,
+        666
+       ],
+       "glyphs": [
+        {
+         "box": [
+          811,
+          633,
+          818,
+          661
+         ],
+         "ink_px": 153,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          838,
+          640,
+          849,
+          666
+         ],
+         "ink_px": 98,
+         "components": 2,
+         "text": "i"
+        },
+        {
+         "box": [
+          868,
+          631,
+          897,
+          662
+         ],
+         "ink_px": 305,
+         "components": 1,
+         "text": "f"
+        },
+        {
+         "box": [
+          896,
+          639,
+          932,
+          664
+         ],
+         "ink_px": 309,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "life,"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        698,
+        660,
+        707,
+        682
+       ],
+       "ink_px": 122
+      },
+      {
+       "box": [
+        963,
+        660,
+        972,
+        678
+       ],
+       "ink_px": 89
+      }
+     ]
+    },
+    {
+     "stanza": 2,
+     "line": 2,
+     "index": 9,
+     "box": [
+      53,
+      672,
+      844,
+      758
+     ],
+     "rule_row": 12,
+     "text": "A burden, a stepping",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "2-2",
+     "author_box_best_key": "2-1",
+     "author_box_best_iou": 0.692,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 4,
+     "n_tokens": 4,
+     "glyphs_total": 14,
+     "letters_total": 16,
+     "words": [
+      {
+       "box": [
+        53,
+        672,
+        89,
+        710
+       ],
+       "glyphs": [
+        {
+         "box": [
+          53,
+          672,
+          89,
+          710
+         ],
+         "ink_px": 473,
+         "components": 1,
+         "text": "A"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "A"
+      },
+      {
+       "box": [
+        146,
+        673,
+        350,
+        725
+       ],
+       "glyphs": [
+        {
+         "box": [
+          146,
+          698,
+          163,
+          711
+         ],
+         "ink_px": 87,
+         "components": 1
+        },
+        {
+         "box": [
+          149,
+          673,
+          174,
+          709
+         ],
+         "ink_px": 265,
+         "components": 1
+        },
+        {
+         "box": [
+          176,
+          679,
+          270,
+          714
+         ],
+         "ink_px": 913,
+         "components": 1
+        },
+        {
+         "box": [
+          279,
+          688,
+          303,
+          715
+         ],
+         "ink_px": 205,
+         "components": 1
+        },
+        {
+         "box": [
+          305,
+          692,
+          350,
+          725
+         ],
+         "ink_px": 335,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "burden,"
+      },
+      {
+       "box": [
+        466,
+        693,
+        487,
+        712
+       ],
+       "glyphs": [
+        {
+         "box": [
+          466,
+          693,
+          487,
+          712
+         ],
+         "ink_px": 226,
+         "components": 1,
+         "text": "a"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "a"
+      },
+      {
+       "box": [
+        557,
+        683,
+        844,
+        758
+       ],
+       "glyphs": [
+        {
+         "box": [
+          557,
+          691,
+          574,
+          720
+         ],
+         "ink_px": 203,
+         "components": 1
+        },
+        {
+         "box": [
+          589,
+          683,
+          644,
+          719
+         ],
+         "ink_px": 527,
+         "components": 1
+        },
+        {
+         "box": [
+          665,
+          698,
+          692,
+          738
+         ],
+         "ink_px": 417,
+         "components": 1
+        },
+        {
+         "box": [
+          709,
+          698,
+          741,
+          739
+         ],
+         "ink_px": 457,
+         "components": 1
+        },
+        {
+         "box": [
+          750,
+          690,
+          761,
+          715
+         ],
+         "ink_px": 112,
+         "components": 2
+        },
+        {
+         "box": [
+          774,
+          696,
+          795,
+          726
+         ],
+         "ink_px": 237,
+         "components": 1
+        },
+        {
+         "box": [
+          791,
+          702,
+          844,
+          758
+         ],
+         "ink_px": 723,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "stepping"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        400,
+        708,
+        408,
+        727
+       ],
+       "ink_px": 97
+      }
+     ]
+    },
+    {
+     "stanza": 2,
+     "line": 3,
+     "index": 10,
+     "box": [
+      62,
+      730,
+      304,
+      774
+     ],
+     "rule_row": 13,
+     "text": "stone.",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": null,
+     "author_box_best_key": "2-2",
+     "author_box_best_iou": 0.182,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 1,
+     "n_tokens": 1,
+     "glyphs_total": 7,
+     "letters_total": 5,
+     "words": [
+      {
+       "box": [
+        62,
+        730,
+        304,
+        774
+       ],
+       "glyphs": [
+        {
+         "box": [
+          62,
+          730,
+          87,
+          769
+         ],
+         "ink_px": 339,
+         "components": 1
+        },
+        {
+         "box": [
+          91,
+          733,
+          131,
+          767
+         ],
+         "ink_px": 339,
+         "components": 1
+        },
+        {
+         "box": [
+          126,
+          746,
+          154,
+          773
+         ],
+         "ink_px": 363,
+         "components": 1
+        },
+        {
+         "box": [
+          167,
+          740,
+          198,
+          767
+         ],
+         "ink_px": 291,
+         "components": 1
+        },
+        {
+         "box": [
+          202,
+          738,
+          248,
+          774
+         ],
+         "ink_px": 525,
+         "components": 1
+        },
+        {
+         "box": [
+          256,
+          760,
+          271,
+          765
+         ],
+         "ink_px": 29,
+         "components": 1
+        },
+        {
+         "box": [
+          292,
+          758,
+          304,
+          771
+         ],
+         "ink_px": 96,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "stone."
+      }
+     ],
+     "marks": []
+    }
+   ]
+  },
+  {
+   "stanza": 3,
+   "block": 3,
+   "lines": [
+    {
+     "stanza": 3,
+     "line": 0,
+     "index": 11,
+     "box": [
+      41,
+      835,
+      472,
+      891
+     ],
+     "rule_row": 15,
+     "text": "The walls \u2014",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "3-0",
+     "author_box_best_key": "3-0",
+     "author_box_best_iou": 0.869,
+     "words_alignment": null,
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 3,
+     "glyphs_total": 8,
+     "letters_total": 8,
+     "words": [
+      {
+       "box": [
+        41,
+        835,
+        158,
+        882
+       ],
+       "glyphs": [
+        {
+         "box": [
+          41,
+          840,
+          73,
+          880
+         ],
+         "ink_px": 326,
+         "components": 1
+        },
+        {
+         "box": [
+          86,
+          835,
+          113,
+          882
+         ],
+         "ink_px": 371,
+         "components": 1
+        },
+        {
+         "box": [
+          121,
+          853,
+          158,
+          882
+         ],
+         "ink_px": 371,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        243,
+        850,
+        472,
+        891
+       ],
+       "glyphs": [
+        {
+         "box": [
+          243,
+          866,
+          262,
+          888
+         ],
+         "ink_px": 137,
+         "components": 2
+        },
+        {
+         "box": [
+          261,
+          864,
+          303,
+          887
+         ],
+         "ink_px": 300,
+         "components": 1
+        },
+        {
+         "box": [
+          304,
+          853,
+          329,
+          886
+         ],
+         "ink_px": 250,
+         "components": 1
+        },
+        {
+         "box": [
+          335,
+          850,
+          388,
+          891
+         ],
+         "ink_px": 543,
+         "components": 1
+        },
+        {
+         "box": [
+          414,
+          864,
+          472,
+          873
+         ],
+         "ink_px": 302,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 3,
+     "line": 1,
+     "index": 12,
+     "box": [
+      40,
+      891,
+      1128,
+      968
+     ],
+     "rule_row": 16,
+     "text": "They were simple, they had grace \u2014",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "3-1",
+     "author_box_best_key": "3-1",
+     "author_box_best_iou": 0.911,
+     "words_alignment": null,
+     "n_word_boxes_gap_rule": 6,
+     "n_tokens": 7,
+     "glyphs_total": 23,
+     "letters_total": 26,
+     "words": [
+      {
+       "box": [
+        40,
+        891,
+        157,
+        948
+       ],
+       "glyphs": [
+        {
+         "box": [
+          40,
+          904,
+          79,
+          942
+         ],
+         "ink_px": 355,
+         "components": 1
+        },
+        {
+         "box": [
+          87,
+          891,
+          117,
+          945
+         ],
+         "ink_px": 443,
+         "components": 1
+        },
+        {
+         "box": [
+          117,
+          916,
+          142,
+          948
+         ],
+         "ink_px": 291,
+         "components": 1
+        },
+        {
+         "box": [
+          144,
+          928,
+          157,
+          939
+         ],
+         "ink_px": 58,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        219,
+        917,
+        349,
+        948
+       ],
+       "glyphs": [
+        {
+         "box": [
+          219,
+          917,
+          333,
+          948
+         ],
+         "ink_px": 1026,
+         "components": 1
+        },
+        {
+         "box": [
+          331,
+          932,
+          349,
+          943
+         ],
+         "ink_px": 69,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        395,
+        911,
+        612,
+        966
+       ],
+       "glyphs": [
+        {
+         "box": [
+          395,
+          919,
+          417,
+          949
+         ],
+         "ink_px": 258,
+         "components": 1
+        },
+        {
+         "box": [
+          421,
+          919,
+          435,
+          949
+         ],
+         "ink_px": 100,
+         "components": 2
+        },
+        {
+         "box": [
+          442,
+          918,
+          482,
+          946
+         ],
+         "ink_px": 344,
+         "components": 1
+        },
+        {
+         "box": [
+          504,
+          925,
+          530,
+          966
+         ],
+         "ink_px": 385,
+         "components": 1
+        },
+        {
+         "box": [
+          536,
+          911,
+          549,
+          945
+         ],
+         "ink_px": 153,
+         "components": 1
+        },
+        {
+         "box": [
+          551,
+          921,
+          612,
+          949
+         ],
+         "ink_px": 462,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        669,
+        908,
+        749,
+        954
+       ],
+       "glyphs": [
+        {
+         "box": [
+          669,
+          908,
+          688,
+          952
+         ],
+         "ink_px": 274,
+         "components": 1
+        },
+        {
+         "box": [
+          700,
+          909,
+          722,
+          951
+         ],
+         "ink_px": 334,
+         "components": 1
+        },
+        {
+         "box": [
+          729,
+          927,
+          749,
+          954
+         ],
+         "ink_px": 203,
+         "components": 2
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        817,
+        907,
+        912,
+        957
+       ],
+       "glyphs": [
+        {
+         "box": [
+          817,
+          907,
+          841,
+          955
+         ],
+         "ink_px": 347,
+         "components": 1
+        },
+        {
+         "box": [
+          851,
+          934,
+          869,
+          957
+         ],
+         "ink_px": 187,
+         "components": 1
+        },
+        {
+         "box": [
+          868,
+          915,
+          912,
+          957
+         ],
+         "ink_px": 474,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        971,
+        931,
+        1128,
+        960
+       ],
+       "glyphs": [
+        {
+         "box": [
+          971,
+          938,
+          990,
+          959
+         ],
+         "ink_px": 148,
+         "components": 1
+        },
+        {
+         "box": [
+          1000,
+          937,
+          1017,
+          954
+         ],
+         "ink_px": 127,
+         "components": 1
+        },
+        {
+         "box": [
+          1024,
+          937,
+          1038,
+          959
+         ],
+         "ink_px": 125,
+         "components": 1
+        },
+        {
+         "box": [
+          1049,
+          939,
+          1072,
+          960
+         ],
+         "ink_px": 165,
+         "components": 1
+        },
+        {
+         "box": [
+          1085,
+          931,
+          1128,
+          940
+         ],
+         "ink_px": 212,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        632,
+        944,
+        642,
+        968
+       ],
+       "ink_px": 108
+      }
+     ]
+    },
+    {
+     "stanza": 3,
+     "line": 2,
+     "index": 13,
+     "box": [
+      57,
+      911,
+      990,
+      1017
+     ],
+     "rule_row": 17,
+     "text": "Stood without your embrace",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "3-2",
+     "author_box_best_key": "3-2",
+     "author_box_best_iou": 0.61,
+     "words_alignment": null,
+     "n_word_boxes_gap_rule": 4,
+     "n_tokens": 4,
+     "glyphs_total": 18,
+     "letters_total": 23,
+     "words": [
+      {
+       "box": [
+        57,
+        911,
+        227,
+        1008
+       ],
+       "glyphs": [
+        {
+         "box": [
+          57,
+          958,
+          78,
+          1001
+         ],
+         "ink_px": 328,
+         "components": 1
+        },
+        {
+         "box": [
+          88,
+          965,
+          119,
+          1005
+         ],
+         "ink_px": 301,
+         "components": 1
+        },
+        {
+         "box": [
+          119,
+          911,
+          202,
+          1008
+         ],
+         "ink_px": 1391,
+         "components": 1
+        },
+        {
+         "box": [
+          193,
+          975,
+          206,
+          1001
+         ],
+         "ink_px": 115,
+         "components": 1
+        },
+        {
+         "box": [
+          204,
+          956,
+          227,
+          1000
+         ],
+         "ink_px": 316,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        298,
+        959,
+        519,
+        1004
+       ],
+       "glyphs": [
+        {
+         "box": [
+          298,
+          984,
+          341,
+          1001
+         ],
+         "ink_px": 296,
+         "components": 1
+        },
+        {
+         "box": [
+          350,
+          959,
+          398,
+          1003
+         ],
+         "ink_px": 508,
+         "components": 1
+        },
+        {
+         "box": [
+          400,
+          980,
+          465,
+          1004
+         ],
+         "ink_px": 523,
+         "components": 1
+        },
+        {
+         "box": [
+          473,
+          963,
+          519,
+          1004
+         ],
+         "ink_px": 408,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        607,
+        983,
+        679,
+        1008
+       ],
+       "glyphs": [
+        {
+         "box": [
+          607,
+          985,
+          629,
+          1008
+         ],
+         "ink_px": 267,
+         "components": 1
+        },
+        {
+         "box": [
+          629,
+          983,
+          679,
+          1003
+         ],
+         "ink_px": 369,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        722,
+        935,
+        990,
+        1017
+       ],
+       "glyphs": [
+        {
+         "box": [
+          722,
+          935,
+          781,
+          1017
+         ],
+         "ink_px": 984,
+         "components": 1
+        },
+        {
+         "box": [
+          756,
+          995,
+          799,
+          1012
+         ],
+         "ink_px": 352,
+         "components": 1
+        },
+        {
+         "box": [
+          807,
+          980,
+          835,
+          1014
+         ],
+         "ink_px": 364,
+         "components": 1
+        },
+        {
+         "box": [
+          840,
+          994,
+          867,
+          1012
+         ],
+         "ink_px": 191,
+         "components": 1
+        },
+        {
+         "box": [
+          876,
+          989,
+          894,
+          1009
+         ],
+         "ink_px": 166,
+         "components": 1
+        },
+        {
+         "box": [
+          904,
+          991,
+          936,
+          1007
+         ],
+         "ink_px": 206,
+         "components": 1
+        },
+        {
+         "box": [
+          919,
+          935,
+          990,
+          1015
+         ],
+         "ink_px": 905,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 3,
+     "line": 3,
+     "index": 14,
+     "box": [
+      64,
+      985,
+      807,
+      1073
+     ],
+     "rule_row": 18,
+     "text": "Or the face of others",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "3-3",
+     "author_box_best_key": "3-3",
+     "author_box_best_iou": 0.913,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 5,
+     "n_tokens": 5,
+     "glyphs_total": 14,
+     "letters_total": 17,
+     "words": [
+      {
+       "box": [
+        64,
+        1012,
+        126,
+        1054
+       ],
+       "glyphs": [
+        {
+         "box": [
+          64,
+          1012,
+          92,
+          1053
+         ],
+         "ink_px": 390,
+         "components": 1,
+         "text": "O"
+        },
+        {
+         "box": [
+          100,
+          1027,
+          126,
+          1054
+         ],
+         "ink_px": 185,
+         "components": 1,
+         "text": "r"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Or"
+      },
+      {
+       "box": [
+        196,
+        1015,
+        288,
+        1062
+       ],
+       "glyphs": [
+        {
+         "box": [
+          196,
+          1018,
+          226,
+          1058
+         ],
+         "ink_px": 364,
+         "components": 1
+        },
+        {
+         "box": [
+          228,
+          1015,
+          288,
+          1062
+         ],
+         "ink_px": 566,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "the"
+      },
+      {
+       "box": [
+        324,
+        1021,
+        436,
+        1064
+       ],
+       "glyphs": [
+        {
+         "box": [
+          324,
+          1021,
+          363,
+          1064
+         ],
+         "ink_px": 479,
+         "components": 1,
+         "text": "f"
+        },
+        {
+         "box": [
+          365,
+          1041,
+          383,
+          1060
+         ],
+         "ink_px": 184,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          388,
+          1040,
+          408,
+          1063
+         ],
+         "ink_px": 126,
+         "components": 2,
+         "text": "c"
+        },
+        {
+         "box": [
+          420,
+          1037,
+          436,
+          1061
+         ],
+         "ink_px": 173,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "face"
+      },
+      {
+       "box": [
+        512,
+        985,
+        596,
+        1063
+       ],
+       "glyphs": [
+        {
+         "box": [
+          512,
+          985,
+          596,
+          1063
+         ],
+         "ink_px": 1160,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "of"
+      },
+      {
+       "box": [
+        634,
+        1030,
+        807,
+        1073
+       ],
+       "glyphs": [
+        {
+         "box": [
+          634,
+          1043,
+          657,
+          1066
+         ],
+         "ink_px": 286,
+         "components": 1
+        },
+        {
+         "box": [
+          663,
+          1032,
+          688,
+          1068
+         ],
+         "ink_px": 250,
+         "components": 1
+        },
+        {
+         "box": [
+          688,
+          1030,
+          715,
+          1067
+         ],
+         "ink_px": 270,
+         "components": 1
+        },
+        {
+         "box": [
+          721,
+          1041,
+          775,
+          1068
+         ],
+         "ink_px": 430,
+         "components": 1
+        },
+        {
+         "box": [
+          780,
+          1036,
+          807,
+          1073
+         ],
+         "ink_px": 271,
+         "components": 2
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "others"
+      }
+     ],
+     "marks": []
+    }
+   ]
+  },
+  {
+   "stanza": 4,
+   "block": 4,
+   "lines": [
+    {
+     "stanza": 4,
+     "line": 0,
+     "index": 15,
+     "box": [
+      46,
+      1121,
+      1000,
+      1212
+     ],
+     "rule_row": 20,
+     "text": "A myth that was true, a myth",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "4-0",
+     "author_box_best_key": "4-0",
+     "author_box_best_iou": 0.917,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 7,
+     "n_tokens": 7,
+     "glyphs_total": 14,
+     "letters_total": 21,
+     "words": [
+      {
+       "box": [
+        46,
+        1121,
+        88,
+        1174
+       ],
+       "glyphs": [
+        {
+         "box": [
+          46,
+          1121,
+          88,
+          1174
+         ],
+         "ink_px": 546,
+         "components": 1,
+         "text": "A"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "A"
+      },
+      {
+       "box": [
+        123,
+        1126,
+        256,
+        1202
+       ],
+       "glyphs": [
+        {
+         "box": [
+          123,
+          1145,
+          157,
+          1171
+         ],
+         "ink_px": 287,
+         "components": 1
+        },
+        {
+         "box": [
+          159,
+          1145,
+          199,
+          1202
+         ],
+         "ink_px": 483,
+         "components": 1
+        },
+        {
+         "box": [
+          202,
+          1126,
+          256,
+          1175
+         ],
+         "ink_px": 612,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "myth"
+      },
+      {
+       "box": [
+        323,
+        1128,
+        459,
+        1175
+       ],
+       "glyphs": [
+        {
+         "box": [
+          323,
+          1132,
+          357,
+          1171
+         ],
+         "ink_px": 394,
+         "components": 1
+        },
+        {
+         "box": [
+          359,
+          1134,
+          394,
+          1175
+         ],
+         "ink_px": 328,
+         "components": 1
+        },
+        {
+         "box": [
+          398,
+          1128,
+          459,
+          1169
+         ],
+         "ink_px": 563,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "that"
+      },
+      {
+       "box": [
+        510,
+        1149,
+        612,
+        1178
+       ],
+       "glyphs": [
+        {
+         "box": [
+          510,
+          1149,
+          612,
+          1178
+         ],
+         "ink_px": 899,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "was"
+      },
+      {
+       "box": [
+        649,
+        1141,
+        764,
+        1184
+       ],
+       "glyphs": [
+        {
+         "box": [
+          649,
+          1141,
+          698,
+          1182
+         ],
+         "ink_px": 492,
+         "components": 1
+        },
+        {
+         "box": [
+          701,
+          1158,
+          764,
+          1184
+         ],
+         "ink_px": 550,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "true,"
+      },
+      {
+       "box": [
+        828,
+        1164,
+        847,
+        1190
+       ],
+       "glyphs": [
+        {
+         "box": [
+          828,
+          1164,
+          847,
+          1190
+         ],
+         "ink_px": 228,
+         "components": 1,
+         "text": "a"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "a"
+      },
+      {
+       "box": [
+        880,
+        1158,
+        1000,
+        1212
+       ],
+       "glyphs": [
+        {
+         "box": [
+          880,
+          1164,
+          912,
+          1186
+         ],
+         "ink_px": 257,
+         "components": 1
+        },
+        {
+         "box": [
+          917,
+          1169,
+          937,
+          1212
+         ],
+         "ink_px": 381,
+         "components": 1
+        },
+        {
+         "box": [
+          948,
+          1158,
+          1000,
+          1196
+         ],
+         "ink_px": 559,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "myth"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        784,
+        1176,
+        791,
+        1196
+       ],
+       "ink_px": 111
+      }
+     ]
+    },
+    {
+     "stanza": 4,
+     "line": 1,
+     "index": 16,
+     "box": [
+      58,
+      1186,
+      967,
+      1265
+     ],
+     "rule_row": 21,
+     "text": "perused, or a passing gaze",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "4-1",
+     "author_box_best_key": "4-1",
+     "author_box_best_iou": 0.874,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 5,
+     "n_tokens": 5,
+     "glyphs_total": 16,
+     "letters_total": 21,
+     "words": [
+      {
+       "box": [
+        58,
+        1186,
+        292,
+        1257
+       ],
+       "glyphs": [
+        {
+         "box": [
+          58,
+          1196,
+          92,
+          1257
+         ],
+         "ink_px": 625,
+         "components": 1
+        },
+        {
+         "box": [
+          104,
+          1201,
+          124,
+          1228
+         ],
+         "ink_px": 223,
+         "components": 1
+        },
+        {
+         "box": [
+          125,
+          1206,
+          211,
+          1234
+         ],
+         "ink_px": 759,
+         "components": 1
+        },
+        {
+         "box": [
+          213,
+          1207,
+          264,
+          1234
+         ],
+         "ink_px": 509,
+         "components": 1
+        },
+        {
+         "box": [
+          264,
+          1186,
+          292,
+          1231
+         ],
+         "ink_px": 361,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "perused,"
+      },
+      {
+       "box": [
+        383,
+        1208,
+        433,
+        1236
+       ],
+       "glyphs": [
+        {
+         "box": [
+          383,
+          1208,
+          433,
+          1236
+         ],
+         "ink_px": 540,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "or"
+      },
+      {
+       "box": [
+        500,
+        1205,
+        520,
+        1230
+       ],
+       "glyphs": [
+        {
+         "box": [
+          500,
+          1205,
+          520,
+          1230
+         ],
+         "ink_px": 239,
+         "components": 1,
+         "text": "a"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "a"
+      },
+      {
+       "box": [
+        560,
+        1203,
+        739,
+        1265
+       ],
+       "glyphs": [
+        {
+         "box": [
+          560,
+          1209,
+          588,
+          1253
+         ],
+         "ink_px": 562,
+         "components": 1
+        },
+        {
+         "box": [
+          592,
+          1208,
+          608,
+          1238
+         ],
+         "ink_px": 242,
+         "components": 1
+        },
+        {
+         "box": [
+          615,
+          1213,
+          635,
+          1238
+         ],
+         "ink_px": 239,
+         "components": 1
+        },
+        {
+         "box": [
+          636,
+          1210,
+          655,
+          1239
+         ],
+         "ink_px": 264,
+         "components": 1
+        },
+        {
+         "box": [
+          677,
+          1203,
+          713,
+          1241
+         ],
+         "ink_px": 312,
+         "components": 1
+        },
+        {
+         "box": [
+          705,
+          1213,
+          739,
+          1265
+         ],
+         "ink_px": 509,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "passing"
+      },
+      {
+       "box": [
+        833,
+        1217,
+        954,
+        1251
+       ],
+       "glyphs": [
+        {
+         "box": [
+          833,
+          1219,
+          851,
+          1250
+         ],
+         "ink_px": 251,
+         "components": 1
+        },
+        {
+         "box": [
+          858,
+          1219,
+          886,
+          1244
+         ],
+         "ink_px": 324,
+         "components": 1
+        },
+        {
+         "box": [
+          894,
+          1217,
+          954,
+          1251
+         ],
+         "ink_px": 526,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "gaze"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        324,
+        1222,
+        337,
+        1245
+       ],
+       "ink_px": 143
+      },
+      {
+       "box": [
+        658,
+        1218,
+        667,
+        1230
+       ],
+       "ink_px": 51
+      },
+      {
+       "box": [
+        659,
+        1203,
+        666,
+        1212
+       ],
+       "ink_px": 38
+      },
+      {
+       "box": [
+        959,
+        1239,
+        967,
+        1243
+       ],
+       "ink_px": 13
+      }
+     ]
+    },
+    {
+     "stanza": 4,
+     "line": 2,
+     "index": 17,
+     "box": [
+      49,
+      1218,
+      1006,
+      1309
+     ],
+     "rule_row": 22,
+     "text": "with not a moment wasted.",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "4-2",
+     "author_box_best_key": "4-2",
+     "author_box_best_iou": 0.707,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 5,
+     "n_tokens": 5,
+     "glyphs_total": 16,
+     "letters_total": 20,
+     "words": [
+      {
+       "box": [
+        49,
+        1239,
+        176,
+        1293
+       ],
+       "glyphs": [
+        {
+         "box": [
+          49,
+          1255,
+          88,
+          1293
+         ],
+         "ink_px": 483,
+         "components": 1
+        },
+        {
+         "box": [
+          96,
+          1258,
+          108,
+          1293
+         ],
+         "ink_px": 126,
+         "components": 2
+        },
+        {
+         "box": [
+          120,
+          1239,
+          176,
+          1293
+         ],
+         "ink_px": 707,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "with"
+      },
+      {
+       "box": [
+        248,
+        1249,
+        352,
+        1294
+       ],
+       "glyphs": [
+        {
+         "box": [
+          248,
+          1264,
+          277,
+          1294
+         ],
+         "ink_px": 305,
+         "components": 1,
+         "text": "n"
+        },
+        {
+         "box": [
+          278,
+          1268,
+          302,
+          1294
+         ],
+         "ink_px": 337,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          306,
+          1249,
+          352,
+          1294
+         ],
+         "ink_px": 415,
+         "components": 1,
+         "text": "t"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "not"
+      },
+      {
+       "box": [
+        406,
+        1267,
+        431,
+        1304
+       ],
+       "glyphs": [
+        {
+         "box": [
+          406,
+          1267,
+          431,
+          1304
+         ],
+         "ink_px": 408,
+         "components": 1,
+         "text": "a"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "a"
+      },
+      {
+       "box": [
+        500,
+        1254,
+        691,
+        1303
+       ],
+       "glyphs": [
+        {
+         "box": [
+          500,
+          1274,
+          600,
+          1303
+         ],
+         "ink_px": 1117,
+         "components": 1
+        },
+        {
+         "box": [
+          607,
+          1276,
+          624,
+          1300
+         ],
+         "ink_px": 212,
+         "components": 1
+        },
+        {
+         "box": [
+          625,
+          1278,
+          652,
+          1300
+         ],
+         "ink_px": 201,
+         "components": 1
+        },
+        {
+         "box": [
+          664,
+          1254,
+          691,
+          1293
+         ],
+         "ink_px": 298,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "moment"
+      },
+      {
+       "box": [
+        758,
+        1218,
+        978,
+        1307
+       ],
+       "glyphs": [
+        {
+         "box": [
+          758,
+          1281,
+          802,
+          1307
+         ],
+         "ink_px": 439,
+         "components": 1
+        },
+        {
+         "box": [
+          799,
+          1218,
+          826,
+          1296
+         ],
+         "ink_px": 811,
+         "components": 1
+        },
+        {
+         "box": [
+          833,
+          1277,
+          856,
+          1302
+         ],
+         "ink_px": 269,
+         "components": 1
+        },
+        {
+         "box": [
+          870,
+          1258,
+          947,
+          1305
+         ],
+         "ink_px": 786,
+         "components": 1
+        },
+        {
+         "box": [
+          940,
+          1264,
+          978,
+          1305
+         ],
+         "ink_px": 402,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "wasted."
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        993,
+        1295,
+        1006,
+        1309
+       ],
+       "ink_px": 116
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "stanza": 5,
+   "block": 5,
+   "lines": [
+    {
+     "stanza": 5,
+     "line": 0,
+     "index": 18,
+     "box": [
+      42,
+      1348,
+      519,
+      1422
+     ],
+     "rule_row": 24,
+     "text": "Poor minotaur,",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "5-0",
+     "author_box_best_key": "5-0",
+     "author_box_best_iou": 0.949,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 11,
+     "letters_total": 12,
+     "words": [
+      {
+       "box": [
+        42,
+        1348,
+        169,
+        1405
+       ],
+       "glyphs": [
+        {
+         "box": [
+          42,
+          1348,
+          75,
+          1399
+         ],
+         "ink_px": 530,
+         "components": 1,
+         "text": "P"
+        },
+        {
+         "box": [
+          67,
+          1379,
+          98,
+          1405
+         ],
+         "ink_px": 345,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          106,
+          1375,
+          126,
+          1401
+         ],
+         "ink_px": 273,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          138,
+          1375,
+          169,
+          1396
+         ],
+         "ink_px": 208,
+         "components": 1,
+         "text": "r"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Poor"
+      },
+      {
+       "box": [
+        220,
+        1365,
+        484,
+        1409
+       ],
+       "glyphs": [
+        {
+         "box": [
+          220,
+          1369,
+          266,
+          1404
+         ],
+         "ink_px": 461,
+         "components": 1
+        },
+        {
+         "box": [
+          292,
+          1377,
+          317,
+          1402
+         ],
+         "ink_px": 219,
+         "components": 1
+        },
+        {
+         "box": [
+          325,
+          1379,
+          359,
+          1406
+         ],
+         "ink_px": 365,
+         "components": 1
+        },
+        {
+         "box": [
+          359,
+          1365,
+          389,
+          1408
+         ],
+         "ink_px": 321,
+         "components": 1
+        },
+        {
+         "box": [
+          394,
+          1384,
+          412,
+          1407
+         ],
+         "ink_px": 197,
+         "components": 1
+        },
+        {
+         "box": [
+          418,
+          1386,
+          446,
+          1408
+         ],
+         "ink_px": 224,
+         "components": 1
+        },
+        {
+         "box": [
+          456,
+          1378,
+          484,
+          1409
+         ],
+         "ink_px": 260,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "minotaur,"
+      }
+     ],
+     "marks": [
+      {
+       "box": [
+        273,
+        1388,
+        280,
+        1400
+       ],
+       "ink_px": 44
+      },
+      {
+       "box": [
+        274,
+        1375,
+        280,
+        1384
+       ],
+       "ink_px": 30
+      },
+      {
+       "box": [
+        506,
+        1406,
+        519,
+        1422
+       ],
+       "ink_px": 99
+      }
+     ]
+    },
+    {
+     "stanza": 5,
+     "line": 1,
+     "index": 19,
+     "box": [
+      50,
+      1412,
+      1088,
+      1493
+     ],
+     "rule_row": 25,
+     "text": "Where are you now? Have you lost",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "5-1",
+     "author_box_best_key": "5-1",
+     "author_box_best_iou": 0.866,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 7,
+     "n_tokens": 7,
+     "glyphs_total": 21,
+     "letters_total": 25,
+     "words": [
+      {
+       "box": [
+        50,
+        1412,
+        213,
+        1461
+       ],
+       "glyphs": [
+        {
+         "box": [
+          50,
+          1419,
+          91,
+          1457
+         ],
+         "ink_px": 567,
+         "components": 1
+        },
+        {
+         "box": [
+          97,
+          1412,
+          118,
+          1461
+         ],
+         "ink_px": 350,
+         "components": 1
+        },
+        {
+         "box": [
+          122,
+          1432,
+          213,
+          1459
+         ],
+         "ink_px": 882,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "Where"
+      },
+      {
+       "box": [
+        252,
+        1438,
+        321,
+        1462
+       ],
+       "glyphs": [
+        {
+         "box": [
+          252,
+          1438,
+          321,
+          1462
+         ],
+         "ink_px": 694,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "are"
+      },
+      {
+       "box": [
+        368,
+        1441,
+        464,
+        1491
+       ],
+       "glyphs": [
+        {
+         "box": [
+          368,
+          1441,
+          397,
+          1491
+         ],
+         "ink_px": 521,
+         "components": 1,
+         "text": "y"
+        },
+        {
+         "box": [
+          401,
+          1445,
+          421,
+          1469
+         ],
+         "ink_px": 285,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          427,
+          1444,
+          464,
+          1466
+         ],
+         "ink_px": 320,
+         "components": 1,
+         "text": "u"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "you"
+      },
+      {
+       "box": [
+        512,
+        1421,
+        647,
+        1477
+       ],
+       "glyphs": [
+        {
+         "box": [
+          512,
+          1447,
+          540,
+          1474
+         ],
+         "ink_px": 264,
+         "components": 1
+        },
+        {
+         "box": [
+          542,
+          1448,
+          564,
+          1474
+         ],
+         "ink_px": 307,
+         "components": 1
+        },
+        {
+         "box": [
+          568,
+          1445,
+          600,
+          1468
+         ],
+         "ink_px": 286,
+         "components": 1
+        },
+        {
+         "box": [
+          617,
+          1421,
+          647,
+          1477
+         ],
+         "ink_px": 389,
+         "components": 2
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "now?"
+      },
+      {
+       "box": [
+        679,
+        1434,
+        799,
+        1473
+       ],
+       "glyphs": [
+        {
+         "box": [
+          679,
+          1434,
+          702,
+          1470
+         ],
+         "ink_px": 265,
+         "components": 1,
+         "text": "H"
+        },
+        {
+         "box": [
+          702,
+          1434,
+          712,
+          1472
+         ],
+         "ink_px": 177,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          715,
+          1451,
+          734,
+          1473
+         ],
+         "ink_px": 235,
+         "components": 1,
+         "text": "v"
+        },
+        {
+         "box": [
+          739,
+          1450,
+          799,
+          1472
+         ],
+         "ink_px": 511,
+         "components": 1,
+         "text": "e"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "Have"
+      },
+      {
+       "box": [
+        843,
+        1450,
+        932,
+        1493
+       ],
+       "glyphs": [
+        {
+         "box": [
+          843,
+          1450,
+          896,
+          1493
+         ],
+         "ink_px": 853,
+         "components": 1
+        },
+        {
+         "box": [
+          903,
+          1455,
+          932,
+          1472
+         ],
+         "ink_px": 222,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false,
+       "text": "you"
+      },
+      {
+       "box": [
+        974,
+        1441,
+        1088,
+        1478
+       ],
+       "glyphs": [
+        {
+         "box": [
+          974,
+          1447,
+          990,
+          1477
+         ],
+         "ink_px": 184,
+         "components": 1,
+         "text": "l"
+        },
+        {
+         "box": [
+          996,
+          1459,
+          1021,
+          1478
+         ],
+         "ink_px": 299,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          1030,
+          1452,
+          1049,
+          1478
+         ],
+         "ink_px": 262,
+         "components": 1,
+         "text": "s"
+        },
+        {
+         "box": [
+          1050,
+          1441,
+          1088,
+          1476
+         ],
+         "ink_px": 383,
+         "components": 1,
+         "text": "t"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "lost"
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 5,
+     "line": 2,
+     "index": 20,
+     "box": [
+      40,
+      1471,
+      342,
+      1526
+     ],
+     "rule_row": 26,
+     "text": "That frown",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "5-2",
+     "author_box_best_key": "5-2",
+     "author_box_best_iou": 0.983,
+     "words_alignment": "gap",
+     "n_word_boxes_gap_rule": 2,
+     "n_tokens": 2,
+     "glyphs_total": 9,
+     "letters_total": 9,
+     "words": [
+      {
+       "box": [
+        40,
+        1471,
+        146,
+        1518
+       ],
+       "glyphs": [
+        {
+         "box": [
+          40,
+          1471,
+          70,
+          1511
+         ],
+         "ink_px": 357,
+         "components": 2,
+         "text": "T"
+        },
+        {
+         "box": [
+          78,
+          1471,
+          99,
+          1518
+         ],
+         "ink_px": 368,
+         "components": 1,
+         "text": "h"
+        },
+        {
+         "box": [
+          108,
+          1492,
+          124,
+          1516
+         ],
+         "ink_px": 193,
+         "components": 1,
+         "text": "a"
+        },
+        {
+         "box": [
+          130,
+          1477,
+          146,
+          1517
+         ],
+         "ink_px": 244,
+         "components": 1,
+         "text": "t"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "That"
+      },
+      {
+       "box": [
+        203,
+        1487,
+        342,
+        1526
+       ],
+       "glyphs": [
+        {
+         "box": [
+          203,
+          1487,
+          242,
+          1518
+         ],
+         "ink_px": 356,
+         "components": 1,
+         "text": "f"
+        },
+        {
+         "box": [
+          233,
+          1502,
+          250,
+          1519
+         ],
+         "ink_px": 117,
+         "components": 1,
+         "text": "r"
+        },
+        {
+         "box": [
+          257,
+          1496,
+          274,
+          1518
+         ],
+         "ink_px": 216,
+         "components": 1,
+         "text": "o"
+        },
+        {
+         "box": [
+          278,
+          1495,
+          309,
+          1514
+         ],
+         "ink_px": 205,
+         "components": 1,
+         "text": "w"
+        },
+        {
+         "box": [
+          314,
+          1492,
+          342,
+          1526
+         ],
+         "ink_px": 319,
+         "components": 1,
+         "text": "n"
+        }
+       ],
+       "glyphs_aligned": true,
+       "text": "frown"
+      }
+     ],
+     "marks": []
+    },
+    {
+     "stanza": 5,
+     "line": 3,
+     "index": 21,
+     "box": [
+      52,
+      1534,
+      1132,
+      1601
+     ],
+     "rule_row": 27,
+     "text": "Of that which you were so fond ?",
+     "text_basis": "row order (22 ink rows = 22 transcription lines) + overlap with author box",
+     "author_box_expected_key": "5-3",
+     "author_box_best_key": "5-3",
+     "author_box_best_iou": 0.818,
+     "words_alignment": null,
+     "n_word_boxes_gap_rule": 7,
+     "n_tokens": 8,
+     "glyphs_total": 22,
+     "letters_total": 24,
+     "words": [
+      {
+       "box": [
+        52,
+        1534,
+        126,
+        1574
+       ],
+       "glyphs": [
+        {
+         "box": [
+          52,
+          1534,
+          85,
+          1574
+         ],
+         "ink_px": 502,
+         "components": 1
+        },
+        {
+         "box": [
+          93,
+          1541,
+          126,
+          1574
+         ],
+         "ink_px": 394,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        184,
+        1538,
+        295,
+        1583
+       ],
+       "glyphs": [
+        {
+         "box": [
+          184,
+          1539,
+          208,
+          1582
+         ],
+         "ink_px": 290,
+         "components": 1
+        },
+        {
+         "box": [
+          216,
+          1538,
+          238,
+          1580
+         ],
+         "ink_px": 260,
+         "components": 1
+        },
+        {
+         "box": [
+          247,
+          1560,
+          263,
+          1583
+         ],
+         "ink_px": 135,
+         "components": 1
+        },
+        {
+         "box": [
+          271,
+          1538,
+          295,
+          1581
+         ],
+         "ink_px": 271,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        343,
+        1538,
+        499,
+        1600
+       ],
+       "glyphs": [
+        {
+         "box": [
+          343,
+          1552,
+          374,
+          1600
+         ],
+         "ink_px": 296,
+         "components": 2
+        },
+        {
+         "box": [
+          381,
+          1538,
+          407,
+          1580
+         ],
+         "ink_px": 288,
+         "components": 1
+        },
+        {
+         "box": [
+          417,
+          1553,
+          431,
+          1581
+         ],
+         "ink_px": 97,
+         "components": 2
+        },
+        {
+         "box": [
+          435,
+          1547,
+          464,
+          1582
+         ],
+         "ink_px": 338,
+         "components": 1
+        },
+        {
+         "box": [
+          470,
+          1541,
+          499,
+          1585
+         ],
+         "ink_px": 344,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        542,
+        1557,
+        627,
+        1601
+       ],
+       "glyphs": [
+        {
+         "box": [
+          542,
+          1559,
+          572,
+          1601
+         ],
+         "ink_px": 481,
+         "components": 1
+        },
+        {
+         "box": [
+          577,
+          1557,
+          595,
+          1580
+         ],
+         "ink_px": 243,
+         "components": 1
+        },
+        {
+         "box": [
+          602,
+          1557,
+          627,
+          1585
+         ],
+         "ink_px": 291,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        665,
+        1560,
+        807,
+        1589
+       ],
+       "glyphs": [
+        {
+         "box": [
+          665,
+          1565,
+          675,
+          1589
+         ],
+         "ink_px": 122,
+         "components": 1
+        },
+        {
+         "box": [
+          675,
+          1570,
+          693,
+          1589
+         ],
+         "ink_px": 130,
+         "components": 1
+        },
+        {
+         "box": [
+          694,
+          1560,
+          807,
+          1588
+         ],
+         "ink_px": 975,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        838,
+        1545,
+        1056,
+        1596
+       ],
+       "glyphs": [
+        {
+         "box": [
+          838,
+          1560,
+          882,
+          1592
+         ],
+         "ink_px": 571,
+         "components": 1
+        },
+        {
+         "box": [
+          901,
+          1554,
+          974,
+          1593
+         ],
+         "ink_px": 894,
+         "components": 1
+        },
+        {
+         "box": [
+          975,
+          1549,
+          1010,
+          1593
+         ],
+         "ink_px": 421,
+         "components": 1
+        },
+        {
+         "box": [
+          1030,
+          1545,
+          1056,
+          1596
+         ],
+         "ink_px": 336,
+         "components": 2
+        }
+       ],
+       "glyphs_aligned": false
+      },
+      {
+       "box": [
+        1130,
+        1579,
+        1132,
+        1600
+       ],
+       "glyphs": [
+        {
+         "box": [
+          1130,
+          1579,
+          1132,
+          1600
+         ],
+         "ink_px": 23,
+         "components": 1
+        }
+       ],
+       "glyphs_aligned": false
+      }
+     ],
+     "marks": []
+    }
+   ]
+  }
+ ]
+}
