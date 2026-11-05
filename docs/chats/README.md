@@ -40,10 +40,11 @@ Conventions
 | 2026-11-05 | [Versforms dashboard](2026-11-05-versforms-dashboard.md) | Open — PR #73 to merge; Actions runners not starting |
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
+| 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); asks wait on the author; Actions blocked by billing |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `957584e` (docs: record the repository in the plan).
-- Tag `v2026.10.27` from the seeding chat is **not** on GitHub.
+- Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
 - CI check workflow runs (last success 2026-11-01).
 - Open issue #1 and PR #2 (not from a chat) ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
 - `site/index.html` is merged-piece v4 (since 2744d7a).
