@@ -20,14 +20,18 @@ A non-empty build also
     X-Robots-Tag: noindex,
   - drops prov.repo, prov.commit and prov.path from data/j.json (the engine only prints
     them in the info panel and tolerates their absence),
-  - renumbers the piece links of published blocks to the published piece list.
+  - renumbers the piece links of published blocks to the published piece list,
+  - sets the page title to "versforms" and renames the handwriting font family to
+    "ajp-scribbles" in index.html (CSS, canvas font strings, the font-load call, visible text)
+    and, through tools/font_rename.py run with the font venv python, inside the embedded
+    WOFF2 itself (name table and CFF strings). site/index.html in the source tree is not edited.
 
 An empty release list builds the engine with no pages.
 
 tools/post_poem.py imports build() from here to publish a single poem (final version only,
 with the author's corrections applied).
 """
-import argparse, json, re, shutil, sys
+import argparse, base64, json, os, re, shutil, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -35,12 +39,24 @@ SITE = ROOT / "site"
 
 NOINDEX_META = '<meta name="robots" content="noindex">'
 HEADERS = "/*\n  X-Robots-Tag: noindex\n"
+PUBLIC_TITLE = "versforms"
+PUBLIC_FONT_FAMILY = "ajp-scribbles"
+PUBLIC_FONT_FULL = PUBLIC_FONT_FAMILY + " Regular"
+PUBLIC_FONT_PS = PUBLIC_FONT_FAMILY + "-Regular"
+# the name the source font carries; built from parts so this file is not itself a search hit
+OLD_NAME = "etceter" + "4"
+OLD_NAME_RE = re.compile(OLD_NAME, re.I)
+OLD_FONT_RE = re.compile(OLD_NAME + r"[\s_-]*diary", re.I)
+FONT_PYTHON_DEFAULT = "/Volumes/Archive4T/Runtime/tools/venvs/versforms-font/bin/python"
+FONT_TOOL = Path(__file__).resolve().parent / "font_rename.py"
+DATA_URI_RE = re.compile(r"data:([a-z0-9/+.-]+);base64,([A-Za-z0-9+/=]+)", re.I)
+FONT_MAGIC = (b"wOF2", b"wOFF", b"OTTO", b"\x00\x01\x00\x00", b"true", b"ttcf")
 PROV_KEEP = ("tdate", "verified")  # prov.repo / commit / path name the source repository and stay private
 
 SHELL = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>vers.forms</title>
+<title>versforms</title>
 <meta name="robots" content="noindex">
 <style>
 :root{--paper:#e6dfd2;color-scheme:light}
@@ -89,17 +105,101 @@ def has_noindex(html):
                for t in re.findall(r"<meta\b[^>]*>", html, re.I))
 
 
+def rebrand(html):
+    """Public-site identity for index.html: the title element is exactly "versforms", and the
+    handwriting font family (any spelling of the old name followed by "Diary", any letter case,
+    quoted or not, in CSS, custom properties, canvas font strings, document.fonts calls and visible
+    text) becomes "ajp-scribbles". Embedded font bytes are handled by rename_embedded_fonts()."""
+    if not re.search(r"<title>.*?</title>", html, re.S | re.I):
+        raise ValueError("index.html has no <title> element")
+    html = re.sub(r"<title>.*?</title>", lambda m: f"<title>{PUBLIC_TITLE}</title>", html, count=1, flags=re.S | re.I)
+    return OLD_FONT_RE.sub(lambda m: PUBLIC_FONT_FAMILY, html)
+
+
+class FontToolError(Exception):
+    """The font step cannot run (no venv python, fontTools or brotli missing) or the tool failed."""
+
+
+class FontDecodeError(FontToolError):
+    """The font tool ran but could not read these bytes as a font."""
+
+
+def font_python():
+    return os.environ.get("VERSFORMS_FONT_PYTHON") or FONT_PYTHON_DEFAULT
+
+
+def run_font_tool(mode, data, *args):
+    """Run tools/font_rename.py MODE with the venv python; font bytes in, parsed JSON out."""
+    py = font_python()
+    if not (os.path.isfile(py) and os.access(py, os.X_OK)):
+        raise FontToolError(f"font python not found: {py} (set VERSFORMS_FONT_PYTHON to a python with fontTools and brotli)")
+    try:
+        r = subprocess.run([py, str(FONT_TOOL), mode, *args], input=data, capture_output=True, timeout=120)
+    except (OSError, subprocess.SubprocessError) as e:
+        raise FontToolError(f"font tool could not run: {e}")
+    try:
+        doc = json.loads(r.stdout.decode("utf-8", "replace") or "null")
+    except ValueError:
+        doc = None
+    if r.returncode != 0 or not isinstance(doc, dict) or "error" in doc:
+        err = doc.get("error") if isinstance(doc, dict) else None
+        if not err:
+            err = r.stderr.decode("utf-8", "replace").strip().splitlines()[-1:] or ["no output"]
+            err = err[0]
+        if "No module named" in err or "ModuleNotFoundError" in err:
+            raise FontToolError(f"{py} lacks fontTools or brotli: {err[:200]}")
+        raise FontDecodeError(f"font tool failed: {err[:200]}")
+    return doc
+
+
+def is_font(mime, raw):
+    return mime.lower().startswith("font/") or "font" in mime.lower() or raw[:4] in FONT_MAGIC
+
+
+def rename_embedded_fonts(html):
+    """Rename every embedded font that carries the old name; -> (html, [one report dict per font]).
+
+    Raises FontToolError when there is such a font and the venv python cannot be used. Fonts that
+    cannot be parsed are reported with error and left alone (the output check then decides)."""
+    reports = []
+
+    def one(m):
+        mime, b64 = m.group(1), m.group(2)
+        try:
+            raw = base64.b64decode(b64, validate=True)
+        except ValueError:
+            return m.group(0)
+        if not is_font(mime, raw):
+            return m.group(0)
+        try:
+            info = run_font_tool("check", raw)
+        except FontDecodeError as e:
+            reports.append(dict(mime=mime, bytes=len(raw), error=str(e)))
+            return m.group(0)
+        if info.get("ok"):
+            reports.append(dict(mime=mime, bytes=len(raw), renamed=False))
+            return m.group(0)
+        doc = run_font_tool("rename", raw, "--family", PUBLIC_FONT_FAMILY, "--full", PUBLIC_FONT_FULL, "--postscript", PUBLIC_FONT_PS)
+        new = base64.b64decode(doc["font_b64"])
+        reports.append(dict(mime=mime, bytes=len(raw), renamed=True, bytes_out=len(new), changed=doc["changed"], hits_after=doc["hits_after"], glyphs=doc["glyphs"]))
+        return f"data:{mime};base64,{doc['font_b64']}"
+
+    return DATA_URI_RE.sub(one, html), reports
+
+
 def load_release(path):
     p = Path(path)
     return json.loads(p.read_text()) if p.exists() else {"pieces": []}
 
 
-def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True):
+def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True):
     """Write the public site for the pieces in `want` into `out`; returns a summary dict.
 
     select       {piece id: [indices into the piece's V]} versions to publish; default all
     corrections  {(page id, block, line): text} replaces machine readings in published blocks
     strip_prov   drop prov.repo / commit / path from data/j.json
+    rename_fonts rename the embedded font file (needs the font venv); when it cannot run, the
+                 summary says so under "font_error" and the font bytes stay as they are
     """
     out, site = Path(out), Path(site)
     want = list(dict.fromkeys(want))
@@ -216,8 +316,15 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True):
     }
     (out / "data" / "j.json").write_text(json.dumps(pub, ensure_ascii=False, separators=(",", ":")))
 
+    fonts, font_error = [], None
     if want:
-        (out / "index.html").write_text(add_noindex((site / "index.html").read_text(encoding="utf-8")), encoding="utf-8")
+        html = rebrand((site / "index.html").read_text(encoding="utf-8"))
+        if rename_fonts:
+            try:
+                html, fonts = rename_embedded_fonts(html)
+            except FontToolError as e:
+                font_error = str(e)
+        (out / "index.html").write_text(add_noindex(html), encoding="utf-8")
         (out / "_headers").write_text(HEADERS)
     else:
         # the engine needs at least one page; until poem 1 posts, serve blank paper only
@@ -225,7 +332,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True):
         (out / "index.html").write_text(SHELL)
 
     return {"want": want, "pages": [p["id"] for p in pages], "shared": shared, "siblings": siblings,
-            "applied": applied, "published": sorted(owner), "chosen": chosen}
+            "applied": applied, "published": sorted(owner), "chosen": chosen, "fonts": fonts, "font_error": font_error}
 
 
 def main():
@@ -237,6 +344,8 @@ def main():
     want = list(dict.fromkeys(load_release(a.release).get("pieces", [])))
     res = build(a.out, want)
     print(f"released pieces: {len(want)}; pages: {len(res['pages'])}")
+    if res["font_error"]:
+        print(f"  WARNING: the embedded font was not renamed: {res['font_error']}")
     for pg in sorted(res["shared"]):
         print(f"  note: {pg} also carries unreleased {sorted(res['shared'][pg])} — visible in the scan, text withheld")
 
