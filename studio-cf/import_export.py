@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -157,6 +158,10 @@ def run_local(args, sql_path, persist):
     env.setdefault("CI", "1")
     proc = subprocess.Popen(cmd, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     out, deadline, ok = [], time.time() + args.timeout, False
+    # Watchdog: also ends wrangler if it hangs without printing anything.
+    watchdog = threading.Timer(args.timeout, lambda: proc.poll() is None and proc.kill())
+    watchdog.daemon = True
+    watchdog.start()
     try:
         for line in proc.stdout:
             out.append(line)
@@ -170,6 +175,7 @@ def run_local(args, sql_path, persist):
             code = proc.wait(timeout=5) if proc.poll() is not None else None
             ok = code == 0
     finally:
+        watchdog.cancel()
         if proc.poll() is None:
             proc.terminate()
             try:

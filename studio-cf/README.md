@@ -162,9 +162,9 @@ The Cloudflare account work below is the author's; nothing was run.
    `versforms-studio.pages.dev` **and** `*.versforms-studio.pages.dev`
    (production and previews).
 5. Add one policy: action **Allow**, include **Emails** equal to the owner
-   address only. No Bypass policy, no Everyone rule, no other includes. (Add a
-   second address to `READONLY_EMAILS` and to the policy only if someone should
-   be able to look.)
+   address only. No Bypass policy, no Everyone rule, no other includes.
+   (Optional, outside these steps: someone who should only look needs both an
+   Allow include in this policy and an entry in `READONLY_EMAILS`.)
 6. Save. On the application's overview copy the **Application Audience (AUD)
    Tag**. Your team domain is `<team>.cloudflareaccess.com`
    (the team name is under Zero Trust > Settings; not re-checked in the dashboard).

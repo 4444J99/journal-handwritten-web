@@ -58,12 +58,17 @@ const SQL_BUMP = 'INSERT INTO revs (collection, rev) VALUES (?1, 1) ON CONFLICT(
 const SQL_REV = 'SELECT rev FROM revs WHERE collection = ?1';
 
 async function listCollection(env, coll, since) {
+  if (since !== null) {
+    // Cheap path for polling: one single-row read, no document rows unless something changed.
+    const cur = await env.DB.prepare(SQL_REV).bind(coll).first();
+    const curRev = cur ? cur.rev : 0;
+    if (curRev === since) return json({ rev: curRev, changed: false });
+  }
   const [revRes, docsRes] = await env.DB.batch([
     env.DB.prepare(SQL_REV).bind(coll),
     env.DB.prepare('SELECT id, data FROM docs WHERE collection = ?1 ORDER BY id').bind(coll),
   ]);
   const rev = revRes.results.length ? revRes.results[0].rev : 0;
-  if (since !== null && since === rev) return json({ rev, changed: false });
   const docs = docsRes.results.map(r => ({ id: r.id, data: JSON.parse(r.data) }));
   return json({ rev, docs });
 }
