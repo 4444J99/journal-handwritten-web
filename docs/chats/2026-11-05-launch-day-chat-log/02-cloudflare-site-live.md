@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 02 of 9 · 2026-11-05 11:22 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #75 |
 
 ## Asked
 Has a Cloudflare account for hosting; the site should be live.

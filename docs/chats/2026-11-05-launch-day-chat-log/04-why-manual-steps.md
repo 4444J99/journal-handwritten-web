@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 04 of 9 · 2026-11-05 11:37 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #77 |
 
 ## Asked
 Asked why he was doing steps Claude should do, and why the plugin/connection was used.

@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 07 of 9 · 2026-11-05 11:44 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #80 |
 
 ## Asked
 Asked for a prompt for each chat that turns every prompt/response into a document, a plan and a GitHub issue.

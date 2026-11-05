@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 05 of 9 · 2026-11-05 11:42 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #78 |
 
 ## Asked
 Asked for a prompt to give Claude in Chrome.

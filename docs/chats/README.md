@@ -7,7 +7,7 @@ text about the poems belongs in this folder.
 Conventions
 - One file per chat: `YYYY-MM-DD-<slug>.md`, date = the chat's last activity (America/New_York).
 - "Author decisions" holds only what Anthony stated. Claude's suggestions go under "Plan" and are labelled.
-- Each record now has an Exchanges table: one document per exchange in `docs/chats/<record>/` and one GitHub issue each (#3–#72), made from the full transcripts on 2026-11-05.
+- Each record now has an Exchanges table: one document per exchange in `docs/chats/<record>/` and one GitHub issue each (#3–#72; this chat and the Versforms dashboard chat are numbered after PR #73), made from the full transcripts on 2026-11-05.
   Correct a record by editing it in a new commit; history keeps the earlier wording.
 - New chats: add a record before the session ends (see `CLAUDE.md` at the repo root).
 - Per-exchange breakdown: each chat runs its prompt from `PROMPTS.md`, which follows `PROCESS.md` and writes `docs/chats/<record>/NN-*.md` plus one GitHub issue per exchange.
@@ -37,15 +37,17 @@ Conventions
 | 2026-11-03 | [Cipher puzzles and handwriting](2026-11-03-cipher-puzzles-and-handwriting.md) | Research only; decisions open. |
 | 2026-11-03 | [Cut-up technique research report](2026-11-03-cut-up-technique-research.md) | Research only. |
 | 2026-11-04 | [Profile picture edit](2026-11-04-profile-picture-edit.md) | Open — handle/domain checks outstanding. |
+| 2026-11-05 | [Versforms dashboard](2026-11-05-versforms-dashboard.md) | Open — PR #73 to merge; Actions runners not starting |
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
-| 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | In progress — Cloudflare link pending |
+| 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Done — site live; 24 chats logged |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `957584e` (docs: record the repository in the plan).
 - Tag `v2026.10.27` from the seeding chat is **not** on GitHub.
 - CI check workflow runs (last success 2026-11-01).
 - Open issue #1 and PR #2 (not from a chat) ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
-- `site/index.html` predates merged-piece v4 (artifact `1Pcbgrvp7BqfmcYhzZLEss`).
+- `site/index.html` is merged-piece v4 (since 2744d7a).
+- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages).
 
 ## Launch list (consolidated from the open plans above)
 Owner in brackets. Order follows the 2026-11-05 advisory.

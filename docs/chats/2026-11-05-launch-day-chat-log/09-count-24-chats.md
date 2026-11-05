@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 09 of 9 · 2026-11-05 12:13 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #82 |
 
 ## Asked
 Pointed out there are 24 chats.

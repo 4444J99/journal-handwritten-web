@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 03 of 9 · 2026-11-05 11:23 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #76 |
 
 ## Asked
 The repo should be split into public and private parts in separate repos.

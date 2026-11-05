@@ -4,7 +4,7 @@
 |---|---|
 | Chat | https://claude.ai/code/session_015ajDsmCvzDKanHQh7r5as2 (this session) |
 | Exchange | 01 of 9 · 2026-11-05 11:20 |
-| Issue | ISSUE_PLACEHOLDER |
+| Issue | #74 |
 
 ## Asked
 Launch day: make sure every chat in the Project has a plan and is logged in the repo to work in.

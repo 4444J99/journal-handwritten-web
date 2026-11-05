@@ -10,7 +10,8 @@
     "done": true
    }
   ],
-  "close": true
+  "close": true,
+  "number": 74
  },
  {
   "nn": "02",
@@ -23,7 +24,8 @@
     "done": true
    }
   ],
-  "close": true
+  "close": true,
+  "number": 75
  },
  {
   "nn": "03",
@@ -46,14 +48,16 @@
     "done": false
    }
   ],
-  "close": false
+  "close": false,
+  "number": 76
  },
  {
   "nn": "04",
   "file": "04-why-manual-steps.md",
   "title": "[2026-11-05-launch-day-chat-log] 04 · Why the author had to sign in",
   "plan": [],
-  "close": true
+  "close": true,
+  "number": 77
  },
  {
   "nn": "05",
@@ -66,21 +70,24 @@
     "done": true
    }
   ],
-  "close": true
+  "close": true,
+  "number": 78
  },
  {
   "nn": "06",
   "file": "06-confirm-logging.md",
   "title": "[2026-11-05-launch-day-chat-log] 06 · Confirm every chat is logged",
   "plan": [],
-  "close": true
+  "close": true,
+  "number": 79
  },
  {
   "nn": "07",
   "file": "07-per-chat-prompts.md",
   "title": "[2026-11-05-launch-day-chat-log] 07 · Prompt per chat: documents, plan, issues",
   "plan": [],
-  "close": true
+  "close": true,
+  "number": 80
  },
  {
   "nn": "08",
@@ -93,7 +100,8 @@
     "done": true
    }
   ],
-  "close": true
+  "close": true,
+  "number": 81
  },
  {
   "nn": "09",
@@ -106,6 +114,7 @@
     "done": true
    }
   ],
-  "close": true
+  "close": true,
+  "number": 82
  }
 ]

@@ -18,3 +18,12 @@
 ## Plan / next steps
 - Merge PR #73 when ready.
 - Fix GitHub Actions not starting runners on the private repo (billing/minutes setting).
+
+## Exchanges
+
+| # | Exchange | Issue | |
+|---|---|---|---|
+| [01](2026-11-05-versforms-dashboard/01-internal-dashboard-location.md) | Location of the internal review dashboard | #83 | open |
+| [02](2026-11-05-versforms-dashboard/02-repo-split-and-hosting.md) | Public/private repo split and private hosting | #84 | open |
+| [03](2026-11-05-versforms-dashboard/03-claude-code-launch-prompt.md) | Claude Code prompt for outstanding launch work | #85 | open |
+| [04](2026-11-05-versforms-dashboard/04-studio-export-pr-73.md) | Studio database export to GitHub (PR #73) | #86 | open |
