@@ -103,3 +103,33 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 ## Rebuild order (technical)
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
+
+
+## T09 addendum · 2026-11-05 · private audio pilot
+
+This dated addendum preserves the earlier plan as history. The current scoped request is issues
+#23, #24 and #35: prepare the acquisition/processing tools before requesting a recording. Sources,
+author decisions, proposals and fixture verification are separated in `docs/audio/README.md`.
+
+- **Author decisions retained:** use his own recordings for both forward/backward speech and
+  voice-derived ambience; reusable methods; creative performance and text remain his.
+- **Engineering preparation:** bounded manifest-driven renderer, explicit alignment/cutter,
+  calibration fixtures, prompt packet and private local listening/prompter workbench. Test scope
+  and limitations are recorded in `docs/verification/t09-audio/README.md`. Fixture results do not
+  establish a finished or intelligible author voice bank.
+- **Proposal replacing two recording requests:** one 50-prompt session designed for approximately
+  30 minutes (2 calibration, 24 speech-transition, 24 texture prompts). Existing equipment only;
+  record after choosing the finite acquisition inputs. This is not full-bank acquisition.
+- **Author inputs still open:** the 14-choice sheet in `docs/audio/author-decisions.md`, actual
+  recordings, reviewed pronunciations/labels and a listening decision naming exact render hashes.
+- **Sequence:** prepared tools → combined author pilot → labeled comparable samples → author
+  listening selection → revised full-bank scope and one reader/studio playback integration.
+  Performed supplements and release follow their own author choices.
+- **Integration owners retained:** T02 source/version identity; T04 reader lifecycle/hidden controls;
+  T03 exact-output publication eligibility; shared studio UI through its single integrator. No
+  production audio or new studio collection is enabled by this draft.
+- **Privacy and identity:** raw masters are held private and outside served paths. Raw-bank sharing,
+  voice reuse and release of rendered audio remain separate decisions. The journal is a distinct
+  body of work in `versforms`, separate from ETCETER4. No merge, deployment, release or issue closure is part of T09.
+- **Context limit:** shared packet `2026-10-16-v1.1` / projection `2026-10-16-v1.1-r2` remained
+  inaccessible; no claims or approvals are attributed to unseen contents.

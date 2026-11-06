@@ -1,0 +1,196 @@
+{
+  "schema": "versforms.t09-test-receipt.v1",
+  "observed_at": "2026-11-06T01:49:01.048292+00:00",
+  "status": "PASS",
+  "fixture_only": true,
+  "python_tests": 24,
+  "playback_tests": 13,
+  "steps": [
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_audio*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 6.412,
+      "log": "python-tests.log"
+    },
+    {
+      "name": "playback-tests",
+      "command": [
+        "node",
+        "--test",
+        "tests/test_audio_playback.mjs"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.228,
+      "log": "playback-tests.log"
+    },
+    {
+      "name": "fixture-generation",
+      "command": [
+        "python3",
+        "audio_build/render.py",
+        "fixture",
+        "--out",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/fixture-session"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.258,
+      "log": "fixture-generation.log"
+    },
+    {
+      "name": "fixture-validation",
+      "command": [
+        "python3",
+        "audio_build/render.py",
+        "validate",
+        "--manifest",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/fixture-session/session.json",
+        "--report",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/validation.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.113,
+      "log": "fixture-validation.log"
+    },
+    {
+      "name": "fixture-render",
+      "command": [
+        "python3",
+        "audio_build/render.py",
+        "run",
+        "--manifest",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/fixture-session/session.json",
+        "--out",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/listening"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.614,
+      "log": "fixture-render.log"
+    },
+    {
+      "name": "fixture-repeat",
+      "command": [
+        "python3",
+        "audio_build/render.py",
+        "run",
+        "--manifest",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/fixture-session/session.json",
+        "--out",
+        "/workspace/scratch/1cde1bcfb3bc/t09-final-repeat"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.735,
+      "log": "fixture-repeat.log"
+    },
+    {
+      "name": "missing-pronunciation",
+      "command": [
+        "python3",
+        "audio_build/render.py",
+        "run",
+        "--manifest",
+        "/workspace/scratch/1cde1bcfb3bc/t09-fixture-output/fixture-session/negative-unlisted.json",
+        "--out",
+        "/workspace/scratch/1cde1bcfb3bc/t09-final-missing-pronunciation"
+      ],
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "elapsed_seconds": 0.124,
+      "log": "missing-pronunciation.log"
+    },
+    {
+      "name": "repository-integrity",
+      "command": [
+        "python3",
+        "tools/check.py"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.516,
+      "log": "repository-integrity.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.004,
+      "log": "diff-check.log"
+    }
+  ],
+  "protected_files": {
+    "CLAUDE.md": {
+      "expected": "0ae180e20177ae649dbac16f6af183c5986cda429ab917e15410c6eff8597918",
+      "actual": "0ae180e20177ae649dbac16f6af183c5986cda429ab917e15410c6eff8597918",
+      "unchanged": true
+    },
+    "site/index.html": {
+      "expected": "7c3e286252e2760085cb420b292b199f3235a80a64f1a2fb96fedd4b51bcc3cc",
+      "actual": "7c3e286252e2760085cb420b292b199f3235a80a64f1a2fb96fedd4b51bcc3cc",
+      "unchanged": true
+    },
+    "studio/index.html": {
+      "expected": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+      "actual": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+      "unchanged": true
+    },
+    "site/data/j.json": {
+      "expected": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+      "actual": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+      "unchanged": true
+    },
+    "studio/data/review.json": {
+      "expected": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353",
+      "actual": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353",
+      "unchanged": true
+    },
+    "release/public.json": {
+      "expected": "f6a0b6c89243082c4c7602e908b66ff4b7823553b04e22dbbc62b0a0b65e4a1a",
+      "actual": "f6a0b6c89243082c4c7602e908b66ff4b7823553b04e22dbbc62b0a0b65e4a1a",
+      "unchanged": true
+    },
+    "MANIFEST.sha256": {
+      "expected": "7d445c665ed80ee7b64b036ddbfa443be4c4569c50411584f41ee3c91c37e3cf",
+      "actual": "7d445c665ed80ee7b64b036ddbfa443be4c4569c50411584f41ee3c91c37e3cf",
+      "unchanged": true
+    }
+  },
+  "code_hashes": {
+    "audio_build/INTERFACE.md": "a7e4c3ed937c09684daa04bc11c59dda1a1852fd80b37ed2c3f2f408fc8c1201",
+    "audio_build/__init__.py": "206d703197c191471bf89c20eaf3ba8e3620f99767c3055cc2116d31d55c3a33",
+    "audio_build/dsp.py": "cef68ceda8b1be85418717c8ed0bee990aa83fc14f9b64fcfb3afe4ea6b13bf4",
+    "audio_build/render.py": "83b037f6ea3f94c6b514eea86c9b18587b7662d72a344b32f50be7fd3506c353",
+    "audio_build/requirements.txt": "2a9e8b478147ec61910b777b6442d33aaa22c8b6f1d8102f5b6ef3ca70a107cb",
+    "audio_pilot/README.md": "faa88f78096891ede7853d14bac19d6cef3c619415de569cba9216d819e3f69a",
+    "audio_pilot/app.js": "5e015a476544566af1574cb9d26b16c3f027ac6d8f2fcd918a6a7086bc03682a",
+    "audio_pilot/index.html": "413d37bad59732a7c44ddb2d2bdfd8d353e1d68cb92ad4634aa91da9d4bd0f1d",
+    "audio_pilot/playback.js": "69af82c40e742846101a76333e5a4c0a8cadd3ae28ab5ae45c1ba00e6ca5a07f",
+    "audio_pilot/serve.py": "4dbe0de6e1683755f34be4027b48e5219189a38c46762d7efd118206da675852",
+    "audio_pilot/style.css": "16451d1b66f85367f9e68a1a20d34443ea8b451827257b04990128e26a3338c9",
+    "tests/test_audio_harness.py": "4f07f433eb9a29ec2d29db250aaa94be09564f3389fbca96b4919fb9a3284c9b",
+    "tests/test_audio_pilot.py": "29fb0f1341c2a97da951b11955fd9ddae4f686309b86b229224961c57e74767a",
+    "tests/test_audio_playback.mjs": "78d394a5aeffa2fb0bd8782ed9d2328d44644dd926f6b5f4e0f093f90cd29294",
+    "tools/verify_audio_pilot.mjs": "4634c7c23ceb66c08a777025189bb0b48956e3edef12418d190a8698cd5faaaa"
+  },
+  "author_audio_milestone": "open_pending_recordings_and_author_listening"
+}
