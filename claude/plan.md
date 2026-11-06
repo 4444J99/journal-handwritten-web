@@ -1,5 +1,13 @@
 # Handwritten journal: plan and state
 
+## T06 identity and audience update — 2026-11-05 (America/New_York)
+
+This dated addendum narrows the historical identity/audience items below; it does not approve a release or replace T03's clearance procedure. The current author-directed identity is `vers.forms`, public title `versforms`, public font `ajp-scribbles`; earlier naming candidates remain history. Account/email control and a custom domain are not established by an old availability result. The existing `versforms.pages.dev` endpoint is the no-spend destination option.
+
+T06 prepared a private identity/status record, avatar provenance/T07 handoff, weekly posting/reply/review SOP, finite decision register, inactive optional-tool brief, later press criteria and a disposition for #4/#43/#49–#51/#57–#61/#70. See [the T06 packet](../docs/audience/README.md). The existing #61 research is retained; the first-12-poems no-analytics rule was proposed, not accepted, and #59's older scheduled-agent proposal is superseded. No optional automation is active.
+
+The author still chooses account separation, slot/reply window, observation thresholds, all public copy, exposure response, exact scan use and optional tools. Avatar arm treatment awaits author/T07 review; inaccessible original/v2 sources are identified rather than regenerated. One future release consumes T03's exact version/output clearance and T07's approved media manifest. No account change, spending, outreach, issue closure, merge, deploy or public posting is authorized by this addendum.
+
 Working document for the journal-handwritten-web project. Last updated 2026-10-28.
 
 ## Source

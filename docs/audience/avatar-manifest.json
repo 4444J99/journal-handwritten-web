@@ -1,0 +1,288 @@
+{
+  "schema": "versforms.t06-avatar-handoff.v1",
+  "status": "partial-recovery-private-handoff",
+  "observed_date_utc": "2026-11-06",
+  "review_baseline": {
+    "date": "2026-11-05",
+    "timezone": "America/New_York"
+  },
+  "repository": {
+    "name": "4444J99/journal-handwritten-web",
+    "source_baseline": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+    "source_baseline_tree": "6d544b582b868a395a45e04cf934d1e7fd5524ca",
+    "integration_base": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+    "integration_tree": "7f90d151f089596c9bd4da4f13652927fe154f7d"
+  },
+  "source_context": {
+    "shared_packet": "2026-10-16-v1.1",
+    "projection": "2026-10-16-v1.1-r2",
+    "private_project": "g-p-6a10bcb4ada4819194e881431212101a",
+    "access": "Inaccessible; no content attributed to these records.",
+    "private_chat_id": "12a3b986-e69b-40f3-9117-b2f29f099eb7",
+    "private_chat_access": "Not accessed directly; cited repository exchange records were read."
+  },
+  "sources": {
+    "avatar_index": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit.md",
+    "avatar_v1": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+    "avatar_v2": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+    "archive": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/claude/README.md",
+    "mockups": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-widget-photo-page-format/02-post-and-kit-mockups.md",
+    "issue70": "https://github.com/4444J99/journal-handwritten-web/issues/70",
+    "pr103": "https://github.com/4444J99/journal-handwritten-web/pull/103",
+    "pr119": "https://github.com/4444J99/journal-handwritten-web/pull/119",
+    "t03_contract": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/release-clearance-contract.md"
+  },
+  "assets": [
+    {
+      "asset_id": "supplied-v3",
+      "original_filename": "vers_forms_profile_v3.jpg",
+      "local_path": "/workspace/scratch/9e563f352454/project_sources/06-vers_forms_profile_v3.jpg",
+      "source_file_id": "file_00000000216881f7bad78539a2f07252",
+      "media_type": "image/jpeg",
+      "mode": "RGB",
+      "width_px": 1080,
+      "height_px": 1080,
+      "size_bytes": 269257,
+      "sha256": "370d979bedd5779e105d7f5a85443adf22aa4fc8496fe122d3f83f8d6018185e",
+      "visually_inspected": true,
+      "observations": [
+        "Cream paper ground; black marker human figure pierced by a horizontal right-pointing arrow.",
+        "Arms raised in different directions; no words visible."
+      ],
+      "lineage_status": "Filename says v3; no proved relationship to the documented v2, approval, or production selection.",
+      "author_approval": null,
+      "modified_by_t06": false,
+      "local_path_status": "session-local recovery hint; not a repository file or durable URL",
+      "root_verification": "SHA-256, bytes, mode and dimensions independently rechecked; preview visually inspected"
+    },
+    {
+      "asset_id": "supplied-preview3",
+      "original_filename": "preview3.png",
+      "local_path": "/workspace/scratch/9e563f352454/project_sources/05-preview3.png",
+      "source_file_id": "file_00000000aa2881f7a2ab844c63ce1bb3",
+      "media_type": "image/png",
+      "mode": "RGB",
+      "width_px": 540,
+      "height_px": 540,
+      "size_bytes": 214060,
+      "sha256": "88663f21fd47fa13c189c88844541deb52335eba8760295066b26d8913550b02",
+      "visually_inspected": true,
+      "observations": [
+        "Cream circular field with white corners; opaque RGB, no alpha channel.",
+        "Composition visually resembles supplied v3; extremities fit inside the circular field, with a lower tip near its edge."
+      ],
+      "lineage_status": "Visual similarity is not verified derivation or evidence that this is a v2 preview.",
+      "author_approval": null,
+      "modified_by_t06": false,
+      "local_path_status": "session-local recovery hint; not a repository file or durable URL",
+      "root_verification": "SHA-256, bytes, mode and dimensions independently rechecked; preview visually inspected"
+    }
+  ],
+  "missing_or_unauthenticated": [
+    {
+      "filename": "vers_forms_profile_v2.jpg",
+      "expected_dimensions_px": [
+        1080,
+        1080
+      ],
+      "last_documented_location": "Profile-picture chat 12a3b986-e69b-40f3-9117-b2f29f099eb7, exchange 02, 2026-11-04; chat-only output.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Exact original chat output or archived copy with its provenance and checksum."
+    },
+    {
+      "filename": "vers_forms_profile.jpg",
+      "expected_dimensions_px": [
+        1080,
+        1080
+      ],
+      "last_documented_location": "Same profile-picture chat, exchange 01, 2026-11-04; chat-only output.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Exact prior output for historical comparison if needed."
+    },
+    {
+      "filename": "FullSizeRender.jpeg",
+      "last_documented_location": "Original attachment to profile-picture chat, exchange 01.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Original attachment bytes; preserve original filename and embedded metadata."
+    },
+    {
+      "filename": "IMG_4824.jpeg",
+      "last_documented_location": "Original attachment to profile-picture chat, exchange 01; source for measured ink bounds/paper tone and later real-paper sampling.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Original attachment bytes; preserve original filename and embedded metadata."
+    },
+    {
+      "filename": "pfp2.py",
+      "last_documented_location": "Profile-picture chat, exchange 02.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Exact script plus dependency/environment notes if retained; record missing if not recoverable."
+    },
+    {
+      "filename": null,
+      "role": "Documented v2 circle preview at 540 pixels",
+      "expected_dimensions_px": [
+        540,
+        540
+      ],
+      "last_documented_location": "Profile-picture chat, exchange 02; filename not recorded in accessible transcript.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Not authenticated as recovered; supplied preview3.png cannot be assigned to v2.",
+      "required_input": "Exact preview bytes and their source link or archive record."
+    },
+    {
+      "filename": null,
+      "role": "Documented v2 circle preview at 110 pixels",
+      "expected_dimensions_px": [
+        110,
+        110
+      ],
+      "last_documented_location": "Profile-picture chat, exchange 02; filename not recorded in accessible transcript.",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Inaccessible in inspected sources; not recovered.",
+      "required_input": "Exact preview bytes and their source link or archive record."
+    },
+    {
+      "filename": "INDEX.md",
+      "last_documented_location": "/Volumes/Archive4T/Archives/versforms/claude-project-artifacts-2026-11-05/INDEX.md",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/claude/README.md",
+      "status": "Archive volume inaccessible here; contents not inspected.",
+      "required_input": "Read-only copy or author-provided relevant indexed records."
+    },
+    {
+      "filename": "SHA256SUMS",
+      "last_documented_location": "/Volumes/Archive4T/Archives/versforms/claude-project-artifacts-2026-11-05/SHA256SUMS",
+      "evidence_url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/claude/README.md",
+      "status": "Archive volume inaccessible here; contents not inspected.",
+      "required_input": "Read-only copy or author-provided relevant checksum records."
+    }
+  ],
+  "author_decisions": [
+    {
+      "decision": "Remove words from the profile image.",
+      "source": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Recorded historical author instruction; not blanket authority for new asset work."
+    },
+    {
+      "decision": "Extend arms like the legs, angled in a different direction.",
+      "source": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "status": "Recorded author request; exact interpretation remains unresolved."
+    }
+  ],
+  "implementation_history": [
+    {
+      "label": "v1",
+      "source": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "recorded_method": "Circle-safe centering with synthetic matching grain extended paper; PIL/numpy/scipy.",
+      "verified_here": "Repository record only; output and script not recovered or rerun."
+    },
+    {
+      "label": "v2",
+      "source": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "recorded_method": "Words faded; arms continued upward at their own fitted angles with tiled copies of the author stroke pixels and tapered ends; real paper sampled from blank scan and mirror-tiled instead of synthetic grain.",
+      "verified_here": "Repository record only; output and script not recovered or rerun."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D13",
+      "owner": "Author",
+      "subject": "Arm treatment and exact avatar asset",
+      "status": "Unresolved",
+      "options": [
+        "Recover and review documented v2, then explicitly approve the existing arm continuation.",
+        "Request a T07 alternate that mirrors the legs spread upward; requires recovered originals and explicit production instructions.",
+        "Defer changes and retain the current avatar; identify its exact bytes or current account state before treating an asset as current."
+      ],
+      "additional_constraint": "Selecting the supplied v3 requires explicit author selection of its checksum; the v3 filename is not approval."
+    },
+    {
+      "id": "D14",
+      "owner": "Author",
+      "subject": "Slang reading and optional explanatory bio wording",
+      "status": "Unresolved author judgment; optional author-written copy only.",
+      "source": "https://github.com/4444J99/journal-handwritten-web/issues/70"
+    }
+  ],
+  "t07_handoff": {
+    "status": "Production dependency; no exports created by T06.",
+    "inputs": [
+      "Recovered original scans and v2, if available.",
+      "Archive INDEX.md/SHA256SUMS relevant records, if available.",
+      "Exact approved source checksum and D13 decision.",
+      "Output destinations/specifications and private QA requirements owned by T07."
+    ],
+    "proposed_qa_dimensions_px": {
+      "square_master": [
+        1080,
+        1080
+      ],
+      "circle_preview": [
+        540,
+        540
+      ],
+      "small_avatar_preview": [
+        110,
+        110
+      ]
+    },
+    "qa_dimensions_status": "Proposed reuse of documented sizes, not new platform capability claims or production approval.",
+    "requirements": [
+      "Preserve originals byte-for-byte and record derivation/source hashes.",
+      "Record any new transformation separately and obtain author acceptance.",
+      "Inspect circle crops and small-size legibility, including the faint head, arm ends, arrow and legs.",
+      "Do not assume supplied preview transparency; it is opaque RGB.",
+      "Do not use screen-grabbed poem-page mockups as cleared scans.",
+      "Keep versforms separate from ETCETER4."
+    ]
+  },
+  "t03_dependency": {
+    "pull_request": "https://github.com/4444J99/journal-handwritten-web/pull/119",
+    "head_commit": "8d16284ba8b80f18398d08b8de931d8812f30429",
+    "contract_url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/release-clearance-contract.md",
+    "schema": "versforms.release-clearance.v1",
+    "status": "Proposed interface in draft PR; no cleared release.",
+    "rule": "Consume exact output manifest and source-linked author clearance covering it; do not recreate release logic in T06/T07. Separate current execution authorization is required to publish.",
+    "may_publish": false,
+    "may_schedule_external_actions": false
+  },
+  "issue_dispositions": [
+    {
+      "issue": 70,
+      "observed_status": "open",
+      "observed_comments": 0,
+      "disposition": "Evidence consolidated and supplied files inventoried; author D13/D14 and missing originals remain unresolved; no closure."
+    },
+    {
+      "issue": 69,
+      "observed_status": "historically closed in accessible record",
+      "disposition": "Preserve initial crop as history; not current arm approval."
+    },
+    {
+      "issue": 67,
+      "observed_status": "Contextual issue, outside scoped live-status matrix",
+      "disposition": "T07 historical post/kit mockup dependency; no production readiness inferred."
+    }
+  ],
+  "search_limits": [
+    "Read scoped repository avatar records, archive README, issue 70, relevant PRs and historical kit mockup record.",
+    "Bounded filename search of supplied project_sources and accessible scratch/checkouts found v3 and preview3 only among avatar binaries.",
+    "Member-name search of two supplied ZIP files found no profile/preview/pfp/FullSizeRender/IMG_4824/avatar/media-kit filename match; contents were not exhaustively inspected as images.",
+    "Exact Library title queries for vers_forms_profile_v2.jpg, FullSizeRender.jpeg, IMG_4824.jpeg, pfp2.py and vers_forms_profile.jpg returned no exact matches. Provider warned supplemental title candidates were first-page only; no global-absence claim.",
+    "Private chat, author archive volume and shared private context packet were not accessible or directly inspected."
+  ],
+  "execution": {
+    "asset_bytes_modified": false,
+    "images_generated": false,
+    "production_exports_created": false,
+    "external_messages_sent": false,
+    "accounts_changed": false,
+    "published": false,
+    "spent_money": false,
+    "issues_closed": false
+  }
+}
