@@ -48,7 +48,103 @@ def current_existing_fixture():
     return original, value
 
 
+def mixed_fixture_history():
+    """Synthetic flag-composition case; supplied text/font and history stay intact."""
+    original, value = current_existing_fixture()
+    prior = stored(value)
+    prior.update(recordId="technical-mixed-package", revisionId="technical-mixed-package-r1")
+    prior["revisionDigest"] = sr.digest({k: v for k, v in prior.items() if k != "revisionDigest"})
+    document = value["realizations"][0]
+    old = document["revisions"][-1]
+    revision = copy.deepcopy(old)
+    revision.update(id="technical-mixed-model-revision", parent=old["digest"],
+                    at="2026-11-06T18:31:00Z", actor="synthetic fixture-composition test",
+                    change="realization-edit", fixture=False,
+                    method={"kind": "human-supplied", "normalization": "preserve",
+                            "evidence": "Synthetic contract case, not an author submission; supplied text and font are unchanged."})
+    revision["authors"].append({"id": "synthetic-mixed-realizer", "role": "realizer",
+                                "evidence": "Synthetic test role only; no author decision or new creative content."})
+    document["revisions"].append(sr.seal(revision))
+    sr.validate(value)
+    current = stored(value)
+    current.update(recordId=prior["recordId"], revisionId="technical-mixed-package-r2",
+                   parents=[prior["revisionId"]], at="2026-11-06T18:31:00.123Z", reason="revision")
+    current["revisionDigest"] = sr.digest({k: v for k, v in current.items() if k != "revisionDigest"})
+    return original, value, [prior, current]
+
+
+def reader_boundary(output, mutation="none"):
+    """Run the production loader over actual exported bytes, stopping at DOM parse."""
+    script = r"""
+import fs from 'node:fs';
+import path from 'node:path';
+import {createHash,webcrypto} from 'node:crypto';
+const folder=process.argv[1],mutation=process.argv[2];
+const M=await import('data:text/javascript;base64,'+fs.readFileSync('site/reader-packages.js').toString('base64'));
+const hash=bytes=>'sha256:'+createHash('sha256').update(bytes).digest('hex');
+const encode=value=>Buffer.from(JSON.stringify(value));
+const manifest=JSON.parse(fs.readFileSync(path.join(folder,'manifest.json')));
+const stored=JSON.parse(fs.readFileSync(path.join(folder,'artifact.json')));
+const files=new Map(manifest.files.map(entry=>[entry.path,fs.readFileSync(path.join(folder,entry.path))]));
+if(mutation==='manifest-cleared')manifest.fixture=false;
+if(mutation==='manifest-array')manifest.fixture=[true];
+if(mutation==='artifact-array'||mutation==='history-cleared'||mutation==='revision-array'){
+  if(mutation==='artifact-array')stored.fixture=[true];
+  if(mutation==='history-cleared'){stored.fixture=false;manifest.fixture=false;}
+  if(mutation==='revision-array'){
+    const revision=stored.payload.realization.revisions.at(-1);revision.fixture=[false];
+    const {digest,...body}=revision;revision.digest=hash(M.packageJSON(body));manifest.realization.revisionDigest=revision.digest;
+    files.set('realization.json',encode({format:'versforms-script-realizations',schemaVersion:1,realizations:[stored.payload.realization]}));
+  }
+  const {revisionDigest,...body}=stored;stored.revisionDigest=hash(M.packageJSON(body));
+  manifest.artifactDigest=stored.revisionDigest;files.set('artifact.json',encode(stored));
+}
+for(const entry of manifest.files){const bytes=files.get(entry.path);entry.bytes=bytes.length;entry.sha256=hash(bytes);}
+const manifestBytes=encode(manifest);let parseCalls=0,requests=0,error;
+const doc={baseURI:'http://127.0.0.1:8123/',defaultView:{crypto:webcrypto,btoa,
+  fetch:async(url,options)=>{if(options.redirect!=='error'||options.credentials!=='same-origin')throw new Error('Transport guard changed');requests++;const name=new URL(url).pathname.replace(/^\/package\//,'')||'index.html';const bytes=name==='manifest.json'?manifestBytes:files.get(name);if(!bytes)throw new Error('Undeclared request');const response=new Response(bytes);Object.defineProperty(response,'url',{value:url});return response;},
+  DOMParser:class{parseFromString(){parseCalls++;throw new Error('VALID_TEMPLATE_REACHED_DOM_BOUNDARY');}}
+}};
+try{await M.loadRealizationPackage({doc,descriptor:{revisionId:stored.revisionId,package:{manifestUrl:'/package/manifest.json',sha256:hash(manifestBytes)}},source:stored.source,scope:{current:()=>true,signal:new AbortController().signal},getCurrentSource:()=>stored.source,getCurrentPolicy:()=>manifest.policy,getStoredArtifact:()=>stored});}catch(e){error=e.message;}
+process.stdout.write(JSON.stringify({parseCalls,requests,error}));
+"""
+    result = subprocess.run(["node", "--input-type=module", "-e", script, str(output), mutation],
+                            cwd=ROOT, text=True, capture_output=True)
+    if result.returncode:
+        raise AssertionError(result.stderr)
+    return json.loads(result.stdout)
+
+
 class RealizationPreviewPackage(unittest.TestCase):
+    def test_exported_mixed_fixture_history_reaches_reader_without_relabeling_revision(self):
+        original, value, history = mixed_fixture_history()
+        artifact = history[-1]
+        self.assertTrue(artifact["fixture"])
+        self.assertFalse(latest(value)["fixture"])
+        self.assertEqual(value["realizations"][0]["revisions"][:-1], history[0]["payload"]["realization"]["revisions"])
+        self.assertEqual(latest(value)["lines"], latest(original)["lines"])
+        self.assertEqual(latest(value)["glyphAssets"], latest(original)["glyphAssets"])
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "mixed-package"
+            package.export_package(artifact, ROOT, ROOT / "exports/studio-db-2026-11-05",
+                                   ROOT / "docs/verification/t10-2026-11-05/pilot", output)
+            manifest = sr.read_json(output / "manifest.json")
+            self.assertTrue(manifest["fixture"])
+            self.assertFalse(manifest["may_publish"])
+            self.assertEqual(sr.read_json(output / "artifact.json"), artifact)
+            self.assertEqual(sr.read_json(output / "realization.json"), value)
+            markup = (output / "index.html").read_text()
+            self.assertIn("Private author-supplied realization — not cleared for release", markup)
+            self.assertNotIn("<h1>Technical fixture", markup)
+            result = reader_boundary(output)
+            self.assertEqual(result, {"parseCalls": 1, "requests": 5,
+                                      "error": "VALID_TEMPLATE_REACHED_DOM_BOUNDARY"})
+            for mutation in ("manifest-cleared", "manifest-array", "artifact-array", "revision-array", "history-cleared"):
+                with self.subTest(mutation=mutation):
+                    result = reader_boundary(output, mutation)
+                    self.assertEqual(result["parseCalls"], 0, result)
+                    self.assertRegex(result["error"], "Unsupported|stored realization|fixture history")
+
     def test_existing_fixture_font_full_history_and_studio_digest_survive_package(self):
         original, value = current_existing_fixture()
         artifact = stored(value)

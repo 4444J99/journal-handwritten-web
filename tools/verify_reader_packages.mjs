@@ -44,6 +44,8 @@ const stored = history.find(r => r.revisionId === t10Manifest.artifactRevisionId
 assert.ok(stored && stored.parents.length, 'The generated package must bind the saved successor revision.');
 assert.deepEqual(read(path.join(T10,'artifact.json')), stored);
 const expectedRevision = stored.payload.realization.revisions.at(-1);
+assert.equal(typeof stored.fixture,'boolean');assert.equal(typeof expectedRevision.fixture,'boolean');
+assert.equal(t10Manifest.fixture,stored.fixture||expectedRevision.fixture,'Package fixture scope combines the stored artifact and latest realization flags.');
 const t10Config = {source:stored.source,revisionId:stored.revisionId,package:{manifestUrl:'/private-fixtures/t10/manifest.json',sha256:digest(fs.readFileSync(path.join(T10,'manifest.json')))}};
 const t08Config = {...read(REGION_DESCRIPTOR),package:{manifestUrl:'/private-fixtures/t08/region-preview.json',sha256:digest(fs.readFileSync(path.join(T08,'region-preview.json')))}};
 const checks = [], errors = [], blockedRequests = [], networkTraps = [], expectedRequestFailures = [];
@@ -162,10 +164,12 @@ try {
     await page.getByRole('button',{name:'Realization',exact:true}).click();assert.equal(await page.locator('iframe').count(),0);
     await page.getByRole('button',{name:'Start realization',exact:true}).click();const frame=await realized(page);
     const facts=await frame.evaluate(async()=>{await document.fonts.ready;const a=document.getElementById('realization');return{lines:[...a.querySelectorAll('.line')].map(l=>({text:l.textContent,stanza:l.classList.contains('stanza')})),lang:a.lang,dir:a.dir,script:a.dataset.script,writing:getComputedStyle(a).writingMode,fixture:document.querySelector('h1')?.textContent,fonts:[...document.fonts].map(f=>({family:f.family,status:f.status})),nfd:document.getElementById('nfd-probe').textContent,nfc:document.getElementById('nfc-probe').textContent};});
-    assert.deepEqual(facts.lines,expectedRevision.lines.map(l=>({text:l.text,stanza:l.breakBefore})));assert.equal(facts.lang,expectedRevision.language);assert.equal(facts.dir,expectedRevision.layout.direction);assert.equal(facts.script,expectedRevision.script);assert.equal(facts.writing,expectedRevision.layout.writingMode);assert.match(facts.fixture,/Technical fixture/);assert.ok(facts.fonts.some(f=>f.family.includes('ajp-scribbles')&&f.status==='loaded'));assert.equal(facts.nfd,'A\u0301');assert.equal(facts.nfc,'Á');
+    assert.deepEqual(facts.lines,expectedRevision.lines.map(l=>({text:l.text,stanza:l.breakBefore})));assert.equal(facts.lang,expectedRevision.language);assert.equal(facts.dir,expectedRevision.layout.direction);assert.equal(facts.script,expectedRevision.script);assert.equal(facts.writing,expectedRevision.layout.writingMode);assert.equal(facts.fixture,expectedRevision.fixture?'Technical fixture — verbatim source; no translation or language adoption':'Private author-supplied realization — not cleared for release');assert.ok(facts.fonts.some(f=>f.family.includes('ajp-scribbles')&&f.status==='loaded'));assert.equal(facts.nfd,'A\u0301');assert.equal(facts.nfc,'Á');
+    assert.match(await page.locator('#feature-preview').innerText(),/Private technical preview/);
+    assert.equal(await frame.locator('#metadata').evaluate(node=>JSON.parse(node.textContent).fixture),expectedRevision.fixture);
     assert.equal(await page.locator('iframe').getAttribute('sandbox'),'allow-same-origin');assert.equal(await frame.locator('script').count(),0);
     assert.equal(await page.evaluate(()=>document.querySelector('iframe').sandbox.contains('allow-scripts')),false);
-    await page.screenshot({path:path.join(OUT,'actual-realization.png')});return{logicalLines:facts.lines.length,fontLoaded:true,sandbox:'allow-same-origin only; scripts forbidden',language:facts.lang,script:facts.script};
+    await page.screenshot({path:path.join(OUT,'actual-realization.png')});return{logicalLines:facts.lines.length,fontLoaded:true,sandbox:'allow-same-origin only; scripts forbidden',language:facts.lang,script:facts.script,fixtureFlags:{artifact:stored.fixture,latestRevision:expectedRevision.fixture,package:t10Manifest.fixture},revisionHeading:facts.fixture};
   });
   await check('Escape while focused inside the actual no-scripts realization closes the shared preview and restores trigger focus',async()=>{
     const frame=await realized(page);await frame.locator('#details summary').click();await frame.locator('#details summary').press('Escape');await noFrame(page);
@@ -193,6 +197,8 @@ try {
   await check('T10 refuses exact package, source, stored revision, HTML and font mismatches',async()=>{
     const variants=[['manifest bytes',{...structuredClone(t10Config),package:{...t10Config.package,sha256:'sha256:'+'f'.repeat(64)}}],
       ['stored revision',{...structuredClone(t10Config),revisionId:'unselected-revision'}],
+      ['combined fixture flag',t10Variant('wrong-fixture-flag',m=>{m.fixture=!m.fixture;})],
+      ['fixture flag type',t10Variant('wrong-fixture-type',m=>{m.fixture=[m.fixture];})],
       ['HTML bytes',t10Variant('bad-html-bytes',(_m,f)=>fs.appendFileSync(path.join(f,'index.html'),'changed'),{rehash:false})],
       ['font bytes',t10Variant('bad-font-bytes',(m,f)=>fs.appendFileSync(path.join(f,m.files.find(e=>e.path.startsWith('assets/')).path),'changed'),{rehash:false})],
       ['model-bound HTML',t10Variant('bad-html-content',(_m,f)=>fs.writeFileSync(path.join(f,'index.html'),fs.readFileSync(path.join(f,'index.html'),'utf8').replace('The walls','TECHNICAL MISMATCH')))],

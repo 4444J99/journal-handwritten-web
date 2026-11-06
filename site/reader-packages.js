@@ -239,13 +239,14 @@ export async function loadRealizationPackage(options) {
   keys(manifest.realization,['id','revisionId','revisionDigest'],'realization identity');
   if (!id(manifest.artifactRevisionId) || !hash(manifest.artifactDigest) || !id(manifest.realization.id) || !id(manifest.realization.revisionId) || !hash(manifest.realization.revisionDigest) || !sameSource(manifest.source,source) || manifest.artifactRevisionId !== stored.revisionId || manifest.artifactDigest !== stored.revisionDigest) fail('Package does not bind the selected stored artifact and source.');
   const realization = stored.payload?.realization, revision = realization?.revisions?.at(-1);
-  if (!realization || !revision || realization.id !== manifest.realization.id || realization.pieceId !== source.pieceId || realization.versionId !== source.versionId || revision.id !== manifest.realization.revisionId || revision.digest !== manifest.realization.revisionDigest || revision.source?.versionFingerprint !== source.sourceFingerprint || revision.fixture !== manifest.fixture || stored.fixture !== manifest.fixture || revision.visibility !== 'private') fail('Package does not bind the current stored realization revision.');
+  if (!realization || !revision || realization.id !== manifest.realization.id || realization.pieceId !== source.pieceId || realization.versionId !== source.versionId || revision.id !== manifest.realization.revisionId || revision.digest !== manifest.realization.revisionDigest || revision.source?.versionFingerprint !== source.sourceFingerprint || typeof revision.fixture !== 'boolean' || typeof stored.fixture !== 'boolean' || manifest.fixture !== (stored.fixture || revision.fixture) || revision.visibility !== 'private') fail('Package does not bind the current stored realization revision.');
   const guardPackage = () => current(manifest.policy);
   guardPackage();
   await logicalSource(revision.source,source,doc); guardPackage();
   if (!Array.isArray(revision.glyphAssets) || revision.glyphAssets.length > 16) fail('Invalid glyph asset inventory.');
   let parent = null;
   for (const saved of realization.revisions) {
+    if (typeof saved.fixture !== 'boolean' || saved.fixture && !stored.fixture) fail('Stored artifact cannot remove realization fixture history.');
     if (!id(saved.id) || !hash(saved.digest) || saved.parent !== parent) fail('Invalid immutable realization history.');
     const {digest:expectedDigest,...revisionBody} = saved;
     if (await jsonDigest(revisionBody,doc) !== expectedDigest) fail('Stored realization revision digest changed.');
