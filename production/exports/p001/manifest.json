@@ -1,0 +1,405 @@
+{
+  "schema": "t07.media-kit-manifest.v1",
+  "generated_at": "2026-11-06T01:50:34+00:00",
+  "kit_version": "t07-media-kit-v1",
+  "source_revision": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+  "builder": {
+    "kit_py_sha256": "5559b6219bf575f0da838aca2173d5fd6187e424a2406b659314f3056f929ada",
+    "config_sha256": "9de45bc3e1c0d6f3efd3acee1114590a28159687afbfa05365769a41933f9d98"
+  },
+  "candidate": {
+    "piece_id": "p001",
+    "version_id": "p001-diary1-0",
+    "page_id": "diary1",
+    "version_blocks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pool_clearance": "unsorted; no Series/Reserve/Archive decision",
+    "selection_provenance": "Derived from recorded journal-page order: j.json p001 top version p001-diary1-0 on page diary1, blocks 0-5. This is a production candidate, not an author selection or a clearance.",
+    "later_version": {
+      "version_id": "p001-diary62a-0",
+      "page_id": "diary62a",
+      "blocks": [
+        0,
+        1,
+        2
+      ],
+      "source": "production/assets/diary62a.jpg",
+      "note": "Later version. Only blocks 0-2 belong to p001; blocks 3-4 are the p126 neighbour and are excluded from the crop."
+    }
+  },
+  "source_inputs": [
+    {
+      "path": "production/assets/diary1.jpg",
+      "role": "primary scan",
+      "sha256": "4cd69af56ae9f86a8d0cabbf662bee7304952441a17a1d4c9261d4a1dd4749a9",
+      "bytes": 296512,
+      "width": 1390,
+      "height": 1959
+    },
+    {
+      "path": "production/assets/diary62a.jpg",
+      "role": "later-version scan (blocks 0-2 only)",
+      "sha256": "a45974511b0a280c780703b2a6c83e600e1dda3d0d0bc4982e5d4bf6b9e5e27f",
+      "bytes": 288083,
+      "width": 1424,
+      "height": 1739
+    },
+    {
+      "path": "production/assets/vers_forms_profile_v3.jpg",
+      "role": "identity chip (supplied, unapproved)",
+      "sha256": "370d979bedd5779e105d7f5a85443adf22aa4fc8496fe122d3f83f8d6018185e",
+      "bytes": 269257
+    },
+    {
+      "path": "production/assets/preview3.png",
+      "role": "recovered design-canvas reference, not composited",
+      "sha256": "88663f21fd47fa13c189c88844541deb52335eba8760295066b26d8913550b02",
+      "bytes": 214060
+    },
+    {
+      "path": "site/data/j.json",
+      "role": "page/version/block/line geometry source of truth",
+      "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+    }
+  ],
+  "assets": [
+    {
+      "path": "4x5/cover-stack.jpg",
+      "sha256": "146d53f8e8f0e4415ee3de9200cac0cf45eb614b2d18e96b08f5afeb11f5e2eb",
+      "bytes": 234858,
+      "width": 1080,
+      "height": 1350,
+      "role": "still",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "4x5/cover-page.jpg",
+      "sha256": "f93adbc27d67c24587f45e202bf72fa1c377c53ead78da11cdcd0cf2fd459df2",
+      "bytes": 233347,
+      "width": 1080,
+      "height": 1350,
+      "role": "still",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "4x5/cover-line.jpg",
+      "sha256": "80d28f2469802524c8588633c345308cccc740b49dc4e358e4adf7d11ddb553b",
+      "bytes": 64538,
+      "width": 1080,
+      "height": 1350,
+      "role": "still",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "carousel/carousel-01-cover.jpg",
+      "sha256": "146d53f8e8f0e4415ee3de9200cac0cf45eb614b2d18e96b08f5afeb11f5e2eb",
+      "bytes": 234858,
+      "width": 1080,
+      "height": 1350,
+      "role": "carousel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "carousel/carousel-02-page.jpg",
+      "sha256": "f93adbc27d67c24587f45e202bf72fa1c377c53ead78da11cdcd0cf2fd459df2",
+      "bytes": 233347,
+      "width": 1080,
+      "height": 1350,
+      "role": "carousel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "carousel/carousel-03-line.jpg",
+      "sha256": "80d28f2469802524c8588633c345308cccc740b49dc4e358e4adf7d11ddb553b",
+      "bytes": 64538,
+      "width": 1080,
+      "height": 1350,
+      "role": "carousel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "carousel/carousel-04-detail.jpg",
+      "sha256": "2ce7723463693267ed95df761d7870f0c8b4588f35da1cf1699a726c086b47a8",
+      "bytes": 76838,
+      "width": 1080,
+      "height": 1350,
+      "role": "carousel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "carousel/carousel-05-version.jpg",
+      "sha256": "ca459d0ceeb04604e44c21292aa4b06659d278193a8546a68537483648410dae",
+      "bytes": 216001,
+      "width": 1080,
+      "height": 1350,
+      "role": "carousel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; awaiting author clearance; may_publish=false"
+    },
+    {
+      "path": "reel/p001-version-reel-1080x1920.mp4",
+      "sha256": "f0f0b9bfea87dff529510ba6d5e48d5dd2eb6235cdda51f30d9ad6849e67adda",
+      "bytes": 297198,
+      "role": "reel",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+      "width": 1080,
+      "height": 1920,
+      "duration_seconds": 6.0,
+      "audio": "none"
+    },
+    {
+      "path": "story/p001-story-assembly-provisional-1080x1920.mp4",
+      "sha256": "d6e6845800d047b1bccd897e4427e8216ce1527ca822cfdceeb745c2a3cc67a0",
+      "bytes": 651110,
+      "role": "story",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+      "width": 1080,
+      "height": 1920,
+      "duration_seconds": 9.0,
+      "audio": "none"
+    },
+    {
+      "path": "widget/tiles/2x1/opening-line.jpg",
+      "sha256": "4476ed7ae8846bebe4847dc4f207dca95aba9c101c480575c99088517fcfccb8",
+      "bytes": 115535,
+      "width": 1600,
+      "height": 760,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/tiles/2x1/detail-line.jpg",
+      "sha256": "355c3bf05a5f27a83cd3afb5c1ee67a72e3f7134c2be98ede70f2364a1cde373",
+      "bytes": 149192,
+      "width": 1600,
+      "height": 760,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/tiles/1x1/detail.jpg",
+      "sha256": "b1fdebe655e17f4714ffc517a043baa68357975fd23cf41f964398497d05f86c",
+      "bytes": 104323,
+      "width": 1080,
+      "height": 1080,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/tiles/1x1/opening.jpg",
+      "sha256": "bce23395a13e97b9954e9456370688ee186bfb98c7eae1952084bf56f2cabac0",
+      "bytes": 86212,
+      "width": 1080,
+      "height": 1080,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/tiles/2x2/page.jpg",
+      "sha256": "067eab93f227c653cb1949e2c6e314457670839547f41d6e47b31b84a8c11e50",
+      "bytes": 175657,
+      "width": 1080,
+      "height": 1080,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/tiles/wide/opening.jpg",
+      "sha256": "f090603bb5c83b7de053d5b2d90945c0babd4c43039e980f3dd496e02f637bfe",
+      "bytes": 89257,
+      "width": 1600,
+      "height": 760,
+      "role": "widget-tile",
+      "source_chain": [
+        "page:diary1",
+        "version:p001-diary1-0",
+        "source:production/assets/diary1.jpg"
+      ],
+      "clearance": "private test tile; not a public download; awaiting author clearance"
+    },
+    {
+      "path": "widget/p001-widget-kit-private.zip",
+      "sha256": "758db01e77900ca7b0f253d4178d27eebca5dc13d7790adfcc2d9b8c7e0e0a51",
+      "bytes": 676774,
+      "role": "downloadable-kit",
+      "source_chain": [
+        "page:diary1"
+      ],
+      "clearance": "private zip; no public distribution; awaiting author clearance"
+    }
+  ],
+  "clearance": {
+    "schema": "versforms.release-clearance.v1",
+    "status": "awaiting-author-and-evidence",
+    "candidate": "p001",
+    "candidate_provenance": "Derived from recorded journal-page order: j.json p001 top version p001-diary1-0 on page diary1, blocks 0-5. This is a production candidate, not an author selection or a clearance.",
+    "proposed_version_ids": [
+      "p001-diary1-0"
+    ],
+    "public_whitelist_change_applied": false,
+    "author_clearance": null,
+    "filing_evidence": null,
+    "shared_scan_resolution": "Unresolved. The later-version comparison crops diary62a to blocks 0-2 only, excluding the p126 neighbour in blocks 3-4; that crop is not a manuscript-wide exclusion proof and no author ruling exists.",
+    "withheld_metadata_clearance": null,
+    "complete_technical_exclusion": false,
+    "first_confirmed_post_date": null,
+    "may_publish": false,
+    "may_schedule_external_actions": false,
+    "pool_clearance": "unsorted; no Series/Reserve/Archive decision",
+    "per_asset": {
+      "stills": "private-preview; awaiting author clearance; may_publish=false",
+      "motion": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+      "widget_tiles": "private test tile; not a public download; awaiting author clearance",
+      "downloadable_kit": "private zip; no public distribution; awaiting author clearance",
+      "identity": "T06 supplied avatar v3; supplied/unapproved; D13 unresolved"
+    }
+  },
+  "qa": {
+    "display_width_px": 390,
+    "method": "PIL ink-box geometry at a 390 px display width, plus Apple Vision OCR on the 390 px preview. Geometry is a proxy; physical-device review is still required.",
+    "ocr_note": "Apple Vision accurate mode with language correction off. Cursive, faint or overlapping lines under-read, so recall is a lower bound on content legibility, not a publishability score.",
+    "readability_rule": "Readable on a 390 px phone width when the smallest ink box is at least 8 px high; OCR recall is reported separately.",
+    "targets": {
+      "cover-page": {
+        "lines": 21,
+        "min_ink_height_px_at_390": 14.37,
+        "median_ink_height_px_at_390": 19.38,
+        "max_ink_height_px_at_390": 26.96,
+        "geometry_readable_at_390": true,
+        "ocr_words": 71,
+        "ocr_word_recall": 0.674
+      },
+      "cover-line": {
+        "lines": 3,
+        "min_ink_height_px_at_390": 25.52,
+        "median_ink_height_px_at_390": 25.6,
+        "max_ink_height_px_at_390": 34.41,
+        "geometry_readable_at_390": true,
+        "ocr_words": 8,
+        "ocr_word_recall": 0.875
+      },
+      "cover-stack": {
+        "lines": 21,
+        "min_ink_height_px_at_390": 13.6,
+        "median_ink_height_px_at_390": 18.34,
+        "max_ink_height_px_at_390": 25.52,
+        "geometry_readable_at_390": true,
+        "ocr_words": 63,
+        "ocr_word_recall": 0.547
+      },
+      "carousel-04-detail": {
+        "lines": 3,
+        "min_ink_height_px_at_390": 24.7,
+        "median_ink_height_px_at_390": 24.88,
+        "max_ink_height_px_at_390": 28.15,
+        "geometry_readable_at_390": true,
+        "ocr_words": 16,
+        "ocr_word_recall": 0.938
+      },
+      "carousel-05-version": {
+        "lines": 10,
+        "min_ink_height_px_at_390": 16.53,
+        "median_ink_height_px_at_390": 20.59,
+        "max_ink_height_px_at_390": 24.85,
+        "geometry_readable_at_390": true,
+        "ocr_words": 63,
+        "ocr_word_recall": 0.471
+      }
+    }
+  },
+  "missing": [
+    "Author clearance naming this exact output manifest and its limits.",
+    "Series/Reserve/Archive decision for p001 and for the p126 neighbour.",
+    "Author ruling on shared-scan exposure for diary62a blocks 3-4.",
+    "Original Live Photo / video clips for the 9:16 photo layer (3 s loop) and background layer (4.5 s loop); current layers are still stand-ins.",
+    "T06 D13 identity approval, or the original avatar assets if v3 is not the release identity.",
+    "Physical iPhone Photos-widget test: album picker, render, shuffle, and shared-album behaviour. No iPhone or iOS Simulator is available in this environment.",
+    "Target-journal treatment of Stories (permanent grid/Highlight/expiry) and whether expiry preserves any Reserve status; not yet confirmed for the selected journal.",
+    "GRUW / filing evidence only if a filing claim is made; none is used here."
+  ],
+  "substitution": {
+    "config": "p001.json",
+    "same_code_path": true,
+    "second_piece_check": "production/tools/check_substitution.py"
+  }
+}

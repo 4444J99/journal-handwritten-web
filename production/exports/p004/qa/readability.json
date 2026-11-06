@@ -1,0 +1,44 @@
+{
+  "display_width_px": 390,
+  "method": "PIL ink-box geometry at a 390 px display width, plus Apple Vision OCR on the 390 px preview. Geometry is a proxy; physical-device review is still required.",
+  "ocr_note": "Apple Vision accurate mode with language correction off. Cursive, faint or overlapping lines under-read, so recall is a lower bound on content legibility, not a publishability score.",
+  "readability_rule": "Readable on a 390 px phone width when the smallest ink box is at least 8 px high; OCR recall is reported separately.",
+  "targets": {
+    "cover-page": {
+      "lines": 9,
+      "min_ink_height_px_at_390": 11.89,
+      "median_ink_height_px_at_390": 16.0,
+      "max_ink_height_px_at_390": 18.43,
+      "geometry_readable_at_390": true,
+      "ocr_words": 92,
+      "ocr_word_recall": 0.884
+    },
+    "cover-line": {
+      "lines": 9,
+      "min_ink_height_px_at_390": 13.2,
+      "median_ink_height_px_at_390": 17.76,
+      "max_ink_height_px_at_390": 20.46,
+      "geometry_readable_at_390": true,
+      "ocr_words": 44,
+      "ocr_word_recall": 0.814
+    },
+    "cover-stack": {
+      "lines": 9,
+      "min_ink_height_px_at_390": 11.55,
+      "median_ink_height_px_at_390": 15.54,
+      "max_ink_height_px_at_390": 17.91,
+      "geometry_readable_at_390": true,
+      "ocr_words": 40,
+      "ocr_word_recall": 0.721
+    },
+    "carousel-04-detail": {
+      "lines": 9,
+      "min_ink_height_px_at_390": 13.78,
+      "median_ink_height_px_at_390": 18.55,
+      "max_ink_height_px_at_390": 21.37,
+      "geometry_readable_at_390": true,
+      "ocr_words": 44,
+      "ocr_word_recall": 0.791
+    }
+  }
+}

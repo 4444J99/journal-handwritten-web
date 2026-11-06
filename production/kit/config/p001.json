@@ -1,0 +1,82 @@
+{
+  "piece_id": "p001",
+  "version_id": "p001-diary1-0",
+  "page_id": "diary1",
+  "source": "production/assets/diary1.jpg",
+  "source_kind": "preserved original",
+  "cover_block": 0,
+  "detail_block": 2,
+  "later_version": {
+    "version_id": "p001-diary62a-0",
+    "page_id": "diary62a",
+    "blocks": [
+      0,
+      1,
+      2
+    ],
+    "source": "production/assets/diary62a.jpg",
+    "note": "Later version. Only blocks 0-2 belong to p001; blocks 3-4 are the p126 neighbour and are excluded from the crop."
+  },
+  "identity": {
+    "asset": "production/assets/vers_forms_profile_v3.jpg",
+    "source": "T06 avatar handoff, PR #125",
+    "status": "supplied/unapproved",
+    "decision": "D13 unresolved; do not regenerate, relabel or treat as approved"
+  },
+  "selection_provenance": "Derived from recorded journal-page order: j.json p001 top version p001-diary1-0 on page diary1, blocks 0-5. This is a production candidate, not an author selection or a clearance.",
+  "shared_scan_resolution": "Unresolved. The later-version comparison crops diary62a to blocks 0-2 only, excluding the p126 neighbour in blocks 3-4; that crop is not a manuscript-wide exclusion proof and no author ruling exists.",
+  "source_inputs": [
+    {
+      "path": "production/assets/diary1.jpg",
+      "role": "primary scan",
+      "sha256": "4cd69af56ae9f86a8d0cabbf662bee7304952441a17a1d4c9261d4a1dd4749a9",
+      "bytes": 296512,
+      "width": 1390,
+      "height": 1959
+    },
+    {
+      "path": "production/assets/diary62a.jpg",
+      "role": "later-version scan (blocks 0-2 only)",
+      "sha256": "a45974511b0a280c780703b2a6c83e600e1dda3d0d0bc4982e5d4bf6b9e5e27f",
+      "bytes": 288083,
+      "width": 1424,
+      "height": 1739
+    },
+    {
+      "path": "production/assets/vers_forms_profile_v3.jpg",
+      "role": "identity chip (supplied, unapproved)",
+      "sha256": "370d979bedd5779e105d7f5a85443adf22aa4fc8496fe122d3f83f8d6018185e",
+      "bytes": 269257
+    },
+    {
+      "path": "production/assets/preview3.png",
+      "role": "recovered design-canvas reference, not composited",
+      "sha256": "88663f21fd47fa13c189c88844541deb52335eba8760295066b26d8913550b02",
+      "bytes": 214060
+    },
+    {
+      "path": "site/data/j.json",
+      "role": "page/version/block/line geometry source of truth",
+      "sha256": "GENERATED_AT_BUILD"
+    }
+  ],
+  "clearance": {
+    "default": "private-preview; awaiting author clearance; may_publish=false",
+    "motion": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+    "widget": "private test tile; not a public download; awaiting author clearance",
+    "download": "private zip; no public distribution; awaiting author clearance",
+    "pool": "unsorted; no Series/Reserve/Archive decision",
+    "identity": "T06 supplied avatar v3; supplied/unapproved; D13 unresolved"
+  },
+  "missing": [
+    "Author clearance naming this exact output manifest and its limits.",
+    "Series/Reserve/Archive decision for p001 and for the p126 neighbour.",
+    "Author ruling on shared-scan exposure for diary62a blocks 3-4.",
+    "Original Live Photo / video clips for the 9:16 photo layer (3 s loop) and background layer (4.5 s loop); current layers are still stand-ins.",
+    "T06 D13 identity approval, or the original avatar assets if v3 is not the release identity.",
+    "Physical iPhone Photos-widget test: album picker, render, shuffle, and shared-album behaviour. No iPhone or iOS Simulator is available in this environment.",
+    "Target-journal treatment of Stories (permanent grid/Highlight/expiry) and whether expiry preserves any Reserve status; not yet confirmed for the selected journal.",
+    "GRUW / filing evidence only if a filing claim is made; none is used here."
+  ],
+  "clearance_note": "Private test material only. Nothing in this kit is cleared for publication, scheduling or distribution. A green build, a `filed`/`registered` string, `pool=series`, a Series label or a `--force` flag is not permission."
+}

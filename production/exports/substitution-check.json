@@ -1,0 +1,69 @@
+{
+  "schema": "t07.substitution-check.v1",
+  "primary": "production/exports/p001",
+  "substitute": "production/exports/p004",
+  "result": "pass",
+  "checks": [
+    {
+      "check": "same kit version",
+      "ok": true,
+      "detail": "t07-media-kit-v1 / t07-media-kit-v1"
+    },
+    {
+      "check": "same generator bytes",
+      "ok": true,
+      "detail": "kit.py hash differs"
+    },
+    {
+      "check": "same clearance schema",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "both private",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "different piece ids",
+      "ok": true,
+      "detail": "p001 / p004"
+    },
+    {
+      "check": "different version ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "comparable roles",
+      "ok": true,
+      "detail": "missing: []"
+    },
+    {
+      "check": "paths, chains and hashes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "no shared output bytes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "no n/100 identity",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "phone-size geometry",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "same output shape",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "note": "Structural and hash check of two exports from the same generator. Re-run each config with production/kit/kit.py to reproduce. A pass is not a clearance."
+}

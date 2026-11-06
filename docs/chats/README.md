@@ -43,6 +43,7 @@ Conventions
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
 | 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
+| 2026-11-05 | [T07 media production kit](2026-11-05-t07-media-production-kit.md) | Open — private kit only; physical device test, original clips and author clearance outstanding |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `06dccc0` (the posting script, #101), with a `local-ci` status; every suite passes locally.
