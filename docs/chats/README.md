@@ -43,6 +43,7 @@ Conventions
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
 | 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
+| 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
 | 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
 
 ## Repository state (checked 2026-11-05)

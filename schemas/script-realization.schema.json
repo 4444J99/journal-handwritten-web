@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:versforms:script-realizations:1",
+  "title": "Private script realizations, independent of editorial versions",
+  "description": "Proposed T10/T02 interface. Syntax schema plus tools/script_realizations.py semantic validation are both required. Language/script patterns check syntax only, not registry membership or author acceptance. Hashes detect changes; they are not signatures or release authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schemaVersion",
+    "realizations"
+  ],
+  "properties": {
+    "format": {
+      "const": "versforms-script-realizations"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "realizations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "pieceId",
+          "versionId",
+          "revisions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "pieceId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "versionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/revision"
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "minItems": 0
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pieceId",
+        "versionId",
+        "members",
+        "lines",
+        "versionFingerprint",
+        "provenance"
+      ],
+      "properties": {
+        "pieceId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "versionId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minItems": 1
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 1
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lineId",
+              "text",
+              "originalText",
+              "blockType",
+              "breakBefore"
+            ],
+            "properties": {
+              "lineId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+              },
+              "text": {
+                "type": "string"
+              },
+              "originalText": {
+                "type": "string"
+              },
+              "blockType": {
+                "type": "string"
+              },
+              "breakBefore": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "versionFingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "contract",
+            "files",
+            "reviewRecords",
+            "readingStatus"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "contract": {
+              "type": "string"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^sha256:[a-f0-9]{64}$"
+                  }
+                }
+              },
+              "minItems": 1
+            },
+            "reviewRecords": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "lineId",
+                  "digest"
+                ],
+                "properties": {
+                  "lineId": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+                  },
+                  "digest": {
+                    "type": "string",
+                    "pattern": "^sha256:[a-f0-9]{64}$"
+                  }
+                }
+              },
+              "minItems": 0
+            },
+            "readingStatus": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "glyphAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "sha256",
+        "visibility",
+        "author",
+        "sourceLocator"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "kind": {
+          "enum": [
+            "font",
+            "capture-manifest"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^assets/[A-Za-z0-9_.-]+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "withheld",
+            "public-proposed"
+          ]
+        },
+        "author": {
+          "type": "string"
+        },
+        "sourceLocator": {
+          "type": "string"
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "parent",
+        "at",
+        "actor",
+        "change",
+        "source",
+        "language",
+        "script",
+        "mode",
+        "method",
+        "authors",
+        "lines",
+        "layout",
+        "glyphAssets",
+        "visibility",
+        "fixture",
+        "digest"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+        },
+        "parent": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^sha256:[a-f0-9]{64}$"
+            }
+          ]
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "actor": {
+          "type": "string"
+        },
+        "change": {
+          "enum": [
+            "initial",
+            "script-change",
+            "source-rebind",
+            "realization-edit",
+            "visibility-change"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+        },
+        "script": {
+          "type": "string",
+          "pattern": "^[A-Z][a-z]{3}$"
+        },
+        "mode": {
+          "enum": [
+            "translation",
+            "transliteration",
+            "visual-realization"
+          ]
+        },
+        "method": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "evidence",
+            "normalization"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "unchanged-source-fixture",
+                "human-supplied"
+              ]
+            },
+            "evidence": {
+              "type": "string"
+            },
+            "normalization": {
+              "const": "preserve"
+            }
+          }
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "role",
+              "evidence"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+              },
+              "role": {
+                "enum": [
+                  "source-author",
+                  "realizer",
+                  "technical-fixture"
+                ]
+              },
+              "evidence": {
+                "type": "string"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "sourceLineIds",
+              "text",
+              "breakBefore"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+              },
+              "sourceLineIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+                },
+                "minItems": 1
+              },
+              "text": {
+                "type": "string"
+              },
+              "breakBefore": {
+                "type": "boolean"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "direction",
+            "writingMode"
+          ],
+          "properties": {
+            "direction": {
+              "enum": [
+                "ltr",
+                "rtl"
+              ]
+            },
+            "writingMode": {
+              "enum": [
+                "horizontal-tb",
+                "vertical-rl",
+                "vertical-lr"
+              ]
+            }
+          }
+        },
+        "glyphAssets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/glyphAsset"
+          },
+          "minItems": 0
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "withheld",
+            "public-proposed"
+          ]
+        },
+        "fixture": {
+          "type": "boolean"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}
