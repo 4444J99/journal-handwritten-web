@@ -78,7 +78,9 @@ proof that its source is still current.
 The consumer compares that projection with its independently loaded current
 source, plus current `{pool,visibility}`. Coordinate-only edits therefore
 invalidate the preview even when the logical source fingerprint is unchanged.
-An unavailable canonical anchor has `box:null`; the old atom's inferred polygon
+An unavailable canonical anchor has `box:null`; if any line in its block lacks
+geometry, the whole block remains unavailable, matching the reader's refusal to
+guess alignment from mismatched line/box counts. The old atom's inferred polygon
 must never replace it. The package retains the source image for byte/provenance
 verification, but an unavailable-anchor view displays the explicit unavailable
 state instead of an image or substituted crop. Available views identify the

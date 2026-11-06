@@ -1230,6 +1230,13 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     anchor = {"lineId": line_id, "pageId": page["id"], "status": anchor_geometry["status"],
               "box": copy.deepcopy(anchor_geometry["studioBox"]) if anchor_geometry["status"] == "available" else None,
               "reason": anchor_geometry.get("reason")}
+    # A partially aligned block cannot establish which surviving box belongs to
+    # each transcript line. Match the current reader's whole-block fallback.
+    block = next(b for b in canonical["blocks"] if b["id"] == line["blockId"])
+    if any(lines[lid]["geometry"]["status"] != "available" for lid in block["lineIds"]):
+        anchor.update(status="unavailable", box=None)
+        if not anchor["reason"]:
+            anchor["reason"] = "block-source-geometry-incomplete"
     if anchor["status"] == "available":
         box = anchor["box"]
         if not isinstance(box, list) or len(box) != 4 or any(type(v) not in (int, float) for v in box) or not (0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1):
@@ -1269,7 +1276,7 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     package_bytes = encode(package)
     descriptor = {key: copy.deepcopy(package[key]) for key in ("source", "sourcePolicy", "atomId", "manifestDigest", "geometryDigest", "mediaDigest", "policyDigest")}
     descriptor["package"] = {"manifestUrl": "region-preview.json", "sha256": "sha256:" + hashlib.sha256(package_bytes).hexdigest()}
-    if expected is not None and (not isinstance(expected, dict) or any(expected.get(key) != value for key, value in descriptor.items() if key != "package") or expected.get("package", {}).get("sha256") != descriptor["package"]["sha256"]):
+    if expected is not None and (not isinstance(expected, dict) or not isinstance(expected.get("package"), dict) or any(expected.get(key) != value for key, value in descriptor.items() if key != "package") or expected["package"].get("sha256") != descriptor["package"]["sha256"]):
         raise ValueError("stale private region descriptor; explicitly re-export current source/geometry/media/policy")
     output = private_destination(output)
     if output.exists() or output.is_relative_to(repo):

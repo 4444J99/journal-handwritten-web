@@ -465,13 +465,15 @@ class PrivateRegionPreviewTests(unittest.TestCase):
 
     def test_unknown_canonical_geometry_never_becomes_the_old_atom_box(self):
         with tempfile.TemporaryDirectory() as tmp:
-            out = Path(tmp) / "preview"
-            sr.export_private_preview(self.manifest, self.policy,
-                "vf:atom:p001/p001-diary1-0/diary1/line-2-3", out)
-            package = load(out / "region-preview.json")
-            self.assertEqual(package["sourceAnchor"]["status"], "unavailable")
-            self.assertIsNone(package["sourceAnchor"]["box"])
-            self.assertEqual(load(out / "geometry.json")["sourceAnchor"], package["sourceAnchor"])
+            for suffix in ("line-2-0", "line-2-3"):
+                out = Path(tmp) / suffix
+                sr.export_private_preview(self.manifest, self.policy,
+                    "vf:atom:p001/p001-diary1-0/diary1/" + suffix, out)
+                package = load(out / "region-preview.json")
+                self.assertEqual(package["sourceAnchor"]["status"], "unavailable")
+                self.assertIsNone(package["sourceAnchor"]["box"])
+                self.assertEqual(load(out / "geometry.json")["sourceAnchor"], package["sourceAnchor"])
+            self.assertEqual(load(Path(tmp) / "line-2-0/region-preview.json")["sourceAnchor"]["reason"], "block-source-geometry-incomplete")
 
     def test_changed_atom_or_coordinate_only_geometry_refuses_old_descriptor(self):
         import source_foundation as foundation
