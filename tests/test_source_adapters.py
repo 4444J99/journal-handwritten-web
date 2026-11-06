@@ -12,10 +12,82 @@ import source_fingerprint as sf
 import script_realizations as scripts
 import release_contract as rc
 import release_fixtures as rf
+import source_regions as regions
+from audio_build import render as audio
 from test_script_realizations import envelope, latest, reseal
 
 
 class CurrentSourceAdapters(unittest.TestCase):
+    def test_region_and_audio_adapters_consume_all_shared_v2_vectors(self):
+        vectors = json.loads((ROOT / "tests/fixtures/source-fingerprint-vectors.json").read_text())["vectors"]
+        for vector in vectors:
+            with self.subTest(vector=vector["name"]):
+                source = vector["source"]
+                expected = sf.source_binding(source)
+                atom = {"piece_id": source["pieceId"], "version_id": source["versionId"], "page_id": "fixture-page",
+                        "source_ids": {"line_id": source["lines"][0]["lineId"]},
+                        "lineage": {"source_line_ids": [l["lineId"] for l in source["lines"]]}}
+                self.assertEqual(regions.current_source_bindings({"atoms": [atom]}, snapshots=[source]), [expected])
+                request = {"id": "test-audio", "text": "\n".join(l["text"] for l in source["lines"])}
+                bound = audio.bind_request_source(request, source, [l["lineId"] for l in source["lines"]])
+                self.assertEqual(audio.current_source_bindings({"requests": [bound]}, snapshots=[source]), [expected])
+                self.assertEqual(expected["sourceFingerprint"], vector["v2"])
+                old = copy.deepcopy(source)
+                old["versionFingerprint"] = vector["v1"]
+                with self.assertRaisesRegex(ValueError, "v2 rebind"):
+                    regions.current_source_bindings({"atoms": [atom]}, snapshots=[old])
+                with self.assertRaisesRegex(ValueError, "v2 rebind"):
+                    audio.current_source_bindings({"requests": [bound]}, snapshots=[old])
+
+    def test_explicit_import_line_ids_and_source_changes_are_not_retargeted(self):
+        source = {"pieceId": "test-piece", "versionId": "test-version", "members": [["test-photo", [0]]],
+                  "lines": [{"lineId": "explicit-import-line", "text": "TECHNICAL TEST", "blockType": "text", "breakBefore": False}]}
+        request = audio.bind_request_source({"text": "TECHNICAL TEST"}, source, ["explicit-import-line"])
+        for name in ("text", "stanza", "membership"):
+            changed = copy.deepcopy(source)
+            if name == "text": changed["lines"][0]["text"] += " CHANGED"
+            if name == "stanza": changed["lines"][0]["breakBefore"] = True
+            if name == "membership": changed["members"][0][1] = [1]
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                audio.current_source_bindings({"requests": [request]}, snapshots=[changed])
+        with self.assertRaisesRegex(ValueError, "exact current version"):
+            audio.bind_request_source({"text": "TECHNICAL TEST"}, source, ["test-photo-0-0"])
+        atom = {"piece_id": "test-piece", "version_id": "test-version", "source_ids": {"line_id": "test-photo-0-0"}}
+        with self.assertRaisesRegex(ValueError, "exact current version"):
+            regions.current_source_bindings({"atoms": [atom]}, snapshots=[source])
+        untranscribed = copy.deepcopy(source)
+        untranscribed["lines"][0].update(text=None, transcriptionStatus="untranscribed")
+        with self.assertRaisesRegex(ValueError, "transcribed"):
+            sf.source_binding(untranscribed)
+
+    def test_bound_audio_render_rechecks_current_source_and_retains_fixture_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            repo = root / "source"
+            source_data = {"pieces": [{"id": "test-piece", "V": [{"id": "test-version", "P": [["test-photo", [0]]]}]}]}
+            review_data = {"pages": [{"id": "test-photo", "blocks": [{"t": "text", "lines": [{"id": "explicit-import-line", "tx": "calibration"}]}]}]}
+            for name, value in (("site/data/j.json", source_data), ("studio/data/review.json", review_data)):
+                path = repo / name
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(value))
+            source = scripts.source_snapshot(repo, "test-piece", "test-version")
+            audio.fixture(root / "session")
+            path = root / "session/session.json"
+            manifest = audio.json_read(path)
+            manifest["requests"] = [audio.bind_request_source(manifest["requests"][0], source, ["explicit-import-line"])]
+            path.write_bytes(audio.json_bytes(manifest))
+            audio.run(path, root / "listen", source_repo=repo)
+            receipt = audio.json_read(root / "listen/receipt.json")
+            self.assertEqual(receipt["source_bindings"], [sf.source_binding(source)])
+            self.assertEqual(receipt["source_fingerprint_version"], 2)
+            self.assertTrue(receipt["fixture"])
+            self.assertEqual(receipt["privacy"]["rendered_release"], "undecided")
+            review_data["acceptedReviews"] = {"explicit-import-line": {"status": "corrected", "original": "calibration", "text": "CHANGED TECHNICAL TEST"}}
+            (repo / "studio/data/review.json").write_text(json.dumps(review_data))
+            with self.assertRaises(audio.PilotError) as error:
+                audio.validate_manifest(path, source_repo=repo)
+            self.assertEqual(error.exception.code, "source_binding_stale")
+
     def test_v1_history_remains_readable_but_cannot_be_the_current_public_source(self):
         value = envelope("TECHNICAL TEST LINE ONE")
         revision = latest(value)

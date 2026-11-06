@@ -24,10 +24,20 @@ def context(sources, components):
 
 def regions(manifest):
     import source_regions as sr
-    bindings = [{"pieceId": p, "versionId": v, "sourceFingerprint": rc.digest({"synthetic-source": [p, v]})}
-                for p, v in sorted({(a["piece_id"], a["version_id"]) for a in manifest["atoms"]})]
+    snapshots = []
+    for piece, version in sorted({(a["piece_id"], a["version_id"]) for a in manifest["atoms"]}):
+        atoms = [a for a in manifest["atoms"] if (a["piece_id"], a["version_id"]) == (piece, version)]
+        line_ids = sorted({a["source_ids"]["line_id"] for a in atoms if a.get("source_ids", {}).get("line_id")} |
+                          {line for a in atoms for line in a.get("lineage", {}).get("source_line_ids", [])})
+        if not line_ids:
+            line_ids = ["synthetic-" + piece + "-source-line"]
+        snapshots.append({"pieceId": piece, "versionId": version, "members": [[atoms[0]["page_id"], [0]]],
+                          "lines": [{"lineId": lid, "text": "SYNTHETIC RELEASE TEST SOURCE", "blockType": "text", "breakBefore": False} for lid in line_ids]})
+    bindings = sr.current_source_bindings(manifest, snapshots=snapshots)
     sha = "sha256:" + sr.manifest_digest(manifest)
     components = [{"kind": "regions", "id": sr.region_component_id(s["pieceId"], s["versionId"]),
                    **s, "revisionDigest": sha, "fixture": False, "path": "regions.json", "sha256": sha}
                   for s in bindings]
-    return context(bindings, components)
+    result = context(bindings, components)
+    result["source_snapshots"] = snapshots
+    return result

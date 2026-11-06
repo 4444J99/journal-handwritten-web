@@ -22,6 +22,14 @@
   `sourceBindings` for every transcribed version. A caller-supplied descriptor
   cannot establish freshness; the reader must compare with these loaded
   bindings. Untranscribed imports have no binding and remain unavailable.
+- Independent combined review reproduced and repaired a T10 legacy-current
+  bypass: a v1 current snapshot could conceal a stanza-only change. History is
+  still readable; live projection now requires v2. Exact output correction
+  overrides preserve quotation differences and reject raw source drift.
+- T08 public eligibility resolves current v2 snapshots and explicit line IDs;
+  T09 request bindings verify selected effective lines during validation and
+  rendering. Shared vectors cover both adapters. Existing calibration input
+  choices and DSP remain unchanged, with updated code provenance.
 
 ## Author decisions
 

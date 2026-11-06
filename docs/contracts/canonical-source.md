@@ -139,8 +139,26 @@ there is no automatic migration. A stanza-only change invalidates a v2 anchor.
 
 The shared vectors in `tests/fixtures/source-fingerprint-vectors.json` cover
 Unicode, text, block type, membership and stanza changes, together with a
-geometry-only change. Python/T10 and JS/T05 consume the same vectors. T08/T09
-integration should consume `source_binding` when binding a rendered output.
+geometry-only change. Python/T10, JS/T05, T08 regions and T09 audio adapters
+consume the same vectors. `source_binding` refuses a snapshot carrying a stale
+or historical v1 digest; v1 remains readable through the history APIs.
+
+T08's `current_source_bindings` resolves exact source versions and checks every
+declared line ID before the public output gate. The command-line gate resolves
+current files from `--source-repo` and optional `--source-db`; saved snapshots or
+copied fingerprint strings in a release-context file cannot establish freshness.
+Old region manifests are preserved. Newly captured image ownership points to
+this contract without rewriting earlier provenance records.
+
+T09's `bind_request_source(request, snapshot, line_ids)` adds an explicit
+`source_binding` without changing request text. The current adapter verifies
+exact selected line IDs and effective text, and checks freshness during
+validation and again while rendering. Bound receipts carry v2 source bindings.
+Existing unbound calibration fixtures remain private, with their original DSP
+defaults and raw/sample behavior. The recorded renderer code hash changes with
+this implementation, as intended; that provenance is not an audio approval.
+`run` and `validate` accept `--source-repo` and `--source-db` for an explicitly
+selected current source checkout/export.
 
 ## Geometry, photos and image lineage
 

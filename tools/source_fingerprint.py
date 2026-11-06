@@ -40,6 +40,16 @@ def source_binding(source):
     already declares a digest must agree with v2; callers retain v1 history and
     create a new explicit rebind instead of treating its old digest as current.
     """
+    if not isinstance(source, dict):
+        raise ValueError("current source snapshot must be an object")
+    lines = source.get("lines")
+    if not isinstance(lines, list) or not lines or any(
+            not isinstance(line, dict) or not isinstance(line.get("lineId"), str) or not line["lineId"]
+            or not isinstance(line.get("text"), str) or not isinstance(line.get("blockType"), str)
+            or line.get("transcriptionStatus") == "untranscribed" for line in lines):
+        raise ValueError("current source needs explicit transcribed lines")
+    if len({line["lineId"] for line in lines}) != len(lines):
+        raise ValueError("duplicate current source line ID")
     current = source_fingerprint(source)
     if source.get("fingerprintVersion", 2) != 2:
         raise ValueError("current source requires explicit v2 rebind")

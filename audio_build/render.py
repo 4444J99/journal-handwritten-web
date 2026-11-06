@@ -6,6 +6,7 @@ Every output is new, private, and explicitly bound to a source manifest.
 """
 from __future__ import annotations
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -25,6 +26,9 @@ else:
     import dsp
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "tools") not in sys.path:
+    sys.path.insert(0, str(ROOT / "tools"))
+from source_fingerprint import source_binding
 MAX_JSON_BYTES = 2 * 1024 * 1024
 MAX_TAKES = 100
 MAX_TOTAL_FRAMES = 48000 * 600
@@ -297,7 +301,51 @@ def text_phones(text, lexicon, text_source):
     return result, [token for token, _ in tokens]
 
 
-def validate_manifest(path, *, snapshot=None):
+def bind_request_source(request, snapshot, line_ids):
+    """Attach an explicit v2 source association without changing request text."""
+    binding = source_binding(snapshot)
+    if not isinstance(line_ids, list) or not line_ids or len(set(line_ids)) != len(line_ids):
+        raise ValueError("audio source binding needs distinct explicit line IDs")
+    rows = {line["lineId"]: line for line in snapshot["lines"]}
+    if any(line_id not in rows for line_id in line_ids):
+        raise ValueError("audio source line is not in the exact current version")
+    if "text" in request and request["text"] != "\n".join(rows[line_id]["text"] for line_id in line_ids):
+        raise ValueError("audio request text differs from its selected effective source lines")
+    result = copy.deepcopy(request)
+    result["source_binding"] = {**binding, "lineIds": list(line_ids)}
+    return result
+
+
+def current_source_bindings(manifest, *, repo=ROOT, db=None, snapshots=None):
+    """Resolve optional request bindings; historical unbound fixtures stay private."""
+    from script_realizations import source_snapshot
+    snapshots_by_key = {}
+    for snapshot in snapshots or []:
+        binding = source_binding(snapshot)
+        key = (binding["pieceId"], binding["versionId"])
+        if key in snapshots_by_key:
+            raise ValueError("duplicate current audio source snapshot")
+        snapshots_by_key[key] = snapshot
+    bindings = {}
+    for request in manifest.get("requests", []):
+        if "source_binding" not in request:
+            continue
+        previous = request["source_binding"]
+        if not isinstance(previous, dict) or set(previous) != {"pieceId", "versionId", "sourceFingerprint", "lineIds"}:
+            raise ValueError("invalid audio source binding")
+        key = (previous["pieceId"], previous["versionId"])
+        if key not in snapshots_by_key:
+            if snapshots is not None:
+                raise ValueError("missing current audio source snapshot")
+            snapshots_by_key[key] = source_snapshot(repo, *key, db)
+        checked = bind_request_source(request, snapshots_by_key[key], previous["lineIds"])["source_binding"]
+        if checked != previous:
+            raise ValueError("audio source changed; explicit source rebind required")
+        bindings[key] = {k: v for k, v in checked.items() if k != "lineIds"}
+    return [bindings[key] for key in sorted(bindings)]
+
+
+def validate_manifest(path, *, snapshot=None, source_repo=ROOT, source_db=None):
     path = Path(path).resolve()
     manifest = json_read(path) if snapshot is None else snapshot
     if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
@@ -417,6 +465,10 @@ def validate_manifest(path, *, snapshot=None):
             matches = [x for x in loaded[take_id]["labels"]["intervals"] if x["id"] == request.get("label_id")]
             if len(matches) != 1:
                 fail("label_missing", "Texture request requires exactly one reviewed label", request_id=identifier)
+    try:
+        current_source_bindings(manifest, repo=source_repo, db=source_db)
+    except (ValueError, KeyError, TypeError, OSError) as error:
+        fail("source_binding_stale", str(error))
     return manifest, loaded, units, warnings
 
 
@@ -512,7 +564,7 @@ def texture_render(request, loaded):
     return y, [ref], parameters, timing
 
 
-def run(manifest_path, output):
+def run(manifest_path, output, *, source_repo=ROOT, source_db=None):
     output = new_directory(output)
     try:
         manifest_path = Path(manifest_path).resolve()
@@ -525,9 +577,13 @@ def run(manifest_path, output):
                                   parse_constant=lambda x: fail("nonfinite_json", f"Nonfinite JSON literal {x}"))
         except (ValueError, UnicodeError) as exc:
             fail("invalid_json", str(exc), file=manifest_path.name)
-        manifest, loaded, units, warnings = validate_manifest(manifest_path, snapshot=snapshot)
+        manifest, loaded, units, warnings = validate_manifest(manifest_path, snapshot=snapshot, source_repo=source_repo, source_db=source_db)
 
         def check_sources():
+            try:
+                current_source_bindings(manifest, repo=source_repo, db=source_db)
+            except (ValueError, KeyError, TypeError, OSError) as error:
+                fail("source_binding_stale", str(error))
             if sha256(manifest_path) != manifest_hash:
                 fail("manifest_changed", "Manifest bytes changed during rendering; use a stable manifest")
             for identifier, entry in loaded.items():
@@ -569,6 +625,10 @@ def run(manifest_path, output):
                    "reproducibility": {"environment": env, "raw_sha256_before": before, "raw_sha256_after": after,
                                        "same_environment_replay_required": True,
                                        "cross_platform_bit_identity": "not established"}}
+        logical_bindings = current_source_bindings(manifest, repo=source_repo, db=source_db)
+        if logical_bindings:
+            receipt["source_fingerprint_version"] = 2
+            receipt["source_bindings"] = logical_bindings
         for request, samples, refs, parameters, timing in rendered:
             identifier = request["id"]
             wav = output / "samples" / f"{identifier}.wav"
@@ -918,9 +978,13 @@ def main(argv=None):
     command = subs.add_parser("run")
     command.add_argument("--manifest", required=True)
     command.add_argument("--out", required=True)
+    command.add_argument("--source-repo", type=Path, default=ROOT)
+    command.add_argument("--source-db", type=Path)
     command = subs.add_parser("validate")
     command.add_argument("--manifest", required=True)
     command.add_argument("--report", required=True)
+    command.add_argument("--source-repo", type=Path, default=ROOT)
+    command.add_argument("--source-db", type=Path)
     command = subs.add_parser("init-session")
     command.add_argument("--config", required=True)
     command.add_argument("--out", required=True)
@@ -945,7 +1009,7 @@ def main(argv=None):
         elif args.command == "packet":
             result = packet(args.out)
         elif args.command == "run":
-            result = run(args.manifest, args.out)
+            result = run(args.manifest, args.out, source_repo=args.source_repo, source_db=args.source_db)
         elif args.command == "init-session":
             result = init_session(args.config, args.out)
         elif args.command == "labels-template":
@@ -958,7 +1022,7 @@ def main(argv=None):
             if report.exists() or report.is_symlink():
                 fail("output_exists", "Validation report must be a new file", target=str(report))
             try:
-                manifest, loaded, units, warnings = validate_manifest(args.manifest)
+                manifest, loaded, units, warnings = validate_manifest(args.manifest, source_repo=args.source_repo, source_db=args.source_db)
                 result = {"schema_version": 1, "status": "valid", "fixture": manifest["fixture"],
                           "session_id": manifest["session_id"], "manifest_sha256": sha256(args.manifest),
                           "takes": len(loaded), "unique_diphones": len(units), "warnings": warnings, "errors": []}
