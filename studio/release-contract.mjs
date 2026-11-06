@@ -9,6 +9,7 @@ export const CLEARANCE_SCHEMA = 'versforms.release-clearance.v1';
 export const EVENT_SCHEMA = 'versforms.release-event.v1';
 export const contractDigest = value => sha256(canonicalJSON(value));
 const HASH = /^sha256:[a-f0-9]{64}$/;
+const hash = value => typeof value === 'string' && HASH.test(value);
 const text = v => typeof v === 'string' && v.trim().length > 0;
 const object = v => !!v && typeof v === 'object' && !Array.isArray(v);
 const same = (a,b) => {try{return canonicalJSON(a) === canonicalJSON(b);}catch{return false;}};
@@ -35,13 +36,13 @@ export function validateOutputManifest(manifest) {
   const paths = new Set();
   for (const f of manifest.files) {
     if (!object(f) || !same(Object.keys(f).sort(),['bytes','path','sha256']) || !safePath(f.path) ||
-        !Number.isSafeInteger(f.bytes) || f.bytes < 0 || !HASH.test(f.sha256 || '')) errors.push('invalid-output-entry');
+        !Number.isSafeInteger(f.bytes) || f.bytes < 0 || !hash(f.sha256)) errors.push('invalid-output-entry');
     else { if (paths.has(f.path)) errors.push('duplicate-output-path'); paths.add(f.path); }
   }
   if (!Array.isArray(manifest.sources) || !manifest.sources.length) return [...errors,'missing-source-bindings'];
   const sourceKeys = new Set(), fingerprints = new Map();
   for (const s of manifest.sources) {
-    if (!object(s) || !text(s.pieceId) || !text(s.versionId) || !HASH.test(s.sourceFingerprint || '')) { errors.push('invalid-source-binding'); continue; }
+    if (!object(s) || !text(s.pieceId) || !text(s.versionId) || !hash(s.sourceFingerprint)) { errors.push('invalid-source-binding'); continue; }
     const key = stableJSON([s.pieceId,s.versionId]);
     if (sourceKeys.has(key)) errors.push('duplicate-source-binding');
     sourceKeys.add(key);
@@ -53,7 +54,7 @@ export function validateOutputManifest(manifest) {
     if (!object(c)) { errors.push('invalid-component'); continue; }
     const key = stableJSON([c.kind,c.id]), sourceKey=stableJSON([c.pieceId,c.versionId]);
     if (!['note','contribution','audio','realization','regions','media'].includes(c.kind) || !text(c.id) || seen.has(key) ||
-        !HASH.test(c.revisionDigest || '') || !HASH.test(c.sourceFingerprint || '') || typeof c.fixture !== 'boolean' ||
+        !hash(c.revisionDigest) || !hash(c.sourceFingerprint) || typeof c.fixture !== 'boolean' ||
         !sourceKeys.has(sourceKey) || fingerprints.get(sourceKey) !== c.sourceFingerprint) errors.push('invalid-component-binding');
     seen.add(key);
     const file = manifest.files.find(f => f?.path === c.path);

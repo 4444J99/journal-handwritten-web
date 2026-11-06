@@ -4,6 +4,7 @@ import {stableJSON,sha256} from './source-fingerprint.mjs';
 import {validUTCInstant} from './release-contract.mjs';
 export const ARTIFACT_KINDS=Object.freeze(['audio-feedback','pronunciation','audio-render','realization','release-evidence']);
 const ID=/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/, HASH=/^sha256:[a-f0-9]{64}$/;
+const id=value=>typeof value==='string'&&ID.test(value), hash=value=>typeof value==='string'&&HASH.test(value);
 const object=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const text=v=>typeof v==='string'&&v.trim().length>0;
 const copy=v=>JSON.parse(JSON.stringify(v));
@@ -38,18 +39,18 @@ export function assertArtifact(_collection,doc) {
   if (_collection !== 'artifacts' || !object(doc) || doc.schemaVersion !== 1 || doc.family !== 'artifact') throw new Error('Invalid artifact envelope.');
   const fields=['schemaVersion','family','kind','recordId','revisionId','parents','source','payload','fixture','at','by','reason','revisionDigest'];
   if (Object.keys(doc).sort().join(',') !== fields.sort().join(',')) throw new Error('Unknown or missing artifact fields.');
-  for(const field of ['recordId','revisionId'])if(!ID.test(doc[field]||''))throw new Error('Invalid artifact identity.');
+  for(const field of ['recordId','revisionId'])if(!id(doc[field]))throw new Error('Invalid artifact identity.');
   if(!ARTIFACT_KINDS.includes(doc.kind)||typeof doc.fixture!=='boolean'||!text(doc.by)||typeof doc.reason!=='string'||!validUTCInstant(doc.at))throw new Error('Invalid artifact provenance.');
   if(!Array.isArray(doc.parents)||new Set(doc.parents).size!==doc.parents.length||doc.parents.some(p=>typeof p!=='string'||!ID.test(p)||p===doc.revisionId))throw new Error('Invalid artifact parents.');
-  if(!object(doc.source)||Object.keys(doc.source).sort().join(',')!=='pieceId,sourceFingerprint,versionId'||!ID.test(doc.source.pieceId||'')||!ID.test(doc.source.versionId||'')||!HASH.test(doc.source.sourceFingerprint||''))throw new Error('Invalid artifact source binding.');
+  if(!object(doc.source)||Object.keys(doc.source).sort().join(',')!=='pieceId,sourceFingerprint,versionId'||!id(doc.source.pieceId)||!id(doc.source.versionId)||!hash(doc.source.sourceFingerprint))throw new Error('Invalid artifact source binding.');
   if(!object(doc.payload))throw new Error('Artifact payload must be an object.');
   if(new TextEncoder().encode(JSON.stringify(doc)).length>64*1024)throw new Error('Artifact exceeds 64 KiB.');
-  if(!HASH.test(doc.revisionDigest||'')||artifactDigest(doc)!==doc.revisionDigest)throw new Error('Artifact digest changed.');
+  if(!hash(doc.revisionDigest)||artifactDigest(doc)!==doc.revisionDigest)throw new Error('Artifact digest changed.');
   if(doc.kind==='audio-feedback') {
     const p=doc.payload;
-    if(!text(p.sampleId)||!['unreviewed','keep','revise','reject'].includes(p.decision)||typeof p.notes!=='string'||['renderDigest','pronunciationDigest','bankDigest'].some(k=>!HASH.test(p[k]||'')))throw new Error('Feedback must bind a render, pronunciation and bank.');
+    if(!text(p.sampleId)||!['unreviewed','keep','revise','reject'].includes(p.decision)||typeof p.notes!=='string'||['renderDigest','pronunciationDigest','bankDigest'].some(k=>!hash(p[k])))throw new Error('Feedback must bind a render, pronunciation and bank.');
   }
-  if(doc.kind==='pronunciation'&&(!Array.isArray(doc.payload.entries)||doc.payload.entries.some(e=>!object(e)||!ID.test(e.lineId||'')||!text(e.token)||!text(e.pronunciation))))throw new Error('Pronunciation entries need source line IDs and supplied readings.');
+  if(doc.kind==='pronunciation'&&(!Array.isArray(doc.payload.entries)||doc.payload.entries.some(e=>!object(e)||!id(e.lineId)||!text(e.token)||!text(e.pronunciation))))throw new Error('Pronunciation entries need source line IDs and supplied readings.');
   if(doc.kind==='realization') {
     const r=doc.payload.realization,last=r?.revisions?.at(-1);
     if(!r||r.pieceId!==doc.source.pieceId||r.versionId!==doc.source.versionId||last?.source?.versionFingerprint!==doc.source.sourceFingerprint)throw new Error('Realization source does not match its storage binding.');

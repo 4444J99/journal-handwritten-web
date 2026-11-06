@@ -33,6 +33,26 @@ test('listening feedback requires exact sample, render, pronunciation and voice-
   }
   const bad=structuredClone(valid);bad.payload.notes+=' changed';assert.throws(()=>assertArtifact('artifacts',bad),/digest/);
 });
+test('artifact identities and hash references must be strings without coercion',()=>{
+  const input={kind:'audio-feedback',recordId:'test-feedback',revisionId:'test-audio',source,fixture:true,
+    payload:{sampleId:'test-sample',decision:'revise',notes:'TECHNICAL TEST',renderDigest:contractDigest({render:1}),pronunciationDigest:contractDigest({pronunciation:1}),bankDigest:contractDigest({bank:1})}};
+  const options={at:'2026-01-01T00:00:00Z',by:'synthetic-test-only'};
+  for(const field of ['renderDigest','pronunciationDigest','bankDigest']){
+    const bad=structuredClone(input);bad.payload[field]=[bad.payload[field]];
+    assert.throws(()=>createArtifactRevision(bad,options),/Feedback/);
+  }
+  for(const field of ['pieceId','versionId','sourceFingerprint']){
+    const bad=structuredClone(input);bad.source[field]=[bad.source[field]];
+    assert.throws(()=>createArtifactRevision(bad,options),/source binding/);
+  }
+  for(const field of ['recordId','revisionId']){
+    const bad=structuredClone(input);bad[field]=[bad[field]];
+    assert.throws(()=>createArtifactRevision(bad,options),/identity/);
+  }
+  const pronunciation=structuredClone(first());pronunciation.payload.entries[0].lineId=['test-line'];
+  pronunciation.revisionDigest=artifactDigest(pronunciation);
+  assert.throws(()=>assertArtifact('artifacts',pronunciation),/Pronunciation/);
+});
 
 test('private artifact store verifies persisted bytes and restores the whole fork without losing Unicode',async()=>{
   function database(){const data=new Map();return {data,collection(name){assert.equal(name,'artifacts');return {

@@ -37,6 +37,23 @@ test('tampered inventories and synthetic fixtures cannot become eligible',()=>{
   assert.ok(validateOutputManifest(changed).includes('output-manifest-changed'));
   assert.equal(evaluateRelease(manifest,clearance,{currentSources:sources,component:{...component,fixture:true}}).eligible,false);
 });
+test('hash fields reject coercible JSON values in both runtimes',()=>{
+  const mutations=[
+    m=>{m.components=[];m.files[0].sha256=[m.files[0].sha256];},
+    m=>{m.components=[];m.sources[0].sourceFingerprint=[m.sources[0].sourceFingerprint];},
+    m=>{m.components[0].revisionDigest=[m.components[0].revisionDigest];},
+    m=>{m.components[0].sourceFingerprint=[m.components[0].sourceFingerprint];},
+  ];
+  for(const mutate of mutations){
+    const {manifest,clearance}=fixture();mutate(manifest);
+    const {manifestDigest,...body}=manifest;manifest.manifestDigest=contractDigest(body);
+    clearance.manifestDigest=manifest.manifestDigest;clearance.author_clearance.manifestDigest=manifest.manifestDigest;
+    const result=evaluateRelease(manifest,clearance,{currentSources:manifest.sources});
+    const run=spawnSync('python3',['-c','import sys,json;sys.path.insert(0,sys.argv[1]);import release_contract as r;x=json.load(sys.stdin);print(json.dumps(r.evaluate(x["manifest"],x["clearance"],current_sources=x["manifest"]["sources"])))',fileURLToPath(new URL('../tools',import.meta.url))],{input:JSON.stringify({manifest,clearance}),encoding:'utf8'});
+    assert.equal(run.status,0,run.stderr);assert.equal(result.eligible,false);
+    assert.deepEqual(JSON.parse(run.stdout),result);
+  }
+});
 test('legacy social event on the site keeps its original type without inventing publication classification',()=>{
   const input={type:'social',url:'https://versforms.pages.dev/'};
   assert.deepEqual(eventChannels(input),{recordedType:'social',channel:'site',url:input.url,publicationClassification:null,classificationProvenance:'author-decision-pending'});
