@@ -1470,6 +1470,23 @@ class HardenedPostingTests(Base):
         fn(j)
         jp.write_text(json.dumps(j))
 
+    def sync_fixture_studio_originals(self):
+        """Keep synthetic source authorities aligned before exercising leak checks.
+
+        Intentional reader/studio drift has its own fail-closed adapter test.
+        These three fixtures need to reach the quotation/leak check instead.
+        """
+        reader = json.loads((self.root / "site/data/j.json").read_text())
+        path = self.root / "studio/data/review.json"
+        studio = json.loads(path.read_text())
+        pages = {page["id"]: page for page in studio["pages"]}
+        for page in reader["pages"]:
+            for bi, block in enumerate(page["B"]):
+                target = pages[page["id"]]["blocks"][bi]
+                target["t"] = "quotation" if block.get("t") == 4 else target["t"]
+                target["lines"] = [dict(target["lines"][li], tx=text) for li, text in enumerate(block["L"])]
+        path.write_text(json.dumps(studio))
+
     def fresh(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
         self.setUp()
@@ -2047,6 +2064,7 @@ class HardenedPostingTests(Base):
             pg["B"][0]["L"] = [post_poem.PLACEHOLDER]
         self.prepare()
         self.edit_j(quote)
+        self.sync_fixture_studio_originals()
         # a review that "corrects" the placeholder line of the quotation block with the quoted passage
         ready_db(self.db, pids=("p001",), _root=self.root, reviews={"pg2-0-0": {"status": "corrected", "original": post_poem.PLACEHOLDER, "text": "THE QUOTED PASSAGE", "at": "2026-11-05T00:00:00Z"}})
         self.assertEqual(self.go("p001"), 0, self.out)
@@ -2057,6 +2075,7 @@ class HardenedPostingTests(Base):
     def test_build_public_itself_drops_a_correction_aimed_at_a_quotation_block(self):
         self.prepare()
         self.edit_j(lambda j: next(p for p in j["pages"] if p["id"] == "pg2")["B"][0].update(t=4, L=[post_poem.PLACEHOLDER]))
+        self.sync_fixture_studio_originals()
         out = self.tmp / "o"
         build_public.build(out, ["p001"], site=self.root / "site", select={"p001": [1]}, corrections={("pg2", 0, 0): "THE QUOTED PASSAGE"})
         self.assertNotIn("THE QUOTED PASSAGE", self.all_text(out))
@@ -2318,6 +2337,7 @@ class HardenedPostingTests(Base):
                 if pg["id"] == "pg2":
                     pg["B"][0]["L"][0] = "x " + secret
         self.edit_j(put)
+        self.sync_fixture_studio_originals()
         ready_db(self.db, pids=("p001",), _root=self.root)
         src, out, published, texts_ok = self.built_output()
         self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
