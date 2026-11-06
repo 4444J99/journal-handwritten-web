@@ -108,12 +108,21 @@ def _unique(items, key, what):
     return result
 
 
-def source_fingerprint(source):
-    # Same field set and sorted-key JSON as T05's proposed version fingerprint.
-    # Coordinates, page dimensions, and display order do not define identity.
+def source_fingerprint_v1(source):
+    # Historical v1 fingerprint: stanza boundaries (breakBefore) were ignored.
+    # Retained for readable history and explicit migration/rebind only.
     return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
                    "members": source["members"], "lines": [
                        {k: line[k] for k in ("lineId", "text", "blockType")}
+                       for line in source["lines"]]})
+
+
+def source_fingerprint(source):
+    # v2 logical-structure digest: includes stanza boundaries (breakBefore).
+    # Coordinates, page dimensions, and display order do not define identity.
+    return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
+                   "members": source["members"], "lines": [
+                       {k: line[k] for k in ("lineId", "text", "blockType", "breakBefore")}
                        for line in source["lines"]]})
 
 
@@ -190,7 +199,7 @@ def source_snapshot(repo, piece_id, version_id, db=None):
         raise Invalid("empty source version")
     snapshot = {"pieceId": piece_id, "versionId": version_id, "members": copy.deepcopy(version["P"]),
                 "lines": rows, "versionFingerprint": "", "provenance": {
-                    "repository": "4444J99/journal-handwritten-web", "contract": "T05-proposed-fingerprint-v1",
+                    "repository": "4444J99/journal-handwritten-web", "contract": "T05-proposed-fingerprint-v2",
                     "files": [{"path": p, "sha256": file_hash(repo / p)} for p in paths],
                     "reviewRecords": review_evidence,
                     "readingStatus": "existing-transcription-with-exported-corrections; not a new author verification"}}
@@ -246,7 +255,7 @@ def _validate_source(source, piece_id, version_id):
         scalar_text(line["blockType"])
         if type(line["breakBefore"]) is not bool:
             raise Invalid("invalid stanza boundary")
-    if source["versionFingerprint"] != source_fingerprint(source):
+    if source["versionFingerprint"] not in (source_fingerprint(source), source_fingerprint_v1(source)):
         raise Invalid("source fingerprint differs from its preserved snapshot")
     provenance = source["provenance"]
     keys(provenance, ("repository", "contract", "files", "reviewRecords", "readingStatus"), "source provenance")

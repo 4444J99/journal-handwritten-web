@@ -249,7 +249,7 @@ class CurrentRepositoryContract(unittest.TestCase):
         # Known source vector at main 038d01f. Changes must update this evidence
         # deliberately, not silently migrate existing realization source hashes.
         current = sr.source_snapshot(ROOT, "p001", "p001-diary1-0", ROOT / "exports/studio-db-2026-11-05")
-        self.assertEqual(current["versionFingerprint"], "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a")
+        self.assertEqual(current["versionFingerprint"], "sha256:17a2950bf426bc437f00ef97c550c2ef017c734b7d50bf20c4606a01907b9a1b")
         self.assertEqual(len(current["lines"]), 22)
         self.assertEqual(sr.release_policy(ROOT, "p001", ROOT / "exports/studio-db-2026-11-05"), {"pool": "unsorted", "visibility": "private"})
 
