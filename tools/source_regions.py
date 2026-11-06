@@ -951,10 +951,13 @@ def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) 
                 manifest_reasons.append("source-binding:declared-current-source-mismatch")
         except (ValueError, KeyError, TypeError, OSError):
             manifest_reasons.append("source-binding:current-v2-source-unavailable")
-        try:
-            _checked_source_assets(manifest, context.get("source_repo", ROOT))
-        except (ValueError, TypeError, OSError) as error:
-            manifest_reasons.append(str(error))
+
+    # Current source pixels are required in every scope, independently of an
+    # unchanged logical fingerprint or a valid exact-output clearance record.
+    try:
+        _checked_source_assets(manifest, (release_context or {}).get("source_repo", ROOT))
+    except (ValueError, TypeError, OSError) as error:
+        manifest_reasons.append(str(error))
 
     clearance = policy.get("author_clearance") or {}
     if scope in PUBLIC_SCOPES:

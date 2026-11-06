@@ -548,6 +548,21 @@ class PrivateRegionPreviewTests(unittest.TestCase):
         self.assertEqual(result.returncode, 3, result.stderr or result.stdout)
         self.assertIn("source-binding:current-v2-source-unavailable", result.stdout)
 
+    def test_current_source_pixels_are_required_even_with_public_positive_control(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = self.copied_source(Path(tmp))
+            context = release_fixtures.regions(self.manifest)
+            context["source_repo"] = repo
+            policy = cleared_policy(self.manifest)
+            self.assertTrue(sr.evaluate(self.manifest, policy, "public-release", release_context=context)["allowed"])
+            image = repo / "site/img/p/diary1.jpg"
+            image.write_bytes(image.read_bytes() + b"CHANGED TECHNICAL SOURCE PIXELS")
+            for scope in ("private-local", "public-release"):
+                with self.subTest(scope=scope):
+                    report = sr.evaluate(self.manifest, policy, scope, release_context=context)
+                    self.assertFalse(report["allowed"])
+                    self.assertIn("source-asset bytes changed: scan:p/diary1", report["manifest_reasons"])
+
 
 if __name__ == "__main__":
     unittest.main()
