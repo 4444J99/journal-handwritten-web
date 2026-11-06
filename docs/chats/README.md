@@ -38,6 +38,7 @@ Conventions
 | 2026-11-03 | [Cut-up technique research report](2026-11-03-cut-up-technique-research.md) | Research only. |
 | 2026-11-04 | [Profile picture edit](2026-11-04-profile-picture-edit.md) | Open — handle/domain checks outstanding. |
 | 2026-11-05 | [Versforms dashboard](2026-11-05-versforms-dashboard.md) | Open — PR #73 to merge; Actions runners not starting |
+| 2026-11-06 | [Launch code completion and live-state reconciliation](2026-11-06-launch-completion.md) | Verified code fixes and recovered prototype tracked in scoped PRs; authenticated deployed acceptance and owner gates remain open. |
 | 2026-11-06 | [Integration execution (partial)](2026-11-06-integration-execution.md) | Two PRs merged (#127 audio, #128 fingerprint); ci_local green on main@8cd9872a; remaining tranche work open. |
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
@@ -51,6 +52,7 @@ Conventions
 | 2026-11-05 | [T06: identity and audience operations](2026-11-05-t06-identity-audience.md) | Private review packet prepared; current identity and policy sources, weekly SOP, finite choices, avatar/T03/T07 handoffs; no public or account action |
 | 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
 | 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
+
 | 2026-11-06 | [Posting hardening completion](2026-11-06-posting-hardening-completion.md) | Follow-up repair for #123: tests, Git isolation, owned cleanup and accurate runbook; review PR, no publication |
 
 ## Repository state (checked 2026-11-05)
