@@ -75,4 +75,4 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 6. [author] Pick poem 1 (`p001`, journal page order) and the first-post date (runbook: issue #113); [Claude] build the Instagram template from his material.
 7. [author] Post.
 
-| 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | Author-directed metadata choices and canonical block-2 repair; verification in progress |
+| 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
