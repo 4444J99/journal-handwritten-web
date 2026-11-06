@@ -1,0 +1,44 @@
+{
+  "baseCommit": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+  "scope": [
+    "site",
+    "studio",
+    "release",
+    "exports",
+    ".github",
+    "tools/post_poem.py",
+    "tools/check.py",
+    "CLAUDE.md"
+  ],
+  "trackedFilesChecked": 559,
+  "byteIdentical": true,
+  "changed": [],
+  "unexpectedFiles": [],
+  "inventorySha256": "1d48a916a2fe4c39c69efd50b9643988f0035402e64c0c7db20b8a370d0858a1",
+  "keyInputs": [
+    {
+      "path": "CLAUDE.md",
+      "baseBlob": "fe453038f2cd7f5175edf48eeddacbd1ff95a181",
+      "currentBlob": "fe453038f2cd7f5175edf48eeddacbd1ff95a181",
+      "sha256": "0ae180e20177ae649dbac16f6af183c5986cda429ab917e15410c6eff8597918"
+    },
+    {
+      "path": "site/data/j.json",
+      "baseBlob": "43108fba6b01f4f6c2a36bf55982263dc310b2ed",
+      "currentBlob": "43108fba6b01f4f6c2a36bf55982263dc310b2ed",
+      "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+    },
+    {
+      "path": "studio/data/review.json",
+      "baseBlob": "efb9f102649010ee4d18e02deb5e61457ae57d04",
+      "currentBlob": "efb9f102649010ee4d18e02deb5e61457ae57d04",
+      "sha256": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+    },
+    {
+      "path": "tools/post_poem.py",
+      "baseBlob": "b3c9e3ad14193c92301319b298294f50e0de4840",
+      "currentBlob": "b3c9e3ad14193c92301319b298294f50e0de4840",
+      "sha256": "fff12cd169e30bff5b82c5cc77a0551ec194554e20d03edc0c31d59d480db3fd"
+    }
+  ]
+}

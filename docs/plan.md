@@ -105,3 +105,12 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 ## Rebuild order (technical)
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
+
+
+## T10 technical preparation — 2026-11-05 review baseline
+
+The later roots/glyphs work in #12 and research follow-ups in #33 now have an isolated, private script-realization fixture and author-glyph workflow. See [the T10 record](t10-script-realizations.md). This is technical preparation: exact existing `p001` / `p001-diary1-0`, English/Latin, unchanged source reading, original supplied font. It is not adoption of Greek-first, a translated poem, an expanded multi-script font, or a release decision.
+
+The proposal keeps realization revisions independent from editorial poem versions, matches the proposed T05 source fingerprint, and hands schema/font interfaces to T02 for review. Current public output is empty pending T03's actual manifest-based clearance adapter. LingFrame was inspected at a pinned commit; a narrow local diagnostic interface is proposed, with no repository coupling. Optional weekly practice fields remain the author's work. Current journal/grant follow-ups are sourced in the T10 packet; no application, inquiry, schedule or publication is authorized by those findings.
+
+Next author input can be one exact line, its source/version association, language/script/orthography and operation, plus only its necessary glyph samples. Preserve the earlier history above; its proposals and historical approvals do not become new authority. #12 and #33 remain open with existing ownership.
