@@ -1,5 +1,10 @@
 # Posting a poem
 
+## Public metadata decisions - 2026-11-06
+
+The author directed completion of these choices. Public builds filter PAL/HF entries to exact selected page/block membership; `post_poem.py` uses this same builder. They blank the journal font's optional provenance/credit name IDs 0 and 10 across platforms (retaining license IDs 13/14), and omit the global machine-transcription review line. The per-line verified gate remains mandatory. Older statements below describing these as pending decisions are historical. Diary1 block 2 now has four manually inspected canonical line regions, with originals retained for archival reconstruction.
+
+
 `tools/post_poem.py` turns "post a poem" into one small, reviewable action. It checks the poem, builds the public site for it, commits that to a branch of the public repository (`4444J99/versforms`) and opens a pull request. It never merges. Technical document; it contains no editorial content.
 
 ## Prerequisites

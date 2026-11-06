@@ -95,7 +95,7 @@ def scan(font, raw=True):
     return hits
 
 
-def do_rename(data, family, full, ps):
+def do_rename(data, family, full, ps, strip_journal_metadata=False):
     from fontTools.ttLib import TTFont
     font = load(data)
     flavor = font.flavor
@@ -105,7 +105,11 @@ def do_rename(data, family, full, ps):
     explicit = {1: family, 16: family, 21: family, 4: full, 18: full, 6: ps}
     for rec in list(name.names):
         old = rec.toUnicode()
-        if rec.nameID in explicit:
+        if rec.nameID in (13, 14):
+            new = old  # license text and URLs are never rebranded
+        elif strip_journal_metadata and rec.nameID in (0, 10):
+            new = ""
+        elif rec.nameID in explicit:
             new = explicit[rec.nameID]
         else:
             new = rewrite(old, family, full, ps)
@@ -161,19 +165,23 @@ def main(argv=None):
     ap.add_argument("--family")
     ap.add_argument("--full")
     ap.add_argument("--postscript")
+    ap.add_argument("--strip-journal-metadata", action="store_true")
     a = ap.parse_args(argv)
     data = sys.stdin.buffer.read()
     try:
         if a.mode == "check":
             font = load(data)
             hits = scan(font)
-            doc = dict(ok=not hits, hits=hits, glyphs=len(font.getGlyphOrder()), flavor=font.flavor)
+            names = [r.toUnicode() for r in font["name"].names]
+            journal_font = bool(hits) or any("ajp-scribbles" in name for name in names)
+            scrub = journal_font and any(r.toUnicode() for r in font["name"].names if r.nameID in (0, 10))
+            doc = dict(ok=not hits, needs_public_scrub=scrub, hits=hits, glyphs=len(font.getGlyphOrder()), flavor=font.flavor)
         elif a.mode == "describe":
             doc = describe(data)
         else:
             if not (a.family and a.full and a.postscript):
                 ap.error("rename needs --family, --full and --postscript")
-            out, info = do_rename(data, a.family, a.full, a.postscript)
+            out, info = do_rename(data, a.family, a.full, a.postscript, a.strip_journal_metadata)
             doc = dict(info, font_b64=base64.b64encode(out).decode("ascii"))
     except Exception as e:  # report, never a traceback that could carry font strings
         sys.stdout.write(json.dumps(dict(error=f"{type(e).__name__}: {e}"[:300])))

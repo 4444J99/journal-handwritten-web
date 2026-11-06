@@ -371,18 +371,19 @@ def render_data(source, *, overlays=True):
             explicit_ids = []
             for li, lid in enumerate(block["lineIds"]):
                 line, review = lines[lid], current.get(lid)
+                anchor_geometry = line["geometry"] if overlays else line.get("originalGeometry", line["geometry"])
                 rb["L"].append(line["readerOriginalText"] if line["readerOriginalText"] is not None else "")
-                sl = {"id": lid, "tx": line["originalText"] if line["originalText"] is not None else "", "box": copy.deepcopy(line["geometry"]["studioBox"])}
+                sl = {"id": lid, "tx": line["originalText"] if line["originalText"] is not None else "", "box": copy.deepcopy(anchor_geometry["studioBox"])}
                 sl.update(copy.deepcopy(line["studio"]))
                 if line["transcriptionStatus"] == "untranscribed":
                     sl["transcriptionStatus"] = "untranscribed"
                     rb["transcriptionStatus"] = "untranscribed"
-                if line["geometry"]["status"] == "unavailable" and overlays:
-                    anchor = {"status": "unavailable", "reason": line["geometry"]["reason"]}
+                if anchor_geometry["status"] == "unavailable" and overlays:
+                    anchor = {"status": "unavailable", "reason": anchor_geometry["reason"]}
                     sl["sourceAnchor"] = anchor
                     missing[lid] = anchor
                 sb["lines"].append(sl)
-                row = line["geometry"]["readerRow"]
+                row = anchor_geometry["readerRow"]
                 if row is not None:
                     geometry[lid] = [bi, li, *row[2:]]
                 explicit_ids.append(lid)
@@ -394,7 +395,7 @@ def render_data(source, *, overlays=True):
             rb = {k: rb[k] for k in key_order if k in rb} | {k: v for k, v in rb.items() if k not in key_order}
             r["B"].append(rb)
             s["blocks"].append(sb)
-        r["x"] = [geometry[lid] for lid in page["geometryOrder"]]
+        r["x"] = [geometry[lid] for lid in (page["geometryOrder"] if overlays else page.get("originalGeometryOrder", page["geometryOrder"]))]
         # Reinsert at the historical key positions for a byte-identical no-op.
         original_reader_order = list(page["reader"])
         if "pl" in original_reader_order:

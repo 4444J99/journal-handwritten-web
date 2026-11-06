@@ -1,5 +1,10 @@
 # Handwritten journal: plan and state
 
+## Author-directed publication fixes - November 6, 2026
+
+This update supersedes earlier deferral/decision wording for three public metadata items and diary1 block 2. The author instructed removal of unpublished page IDs, blank optional handwriting-font provenance, omission of the global transcription status and completion of the four-line scan mapping before posting. The real posting builder already filters PAL/HF by exact selected membership. Public font name IDs 0/10 are now blanked, the global claim omitted, and diary1 block 2 canonical geometry repaired with original geometry retained for archival reconstruction. Existing release classification, filing and exact-output clearance gates remain. See [the session record](chats/2026-11-06-publication-metadata-diary1.md) for implementation and verification.
+
+
 ## Private integration update — November 6, 2026
 
 This dated update supersedes earlier statements that the source foundation and

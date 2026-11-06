@@ -233,15 +233,24 @@ def rename_embedded_fonts(html):
         except FontDecodeError as e:
             reports.append(dict(mime=mime, bytes=len(raw), error=str(e)))
             return m.group(0)
-        if info.get("ok"):
+        needs_scrub = info.get("needs_public_scrub", False)
+        if info.get("ok") and not needs_scrub:
             reports.append(dict(mime=mime, bytes=len(raw), renamed=False))
             return m.group(0)
-        doc = run_font_tool("rename", raw, "--family", PUBLIC_FONT_FAMILY, "--full", PUBLIC_FONT_FULL, "--postscript", PUBLIC_FONT_PS)
+        doc = run_font_tool("rename", raw, "--family", PUBLIC_FONT_FAMILY, "--full", PUBLIC_FONT_FULL, "--postscript", PUBLIC_FONT_PS, "--strip-journal-metadata")
         new = base64.b64decode(doc["font_b64"])
         reports.append(dict(mime=mime, bytes=len(raw), renamed=True, bytes_out=len(new), changed=doc["changed"], hits_after=doc["hits_after"], glyphs=doc["glyphs"]))
         return f"data:{mime};base64,{doc['font_b64']}"
 
     return DATA_URI_RE.sub(one, html), reports
+
+
+def remove_public_transcription_status(html):
+    """Omit the global review claim; publication uses the per-line verified gate."""
+    html = re.sub(r'^\s*`Machine transcription \(.*?`,\s*\n', '', html, flags=re.M)
+    if "Machine transcription (" in html or "not yet checked" in html:
+        raise ValueError("Unsupported public transcription status template")
+    return html
 
 
 def load_release(path):
@@ -452,6 +461,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     if want:
         html = rebrand((site / "index.html").read_text(encoding="utf-8"))
         html = filter_reader_metadata(html, d["pages"], owner)
+        html = remove_public_transcription_status(html)
         for asset in reader_assets:
             if (site / asset).is_file():
                 shutil.copy2(site / asset, out / asset)
