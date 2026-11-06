@@ -269,11 +269,24 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
 
     # versions published, per piece (indices into V)
     chosen = {}
+    source_pages = {page["id"]: page for page in d["pages"]}
     for k in want:
         n = len(pieces[k]["V"])
         sel = list(range(n)) if select.get(k) is None else sorted(set(select[k]))
         if not sel or any(not 0 <= i < n for i in sel):
             sys.exit(f"bad version selection for {k}: {sel}")
+        for vi in sel:
+            version = pieces[k]["V"][vi]
+            if version.get("sourceStatus") == "staged-untranscribed":
+                sys.exit(f"selected version {version['id']} is staged-untranscribed; output unchanged")
+            for page_id, blocks in version["P"]:
+                page = source_pages[page_id]
+                if (page.get("sourceStatus") == "staged-untranscribed"
+                        or not isinstance(page.get("a"), list) or len(page["a"]) != 5
+                        or any(page["B"][bi].get("transcriptionStatus") == "untranscribed" for bi in blocks)):
+                    sys.exit(f"selected source {page_id} is untranscribed or has no verified atlas; output unchanged")
+            if vi not in pieces[k]["st"]:
+                sys.exit(f"selected version {version['id']} has no established reading order; output unchanged")
         chosen[k] = sel
 
     # published pieces with the chosen versions renumbered; owner[(page, block)] = (piece index, version, rank)
@@ -296,10 +309,6 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     effective_lines, version_lines = {}, {}
     for p in pages:
         selected_blocks = keep[p["id"]]
-        if (p.get("sourceStatus") == "staged-untranscribed"
-                or not isinstance(p.get("a"), list) or len(p["a"]) != 5
-                or any(p["B"][b].get("transcriptionStatus") == "staged-untranscribed" for b in selected_blocks)):
-            sys.exit(f"selected source {p['id']} is untranscribed or has no verified atlas; output unchanged")
         for bi in selected_blocks:
             block = p["B"][bi]
             for li, original in enumerate(block["L"]):

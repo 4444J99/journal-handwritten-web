@@ -91,6 +91,14 @@ class MetadataFiltering(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "untranscribed or has no verified atlas"):
                 build(out, ["p001"], site=site, select={"p001": [0]}, rename_fonts=False)
             self.assertEqual((out / "sentinel").read_text(), "preserve prior output")
+            piece = next(p for p in data["pieces"] if p["id"] == "p001")
+            # Actual ingest appends V without changing the established st/top.
+            piece["V"].append({"id": "p001-fixture-stage", "P": [["diary1", [0]]],
+                               "sourceStatus": "staged-untranscribed"})
+            (site / "data/j.json").write_text(json.dumps(data))
+            with self.assertRaisesRegex(SystemExit, "staged-untranscribed"):
+                build(out, ["p001"], site=site, select={"p001": [len(piece["V"]) - 1]}, rename_fonts=False)
+            self.assertEqual((out / "sentinel").read_text(), "preserve prior output")
 
 
 if __name__ == "__main__":
