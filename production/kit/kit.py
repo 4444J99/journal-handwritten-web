@@ -1083,6 +1083,15 @@ def build_manifest(src: SourcePackage, out: Path, cfg: dict, stills: dict,
              "duration_seconds": d.get("duration_seconds"),
              "audio": d.get("audio")},
         ))
+        poster = out / role / "poster-1080x1920.jpg"
+        if poster.exists():
+            entries.append(media_entry(
+                poster, out, f"{role}-poster",
+                [f"page:{cfg['page_id']}", f"version:{cfg['version_id']}",
+                 f"source:{cfg['source']}"],
+                clear["motion"],
+                {"width": W9, "height": H9},
+            ))
     for rel, w, h in widget["tiles"]:
         p = out / rel
         entries.append(asset_entry(

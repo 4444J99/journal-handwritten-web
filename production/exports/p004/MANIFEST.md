@@ -1,7 +1,7 @@
 # p004 media kit — private manifest
 
-Generated: 2026-11-06T01:49:55+00:00  
-Source revision: `038d01fb1862f2e569d231b5b3c4c3a4eb1aecda`  
+Generated: 2026-11-06T13:39:35+00:00  
+Source revision: `c32f8b143635fff8def35c478b7610c0934639b6`  
 Kit: `t07-media-kit-v1`  
 Candidate: `p004` / `p004-diary3-1` / page `diary3`  
 Pool: unsorted; no Series/Reserve/Archive decision  
@@ -21,12 +21,14 @@ Pool: unsorted; no Series/Reserve/Archive decision
 | `carousel/carousel-04-detail.jpg` | carousel | 1080×1350 | 142525 | `1f8fc5378506482b…` | private-preview; awaiting author clearance; may_publish=false |
 | `carousel/carousel-05-detail.jpg` | carousel | 1080×1350 | 142525 | `1f8fc5378506482b…` | private-preview; awaiting author clearance; may_publish=false |
 | `reel/p004-version-reel-1080x1920.mp4` | reel | 1080×1920 | 451134 | `45985e289829b61c…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
+| `reel/poster-1080x1920.jpg` | reel-poster | 1080×1920 | 157014 | `73a10d9a854da026…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
 | `story/p004-story-assembly-provisional-1080x1920.mp4` | story | 1080×1920 | 590835 | `3a778a3622402d3d…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
+| `story/poster-1080x1920.jpg` | story-poster | 1080×1920 | 92978 | `0f2fbc0cb23be6cc…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
 | `widget/tiles/2x1/opening-line.jpg` | widget-tile | 1600×760 | 226984 | `229d95e09efad7f9…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/1x1/detail.jpg` | widget-tile | 1080×1080 | 182871 | `8a26d900478ee194…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/2x2/page.jpg` | widget-tile | 1080×1080 | 233036 | `c69cc1da4e5ddafe…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/wide/opening.jpg` | widget-tile | 1600×760 | 182796 | `3839ea3af8ee5981…` | private test tile; not a public download; awaiting author clearance |
-| `widget/p004-widget-kit-private.zip` | downloadable-kit | — | 802060 | `3cd8a032a98b81c5…` | private zip; no public distribution; awaiting author clearance |
+| `widget/p004-widget-kit-private.zip` | downloadable-kit | — | 802060 | `c10c9ff4de10d1c7…` | private zip; no public distribution; awaiting author clearance |
 
 ## Clearance
 

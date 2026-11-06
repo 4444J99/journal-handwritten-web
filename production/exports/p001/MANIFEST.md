@@ -1,7 +1,7 @@
 # p001 media kit — private manifest
 
-Generated: 2026-11-06T01:50:34+00:00  
-Source revision: `038d01fb1862f2e569d231b5b3c4c3a4eb1aecda`  
+Generated: 2026-11-06T13:39:00+00:00  
+Source revision: `c32f8b143635fff8def35c478b7610c0934639b6`  
 Kit: `t07-media-kit-v1`  
 Candidate: `p001` / `p001-diary1-0` / page `diary1`  
 Pool: unsorted; no Series/Reserve/Archive decision  
@@ -21,14 +21,16 @@ Pool: unsorted; no Series/Reserve/Archive decision
 | `carousel/carousel-04-detail.jpg` | carousel | 1080×1350 | 76838 | `2ce7723463693267…` | private-preview; awaiting author clearance; may_publish=false |
 | `carousel/carousel-05-version.jpg` | carousel | 1080×1350 | 216001 | `ca459d0ceeb04604…` | private-preview; awaiting author clearance; may_publish=false |
 | `reel/p001-version-reel-1080x1920.mp4` | reel | 1080×1920 | 297198 | `f0f0b9bfea87dff5…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
+| `reel/poster-1080x1920.jpg` | reel-poster | 1080×1920 | 88321 | `c3fb1e5b7609b524…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
 | `story/p001-story-assembly-provisional-1080x1920.mp4` | story | 1080×1920 | 651110 | `d6e6845800d047b1…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
+| `story/poster-1080x1920.jpg` | story-poster | 1080×1920 | 81152 | `24e88f92f5e66467…` | private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false |
 | `widget/tiles/2x1/opening-line.jpg` | widget-tile | 1600×760 | 115535 | `4476ed7ae8846beb…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/2x1/detail-line.jpg` | widget-tile | 1600×760 | 149192 | `355c3bf05a5f27a8…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/1x1/detail.jpg` | widget-tile | 1080×1080 | 104323 | `b1fdebe655e17f47…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/1x1/opening.jpg` | widget-tile | 1080×1080 | 86212 | `bce23395a13e97b9…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/2x2/page.jpg` | widget-tile | 1080×1080 | 175657 | `067eab93f227c653…` | private test tile; not a public download; awaiting author clearance |
 | `widget/tiles/wide/opening.jpg` | widget-tile | 1600×760 | 89257 | `f090603bb5c83b7d…` | private test tile; not a public download; awaiting author clearance |
-| `widget/p001-widget-kit-private.zip` | downloadable-kit | — | 676774 | `758db01e77900ca7…` | private zip; no public distribution; awaiting author clearance |
+| `widget/p001-widget-kit-private.zip` | downloadable-kit | — | 676774 | `a1c0c6c8c26bd5f4…` | private zip; no public distribution; awaiting author clearance |
 
 ## Clearance
 

@@ -1,10 +1,10 @@
 {
   "schema": "t07.media-kit-manifest.v1",
-  "generated_at": "2026-11-06T01:49:55+00:00",
+  "generated_at": "2026-11-06T13:39:35+00:00",
   "kit_version": "t07-media-kit-v1",
-  "source_revision": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+  "source_revision": "c32f8b143635fff8def35c478b7610c0934639b6",
   "builder": {
-    "kit_py_sha256": "5559b6219bf575f0da838aca2173d5fd6187e424a2406b659314f3056f929ada",
+    "kit_py_sha256": "f93718bd714e87d8f88b64e7a51d944d410476b7bef5c34d98b3101721aa64f1",
     "config_sha256": "b6976ec55d368fee9610c9fefe17bc3ba7bd05c7aa242eae5643fb7e015d2f47"
   },
   "candidate": {
@@ -175,6 +175,20 @@
       "audio": "none"
     },
     {
+      "path": "reel/poster-1080x1920.jpg",
+      "sha256": "73a10d9a854da026e6c7bcc32e548e07d47473e594667fe58519bf6232c29241",
+      "bytes": 157014,
+      "role": "reel-poster",
+      "source_chain": [
+        "page:diary3",
+        "version:p004-diary3-1",
+        "source:production/assets/diary3.jpg"
+      ],
+      "clearance": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+      "width": 1080,
+      "height": 1920
+    },
+    {
       "path": "story/p004-story-assembly-provisional-1080x1920.mp4",
       "sha256": "3a778a3622402d3dece4e6931d43a8a86dd1cecf3cafc9fb180df036f1f42f0b",
       "bytes": 590835,
@@ -189,6 +203,20 @@
       "height": 1920,
       "duration_seconds": 9.0,
       "audio": "none"
+    },
+    {
+      "path": "story/poster-1080x1920.jpg",
+      "sha256": "0f2fbc0cb23be6cc65954bc5d6f35e437909136cc96d355e7ca94a11a779574f",
+      "bytes": 92978,
+      "role": "story-poster",
+      "source_chain": [
+        "page:diary3",
+        "version:p004-diary3-1",
+        "source:production/assets/diary3.jpg"
+      ],
+      "clearance": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+      "width": 1080,
+      "height": 1920
     },
     {
       "path": "widget/tiles/2x1/opening-line.jpg",
@@ -248,7 +276,7 @@
     },
     {
       "path": "widget/p004-widget-kit-private.zip",
-      "sha256": "3cd8a032a98b81c5a498f486045a4ab6f9a9fb485ace57958c031eebfdb1f8d4",
+      "sha256": "c10c9ff4de10d1c7cb6587c1a8c5162d7d88c236d92d4c95e4afba3a9b46ef3c",
       "bytes": 802060,
       "role": "downloadable-kit",
       "source_chain": [
