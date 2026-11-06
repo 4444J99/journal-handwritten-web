@@ -1,0 +1,1368 @@
+{
+  "schema": "versforms.source-eligibility-report.v1",
+  "scope": "private-local",
+  "policy_id": "t08-fixture-version-exclusion-2026-11-05",
+  "manifest_sha256": "d878b8c32d665ce8f4bd1e191c52eb2c1aa0fa2dfc3d29862411090c1346c988",
+  "allowed": false,
+  "summary": {
+    "atoms": 441,
+    "atoms_rejected": 441,
+    "reason_counts": {
+      "version:excluded-for-private-local:p001-diary1-0": 441
+    },
+    "inherited_pool": "series"
+  },
+  "manifest_reasons": [],
+  "atom_reasons": {
+    "vf:atom:p001/p001-diary1-0/poem": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-0/word-1/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-0/glyph-7": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/mark-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-1/mark-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-0-2/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-0/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-1/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-0/glyph-7": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-2/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-1-3/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-1/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-2/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/word-4/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-0/mark-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-5/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-5/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-5/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/word-5/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-1/mark-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/word-3/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-2/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-2-3/word-0/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-0/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-2/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/word-5/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-1/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-2/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-3/word-4/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-5/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-6/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-6/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/word-6/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-0/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-0/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-3/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/word-4/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/mark-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/mark-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-1/mark-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/word-4/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-4-2/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/stanza-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/word-1/glyph-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/mark-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/mark-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-0/mark-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-3/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-4/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-5/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-5/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-6": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-6/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-6/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-6/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-1/word-6/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-0/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-0/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-2/word-1/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-0/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-0/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-1/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-1/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-1/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-1/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-2/glyph-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-3/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-3/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-3/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-4": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-4/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-4/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-4/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-5": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-5/glyph-0": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-5/glyph-1": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-5/glyph-2": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-5-3/word-5/glyph-3": [
+      "version:excluded-for-private-local:p001-diary1-0"
+    ]
+  },
+  "warnings": [
+    "reading:open-uncertainty-present"
+  ],
+  "atom_warnings": {
+    "vf:atom:p001/p001-diary1-0/poem": [
+      "reading:open-uncertainty"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3": [
+      "reading:owner-withdrawn-crop"
+    ]
+  },
+  "required_actions": [
+    "Use a version the author has not excluded for this scope."
+  ],
+  "closures_checked": 441
+}

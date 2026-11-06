@@ -46,13 +46,16 @@ Conventions
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
 | 2026-11-05 | [T07 media production kit](2026-11-05-t07-media-production-kit.md) | Open — private kit only; physical device test, original clips and author clearance outstanding |
 ||||||| 038d01f
+||||||| b8d60a0
+| 2026-11-05 | [Local agent: T08 source-region model and private pilot](2026-11-05-t08-source-regions-pilot.md) | Pilot, contract and tests done in an isolated branch; draft PR #130 only; public release correctly refused; T02 hand-off and author inputs open |
+||||||| 038d01f
 | 2026-11-05 | [T06: identity and audience operations](2026-11-05-t06-identity-audience.md) | Private review packet prepared; current identity and policy sources, weekly SOP, finite choices, avatar/T03/T07 handoffs; no public or account action |
 ||||||| fab6a82
 | 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
 | 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
 
 ## Repository state (checked 2026-11-05)
-- `main` at `06dccc0` (the posting script, #101), with a `local-ci` status; every suite passes locally.
+- `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
 - GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
 - Issue #1 closed by #114; draft PR #2 closed as superseded.

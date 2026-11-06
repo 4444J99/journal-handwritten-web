@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "uncertain readings are carried as open states, not resolved"
+  ],
+  "counts": {
+    "atoms": 441,
+    "poems": 1,
+    "stanzas": 6,
+    "lines": 22,
+    "words": 86,
+    "glyphs": 306,
+    "marks": 20,
+    "uncertainties": 3
+  },
+  "atoms": 441,
+  "assets": 1
+}
