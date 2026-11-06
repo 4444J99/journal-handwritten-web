@@ -7,11 +7,11 @@
     "sources": [
       {
         "path": "site/data/j.json",
-        "sha256": "0a1225d7ba3deabd4cfe6cfc3077015bec4c1a5405b87b30dea31ae32eff4061"
+        "sha256": "70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966"
       },
       {
         "path": "studio/data/review.json",
-        "sha256": "49017ca86b4a25f1570c5291ae6432af27751123d807f86aaa64b0cfa0acd0f4"
+        "sha256": "2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       }
     ]
   },

@@ -138,6 +138,10 @@ def text(value):
 def instant(value):
     if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?Z", value):
         return False
+    # Python 3.15 normalizes 24:00 to the next day; the release contract
+    # requires an explicit hour within this calendar day in both runtimes.
+    if int(value[11:13]) > 23:
+        return False
     try:
         return dt.datetime.fromisoformat(value[:-1] + "+00:00").tzinfo is not None
     except ValueError:

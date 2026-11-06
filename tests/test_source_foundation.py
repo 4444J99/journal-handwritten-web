@@ -62,9 +62,9 @@ class PreservedSourceTests(unittest.TestCase):
         binding = reader["sourceBindings"]["p001/p001-diary1-0"]
         self.assertEqual(binding, {"pieceId": "p001", "versionId": "p001-diary1-0",
                                   "sourceFingerprint": "sha256:17a2950bf426bc437f00ef97c550c2ef017c734b7d50bf20c4606a01907b9a1b"})
-        self.assertEqual(reader["sourceAnchors"]["diary1-2-3"], {"status": "unavailable", "reason": "no-source-line-geometry"})
+        self.assertNotIn("diary1-2-3", reader["sourceAnchors"])
         line = next(l for p in studio["pages"] for b in p["blocks"] for l in b["lines"] if l["id"] == "diary1-2-3")
-        self.assertIsNone(line["box"])
+        self.assertEqual(line["box"], [0.0396, 0.4537, 0.2775, 0.4875])
         self.assertEqual(sf.logical_snapshot(applied, "p001", "p001-diary1-0")["sourceFingerprint"],
                          "sha256:17a2950bf426bc437f00ef97c550c2ef017c734b7d50bf20c4606a01907b9a1b")
 

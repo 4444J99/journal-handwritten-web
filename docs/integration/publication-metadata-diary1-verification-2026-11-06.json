@@ -1,0 +1,240 @@
+{
+  "schema": "versforms.session-verification.v1",
+  "date": "2026-11-06",
+  "scope": "publication-metadata-diary1",
+  "codeCommit": "638c4ae3f0724f58f53b7971c77fb5d6811ec788",
+  "browsers": {
+    "private": {
+      "pass": true,
+      "chrome": "Chrome/157.0.8103.38",
+      "html": {
+        "bytes": 239558,
+        "sha256": "aea7b3e498627337e6ac920ba7c218404c418935dca31914ce78f67148ec93db"
+      },
+      "cells": [
+        {
+          "id": "desktop-light",
+          "reasons": [],
+          "diary1Block2": null
+        },
+        {
+          "id": "desktop-dark",
+          "reasons": [],
+          "diary1Block2": null
+        },
+        {
+          "id": "mobile-light",
+          "reasons": [],
+          "diary1Block2": null
+        },
+        {
+          "id": "mobile-dark",
+          "reasons": [],
+          "diary1Block2": null
+        }
+      ]
+    },
+    "public": {
+      "pass": true,
+      "chrome": "Chrome/157.0.8103.38",
+      "html": {
+        "bytes": 238725,
+        "sha256": "00c6de3876f41e9835dd707516e6fa0a6d337d34d342286279076a5d7111db1c"
+      },
+      "cells": [
+        {
+          "id": "desktop-light",
+          "reasons": [],
+          "diary1Block2": [
+            {
+              "key": "2-0",
+              "located": true
+            },
+            {
+              "key": "2-1",
+              "located": true
+            },
+            {
+              "key": "2-2",
+              "located": true
+            },
+            {
+              "key": "2-3",
+              "located": true
+            }
+          ]
+        },
+        {
+          "id": "desktop-dark",
+          "reasons": [],
+          "diary1Block2": [
+            {
+              "key": "2-0",
+              "located": true
+            },
+            {
+              "key": "2-1",
+              "located": true
+            },
+            {
+              "key": "2-2",
+              "located": true
+            },
+            {
+              "key": "2-3",
+              "located": true
+            }
+          ]
+        },
+        {
+          "id": "mobile-light",
+          "reasons": [],
+          "diary1Block2": [
+            {
+              "key": "2-0",
+              "located": true
+            },
+            {
+              "key": "2-1",
+              "located": true
+            },
+            {
+              "key": "2-2",
+              "located": true
+            },
+            {
+              "key": "2-3",
+              "located": true
+            }
+          ]
+        },
+        {
+          "id": "mobile-dark",
+          "reasons": [],
+          "diary1Block2": [
+            {
+              "key": "2-0",
+              "located": true
+            },
+            {
+              "key": "2-1",
+              "located": true
+            },
+            {
+              "key": "2-2",
+              "located": true
+            },
+            {
+              "key": "2-3",
+              "located": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sourceChecks": {
+    "canonicalRebuildStable": true,
+    "rawTextIdsAndAcceptedReviewsUnchanged": true,
+    "archivalOriginalHashesMatch": true
+  },
+  "geometry": [
+    {
+      "lineId": "diary1-2-0",
+      "box": [
+        0.0504,
+        0.342,
+        0.7921,
+        0.3831
+      ],
+      "method": "preserved-existing-region"
+    },
+    {
+      "lineId": "diary1-2-1",
+      "box": [
+        0.0352,
+        0.3812,
+        0.8722,
+        0.4238
+      ],
+      "method": "manual-scan-inspection"
+    },
+    {
+      "lineId": "diary1-2-2",
+      "box": [
+        0.037,
+        0.4175,
+        0.7489,
+        0.475
+      ],
+      "method": "manual-scan-inspection"
+    },
+    {
+      "lineId": "diary1-2-3",
+      "box": [
+        0.0396,
+        0.4537,
+        0.2775,
+        0.4875
+      ],
+      "method": "manual-scan-inspection"
+    }
+  ],
+  "externalChecks": {
+    "githubActions": {
+      "run": 42309912506,
+      "started": false,
+      "annotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased.",
+      "ownerIssue": 111
+    },
+    "cloudflare": {
+      "project": "versforms-studio",
+      "deployment": "c2c366bb-489d-469a-847a-acd6799cc4f0",
+      "root_dir": "",
+      "destination_dir": "../studio",
+      "build_command": "",
+      "error": "Failed: build output directory is outside of the repository",
+      "deployStage": "idle",
+      "relatedOwnerIssues": [
+        104,
+        113
+      ]
+    }
+  },
+  "tests": {
+    "publicMetadata": {
+      "passed": 11
+    },
+    "sourceFoundation": {
+      "passed": 12
+    },
+    "sourceRegions": {
+      "passed": 58
+    },
+    "releaseContract": {
+      "passed": 10
+    },
+    "nodeSuite": {
+      "passed": 116,
+      "failed": 0
+    },
+    "pythonSuite": {
+      "run": 386,
+      "failed": 0,
+      "skipped": 1,
+      "seconds": 439.162
+    },
+    "referenceAndChecksums": {
+      "passed": true,
+      "references": 509,
+      "missing": 0,
+      "checksums": 528
+    }
+  },
+  "finalPacket": {
+    "technicalExclusionPass": true,
+    "publicHtmlIdenticalToBrowserTestedOutput": true,
+    "actualGatedDryRunExit": 3,
+    "releaseClearance": false
+  }
+}
