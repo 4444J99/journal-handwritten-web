@@ -18,7 +18,7 @@ import re
 import shutil
 import tempfile
 
-from source_fingerprint import source_fingerprint
+from source_fingerprint import source_fingerprint, source_binding
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "versforms.canonical-source.v1"
@@ -135,7 +135,7 @@ def reconstruct(root=ROOT):
     root = Path(root)
     raw = [read_bytes(root / name) for name in SOURCE_FILES]
     reader, studio = map(decode, raw)
-    if reader.get("acceptedReadings") or studio.get("acceptedReviews") or reader.get("acceptedReviews"):
+    if reader.get("acceptedReadings") or studio.get("acceptedReviews") or reader.get("acceptedReviews") or reader.get("sourceBindings"):
         raise Invalid("cannot recapture accepted overlays without canonical review history; restore the canonical source")
     rp, sp = index(reader["pages"], "page"), index(studio["pages"], "studio page")
     if set(rp) != set(sp):
@@ -217,7 +217,7 @@ def reconstruct(root=ROOT):
                              "sourceFiles": [{"path": name, "sha256": sha(data)} for name, data in zip(SOURCE_FILES, raw)]},
               "pages": pages, "blocks": blocks, "lines": lines, "pieces": pieces, "versions": versions,
               "order": {"pages": list(rp), "studioPages": list(sp), "pieces": [p["id"] for p in pieces]},
-              "reader": {k: v for k, v in reader.items() if k not in ("pages", "pieces", "acceptedReadings", "sourceAnchors")},
+              "reader": {k: v for k, v in reader.items() if k not in ("pages", "pieces", "acceptedReadings", "sourceAnchors", "sourceBindings")},
               "studio": {k: v for k, v in studio.items() if k not in ("pages", "acceptedReviews")},
               "reviews": {"current": {}, "history": []}, "assets": assets}
     validate(source)
@@ -427,11 +427,16 @@ def render_data(source, *, overlays=True):
             reader["acceptedReadings"] = readings
         if missing:
             reader["sourceAnchors"] = missing
+        reader["sourceBindings"] = {}
+        for piece in reader["pieces"]:
+            for version in piece["V"]:
+                snapshot = _logical_from_rendered(reader, studio, piece["id"], version["id"])
+                if snapshot is not None:
+                    reader["sourceBindings"][piece["id"] + "/" + version["id"]] = source_binding(snapshot)
     return reader, studio
 
 
-def logical_snapshot(source, piece_id, version_id):
-    reader, studio = render_data(source)
+def _logical_from_rendered(reader, studio, piece_id, version_id):
     piece = next((p for p in reader["pieces"] if p["id"] == piece_id), None)
     version = next((v for v in (piece or {}).get("V", []) if v["id"] == version_id), None)
     if version is None:
@@ -442,12 +447,21 @@ def logical_snapshot(source, piece_id, version_id):
             block = pages[pid]["blocks"][bi]
             for li, line in enumerate(block["lines"]):
                 if line.get("transcriptionStatus") == "untranscribed":
-                    raise Invalid("untranscribed source line; explicit transcription required")
-                review = source["reviews"]["current"].get(line["id"])
+                    return None
+                review = studio.get("acceptedReviews", {}).get(line["id"])
                 text = review["text"] if review and review["status"] == "corrected" and block["t"] != "quotation" else line["tx"]
                 rows.append({"lineId": line["id"], "text": text, "blockType": block["t"],
                              "breakBefore": line.get("breakBefore", bool(rows) and li == 0)})
-    out = {"pieceId": piece_id, "versionId": version_id, "members": version["P"], "lines": rows}
+    if not rows:
+        return None
+    return {"pieceId": piece_id, "versionId": version_id, "members": version["P"], "lines": rows}
+
+
+def logical_snapshot(source, piece_id, version_id):
+    reader, studio = render_data(source)
+    out = _logical_from_rendered(reader, studio, piece_id, version_id)
+    if out is None:
+        raise Invalid("untranscribed source line; explicit transcription required")
     out["sourceFingerprint"] = source_fingerprint(out)
     return out
 

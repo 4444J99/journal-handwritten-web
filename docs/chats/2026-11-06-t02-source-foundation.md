@@ -18,6 +18,10 @@
   retained. Existing source images and current HTML templates are unchanged.
 - Synthetic correction/photo/new-version and history/restore tests, shared
   vectors, schema/contract documentation and private verification receipts.
+- Follow-up integration repair: rebuilt reader data carries current v2
+  `sourceBindings` for every transcribed version. A caller-supplied descriptor
+  cannot establish freshness; the reader must compare with these loaded
+  bindings. Untranscribed imports have no binding and remain unavailable.
 
 ## Author decisions
 

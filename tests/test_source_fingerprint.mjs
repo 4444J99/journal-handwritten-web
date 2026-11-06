@@ -5,6 +5,17 @@ import {sourceFingerprint,sourceFingerprintV1} from '../studio/source-fingerprin
 import {buildSourceCatalog,createAnchor,validateAnchor,createRevision,validateRevision} from '../studio/notes-model.mjs';
 
 const {vectors}=JSON.parse(readFileSync(new URL('./fixtures/source-fingerprint-vectors.json',import.meta.url)));
+test('every generated reader binding equals its current T05 v2 source catalog',()=>{
+  const reader=JSON.parse(readFileSync(new URL('../site/data/j.json',import.meta.url)));
+  const review=JSON.parse(readFileSync(new URL('../studio/data/review.json',import.meta.url)));
+  const catalog=buildSourceCatalog(reader,review);
+  for(const piece of catalog.pieces)for(const version of piece.versions){
+    assert.equal(version.issues.length,0);
+    assert.deepEqual(reader.sourceBindings[piece.pieceId+'/'+version.versionId],
+      {pieceId:piece.pieceId,versionId:version.versionId,sourceFingerprint:version.fingerprint});
+  }
+  assert.equal(Object.keys(reader.sourceBindings).length,156);
+});
 test('T02 shared vectors have identical Python and JS v1/v2 logical digests',()=>{
   for(const vector of vectors){
     assert.equal(sourceFingerprint(vector.source),vector.v2,vector.name);

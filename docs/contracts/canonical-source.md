@@ -90,6 +90,7 @@ The builder writes only `site/data/j.json`, `studio/data/review.json`, and
 | --- | --- |
 | `review.acceptedReviews` | Private imported review documents, used by the notes and script source adapters unless an explicit live export supplies a later current record. |
 | `j.acceptedReadings` | Five accepted correction strings keyed by stable line ID for the private reader; no review provenance is copied into this map. |
+| `j.sourceBindings` | Current v2 `{pieceId, versionId, sourceFingerprint}` bindings keyed by `pieceId/versionId`, computed from effective accepted readings. Untranscribed versions are omitted; feature mounting must compare against this loaded current binding. |
 | `j.sourceAnchors` | Explicit unavailable source anchors, keyed by stable line ID. |
 | `review.pages[].blocks[].lines[].sourceAnchor` | The same unavailable-anchor state alongside the existing nullable box. |
 | `B.lineIds` | Explicit IDs when an imported block's line IDs cannot be represented by the historical page/index convention. |

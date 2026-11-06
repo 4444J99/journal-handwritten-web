@@ -7,7 +7,7 @@
     "sources": [
       {
         "path": "site/data/j.json",
-        "sha256": "ffa0ad8910a6b4a8767cddbe30917f3c2c3b17172b5bc753a2920db1caed2bc1"
+        "sha256": "0a1225d7ba3deabd4cfe6cfc3077015bec4c1a5405b87b30dea31ae32eff4061"
       },
       {
         "path": "studio/data/review.json",
