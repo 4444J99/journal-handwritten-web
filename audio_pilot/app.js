@@ -45,7 +45,7 @@
     if (typeof value.session_id !== 'string' || !value.session_id.trim() || !/^[a-f0-9]{64}$/.test(value.manifest_sha256 || '')) throw new Error('Receipt must identify its session and a lowercase SHA-256 manifest hash before loading or exporting samples.');
     const ids = new Set();
     value.samples.forEach(sample => {
-      if (!sample.id || ids.has(sample.id) || !/^samples\/[A-Za-z0-9][A-Za-z0-9_.:-]*\.wav$/.test(sample.path || '') || !/^[a-f0-9]{64}$/i.test(sample.sha256 || '') || typeof sample.fixture !== 'boolean') throw new Error('Receipt contains an invalid, duplicate, unidentified, or unsafe sample.');
+      if (!sample.id || ids.has(sample.id) || !/^samples\/[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}\.wav$/.test(sample.path || '') || !/^[a-f0-9]{64}$/i.test(sample.sha256 || '') || typeof sample.fixture !== 'boolean') throw new Error('Receipt contains an invalid, duplicate, unidentified, or unsafe sample.');
       ids.add(sample.id);
     });
     receipt = value;

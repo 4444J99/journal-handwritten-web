@@ -15,7 +15,7 @@ STATIC = {"/": ("index.html", "text/html; charset=utf-8"),
           "/style.css": ("style.css", "text/css; charset=utf-8"),
           "/playback.js": ("playback.js", "text/javascript; charset=utf-8"),
           "/app.js": ("app.js", "text/javascript; charset=utf-8")}
-SAMPLE_PATH = re.compile(r"samples/[A-Za-z0-9][A-Za-z0-9_.:-]*\.wav\Z")
+SAMPLE_PATH = re.compile(r"samples/[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}\.wav\Z")
 HASH = re.compile(r"[a-fA-F0-9]{64}\Z")
 MAX_SAMPLE_BYTES = 40 * 1024 * 1024
 
