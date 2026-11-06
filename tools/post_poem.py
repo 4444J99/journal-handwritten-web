@@ -61,6 +61,8 @@ class Source:
             self.review = json.loads((self.root / "studio" / "data" / "review.json").read_text())
         except (OSError, ValueError) as e:
             raise Stop(f"cannot read site/data/j.json or studio/data/review.json under {self.root}: {e}")
+        if not isinstance(self.j, dict) or not isinstance(self.j.get("pieces"), list) or not isinstance(self.j.get("pages"), list):
+            raise Stop(f"site/data/j.json has unexpected shape (no pieces/pages list)")
         self.pieces = {p["id"]: p for p in self.j["pieces"]}
         self.jpages = {p["id"]: p for p in self.j["pages"]}
         self.items = {i["id"]: i for i in self.review["items"]}
@@ -142,7 +144,10 @@ class Source:
                 mates |= found
             elif sp.get("s") == "whole spread" or sp.get("cb") is None:
                 if k:
-                    mates |= {q["id"] for q in self.j["pages"] if q["id"] != pg and (q.get("sp") or {}).get("k") == k}
+                    found = {q["id"] for q in self.j["pages"] if q["id"] != pg and (q.get("sp") or {}).get("k") == k}
+                    if not found:
+                        raise Stop(f"page {pg}: its scan is a whole spread ({k!r}), but no facing page can be identified, so what is written on the other half cannot be checked")
+                    mates |= found
             mates |= self.scan_twins().get(pg, set())
         return sorted(mates - pages)
 
@@ -218,8 +223,8 @@ def load_db_with_root(path, piece_ids=None):
         for f in sorted(folder.glob("*.json")):
             try:
                 doc = json.loads(f.read_text())
-            except ValueError as e:
-                raise Stop(f"{f}: not valid JSON ({e})")
+            except (OSError, ValueError) as e:
+                raise Stop(f"cannot read {f}: {e}")
             if not isinstance(doc, dict):
                 raise Stop(f"{f}: not a JSON object ({type(doc).__name__}); a studio document is always an object, so this export is damaged")
             db[c][f.stem] = doc
@@ -606,14 +611,36 @@ def leak_check(src, out, published, texts_ok):
     # An unpublished line can be a fragment of a longer line that IS published (the same words occur in both).
     # Such a hit is not a leak: it is excused only where it lies inside an authorised published line, so the
     # occurrences inside those lines are removed before searching. Any occurrence outside them still counts.
-    authorised = sorted((t for t in texts_ok if t), key=len, reverse=True)
+    authorised = [t for t in texts_ok if t]
+    # Build list of (start,end) spans in blob covered by an authorised published line.
+    auth_spans = []
+    for t in authorised:
+        for form in _json_forms(t):
+            start = 0
+            while True:
+                idx = blob.find(form, start)
+                if idx == -1:
+                    break
+                auth_spans.append((idx, idx + len(form)))
+                start = idx + 1
     for sec in secrets:
-        masked = blob
-        for t in authorised:
-            if len(t) > len(sec) and sec in t:
-                for form in _json_forms(t):
-                    masked = masked.replace(form, "\x00")
-        if any(form in masked for form in _json_forms(sec)):
+        leaked = False
+        for form in _json_forms(sec):
+            start = 0
+            while True:
+                idx = blob.find(form, start)
+                if idx == -1:
+                    break
+                end = idx + len(form)
+                # excused only if this occurrence lies entirely inside an authorised span
+                inside = any(a <= idx and end <= b for a, b in auth_spans)
+                if not inside:
+                    leaked = True
+                    break
+                start = idx + 1
+            if leaked:
+                break
+        if leaked:
             bad.add(sec)
     return sorted(bad)
 
@@ -679,8 +706,22 @@ def tree_hashes(root):
 
 # ------------------------------------------------------------------ public repository
 
+_GIT_ENV_BLOCKED = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+                      "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_QUARANTINE_PATH",
+                      "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
+
+
+def _clean_env():
+    env = dict(os.environ)
+    for key in list(env):
+        if key in _GIT_ENV_BLOCKED or key.startswith("GIT_CONFIG_KEY_") or key.startswith("GIT_CONFIG_VALUE_"):
+            env.pop(key, None)
+    # Remove any GIT_CONFIG_KEY/VALUE indexed entries already covered above.
+    return env
+
+
 def git(repo, *args, check=True):
-    r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
+    r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, env=_clean_env())
     if check and r.returncode != 0:
         raise RuntimeError(f"git {' '.join(args)} failed: {r.stderr.strip() or r.stdout.strip()}")
     return r.stdout.strip() if check else r
@@ -721,7 +762,7 @@ def effective_url_ok(url):
 
 def _redact(url):
     """A URL for a message: any user name or password is replaced (it may be a token)."""
-    return re.sub(r"(?<=//)[^/@\s]*@", "***@", url)
+    return re.sub(r"(?<=://).+@(?=[^/\s]*\.)", "***@", url)
 
 
 def remote_main_sha(path):
@@ -735,8 +776,17 @@ def check_public_repo(path, branch):
     p = Path(path)
     if not (p / ".git").exists():
         return [("public repo is a git checkout", False, str(path))]
-    url = git(p, "config", "--get", "remote.origin.url", check=False).stdout.strip()
+    urls = [x for x in git(p, "config", "--get-all", "remote.origin.url", check=False).stdout.splitlines() if x.strip()]
+    pushurls = [x for x in git(p, "config", "--get-all", "remote.origin.pushurl", check=False).stdout.splitlines() if x.strip()]
+    url = urls[0].strip() if urls else ""
     res.append((f"remote origin is {PUBLIC_REPO_NAME} (https://github.com, no credentials in the URL)", remote_is_public_repo(url), _redact(url) or "no origin"))
+    # exactly one effective fetch URL and one effective push URL
+    one_url_ok = (len(urls) <= 1)
+    one_pushurl_ok = (len(pushurls) <= 1)
+    res.append(("exactly one remote.origin.url", one_url_ok, "" if one_url_ok else "more than one remote.origin.url"))
+    res.append(("exactly one remote.origin.pushurl", one_pushurl_ok, "" if one_pushurl_ok else "more than one remote.origin.pushurl"))
+    mirror_cfg = git(p, "config", "--get", "remote.origin.mirror", check=False).stdout.strip().lower()
+    res.append(("remote.origin.mirror is not set", mirror_cfg not in ("true", "1", "yes"), f"remote.origin.mirror = {mirror_cfg}" if mirror_cfg else ""))
     fetch_eff = git(p, "remote", "get-url", "origin", check=False).stdout.strip()
     push_eff = git(p, "remote", "get-url", "--push", "origin", check=False).stdout.strip()
     res.append(("effective fetch and push URL are the same (after insteadOf, pushInsteadOf and pushurl)", bool(fetch_eff) and fetch_eff == push_eff,
@@ -763,13 +813,16 @@ def commit_in_worktree(repo, build_dir, branch, message, scratch):
     checkout (on main) is never touched, so a failure leaves nothing half-written in it. The commit is then compared with
     the build listing (paths and sizes). On success the worktree is removed and the branch stays; on failure both are
     removed and the RuntimeError says what is left. -> commit sha."""
+    # Sanitize the process environment: GIT_DIR/GIT_WORK_TREE/etc. must not redirect git operations.
+    _saved = {k: os.environ.pop(k, None) for k in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE",
+                                                     "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+                                                     "GIT_QUARANTINE_PATH")}
     repo = Path(repo)
     wt_root = Path(tempfile.mkdtemp(prefix="post-poem-wt-", dir=str(scratch)))
     target = wt_root / "tree"
-    created = False
+    created = True
     try:
         git(repo, "worktree", "add", "-b", branch, str(target), "main")
-        created = True
         site = target / "site"
         if site.exists():
             shutil.rmtree(site)
@@ -777,14 +830,21 @@ def commit_in_worktree(repo, build_dir, branch, message, scratch):
         git(target, "add", "-A", "-f", "site")  # -f: a .gitignore in the public clone must not silently drop a file
         git(target, "commit", "-m", message)
         sha = git(target, "rev-parse", "HEAD")
-        committed = {}
-        for line in git(target, "ls-tree", "-r", "-l", "HEAD", "--", "site").splitlines():
+        built_paths = sorted(tree_listing(build_dir))
+        committed_paths = []
+        for line in git(target, "ls-tree", "-r", "HEAD", "--", "site").splitlines():
             meta, path = line.split("\t", 1)
-            committed[path[len("site/"):]] = int(meta.split()[3])
-        built = tree_listing(build_dir)
-        if committed != built:
-            diff = sorted(set(committed) ^ set(built)) or sorted(k for k in built if committed.get(k) != built[k])
+            committed_paths.append(path[len("site/"):])
+        if sorted(committed_paths) != built_paths:
+            diff = sorted(set(committed_paths) ^ set(built_paths))
             raise RuntimeError(f"the committed site/ differs from the build output ({len(diff)} path(s), first: {', '.join(diff[:5])})")
+        # Compare committed bytes to build bytes (git clean/smudge filters can change content without changing size).
+        import subprocess as _sp
+        for rel in built_paths:
+            r = _sp.run(["git", "-C", str(target), "show", f"HEAD:site/{rel}"], capture_output=True)
+            build_bytes = (Path(build_dir) / rel).read_bytes()
+            if r.returncode != 0 or r.stdout != build_bytes:
+                raise RuntimeError(f"the committed site/ differs from the build output (1 path(s), first: {rel})")
         return sha
     except (RuntimeError, OSError) as e:
         left = []
@@ -801,6 +861,9 @@ def commit_in_worktree(repo, build_dir, branch, message, scratch):
         git(repo, "worktree", "remove", "--force", str(target), check=False)
         git(repo, "worktree", "prune", check=False)
         shutil.rmtree(wt_root, ignore_errors=True)
+        for k, v in _saved.items():
+            if v is not None:
+                os.environ[k] = v
 
 
 def public_changes(public_site, out):
@@ -853,7 +916,8 @@ def render_pr_body(ctx):
     L.append("## How verified")
     for kind, pid, name, ok, detail, forced in ctx["results"]:
         word = "PASS" if ok else ("FAIL (forced)" if forced else "FAIL")
-        L.append(f"- {word} {name} [{pid}]" + (f": {detail}" if detail else ""))
+        safe_detail = re.sub(r"\s*\(first:[^)]*\)", "", detail or "")
+        L.append(f"- {word} {name} [{pid}]" + (f": {safe_detail}" if safe_detail else ""))
     for name, ok, detail in ctx["checks"]:
         L.append(f"- {word_of(ok)} {name}" + (f": {detail}" if detail else ""))
     for pid, c in ctx["counts"].items():
@@ -864,7 +928,7 @@ def render_pr_body(ctx):
     L.append("## Not verified")
     L.append("- Rendering on a real phone or other device")
     L.append("- A Cloudflare Pages preview deploy of this branch")
-    pg_shared = sorted({f["page"] for f in ctx["shared"]})
+    pg_shared = sorted({f["page"] for f in ctx["shared"] if f["page"] in ctx["pages"]})
     L.append("- Author sign-off on shared scans: " + (f"other writing is visible in the scan of {len(pg_shared)} page(s) ({', '.join(pg_shared)}); "
                                                       "which pieces or items is in the console log of the run, not in this text" if pg_shared else "none found"))
     for note in ctx["font_notes"]:
@@ -1068,7 +1132,13 @@ def run(a):
     # default scratch: a new directory under the repository's git-ignored .post-poem-work/, never a sibling of the repository
     if a.workdir:
         workdir = Path(a.workdir)
-        workdir.mkdir(parents=True, exist_ok=True)
+        try:
+            workdir.mkdir(parents=True, exist_ok=True)
+        except (OSError, FileExistsError):
+            if not workdir.is_dir():
+                say(f"FAIL  usage {workdir} is not a directory")
+                return EXIT_USAGE
+            raise
         # build/ is deleted and rebuilt on every run: only ever one this script made (it leaves a marker next to it)
         if (workdir / "build").is_symlink():
             say(f"FAIL  usage {workdir / 'build'} is a symbolic link; this script replaces build/ and will not follow or delete a link. Remove the link or choose another --workdir")
@@ -1192,6 +1262,7 @@ def run(a):
     pushed = False
     try:
         # the fully qualified refspec: what is sent does not depend on remote.origin.push or push.default
+        git(a.public_repo, "config", "push.followTags", "false")
         git(a.public_repo, "push", "origin", f"refs/heads/{branch}:refs/heads/{branch}")
         pushed = True
         on_origin = git(a.public_repo, "ls-remote", "origin", f"refs/heads/{branch}", check=False).stdout.split()
@@ -1201,7 +1272,7 @@ def run(a):
             raise RuntimeError("main of the public repository CHANGED during the push; this must never happen. Look at the public repository now")
         r = subprocess.run(["gh", "pr", "create", "--repo", PUBLIC_REPO_NAME, "--base", "main", "--head", branch,
                             "--title", "Post " + ", ".join(pids), "--body-file", str(workdir / "pr-body.md")],
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, env=_clean_env())
         if r.returncode != 0:
             raise RuntimeError(f"gh pr create failed: {r.stderr.strip()}")
         say(f"pull request: {r.stdout.strip()}")
@@ -1215,7 +1286,11 @@ def run(a):
         return EXIT_PARTIAL
 
     # --- private release list (not committed): only now that the branch is pushed AND the pull request exists
-    update_release_list(src, pids, all_versions, write=True)
+    try:
+        update_release_list(src, pids, all_versions, write=True)
+    except OSError as e:
+        say(f"pull request exists; private release/public.json could NOT be updated: {e}")
+        return EXIT_PARTIAL
     return EXIT_OK
 
 

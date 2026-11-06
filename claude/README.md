@@ -2,7 +2,7 @@
 
 These are the documents from the claude.ai Project **journal-handwritten-web**, downloaded by the author on 2026-11-05 and committed here so they are versioned and not only on a disk. Technical and research writing; none of it is shown to readers of the site.
 
-- `plan.md` is the **Project doc** itself (the working copy; the Project doc was last revised 2026-10-28). `docs/plan.md` is the versioned copy kept up to date in this repository; the only differences today are two lines (a header note, and the 2026-11-05 note about copying v4 into `site/`). When the plan changes, update both (see `CLAUDE.md`).
+- `plan.md` is the **Project doc** itself (the working copy; the Project doc was last revised 2026-10-28). `docs/plan.md` is the versioned copy kept up to date in this repository; the original import differed by two lines (a header note, and the 2026-11-05 note about copying v4 into `site/`). Both copies now also carry the dated T06 identity/audience addendum, with relative links appropriate to each location. When the plan changes, update both (see `CLAUDE.md`).
 - The twelve reports are the research outputs of the Project chats. The chat column below is derived from titles and topics (a suggestion, not a record) except where a chat record names the report. Per-chat records are in `docs/chats/`.
 - The PDFs are the Project's other documents.
 

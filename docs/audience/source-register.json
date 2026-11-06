@@ -1,0 +1,1333 @@
+{
+  "schema": "versforms.t06.sources.v1",
+  "packet": "T06-2026-11-05-v1",
+  "timezone": "America/New_York",
+  "initial_main": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+  "delivery_base": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+  "public_head": "1fe6b507b24bbe20ba0d45a917031f42cc171b58",
+  "shared_context": {
+    "packet": "2026-10-16-v1.1",
+    "projection": "2026-10-16-v1.1-r2",
+    "project": "g-p-6a10bcb4ada4819194e881431212101a",
+    "status": "inaccessible",
+    "unseen_files": [
+      "interpretation.md",
+      "cloud-master-context.md",
+      "cloud-source-ledger.json"
+    ],
+    "claims_attributed": false
+  },
+  "sources": [
+    {
+      "id": "INSTRUCTIONS",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "CLAUDE.md",
+      "blob_sha": "fe453038f2cd7f5175edf48eeddacbd1ff95a181",
+      "sha256": "0ae180e20177ae649dbac16f6af183c5986cda429ab917e15410c6eff8597918",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/CLAUDE.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X04",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-24-release-methods-and-standards/02-separate-identity-for-work.md",
+      "blob_sha": "fd34c08dd519c626858df80371a004f59fff0147",
+      "sha256": "4e8361fa9645d79a8d8b7e10d173b44fc4f2f360b0960c178b63095286f10d67",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-24-release-methods-and-standards/02-separate-identity-for-work.md",
+      "original_chat_url": "https://claude.ai/chat/f8784530-2ff6-434e-9b99-ac9f1500e2ba",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X43",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-31-poetry-archive-relaunch-plan/04-press-versus-journals.md",
+      "blob_sha": "af91f1c1dde26848466f14ab5df1057ef3009131",
+      "sha256": "ed02a92f117249862c4e4539ae826fd6f8300f97289f5dce45f2ee3edd5ed6a3",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-31-poetry-archive-relaunch-plan/04-press-versus-journals.md",
+      "original_chat_url": "https://claude.ai/chat/c10a57af-55de-43c7-8c3b-a18e6d171dc5",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X41",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-31-poetry-archive-relaunch-plan/02-cadence-gruw-accounts.md",
+      "blob_sha": "861e1c86073b2c889bb222e5c4dc96461663ab92",
+      "sha256": "d782a0a7b6a7451bb72164882ece1a21481919cba812a9713b761780e78224bd",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-31-poetry-archive-relaunch-plan/02-cadence-gruw-accounts.md",
+      "original_chat_url": "https://claude.ai/chat/c10a57af-55de-43c7-8c3b-a18e6d171dc5",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X49",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-31-poetry-archive-relaunch-plan/10-handle-intended-meaning.md",
+      "blob_sha": "409c73c33f12d2c3d7a39fdcaf6c3d152fd85808",
+      "sha256": "9aad694ef4be31f896afb6c9ad165836eae97e5271f845b5d358bc815003acdb",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-31-poetry-archive-relaunch-plan/10-handle-intended-meaning.md",
+      "original_chat_url": "https://claude.ai/chat/c10a57af-55de-43c7-8c3b-a18e6d171dc5",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X50",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-31-poetry-archive-relaunch-plan/11-forms-vs-vers.md",
+      "blob_sha": "93d3738a262f11d410fd91e378d4621965669bd2",
+      "sha256": "2bd44de49665c302f89ccc6ab5841cc9eb832308f080153cac010d719a3c6e10",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-31-poetry-archive-relaunch-plan/11-forms-vs-vers.md",
+      "original_chat_url": "https://claude.ai/chat/c10a57af-55de-43c7-8c3b-a18e6d171dc5",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X51",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-10-31-poetry-archive-relaunch-plan/12-name-accounts-and-roots.md",
+      "blob_sha": "c09fb86e63579d3a9059ccb48b3971e298a6d749",
+      "sha256": "c72d329834f88c1dcfc378446e8be53289d6f24bb32c61f0d6589a5d795cea40",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-10-31-poetry-archive-relaunch-plan/12-name-accounts-and-roots.md",
+      "original_chat_url": "https://claude.ai/chat/c10a57af-55de-43c7-8c3b-a18e6d171dc5",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X70",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "blob_sha": "a8c2f0a805bbdc287aff06df8b825c0ebf13d3ff",
+      "sha256": "b4866d9de075fd0405bc2990d1f76416b48d0aa6765935af2047345edb676608",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/02-remove-words-extend-arms.md",
+      "original_chat_url": "https://claude.ai/chat/12a3b986-e69b-40f3-9117-b2f29f099eb7",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X69",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "blob_sha": "9587370310d3b07ee4ee5e1c494330937763d67b",
+      "sha256": "3b0cb0a39e657f741042d82669841579ed931f9fd995ead2492e013e8f692b3a",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit/01-circle-safe-avatar-crop.md",
+      "original_chat_url": "https://claude.ai/chat/12a3b986-e69b-40f3-9117-b2f29f099eb7",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X70-SUMMARY",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-04-profile-picture-edit.md",
+      "blob_sha": "fe8ca30f0a6a2ddb7b848fc289edde5943342fa9",
+      "sha256": "d8469f88389959f6cca2f914c919e29c4cc04f9c02ec3f355fa5894caa4d6866",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-04-profile-picture-edit.md",
+      "original_chat_url": "https://claude.ai/chat/12a3b986-e69b-40f3-9117-b2f29f099eb7",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X-LAUNCH",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-05-local-session-finish-and-launch.md",
+      "blob_sha": "7d131582f21d534d0f3380e9ea42529747086a1a",
+      "sha256": "303245808c9a15ca264f2a1cc76e439b209a586c4da2daff1c7960bb4af994c9",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-05-local-session-finish-and-launch.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X-LANES",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-05-versforms-launch-lanes.md",
+      "blob_sha": "e530dad2f5eb0b5cdb04b9d2ab6b8491412b626b",
+      "sha256": "05510ac16143ef7733062c60d37492824ac105ba2f84e41bbe552a1de01c3bcf",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-05-versforms-launch-lanes.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X-SOP",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "claude/SOP_ Using Meta Muse with Instagram for the n_100 Handwritten Poetry Series.md",
+      "blob_sha": "faee52b57b8d28eaa5a27b78ab10eacf11e4c01a",
+      "sha256": "70635f752c78f99fff3ae3975a2bc6a9f031c28b69d31bce494fa006d512ade3",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/claude/SOP_ Using Meta Muse with Instagram for the n_100 Handwritten Poetry Series.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X-ARCHIVE",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "claude/README.md",
+      "blob_sha": "586afe02620dd8d1f5fadb9c528493be9efcc87f",
+      "sha256": "350dca0059bd912fc7e442bb8392f520bc0c3220b1c69c41be8da636e9f63a82",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/claude/README.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "PLAN-HISTORICAL",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/plan.md",
+      "blob_sha": "61413c5d2608066d1083739c913e00bc172bdcf6",
+      "sha256": "2d2939cba9b16fa5675f5a079add94dd7ca46e4d0ca906e9c6a72a739bab7762",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/plan.md",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "STUDIO-EVENTS",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "studio/index.html",
+      "blob_sha": "6bd68d56180e722c19b22ba7d4f57354d4a48c28",
+      "sha256": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/studio/index.html",
+      "original_chat_url": null,
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X57",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-fear-of-unseen-posts/01-quiet-posts-concern.md",
+      "blob_sha": "898be7c1a298e269ea8bb09538706cd767e695f5",
+      "sha256": "400eac4376560463740372ed8380684cfca7707daea912e166d2bee28e4ba411",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-fear-of-unseen-posts/01-quiet-posts-concern.md",
+      "original_chat_url": "https://claude.ai/chat/c785233f-1213-46d1-b5a2-10b3136fe24a",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X58",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-fear-of-unseen-posts/02-distribution-vs-content.md",
+      "blob_sha": "25b40c70972a746cf1c6e0a128a6e50913dd8eb2",
+      "sha256": "e5afbbc905c43d15c0e1af12a3e4e2f0c794911a48a9ed282aa4712900b366ad",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-fear-of-unseen-posts/02-distribution-vs-content.md",
+      "original_chat_url": "https://claude.ai/chat/c785233f-1213-46d1-b5a2-10b3136fe24a",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X59",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-fear-of-unseen-posts/03-muse-agent-identification.md",
+      "blob_sha": "a992ba7e01a46d0eea164f72e97254db4c044d56",
+      "sha256": "82c7a1db67a936bd100116fba7a7a4983c919eb9580cd5101f5a780b7f0ba72a",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-fear-of-unseen-posts/03-muse-agent-identification.md",
+      "original_chat_url": "https://claude.ai/chat/c785233f-1213-46d1-b5a2-10b3136fe24a",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X60",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-fear-of-unseen-posts/04-meta-muse-instagram-fit.md",
+      "blob_sha": "659eac3608f8704e4cc9320abefea5184c863e98",
+      "sha256": "60ab077b7000547c7208afff45b7017aee46a43979221f71070ab09db4c97b50",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-fear-of-unseen-posts/04-meta-muse-instagram-fit.md",
+      "original_chat_url": "https://claude.ai/chat/c785233f-1213-46d1-b5a2-10b3136fe24a",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "X61",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-fear-of-unseen-posts/05-muse-instagram-sop.md",
+      "blob_sha": "0ca2ce4db52855a3d57b5d94d633229902c81fda",
+      "sha256": "ea978aedfbeb3f260beede7af648faf7d3d163181df3d19bdde4d11e5c4b46a2",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-fear-of-unseen-posts/05-muse-instagram-sop.md",
+      "original_chat_url": "https://claude.ai/chat/c785233f-1213-46d1-b5a2-10b3136fe24a",
+      "original_chat_retrieved": false,
+      "note": "Repository text read; original transcript not independently retrieved."
+    },
+    {
+      "id": "I04",
+      "kind": "github-issue",
+      "number": 4,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/4",
+      "title": "[2026-10-24-release-methods-and-standards] 02 \u00b7 Separate identity for the handwriting work",
+      "state": "open",
+      "created_at": "2026-11-05T16:52:58Z",
+      "updated_at": "2026-11-05T16:52:58Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I43",
+      "kind": "github-issue",
+      "number": 43,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/43",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 04 \u00b7 Press versus journal publication",
+      "state": "open",
+      "created_at": "2026-11-05T16:54:33Z",
+      "updated_at": "2026-11-05T16:54:33Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I49",
+      "kind": "github-issue",
+      "number": 49,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/49",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 10 \u00b7 Intended meaning of the handle",
+      "state": "open",
+      "created_at": "2026-11-05T16:54:48Z",
+      "updated_at": "2026-11-05T16:54:48Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I50",
+      "kind": "github-issue",
+      "number": 50,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/50",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 11 \u00b7 Comparing forms.vs and forms.vers",
+      "state": "open",
+      "created_at": "2026-11-05T16:54:50Z",
+      "updated_at": "2026-11-05T16:54:50Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I51",
+      "kind": "github-issue",
+      "number": 51,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/51",
+      "title": "[2026-10-31-poetry-archive-relaunch-plan] 12 \u00b7 Name accounts, verse.us and word roots",
+      "state": "open",
+      "created_at": "2026-11-05T16:54:52Z",
+      "updated_at": "2026-11-05T16:54:52Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I57",
+      "kind": "github-issue",
+      "number": 57,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/57",
+      "title": "[2026-11-03-fear-of-unseen-posts] 01 \u00b7 Concern about posts getting no response",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:05Z",
+      "updated_at": "2026-11-05T16:55:05Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I58",
+      "kind": "github-issue",
+      "number": 58,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/58",
+      "title": "[2026-11-03-fear-of-unseen-posts] 02 \u00b7 Diagnosing low response: distribution vs content",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:07Z",
+      "updated_at": "2026-11-05T16:55:07Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I59",
+      "kind": "github-issue",
+      "number": 59,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/59",
+      "title": "[2026-11-03-fear-of-unseen-posts] 03 \u00b7 Using the Muse agent: first answer and agent functions",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:10Z",
+      "updated_at": "2026-11-05T16:55:10Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I60",
+      "kind": "github-issue",
+      "number": 60,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/60",
+      "title": "[2026-11-03-fear-of-unseen-posts] 04 \u00b7 Meta Muse and Instagram: fit and limits",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:12Z",
+      "updated_at": "2026-11-05T16:55:12Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I61",
+      "kind": "github-issue",
+      "number": 61,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/61",
+      "title": "[2026-11-03-fear-of-unseen-posts] 05 \u00b7 Primary-source research and SOP for Muse with Instagram",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:14Z",
+      "updated_at": "2026-11-05T16:55:14Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "I70",
+      "kind": "github-issue",
+      "number": 70,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/70",
+      "title": "[2026-11-04-profile-picture-edit] 02 \u00b7 Remove words, extend arms, avatar and handle feedback",
+      "state": "open",
+      "created_at": "2026-11-05T16:55:36Z",
+      "updated_at": "2026-11-05T16:55:36Z",
+      "closed_at": null,
+      "assignees": null,
+      "labels": [
+        "chat",
+        "author"
+      ],
+      "comments_retrieved": 0,
+      "retrieval": "GitHub connector, all comments pages; initial observation before editing; exact per-call time not recorded"
+    },
+    {
+      "id": "P95",
+      "kind": "github-pr-initial",
+      "number": 95,
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/95",
+      "title": "docs(chats): local session record - finish and launch (2026-11-05)",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "ebd130cb079ee58df67d084b5445fdad841fe88d",
+      "base": "3f8399a541e48069738f4d69ffc986fe37869f34",
+      "merge": "a476fa86514d59039b833d702c5a9c6a48e82965",
+      "updated_at": "2026-11-05T21:53:41Z",
+      "merged_at": "2026-11-05T21:53:41Z",
+      "comment_ids": [
+        5789980451,
+        6665965920,
+        6665967705
+      ],
+      "note": "Initial PR observation. Later movement retained separately; code/test acceptance is revision-bound."
+    },
+    {
+      "id": "P103",
+      "kind": "github-pr-initial",
+      "number": 103,
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/103",
+      "title": "docs: claude/ - the claude.ai Project's text documents (plan, 12 research reports, 5 PDFs)",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+      "base": "d830d2a8f0556c50917d34528ab0b19cf7e0579a",
+      "merge": "04168b1f68bc4579fae245f8411b0b337d064369",
+      "updated_at": "2026-11-05T22:36:38Z",
+      "merged_at": "2026-11-05T22:36:38Z",
+      "comment_ids": [
+        5793116892,
+        6671302597,
+        6671304676
+      ],
+      "note": "Initial PR observation. Later movement retained separately; code/test acceptance is revision-bound."
+    },
+    {
+      "id": "P117",
+      "kind": "github-pr-initial",
+      "number": 117,
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/117",
+      "title": "docs(chats): record of the versforms launch lanes session (2026-11-05)",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "6806d2c62b4b2f2410b071aed582cb80c200723b",
+      "base": "efccd97f8c91fcabf8d45b5e60729e914300e434",
+      "merge": "3eadec631816d40766dbe28c1f2a32e893c8e422",
+      "updated_at": "2026-11-05T23:11:48Z",
+      "merged_at": "2026-11-05T23:11:48Z",
+      "comment_ids": [
+        5793422700,
+        6671880995,
+        6671881942
+      ],
+      "note": "Initial PR observation. Later movement retained separately; code/test acceptance is revision-bound."
+    },
+    {
+      "id": "P119",
+      "kind": "github-pr-initial",
+      "number": 119,
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/119",
+      "title": "T03: private first-release packet and repeatable clearance procedure",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "base": "e5ae157ef556690e73047e30225cad61c5484cf9",
+      "merge": null,
+      "updated_at": "2026-11-05T23:36:22Z",
+      "merged_at": null,
+      "comment_ids": [
+        5793654905,
+        6672375001
+      ],
+      "note": "Initial PR observation. Later movement retained separately; code/test acceptance is revision-bound."
+    },
+    {
+      "id": "P101",
+      "kind": "github-pr-initial",
+      "number": 101,
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/101",
+      "title": "Posting script: gates, hard stops and a public build for posting one poem (title versforms, font ajp-scribbles)",
+      "state": "open",
+      "draft": false,
+      "merged": false,
+      "head": "7970503de4e6c692fa57075164b92788bcd970c4",
+      "base": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "updated_at": "2026-11-05T23:42:41Z",
+      "merged_at": null,
+      "comment_ids": [
+        5792534667,
+        6670256924,
+        6670257620,
+        4486446890,
+        4486446898,
+        5792590224,
+        4487062599,
+        5793330932
+      ],
+      "note": "Initial open-PR observation; any reported merge SHA was provisional, not a completed merge. See P101-MERGED and final_refresh.",
+      "merge_commit_sha_as_reported": "405f51c11ab3647932522c9f6b928d4d4a2c7a1e"
+    },
+    {
+      "id": "P101-MERGED",
+      "kind": "github-pr-refresh",
+      "number": 101,
+      "title": "Posting script: gates, hard stops and a public build for posting one poem (title versforms, font ajp-scribbles)",
+      "state": "closed",
+      "merged": true,
+      "head": "15cad30cb923161716be51b2d075a6b98062cad4",
+      "merge": "06dccc0af91e563dc15e70d436569b7fe0cf9cba",
+      "merged_at": "2026-11-06T00:05:01Z",
+      "updated_at": "2026-11-06T00:05:01Z",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/101",
+      "note": "Merged independently by the owner/other session, not by T06."
+    },
+    {
+      "id": "REPO",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web",
+      "note": "Private repository; repository id 1436504763; default main."
+    },
+    {
+      "id": "MAIN-INTERIM",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/commit/06dccc0af91e563dc15e70d436569b7fe0cf9cba",
+      "note": "Historical main observation after PR #101 merge; superseded for delivery base by MAIN."
+    },
+    {
+      "id": "PUB-REPO",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/versforms",
+      "note": "Public repository; source of released content only."
+    },
+    {
+      "id": "PUB-HEAD",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/versforms/commit/1fe6b507b24bbe20ba0d45a917031f42cc171b58",
+      "note": "Public main inspected."
+    },
+    {
+      "id": "PUB-TREE",
+      "kind": "github-observation",
+      "url": "https://api.github.com/repos/4444J99/versforms/git/trees/12f8ec44c80a9b2c7e0bd20350b099eb432499ad?recursive=1",
+      "note": "Complete tree, not truncated; three files."
+    },
+    {
+      "id": "PUB-HTML",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/versforms/blob/1fe6b507b24bbe20ba0d45a917031f42cc171b58/site/index.html",
+      "note": "Blank page with versforms title and noindex; blob 6696a0ebc9d7701a8dbee9c66a3dcbf8bc839352"
+    },
+    {
+      "id": "P-V1",
+      "kind": "github-observation",
+      "url": "https://github.com/4444J99/versforms/pull/1",
+      "note": "Merged 1fe6b507b24bbe20ba0d45a917031f42cc171b58 at 2026-11-05T18:23:33Z"
+    },
+    {
+      "id": "WEB-PAGES",
+      "kind": "public-http-observation",
+      "url": "https://versforms.pages.dev/",
+      "observed_at": "2026-11-06T00:08:01.392238+00:00",
+      "method": "unauthenticated HTTP GET; no cookies or credentials",
+      "status": 200,
+      "final_url": "https://versforms.pages.dev/",
+      "sha256": "ba5bbff3c9f2b0efe4da6b50596ea14571beeb3759beff2e11a3b1bff1a64ac4",
+      "bytes": 432,
+      "body": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n<title>versforms</title>\n<meta name=\"robots\" content=\"noindex\">\n<style>\n:root{--paper:#e6dfd2;color-scheme:light}\n@media (prefers-color-scheme: dark){:root{--paper:#16171a;color-scheme:dark}}\nhtml,body{margin:0;height:100%;background:var(--paper)}\n</style></head><body></body></html>\n",
+      "limits": "No account control or ownership inference. RDAP 404 is not a reservation or availability guarantee."
+    },
+    {
+      "id": "WEB-DOMAIN",
+      "kind": "public-http-observation",
+      "url": "https://rdap.verisign.com/com/v1/domain/versforms.com",
+      "observed_at": "2026-11-06T00:08:08.170065+00:00",
+      "method": "unauthenticated HTTP GET; no cookies or credentials",
+      "status": 404,
+      "body": "",
+      "limits": "No account control or ownership inference. RDAP 404 is not a reservation or availability guarantee."
+    },
+    {
+      "id": "WEB-HANDLES",
+      "kind": "public-search-attempt",
+      "observed_on_local_date": "2026-11-05",
+      "timezone": "America/New_York",
+      "urls": [
+        "https://www.instagram.com/vers.forms/",
+        "https://www.instagram.com/versforms/",
+        "https://www.threads.com/@vers.forms"
+      ],
+      "queries": [
+        "\"vers.forms\" Instagram",
+        "\"versforms\" site:instagram.com OR site:threads.com OR site:bsky.app"
+      ],
+      "result": "Instagram fetch DisabledError; Threads inaccessible; no authoritative matching search result. Ownership/availability remains unknown."
+    },
+    {
+      "id": "ACCOUNT-EMAIL-GAP",
+      "kind": "limited-repository-search",
+      "paths": [
+        "docs",
+        "claude",
+        "README.md",
+        "studio-cf"
+      ],
+      "result": "No separate project inbox or control evidence found; no account settings or inbox accessed; commit/studio email not treated as project-email identity."
+    },
+    {
+      "id": "T03-CONTRACT",
+      "kind": "draft-dependency-source",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/releases/release-clearance-contract.md",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/release-clearance-contract.md",
+      "sha256": "e0db446dec263b31d1e5ac07e389daf2b4bf8dee2f61ef73698465692915b33f",
+      "note": "PR119 draft source; interface proposed, no cleared release record. Root read contract/procedure; companion sources checked by release agent and verified below."
+    },
+    {
+      "id": "T03-PROCEDURE",
+      "kind": "draft-dependency-source",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/releases/t03-release-procedure.md",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/t03-release-procedure.md",
+      "sha256": "9357069883ec6a9f1b0e1a43777f14ca2903ff02638d8523693ab238921bd612",
+      "note": "PR119 draft source; interface proposed, no cleared release record. Root read contract/procedure; companion sources checked by release agent and verified below."
+    },
+    {
+      "id": "T03-POLICY",
+      "kind": "draft-dependency-source",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/releases/t03-policy-and-disposition.md",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/t03-policy-and-disposition.md",
+      "sha256": "37a3ad4b09689aee19b65becce1ad5592881b28a6a9dad4d77f217145a9370c6",
+      "note": "PR119 draft source; interface proposed, no cleared release record. Root read contract/procedure; companion sources checked by release agent and verified below."
+    },
+    {
+      "id": "T03-DECISIONS",
+      "kind": "draft-dependency-source",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/releases/t03-author-decisions.md",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/t03-author-decisions.md",
+      "sha256": "7e3f5c4ba45c54ac7cd69437d55407731ca2c917cb76d1c740be397863dab30d",
+      "note": "PR119 draft source; interface proposed, no cleared release record. Root read contract/procedure; companion sources checked by release agent and verified below."
+    },
+    {
+      "id": "X-LAUNCH-CLOSEOUT",
+      "kind": "repository-source-refresh",
+      "revision": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "path": "docs/chats/2026-11-05-local-session-finish-and-launch.md",
+      "blob_sha": "7afc7b2492604241790cd1380537537119acc958",
+      "sha256": "19ce0162d03e0ae7114a0765ef5efdbf2e239e439d70968cbae2b9006cb41059",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/fab6a82b72f23efb16278b90cdc4f7790ca55713/docs/chats/2026-11-05-local-session-finish-and-launch.md",
+      "note": "Inspected closeout update; author decisions unchanged; merge/test observations belong to the source session."
+    },
+    {
+      "id": "X-LANES-CLOSEOUT",
+      "kind": "repository-source-refresh",
+      "revision": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "path": "docs/chats/2026-11-05-versforms-launch-lanes.md",
+      "blob_sha": "b9cf3e0641f79cbc330cf8bdfb5291c24f11c4d3",
+      "sha256": "be05eb6a5a4edfb70de135818f4b888d0a70a9a5f1412d1ff8326de682d259b9",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/fab6a82b72f23efb16278b90cdc4f7790ca55713/docs/chats/2026-11-05-versforms-launch-lanes.md",
+      "note": "Inspected closeout update; author decisions unchanged; merge/test observations belong to the source session."
+    },
+    {
+      "id": "POSTING-CURRENT",
+      "kind": "repository-source-refresh",
+      "revision": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "path": "tools/post_poem.py",
+      "blob_sha": "b3c9e3ad14193c92301319b298294f50e0de4840",
+      "sha256": "fff12cd169e30bff5b82c5cc77a0551ec194554e20d03edc0c31d59d480db3fd",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/fab6a82b72f23efb16278b90cdc4f7790ca55713/tools/post_poem.py",
+      "note": "Inspected update from prior source; author-decision statements unchanged; status records PR101 merge. Current posting source still uses one push URL without --all."
+    },
+    {
+      "id": "ATT-SOP",
+      "kind": "supplied-project-file",
+      "uploaded_name": "SOP_ Using Meta Muse with Instagram for the n_100 Handwritten Poetry Series.md",
+      "source_file_id": "file_00000000355c81f59bdf7b2f6222864e",
+      "sha256": "70635f752c78f99fff3ae3975a2bc6a9f031c28b69d31bce494fa006d512ade3",
+      "matches_repository_bytes": true,
+      "original_research_artifact": "compass_artifact_wf-2007fbab-c714-5a64-a234-7c32d98f05f8_text/markdown",
+      "note": "Original artifact ID is reported in X61; source bytes recovered in attachment and repository."
+    },
+    {
+      "id": "MAIN",
+      "kind": "github-main-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/commit/fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "revision": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "tree": "7f90d151f089596c9bd4da4f13652927fe154f7d",
+      "observed_at": "2026-11-06T00:29:30.581Z",
+      "note": "Exact delivery base after PR #122; remote read refreshed independently before commit."
+    },
+    {
+      "id": "P101-FINAL",
+      "kind": "github-pr-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/101",
+      "observed_at": "2026-11-06T00:29:30.581Z",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "15cad30cb923161716be51b2d075a6b98062cad4",
+      "base": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "base_ref": "main",
+      "merge_commit_sha_as_reported": "06dccc0af91e563dc15e70d436569b7fe0cf9cba",
+      "merged_at": "2026-11-06T00:05:01Z",
+      "updated_at": "2026-11-06T00:05:01Z",
+      "note": "Final precommit status observation; no PR state changed by T06."
+    },
+    {
+      "id": "P119-FINAL",
+      "kind": "github-pr-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/119",
+      "observed_at": "2026-11-06T00:29:30.581Z",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "head": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "base": "e5ae157ef556690e73047e30225cad61c5484cf9",
+      "base_ref": "post-poem-gates",
+      "merge_commit_sha_as_reported": null,
+      "merged_at": null,
+      "updated_at": "2026-11-05T23:36:22Z",
+      "note": "Final precommit status observation; no PR state changed by T06."
+    },
+    {
+      "id": "P122-FINAL",
+      "kind": "github-pr-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/122",
+      "observed_at": "2026-11-06T00:29:30.581Z",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+      "base": "06dccc0af91e563dc15e70d436569b7fe0cf9cba",
+      "base_ref": "main",
+      "merge_commit_sha_as_reported": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+      "merged_at": "2026-11-06T00:14:05Z",
+      "updated_at": "2026-11-06T00:14:05Z",
+      "note": "Final precommit status observation; no PR state changed by T06."
+    },
+    {
+      "id": "POL-P01",
+      "url": "https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/",
+      "status": "full page retrieved",
+      "published": "2026-09-08",
+      "updated_display": "2026-09-30",
+      "scope": "US launch; product announcement",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn2search0",
+        "turn3view1",
+        "turn6view0",
+        "turn8view2"
+      ],
+      "root_retrieval_refs": [
+        "turn14view0"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P02",
+      "url": "https://www.meta.com/help/superintelligence/1687253048996149/",
+      "status": "full page retrieved",
+      "updated_display": "8 weeks ago",
+      "effective_date": null,
+      "scope": "Muse connectors; account eligibility/scopes untested",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn5view0"
+      ],
+      "root_retrieval_refs": [
+        "turn14view3"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P03",
+      "url": "https://www.meta.com/help/superintelligence/1047255454427887/",
+      "status": "full page retrieved",
+      "updated_display": "8 weeks ago",
+      "effective_date": null,
+      "scope": "Muse privacy; settings untested",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn5view1"
+      ],
+      "root_retrieval_refs": [
+        "turn16view2",
+        "turn17view0"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P04",
+      "url": "https://www.meta.com/help/superintelligence/2225571704857152/",
+      "status": "full page retrieved",
+      "effective_date": null,
+      "scope": "Muse data, Goals, memory",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn5view2"
+      ],
+      "root_retrieval_refs": [
+        "turn16view1"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false,
+      "updated_display": "8 weeks ago"
+    },
+    {
+      "id": "POL-P05",
+      "url": "https://www.meta.com/help/subscriptions/882345181477896/",
+      "status": "full page retrieved",
+      "updated_display": "7 weeks ago",
+      "effective_date": null,
+      "scope": "eligible public Instagram accounts; extended Meta One insights not for teens",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn12view0"
+      ],
+      "root_retrieval_refs": [
+        "turn16view0"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P06",
+      "url": "https://about.fb.com/news/2025/04/making-ai-work-harder-for-europeans/",
+      "status": "full page retrieved",
+      "published": "2025-04-14",
+      "updated": "2026-03-27T13:00:00-07:00",
+      "scope": "EU",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn9search4",
+        "turn11view0"
+      ],
+      "root_retrieval_refs": [
+        "turn15search2"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P07",
+      "url": "https://about.fb.com/news/2024/09/building-ai-technology-for-the-uk-in-a-responsible-and-transparent-way/",
+      "status": "full page retrieved",
+      "published": "2024-09-13",
+      "scope": "UK",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn9search5",
+        "turn11view1"
+      ],
+      "root_retrieval_refs": [
+        "turn15search1"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-P08",
+      "url": "https://about.fb.com/news/2026/10/muse-is-now-available-in-singapore-the-worlds-first-personal-ai-agent-built-for-everyone/",
+      "status": "Official search result followed by full primary page independently retrieved by root",
+      "published": "2026-10-27",
+      "scope": "Singapore rollout announcement",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn2search5"
+      ],
+      "root_retrieval_refs": [
+        "turn18view0",
+        "turn19view1"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-G01",
+      "url": "https://help.instagram.com/termsofuse",
+      "status": "HTTP 429",
+      "effective_date": null,
+      "claim_unverified": "January 20, 2027 update",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn8view0"
+      ],
+      "root_retrieval_refs": [
+        "turn14view2"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-G02",
+      "url": "https://muse.ai/terms",
+      "status": "login wall",
+      "effective_date": null,
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn3view0"
+      ],
+      "root_retrieval_refs": [
+        "turn14view1",
+        "turn20view0"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false,
+      "alternate_official_url": "https://agent.meta.ai/terms",
+      "alternate_result": "Redirected to https://muse.ai/terms and the same login wall."
+    },
+    {
+      "id": "POL-G03",
+      "url": "https://www.meta.com/help/superintelligence/1385290430137537/",
+      "status": "Full primary page independently retrieved by root after earlier timeout",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn8view1"
+      ],
+      "root_retrieval_refs": [
+        "turn18view1",
+        "turn19view0"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false,
+      "earlier_status": "400/timeout",
+      "updated_display": "8 weeks ago",
+      "effective_date": null,
+      "supported": "Documents Ask for some actions, Always ask and Allow once; exact account availability/enforcement and Instagram-only isolation remain untested."
+    },
+    {
+      "id": "POL-G04",
+      "url": "https://help.instagram.com/1631821640426723/",
+      "status": "HTTP 429",
+      "claim_unverified": "current resolution/aspect-ratio limits",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn12view2"
+      ],
+      "root_retrieval_refs": [
+        "turn18view2"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "POL-G05",
+      "url": "https://help.instagram.com/1533933820244654/",
+      "status": "HTTP 429",
+      "claim_unverified": "current separate Instagram insights page",
+      "kind": "primary-platform-source",
+      "agent_retrieval_refs": [
+        "turn12view1"
+      ],
+      "root_retrieval_refs": [
+        "turn18view3"
+      ],
+      "observed_date_utc": "2026-11-06",
+      "account_behavior_tested": false
+    },
+    {
+      "id": "ATT-SUPPLIED-V3",
+      "kind": "supplied-asset",
+      "source_file_id": "file_00000000216881f7bad78539a2f07252",
+      "filename": "vers_forms_profile_v3.jpg",
+      "sha256": "370d979bedd5779e105d7f5a85443adf22aa4fc8496fe122d3f83f8d6018185e",
+      "bytes": 269257,
+      "dimensions": [
+        1080,
+        1080
+      ],
+      "mode": "RGB",
+      "observed_at": "2026-11-06T00:32:47.244400+00:00",
+      "note": "Root independently rechecked hash/bytes/dimensions; agent visually inspected both, root inspected preview. Lineage and approval unknown. Session-local paths are in avatar-manifest.json; binaries are not newly committed."
+    },
+    {
+      "id": "ATT-SUPPLIED-PREVIEW3",
+      "kind": "supplied-asset",
+      "source_file_id": "file_00000000aa2881f7a2ab844c63ce1bb3",
+      "filename": "preview3.png",
+      "sha256": "88663f21fd47fa13c189c88844541deb52335eba8760295066b26d8913550b02",
+      "bytes": 214060,
+      "dimensions": [
+        540,
+        540
+      ],
+      "mode": "RGB",
+      "observed_at": "2026-11-06T00:32:47.244400+00:00",
+      "note": "Root independently rechecked hash/bytes/dimensions; agent visually inspected both, root inspected preview. Lineage and approval unknown. Session-local paths are in avatar-manifest.json; binaries are not newly committed."
+    },
+    {
+      "id": "T03-VERIFICATION",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/verification/t03-release-verification.md",
+      "blob_sha": "b9a77635d83b3561f5bcf289a67ab27fae645d09",
+      "sha256": "7e276ceb5a0ed3efcbf7aea7736c78372b1a264844c6d659da3f3327e618da11",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/verification/t03-release-verification.md",
+      "note": "Root independently read exact pinned repository evidence; reported T03 test results were not rerun by T06."
+    },
+    {
+      "id": "T03-HANDOFF",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "docs/releases/t03-integrator-handoff.md",
+      "blob_sha": "de545dc0b6465acd50d6b035aaa1b8266079091b",
+      "sha256": "aab6094e7f5ef0290b16e3bcef7c0732ecfa5772bd12d647147b57a43db758d1",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/docs/releases/t03-integrator-handoff.md",
+      "note": "Root independently read exact pinned repository evidence; reported T03 test results were not rerun by T06."
+    },
+    {
+      "id": "T03-PACKET",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "path": "release/packets/2026-11-05-t03-current/packet.json",
+      "blob_sha": "4d37634bc7dbd9ac33ddb3032da1bc8966b2ba04",
+      "sha256": "aedfcf77188db9de30cfa1d59332f93db8e2174ba54d0e7eaa7c8d32119c0b24",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/8d16284ba8b80f18398d08b8de931d8812f30429/release/packets/2026-11-05-t03-current/packet.json",
+      "note": "Root independently read exact pinned repository evidence; reported T03 test results were not rerun by T06."
+    },
+    {
+      "id": "X67",
+      "kind": "repository-source",
+      "repository": "4444J99/journal-handwritten-web",
+      "revision": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+      "path": "docs/chats/2026-11-03-widget-photo-page-format/02-post-and-kit-mockups.md",
+      "blob_sha": "bfba464be6335420a84969984ad5fd080d6279ed",
+      "sha256": "6f5ad49075cd52dcd52c87f808f90b96818ff4bbc87d015bebac4ae785c1fcc1",
+      "url": "https://github.com/4444J99/journal-handwritten-web/blob/d74df372ace00c8a7544ab3b5302cb05418d672c/docs/chats/2026-11-03-widget-photo-page-format/02-post-and-kit-mockups.md",
+      "note": "Historical screenshot mockups; root independently read. Not an accepted T07 production kit."
+    },
+    {
+      "id": "T07-KIT-GAP",
+      "kind": "bounded-search",
+      "observed_at": "2026-11-06T00:29:30.581Z",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pulls",
+      "query": "repo:4444J99/journal-handwritten-web is:pr (T07 OR \"media kit\")",
+      "result_pr_numbers": [
+        119
+      ],
+      "note": "Only T03 consumer reference PR #119 returned. Accessible repository/source searches did not locate a completed production receipt; not a claim of global absence."
+    },
+    {
+      "id": "MAIN-AFTER-PR",
+      "kind": "github-main-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/commit/038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+      "revision": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+      "tree": "61618a204611a0e5dafb5485c6d99007ef679554",
+      "observed_at": "2026-11-06T00:38:14.531Z",
+      "note": "Main advanced after T06 commit creation through PR #124. Only the launch-session record changed; no overlap with T06 edited paths. Initial T06 PR read-back reported mergeable=true. Delivery branch preserves its original fab6a82 parent."
+    },
+    {
+      "id": "I123",
+      "kind": "github-issue-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/123",
+      "title": "Deferred: posting-script hardening - three majors and minors from a later adversarial check (branch post-poem-hardening-wip)",
+      "state": "open",
+      "assignees": null,
+      "updated_at": "2026-11-06T00:31:37Z",
+      "observed_at": "2026-11-06T00:38:52.781Z",
+      "comments_count": 0,
+      "body_sha256": "48ab9533578d2ca7c29d60c5b3e0919510c6baa39d5beb4b1aaf94cf6ac3fcf5",
+      "note": "Post-merge findings are tracked by the existing implementation owner on post-poem-hardening-wip. The reported adversarial tests were not rerun by T06. This contextual issue is outside T06 primary scope."
+    },
+    {
+      "id": "P124",
+      "kind": "github-pr-observation",
+      "url": "https://github.com/4444J99/journal-handwritten-web/pull/124",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "head": "5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+      "merge": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+      "observed_at": "2026-11-06T00:38:52.781Z",
+      "note": "Merged documentation follow-up recording issue #123 and the other session's public-repository read-back. No runtime change."
+    }
+  ],
+  "final_refresh": {
+    "observed_at": "2026-11-06T00:29:30.581Z",
+    "main": "fab6a82b72f23efb16278b90cdc4f7790ca55713",
+    "main_tree": "7f90d151f089596c9bd4da4f13652927fe154f7d",
+    "public_main": "1fe6b507b24bbe20ba0d45a917031f42cc171b58",
+    "scoped_issues": [
+      {
+        "number": 4,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:52:58Z",
+        "body_sha256": "366deeb6c3087d44f36518bc5622d5f47dd2dba3eafca63fb32099441062637f",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 43,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:54:33Z",
+        "body_sha256": "416e7721b3a9dd921fd4723949213a3bfa3f12f6448b595854a19920e11a5ca5",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 49,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:54:48Z",
+        "body_sha256": "def8a9953f1254ff8a63414bc26b5dc45bacba91b29dc3d44329618c271059a9",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 50,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:54:50Z",
+        "body_sha256": "cc132035a79357f8724b98347f2d8cee1eadb1c598bdf184137b163df8b3c722",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 51,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:54:52Z",
+        "body_sha256": "a097e8e4432114674d9c228a92c8845e13e23e7868c471ec461f84fdcd8f8676",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 57,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:05Z",
+        "body_sha256": "e90dd890a8af9ae2eef9de0cbfaf3e170b65335baf18c1715d538482a5a52a15",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 58,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:07Z",
+        "body_sha256": "947424fe88ab8d54985a74633be568c4267b91fa3b308ad82d4d1c074f410107",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 59,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:10Z",
+        "body_sha256": "ccf0faf5b3945560bd265888ac1b6f33f7af32630b57a2cddf902408348abd32",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 60,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:12Z",
+        "body_sha256": "b0fe481105cef772ce51e7bc627f5f7e3a5f7180b4a46032a912a5294690abe3",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 61,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:14Z",
+        "body_sha256": "c5ecf540f700c0c2b1aabcaad1b3da3ceccc403e4fac135fc52543f60d190247",
+        "comment_count": 0,
+        "comment_ids": []
+      },
+      {
+        "number": 70,
+        "state": "open",
+        "assignees": null,
+        "updated_at": "2026-11-05T16:55:36Z",
+        "body_sha256": "1faba2b64f935e5a285cdaaa5eb473827bc8bb3b4cd3c8eb6d22a02e8839e7dd",
+        "comment_count": 0,
+        "comment_ids": []
+      }
+    ],
+    "pull_requests": [
+      {
+        "number": 101,
+        "state": "closed",
+        "draft": false,
+        "merged": true,
+        "head_sha": "15cad30cb923161716be51b2d075a6b98062cad4",
+        "base_sha": "d74df372ace00c8a7544ab3b5302cb05418d672c",
+        "merged_at": "2026-11-06T00:05:01Z",
+        "updated_at": "2026-11-06T00:05:01Z"
+      },
+      {
+        "number": 119,
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head_sha": "8d16284ba8b80f18398d08b8de931d8812f30429",
+        "base_sha": "e5ae157ef556690e73047e30225cad61c5484cf9",
+        "merged_at": null,
+        "updated_at": "2026-11-05T23:36:22Z"
+      },
+      {
+        "number": 122,
+        "state": "closed",
+        "draft": false,
+        "merged": true,
+        "head_sha": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+        "base_sha": "06dccc0af91e563dc15e70d436569b7fe0cf9cba",
+        "merged_at": "2026-11-06T00:14:05Z",
+        "updated_at": "2026-11-06T00:14:05Z"
+      }
+    ],
+    "target_branch_before": "Exact git refs endpoint returned 404 for t06/identity-audience-2026-11-05; encoded branches endpoint rejected the path, not a permission rejection.",
+    "limits": "Snapshot only; no account ownership/control or platform-action testing."
+  },
+  "register_created_at": "2026-11-06T00:13:49.812824+00:00",
+  "updated_at": "2026-11-06T00:39:42.257200+00:00",
+  "timestamp_note": "Creation time records the initial ledger; updated_at includes later refresh and source additions. Each observation retains its own time or stated time precision.",
+  "delivery_readback": {
+    "initial_pr_url": "https://github.com/4444J99/journal-handwritten-web/pull/125",
+    "initial_pr_head": "a1bbe56cd10b615e2bff2413f18e4fca09eb03d7",
+    "observed_at": "2026-11-06T00:38:14.531Z",
+    "main": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+    "draft": true,
+    "merged": false,
+    "mergeable_at_observation": true,
+    "base_relationship": "One non-overlapping main documentation commit followed the reviewed delivery base. No merge/rebase/force update performed by T06. Follow-up T06 documentation records this observation."
+  }
+}

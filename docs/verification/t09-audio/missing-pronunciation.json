@@ -1,0 +1,16 @@
+{
+  "errors": [
+    {
+      "code": "missing_pronunciation",
+      "message": "No pronunciation exists; no fallback was used",
+      "source": {
+        "id": "fixture:calibration-text",
+        "text_sha256": "d4010cacbafbb3d65ef7a55779575e0fc0d45d77d55c3219731674171f1178ae",
+        "version": "v1"
+      },
+      "token": "unlisted"
+    }
+  ],
+  "schema_version": 1,
+  "status": "failed"
+}

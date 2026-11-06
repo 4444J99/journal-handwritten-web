@@ -1,0 +1,21 @@
+✔ initially off: no reads, context, source or implicit start (1.456629ms)
+✔ load stays silent; explicit start plays one source once; stop disconnects (0.493124ms)
+✔ stop while a fetch is pending cannot load or start later (0.780907ms)
+✔ stop while decode is pending invalidates its result (9.766991ms)
+✔ stop during pending context resume prevents late startup (0.361491ms)
+✔ a newer sample supersedes an older pending decode (1.098453ms)
+✔ repeated starts stop the previous source and never loop (0.432445ms)
+✔ hidden and pagehide stop; returning does not resume (0.210889ms)
+✔ audio context interruption stops and cannot auto-resume (0.344626ms)
+✔ context identity invalidation clears old sample and buffer (0.541164ms)
+✔ read and decode failures are visible and silent (0.677735ms)
+✔ blocked resume is visible; oversized decoded memory is rejected (0.915444ms)
+✔ destroy cancels and detaches the controller (0.534108ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.304393

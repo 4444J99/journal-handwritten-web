@@ -1,0 +1,143 @@
+{
+  "schema": "versforms.t09-baseline.v1",
+  "observed_at": "2026-11-06T01:14:17Z",
+  "review_date": "2026-11-05",
+  "review_timezone": "America/New_York",
+  "repository": "4444J99/journal-handwritten-web",
+  "visibility": "private",
+  "base_commit": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+  "base_tree": "61618a204611a0e5dafb5485c6d99007ef679554",
+  "local_branch": "t09/audio-pilot-2026-11-05",
+  "local_isolation": "Independent copy of Git object store with no hardlinks, new checkout, shallow history. No existing checkout modified.",
+  "local_initial_clean": true,
+  "tracked_blob_parity": {
+    "count": 769,
+    "differences": 0,
+    "checked_modes": true,
+    "source": "GitHub recursive tree vs git ls-tree -r HEAD"
+  },
+  "primary_issues": [
+    {
+      "number": 23,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/23",
+      "state": "open",
+      "updated_at": "2026-11-05T16:53:45Z",
+      "comments": 0,
+      "assignees": [],
+      "title": "[2026-10-27-custom-synthetic-voice] 02 · Research: forward and backward concatenative voice banks"
+    },
+    {
+      "number": 24,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/24",
+      "state": "open",
+      "updated_at": "2026-11-05T16:53:47Z",
+      "comments": 0,
+      "assignees": [],
+      "title": "[2026-10-27-custom-synthetic-voice] 03 · Voice Banks buildout spec (Claude Docs)"
+    },
+    {
+      "number": 35,
+      "url": "https://github.com/4444J99/journal-handwritten-web/issues/35",
+      "state": "open",
+      "updated_at": "2026-11-05T16:54:13Z",
+      "comments": 0,
+      "assignees": [],
+      "title": "[2026-10-29-generative-audio-from-voice] 02 · Six-phase audio implementation plan"
+    }
+  ],
+  "relevant_prs": [
+    {
+      "number": 97,
+      "state": "merged",
+      "head": "9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+      "role": "Existing reader verifier; later cleanup findings addressed by PR118"
+    },
+    {
+      "number": 103,
+      "state": "merged",
+      "head": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+      "role": "Accessible research/spec import"
+    },
+    {
+      "number": 118,
+      "state": "merged",
+      "head": "33a29625922db138287dd49d30fa19500eec480a",
+      "role": "Browser verifier cleanup follow-up"
+    },
+    {
+      "number": 101,
+      "state": "merged",
+      "head": "15cad30cb923161716be51b2d075a6b98062cad4",
+      "role": "Posting implementation, open residual findings tracked in issue123"
+    },
+    {
+      "number": 119,
+      "state": "open-draft",
+      "head": "8d16284ba8b80f18398d08b8de931d8812f30429",
+      "role": "T03 proposed release-clearance contract, separate older stack"
+    },
+    {
+      "number": 126,
+      "state": "open-draft",
+      "head": "c6930bb48f07fe81e23b3126aeaf5947fb4406e1",
+      "role": "T05 documented existing source IDs and pending T02 agreement"
+    }
+  ],
+  "recordings_inventory": {
+    "baseline_tracked_files": 769,
+    "matched_audio_files": 0,
+    "direct_attachments_matched_audio": 0,
+    "zip_names": [
+      "Journal Review.zip",
+      "Journal, 2014–2015.zip"
+    ],
+    "zip_matched_audio": 0,
+    "extensions": [
+      ".wav",
+      ".aif",
+      ".aiff",
+      ".m4a",
+      ".mp3",
+      ".opus",
+      ".flac",
+      ".ogg"
+    ],
+    "outside_accessible_scope": "unknown"
+  },
+  "initial_check": {
+    "command": "python3 tools/check.py",
+    "exit_code": 0,
+    "references": 509,
+    "missing": 0,
+    "checksums": 511
+  },
+  "shared_context": {
+    "version": "2026-10-16-v1.1",
+    "projection": "2026-10-16-v1.1-r2",
+    "project_id": "g-p-6a10bcb4ada4819194e881431212101a",
+    "access": "inaccessible",
+    "unseen_claims_used": false
+  },
+  "authority": {
+    "source": "Current T09 request",
+    "allowed": [
+      "isolated branch",
+      "technical pilot",
+      "recording packet",
+      "draft PR or patch/handoff"
+    ],
+    "no_merge": true,
+    "no_deploy": true,
+    "no_release": true,
+    "no_spend": true,
+    "no_accounts": true,
+    "no_issue_closure": true,
+    "no_external_messages": true,
+    "no_restructure": true
+  },
+  "preservation": {
+    "existing_checkouts": "retained unchanged",
+    "retirement_actions": [],
+    "local_backing_history": "shallow; not a complete archival clone"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "fixture": true,
+  "fixtureAt": "2026-11-06T01:44:21Z",
+  "sourcePieceId": "p001",
+  "sourceVersionId": "p001-diary1-0",
+  "sourceFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+  "revisionDigest": "sha256:15433dc21b334d64df46d62432f9a4a31d25574351872f39b3aee248e8f719a1",
+  "roundTripEqual": true,
+  "publicRecordCount": 0,
+  "publicExcludedReasons": [
+    "t03-manifest-clearance-adapter-pending",
+    "technical-fixture",
+    "private-realization",
+    "private-glyph-asset"
+  ],
+  "rendering": {
+    "fallbackRuns": [],
+    "lineCount": 22,
+    "fontSha256": "sha256:ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc"
+  },
+  "authorLanguageDecision": "pending",
+  "translationProduced": false
+}

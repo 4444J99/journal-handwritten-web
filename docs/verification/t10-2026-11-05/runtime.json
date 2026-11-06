@@ -1,0 +1,23 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "pythonExecutable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "pythonUnicodeData": "15.0.0",
+  "fontTools": "4.61.1",
+  "Pillow": "13.0.0",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "HeadlessChrome/153.0.8010.0",
+    "revision": "@86cee6df69e0463a839c0cc8435c9d4c259434d3",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+    "jsVersion": "15.3.76"
+  },
+  "fontEnabledTestEnvironment": {
+    "PYTHONPATH": "/workspace/scratch/d5c1b1e5f42b/runtime-python",
+    "VERSFORMS_FONT_PYTHON": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  },
+  "sourceAttachmentFontId": "file_0000000062ec81f5bd6460094274fc8e",
+  "sourceAttachmentResearchId": "file_000000000ccc81f79f98466cb567e8c6",
+  "sourceAttachmentFillinId": "file_00000000bf9481f79683d375b39a82cc"
+}
