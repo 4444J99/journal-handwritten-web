@@ -46,6 +46,10 @@ Conventions
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
 | 2026-11-05 | [T05: private notes and contribution review](2026-11-05-t05-private-notes-contributions.md) | Private workflow verified for draft review; T01/T02/T03/T04 integration and author choices remain open; no publication |
 ||||||| 038d01f
+||||||| 7198bc3
+| 2026-11-05 | [T07 media production kit](2026-11-05-t07-media-production-kit.md) | Open — private kit only; physical device test, original clips and author clearance outstanding |
+||||||| 038d01f
+||||||| b8d60a0
 | 2026-11-05 | [Local agent: T08 source-region model and private pilot](2026-11-05-t08-source-regions-pilot.md) | Pilot, contract and tests done in an isolated branch; draft PR #130 only; public release correctly refused; T02 hand-off and author inputs open |
 ||||||| 038d01f
 | 2026-11-05 | [T06: identity and audience operations](2026-11-05-t06-identity-audience.md) | Private review packet prepared; current identity and policy sources, weekly SOP, finite choices, avatar/T03/T07 handoffs; no public or account action |

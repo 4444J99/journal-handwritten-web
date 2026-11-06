@@ -88,6 +88,18 @@ Items 2–9 are answerable in the review studio (Decisions and Release tabs).
 ## Release tab (review studio, v2)
 Sections, all saved to the studio database:
 - **Sort**: assign each piece (journal items and "New poem" uploads) to Series, Reserve or Archive. Warns when a Reserve piece has a logged appearance.
+
+## T07 media-production kit (2026-11-05/06)
+
+A reusable private kit lives in `production/`. It produces the 4:5 stills
+(three cover treatments), a paired Reel and carousel, a provisional 9:16
+assembly, and a private scan-based widget kit from one source package, with
+phone-size QA and manifests. The second piece (`p004`) runs through the same
+code path and passes `production/tools/check_substitution.py`. Nothing is
+cleared: `may_publish: false`, `author_clearance: null`. Original Live
+Photo/video clips, the physical iPhone widget test, target-journal Story
+treatment and T06 D13 identity approval remain open. See
+`production/DISPOSITION.md`.
 - **Calendar**: Series queue, one per week from a chosen first-post date; reorder; per-poem prep checklist (edits, response end note, footnotes, endnotes, citations, academic note, social post); gates for verified, GRUW filed, prep complete; Mark posted (asks for a second tap if not ready). Number shown per the numbering decision.
 - **Copyright**: GRUW batches of up to 10 Series pieces; draft → filed (date, case number) → registered (reg. number, effective date); shows the `make_deposit.py` command for the batch.
 - **Exposure**: log of every place any version appeared (social, own site, member layer, recording, sold, download, journal, anthology); flags types that count as publication for copyright.
