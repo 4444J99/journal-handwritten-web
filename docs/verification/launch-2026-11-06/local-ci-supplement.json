@@ -1,0 +1,49 @@
+{
+  "tested_revision": "2e02761e752aba6a57a2ddbc834493e9c2c93e01",
+  "source_tree": "24682eb3f7d2f93c03c1e94667ddecbfa7f59172",
+  "scope": "Two optional fixture tests skipped only because their default paths were unavailable; explicit immutable local inputs supplied. No production writes.",
+  "results": [
+    {
+      "name": "source-region reproduction",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_source_regions.py",
+        "-k",
+        "build_is_reproducible"
+      ],
+      "environment": {
+        "T08_ATOMS": "/workspace/scratch/fb803bfdcadb/alive-work/proto/alive/atoms-p001.json"
+      },
+      "exit": 0,
+      "output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.019s\n\nOK\n"
+    },
+    {
+      "name": "real export round trip",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "studio-cf/tests",
+        "-p",
+        "test_export_db.py",
+        "-k",
+        "real_pr73"
+      ],
+      "environment": {
+        "STUDIO_CF_REAL_EXPORT": "/workspace/scratch/fb803bfdcadb/journal-work/exports/studio-db-2026-11-05",
+        "STUDIO_CF_SCRATCH": "/workspace/scratch/fb803bfdcadb/supplement-runtime"
+      },
+      "exit": 0,
+      "output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.083s\n\nOK\n"
+    }
+  ],
+  "remaining_skip": "test_python_without_fonttools_is_reported: system Python includes fontTools, so its absence cannot be simulated by this existing test."
+}

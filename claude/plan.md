@@ -2,7 +2,7 @@
 
 ## Launch code reconciliation — 2026-11-06
 
-This dated update supersedes the repository-status assertions in older sections, while retaining their history. Live private main was `ef3d263c455788c769547df9e1e6010a54b7719a`: PR #131 posting hardening and #119 T03 release packet had already merged. #119's account attribution does not establish an explicit owner keep/discard decision. The final alive work and README fix exist remotely at `eece4f56ffaae81500aaf94fd18852b2038e06d6`; #102 is being reconciled separately as a private prototype.
+This dated update supersedes the repository-status assertions in older sections, while retaining their history. Live private main was `ef3d263c455788c769547df9e1e6010a54b7719a`: PR #131 posting hardening and #119 T03 release packet had already merged. #119's account attribution does not establish an explicit owner keep/discard decision. The final alive work and README fix exist remotely at `eece4f56ffaae81500aaf94fd18852b2038e06d6`; #102 is now updated at `0561f712e0061db5317115097af72e874c9652d9`, retained as a draft private prototype with byte-identical atom reproduction and a passing 12-case local rendering matrix.
 
 The Release browser checks now have a passing, isolated local D1 run: Mark posted, Exposure, save/reload, touch-phone and desktop light/dark layouts, and refusal of a signed unlisted email. Exposure URL validation was corrected. These checks do not establish hosted save behavior or live Access policy. The live public page is blank/noindex and the studio presents Access login; authenticated Cloudflare runtime/bindings and deployed acceptance remain unverified. No publication or live poem classification was performed.
 

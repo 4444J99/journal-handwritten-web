@@ -1,0 +1,53 @@
+{
+  "sha": "2e02761e752aba6a57a2ddbc834493e9c2c93e01",
+  "branch": "launch-completion-published-2026-11-06",
+  "tree": "clean",
+  "passed": true,
+  "suites": [
+    {
+      "suite": "check",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.1,
+      "detail": "OK",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "py-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 79.5,
+      "detail": "275 tests, 2 skipped",
+      "skipped": 2,
+      "tail": []
+    },
+    {
+      "suite": "node-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 5.5,
+      "detail": "94 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-py",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.3,
+      "detail": "59 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-node",
+      "ok": true,
+      "exit": 0,
+      "seconds": 17.3,
+      "detail": "83 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    }
+  ]
+}
