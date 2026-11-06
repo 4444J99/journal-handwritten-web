@@ -20,6 +20,20 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "MANIFEST.sha256"
 CONTENT_DIRS = ("site", "studio")  # checksummed; docs and tools may change freely
 IGNORED_NAMES = {".DS_Store"}  # Finder litter: never content, never checksummed
+PROJECT_RECORDS = ("docs/plan.md", "claude/plan.md", "docs/chats/README.md")
+MERGE_MARKER = re.compile(r"^(?:<{7}(?:\s|$)|\|{7}(?:\s|$)|>{7}(?:\s|$)|={7}$)")
+
+
+def record_conflicts():
+    """Catch unresolved normal/diff3 markers in the shared integration records."""
+    found = []
+    for rel in PROJECT_RECORDS:
+        path = ROOT / rel
+        if path.is_file():
+            for line_no, line in enumerate(path.read_text().splitlines(), 1):
+                if MERGE_MARKER.match(line):
+                    found.append((rel, line_no))
+    return found
 
 
 def sha256(path: Path) -> str:
@@ -84,6 +98,12 @@ def studio_source(published_path: str) -> str:
 
 
 def main() -> int:
+    conflicts = record_conflicts()
+    if conflicts:
+        for rel, line_no in conflicts:
+            print(f"CONFLICT {rel}:{line_no}")
+        print(f"{len(conflicts)} unresolved merge marker(s) in project records")
+        return 1
     if "--write" in sys.argv:
         lines = [f"{sha256(ROOT / rel)}  {rel.as_posix()}" for rel in tracked_files()]
         MANIFEST.write_text("\n".join(lines) + "\n")

@@ -1854,7 +1854,7 @@ class HardenedPostingTests(Base):
         with mock.patch.object(post_poem, "git", spy):
             self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
         pushes = [c for c in calls if c and c[0] == "push"]
-        self.assertEqual(pushes, [("push", "origin", "refs/heads/post/p001:refs/heads/post/p001")])
+        self.assertEqual(pushes, [("push", "--no-follow-tags", "origin", f'{git(clone, "rev-parse", "post/p001")}:refs/heads/post/p001')])
         self.assertEqual(git(bare, "rev-parse", "main"), before)
         self.assertEqual(git(bare, "rev-parse", "post/p001"), git(clone, "rev-parse", "post/p001"))
 
@@ -2125,6 +2125,7 @@ class HardenedPostingTests(Base):
         main_before = git(clone, "rev-parse", "main")
         with mock.patch.dict(os.environ, {"GIT_DIR": str(clone / ".git")}):
             code = self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone)
+            self.assertEqual(os.environ["GIT_DIR"], str(clone / ".git"))
         self.assertEqual(code, 0, self.out)
         self.assertEqual(git(clone, "rev-parse", "main"), main_before)
         self.assertEqual(git(clone, "status", "--porcelain"), "")
@@ -2139,6 +2140,25 @@ class HardenedPostingTests(Base):
         self.assertEqual(git(clone, "status", "--porcelain"), "")
         self.assertEqual(git(clone, "rev-parse", "--abbrev-ref", "HEAD"), "main")
 
+    def test_git_common_dir_and_bad_config_count_do_not_redirect_or_break_the_commit(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        before = git(clone, "rev-parse", "main")
+        injected = {"GIT_COMMON_DIR": str(self.tmp / "wrong-common-dir"), "GIT_CONFIG_COUNT": "not-a-number"}
+        with mock.patch.dict(os.environ, injected):
+            # The test seam itself reads Git before entering the script, so use
+            # the known fixture path instead of reading the poisoned environment.
+            with mock.patch.object(post_poem, "effective_url_ok", lambda url: url == str(bare)):
+                argv = ["p001", "--db", str(self.db), "--source", str(self.root), "--workdir", str(self.work),
+                        "--public-repo", str(clone), "--no-pr", "--accept-embedded-font"]
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    code = post_poem.main(argv)
+            self.assertEqual({key: os.environ[key] for key in injected}, injected)
+        self.assertEqual(code, 0, output.getvalue())
+        self.assertEqual(git(clone, "rev-parse", "main"), before)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+
     # m2. tags and mirrors
     def test_push_follow_tags_does_not_send_a_local_tag_to_origin(self):
         self.prepare()
@@ -2149,6 +2169,110 @@ class HardenedPostingTests(Base):
         self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
         self.assertEqual(git(bare, "tag", "--list"), "")
         self.assertTrue(self.pushed_ok(clone, bare))
+        self.assertEqual(git(clone, "config", "--get", "push.followTags"), "true", "posting must not rewrite the clone's configuration")
+
+    def test_git_boolean_mirror_spellings_are_all_hard_stops(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        before = git(clone, "for-each-ref")
+        for value in ("on", "2", "-1", "invalid"):
+            with self.subTest(value=value):
+                git(clone, "config", "remote.origin.mirror", value)
+                self.assertEqual(self.go("p001", "--accept-embedded-font", public=clone), 3, self.out)
+                self.assertIn("FAIL  stop remote.origin.mirror", self.out)
+                self.assertEqual(git(clone, "for-each-ref"), before)
+        git(clone, "config", "--unset", "remote.origin.mirror")
+        with (clone / ".git" / "config").open("a") as config:
+            config.write('\n[remote "origin"]\n\tmirror\n')
+        self.assertEqual(self.go("p001", "--accept-embedded-font", public=clone), 3, self.out)
+        self.assertIn("FAIL  stop remote.origin.mirror", self.out)
+        self.assertEqual(git(clone, "for-each-ref"), before)
+
+    def test_a_branch_created_after_preflight_is_never_removed_as_our_failed_work(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        original = post_poem.commit_in_worktree
+        before = git(clone, "rev-parse", "main")
+        def after_preflight(*args, **kwargs):
+            git(clone, "branch", "post/p001", "main")
+            return original(*args, **kwargs)
+        with mock.patch.object(post_poem, "commit_in_worktree", side_effect=after_preflight):
+            self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertEqual(git(clone, "rev-parse", "refs/heads/post/p001"), before)
+        self.assertEqual(git(clone, "rev-parse", "main"), before)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+
+    def test_git_config_environment_cannot_hide_multiple_push_urls(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        second = self.bare_repo("second-destination.git")
+        harmless_config = self.tmp / "single-remote.config"
+        harmless_config.write_text('[remote "origin"]\n\turl = https://github.com/4444J99/versforms.git\n')
+        git(clone, "config", "--add", "remote.origin.pushurl", str(bare))
+        git(clone, "config", "--add", "remote.origin.pushurl", str(second))
+        with mock.patch.dict(os.environ, {"GIT_CONFIG": str(harmless_config)}):
+            code = self.go("p001", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(git(bare, "for-each-ref", "refs/heads/post"), "")
+        self.assertEqual(git(second, "for-each-ref"), "")
+        self.assertEqual(code, 3, self.out)
+
+    def test_failure_cleanup_preserves_a_new_branch_that_another_writer_moved(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        before = git(clone, "rev-parse", "main")
+        other = git(clone, "commit-tree", "main^{tree}", "-p", "main", "-m", "other writer")
+        hook = clone / ".git" / "hooks" / "pre-commit"
+        hook.write_text(f"#!/bin/sh\ngit update-ref refs/heads/post/p001 {other}\nexit 1\n")
+        hook.chmod(0o755)
+        self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertEqual(git(clone, "rev-parse", "post/p001"), other)
+        self.assertEqual(git(clone, "rev-parse", "main"), before)
+        self.assertIn("retained: its ref moved or cleanup failed", self.out)
+
+    def test_a_branch_moved_after_our_commit_is_not_adopted_or_deleted(self):
+        clone, bare = make_public(self.tmp)
+        before = git(clone, "rev-parse", "main")
+        other = git(clone, "commit-tree", "main^{tree}", "-p", "main", "-m", "other writer")
+        build = self.tmp / "build"
+        build.mkdir()
+        (build / "index.html").write_text("new fixture output")
+        original = post_poem.git
+        def after_commit(where, *args, **kwargs):
+            result = original(where, *args, **kwargs)
+            if args and args[0] == "commit":
+                git(clone, "update-ref", "refs/heads/post/p001", other)
+            return result
+        with mock.patch.object(post_poem, "git", side_effect=after_commit):
+            with self.assertRaises(RuntimeError):
+                post_poem.commit_in_worktree(clone, build, "post/p001", "post fixture", self.tmp)
+        self.assertEqual(git(clone, "rev-parse", "post/p001"), other)
+        self.assertEqual(git(clone, "rev-parse", "main"), before)
+
+    def test_push_uses_the_verified_commit_when_the_local_branch_moves_after_verification(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        other = git(clone, "commit-tree", "main^{tree}", "-p", "main", "-m", "other writer")
+        original = post_poem.commit_in_worktree
+        verified = []
+        def after_verification(*args, **kwargs):
+            commit = original(*args, **kwargs)
+            verified.append(commit)
+            git(clone, "update-ref", "refs/heads/post/p001", other)
+            return commit
+        with mock.patch.object(post_poem, "commit_in_worktree", side_effect=after_verification):
+            self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        self.assertEqual(git(clone, "rev-parse", "post/p001"), other)
+        self.assertEqual(git(bare, "rev-parse", "post/p001"), verified[0])
+
+    def test_an_empty_second_push_url_is_still_a_second_destination(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "--add", "remote.origin.pushurl", str(bare))
+        git(clone, "config", "--add", "remote.origin.pushurl", "")
+        self.assertEqual(self.go("p001", "--accept-embedded-font", public=clone), 3, self.out)
+        self.assertIn("FAIL  stop at most one remote.origin.pushurl", self.out)
 
     def test_remote_origin_mirror_is_a_hard_stop(self):
         self.prepare()
@@ -2253,6 +2377,9 @@ class HardenedPostingTests(Base):
         self.assertNotIn("pa@ss", out)
         self.assertNotIn("ss/word", out)
         self.assertIn("github.com/4444J99/versforms.git", out)
+
+    def test_redact_hides_credentials_even_when_the_rejected_host_has_no_dot(self):
+        self.assertEqual(post_poem._redact("https://user:secret@localhost/path"), "https://***@localhost/path")
 
     # ---- release list change is described
     def test_the_pull_request_lists_new_pieces_and_rebuilt_pieces_whose_data_changed(self):

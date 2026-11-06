@@ -1,0 +1,281 @@
+{
+  "tested_revision": "8d4e6bd4a216e9564924a8a02ed29f951dec1b27",
+  "source_tree": "f7105fde4599ee6fdbdc306229582bc51ddc5f8e",
+  "runner_sha256": "44709e1ccf0a37029be97aa8ff5d087da4a226f00730170e5e9111d17ee43c64",
+  "runtime": {
+    "node": "v24.22.1",
+    "platform": "linux",
+    "playwright": "1.62.1"
+  },
+  "source_root": "/workspace/scratch/fb803bfdcadb/journal-work",
+  "started": "2026-11-06T16:30:10.644Z",
+  "scope": "Disposable local D1, actual studio + cf-adapter, loopback JWKS, synthetic release state; no live DB or publishing.",
+  "checks": [
+    {
+      "name": "Owner connects to disposable D1",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid Mark posted URL neither arms nor writes",
+      "status": "pass"
+    },
+    {
+      "name": "Unready first tap arms without DB write",
+      "status": "pass"
+    },
+    {
+      "name": "Unready second tap persists one social event and derived number 1",
+      "status": "pass"
+    },
+    {
+      "name": "Reload reads persisted Mark posted record and removes repeat button",
+      "status": "pass"
+    },
+    {
+      "name": "Unsafe Exposure links show an error, preserve the draft and do not write",
+      "status": "pass"
+    },
+    {
+      "name": "Site shortcut writes site event, scan version, omitted empty account",
+      "status": "pass"
+    },
+    {
+      "name": "Site-only exposure persists after reload but Calendar remains unposted",
+      "status": "pass"
+    },
+    {
+      "name": "Instagram shortcut defaults and manual-edit deselection",
+      "status": "pass"
+    },
+    {
+      "name": "Instagram event appends without replacing Site event",
+      "status": "pass"
+    },
+    {
+      "name": "Fresh page reload reads all three persisted events",
+      "status": "pass"
+    },
+    {
+      "name": "Site and social source flags false and no published badge rendered for persisted events",
+      "status": "pass"
+    },
+    {
+      "name": "390px emulator has no document horizontal overflow",
+      "status": "pass",
+      "viewport": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390
+    },
+    {
+      "name": "Legacy unsafe URL stays in the record without a clickable link or read-time rewrite",
+      "status": "pass"
+    },
+    {
+      "name": "Calendar and Exposure fit touch phone layout in light and dark modes",
+      "status": "pass"
+    },
+    {
+      "name": "Persisted release state renders on desktop in light and dark modes",
+      "status": "pass"
+    },
+    {
+      "name": "Correctly signed unlisted email receives no studio and cannot save",
+      "status": "pass"
+    }
+  ],
+  "source_hashes": {
+    "studio/index.html": "751ab3ff58cce1591373a7989a351a9103917a694fc2df7b736eeae841c524c5",
+    "studio/cf-adapter.js": "2ec9d8be4fae63de6b7ee516046f5a5969e273581552db74657ab82cd2048185",
+    "studio-cf/lib/api.js": "da97140e32ac78662e4f6d9203bad9f10eba0b35fbb8fec162089d3f06063c51",
+    "studio-cf/lib/auth.js": "d1229b8e6596c354bddb20a87bb67e47f7c3fbb04b63b839ff83d0ae5ec59385",
+    "studio-cf/functions/_middleware.js": "397835ea4b57bba651e508d320574607decac3dea7a8fb97e1f374cceca1293c",
+    "studio-cf/schema.sql": "efe3ebd9b143063d4e24053faf7f9cce6d40370b739b5620ed46c1b55423532c"
+  },
+  "blocked_external_requests": [
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com",
+    "https://fonts.googleapis.com"
+  ],
+  "local_persist": "/workspace/scratch/fb803bfdcadb/release-browser-run2/runtime/state-t03-2-1793982610698",
+  "fixture_keys": [
+    "p001",
+    "p002"
+  ],
+  "browser": "153.0.8010.0",
+  "mark_posted_record": {
+    "pool": "series",
+    "order": 0,
+    "exposures": [
+      {
+        "type": "social",
+        "where": "versforms.pages.dev",
+        "account": "vers.forms",
+        "date": "2026-11-06",
+        "url": "https://versforms.pages.dev/#p001",
+        "ver": "final",
+        "at": "2026-11-06T16:30:14.007Z"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "num": 1,
+    "at": "2026-11-06T16:30:14.007Z"
+  },
+  "site_record": {
+    "pool": "series",
+    "order": 1,
+    "exposures": [
+      {
+        "type": "site",
+        "where": "versforms.pages.dev",
+        "date": "2026-11-06",
+        "url": "https://example.test/local-site-fixture",
+        "ver": "scan",
+        "at": "2026-11-06T16:30:14.891Z"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "at": "2026-11-06T16:30:14.892Z"
+  },
+  "exposure_record": {
+    "pool": "series",
+    "order": 1,
+    "exposures": [
+      {
+        "type": "site",
+        "where": "versforms.pages.dev",
+        "date": "2026-11-06",
+        "url": "https://example.test/local-site-fixture",
+        "ver": "scan",
+        "at": "2026-11-06T16:30:14.891Z"
+      },
+      {
+        "type": "social",
+        "where": "Instagram",
+        "date": "2026-11-06",
+        "url": "https://example.test/local-instagram-fixture",
+        "ver": "draft",
+        "at": "2026-11-06T16:30:15.626Z",
+        "account": "vers.forms"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "at": "2026-11-06T16:30:15.626Z"
+  },
+  "publication_flags": {
+    "social": false,
+    "site": false
+  },
+  "mobile_layout": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "bodyWidth": 390
+  },
+  "appearance_matrix": [
+    {
+      "view": "Calendar",
+      "colorScheme": "light",
+      "width": 390,
+      "scrollWidth": 390,
+      "bg": "rgb(245, 243, 237)",
+      "color": "rgb(29, 33, 41)",
+      "touch": 1,
+      "dark": false
+    },
+    {
+      "view": "Exposure",
+      "colorScheme": "light",
+      "width": 390,
+      "scrollWidth": 390,
+      "bg": "rgb(245, 243, 237)",
+      "color": "rgb(29, 33, 41)",
+      "touch": 1,
+      "dark": false
+    },
+    {
+      "view": "Calendar",
+      "colorScheme": "dark",
+      "width": 390,
+      "scrollWidth": 390,
+      "bg": "rgb(20, 22, 25)",
+      "color": "rgb(230, 226, 216)",
+      "touch": 1,
+      "dark": true
+    },
+    {
+      "view": "Exposure",
+      "colorScheme": "dark",
+      "width": 390,
+      "scrollWidth": 390,
+      "bg": "rgb(20, 22, 25)",
+      "color": "rgb(230, 226, 216)",
+      "touch": 1,
+      "dark": true
+    }
+  ],
+  "release_collection": {
+    "rev": 6,
+    "docs": [
+      {
+        "id": "p001",
+        "data": {
+          "pool": "series",
+          "order": 0,
+          "exposures": [
+            {
+              "type": "social",
+              "where": "versforms.pages.dev",
+              "account": "vers.forms",
+              "date": "2026-11-06",
+              "url": "https://versforms.pages.dev/#p001",
+              "ver": "final",
+              "at": "2026-11-06T16:30:14.007Z"
+            }
+          ],
+          "fixture": "T03 LOCAL ONLY; not author approval",
+          "num": 1,
+          "at": "2026-11-06T16:30:14.007Z"
+        }
+      },
+      {
+        "id": "p002",
+        "data": {
+          "pool": "series",
+          "order": 1,
+          "exposures": [
+            {
+              "type": "site",
+              "where": "versforms.pages.dev",
+              "date": "2026-11-06",
+              "url": "https://example.test/local-site-fixture",
+              "ver": "scan",
+              "at": "2026-11-06T16:30:14.891Z"
+            },
+            {
+              "type": "social",
+              "where": "Instagram",
+              "date": "2026-11-06",
+              "url": "https://example.test/local-instagram-fixture",
+              "ver": "draft",
+              "at": "2026-11-06T16:30:15.626Z",
+              "account": "vers.forms"
+            },
+            {
+              "type": "site",
+              "where": "Legacy invalid URL fixture",
+              "url": "javascript:alert(1)",
+              "date": "2026-01-01",
+              "ver": "scan"
+            }
+          ],
+          "fixture": "T03 LOCAL ONLY; not author approval",
+          "at": "2026-11-06T16:30:15.626Z"
+        }
+      }
+    ]
+  },
+  "status": "pass",
+  "finished": "2026-11-06T16:30:17.865Z"
+}

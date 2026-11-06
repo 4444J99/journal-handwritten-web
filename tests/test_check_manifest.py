@@ -92,6 +92,20 @@ class CheckManifestTest(unittest.TestCase):
         self.assertEqual(r.returncode, 1)
         self.assertIn("GONE     studio/index.html", r.stdout)
 
+    def test_merge_markers_in_shared_records_fail_even_with_a_valid_manifest(self):
+        for rel in ["docs/plan.md", "claude/plan.md", "docs/chats/README.md"]:
+            p = self.root / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            for marker in ["<<<<<<< HEAD", "||||||| 038d01f", "=======", ">>>>>>> origin/main"]:
+                with self.subTest(path=rel, marker=marker):
+                    p.write_text("# Record\n" + marker + "\n")
+                    r = self.run_check()
+                    self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+                    self.assertIn("CONFLICT " + rel + ":2", r.stdout)
+                    self.assertEqual(self.run_check("--write").returncode, 1)
+            p.write_text("# Record\n| Date | Work |\n|---|---|\n")
+        self.assertEqual(self.run_check().returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

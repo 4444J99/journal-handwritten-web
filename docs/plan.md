@@ -1,8 +1,14 @@
 # Handwritten journal: plan and state
 
-Working document for the journal-handwritten-web project. Last updated 2026-11-05.
-||||||| 038d01f
-Working document for the journal-handwritten-web project. Last updated 2026-10-28.
+## Launch code reconciliation — 2026-11-06
+
+This dated update supersedes the repository-status assertions in older sections, while retaining their history. Live private main was `ef3d263c455788c769547df9e1e6010a54b7719a`: PR #131 posting hardening and #119 T03 release packet had already merged. #119's account attribution does not establish an explicit owner keep/discard decision. The final alive work and README fix exist remotely at `eece4f56ffaae81500aaf94fd18852b2038e06d6`; #102 is being reconciled separately as a private prototype.
+
+The Release browser checks now have a passing, isolated local D1 run: Mark posted, Exposure, save/reload, touch-phone and desktop light/dark layouts, and refusal of a signed unlisted email. Exposure URL validation was corrected. These checks do not establish hosted save behavior or live Access policy. The live public page is blank/noindex and the studio presents Access login; authenticated Cloudflare runtime/bindings and deployed acceptance remain unverified. No publication or live poem classification was performed.
+
+The [completion record](chats/2026-11-06-launch-completion.md) preserves exact commit IDs, PR #119 provenance, inaccessible sources and the verified owner-issue mapping. #104–#109, #111–#113 and #121 remain open. #110 is closed in GitHub, but receipt/ingestion of the optional photos is unverified. Missing original builders (#107), owner source correction (#121), publication choices, noindex, name/date, spending and account creation remain gated. Repository conflict markers were repaired without dropping historical plan content or unique session records.
+
+Working document for the journal-handwritten-web project. Last updated 2026-11-06; dated earlier sections are historical.
 
 ## T06 identity and audience update — 2026-11-05 (America/New_York)
 
@@ -12,7 +18,6 @@ T06 prepared a private identity/status record, avatar provenance/T07 handoff, we
 
 The author still chooses account separation, slot/reply window, observation thresholds, all public copy, exposure response, exact scan use and optional tools. Avatar arm treatment awaits author/T07 review; inaccessible original/v2 sources are identified rather than regenerated. One future release consumes T03's exact version/output clearance and T07's approved media manifest. No account change, spending, outreach, issue closure, merge, deploy or public posting is authorized by this addendum.
 
-Working document for the journal-handwritten-web project. Last updated 2026-10-28.
 
 > Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-28 (synced 2026-11-05). The Project doc is the working copy; this file is versioned here so each revision of the plan is kept. Per-chat plans and their status: `docs/chats/`.
 
@@ -187,7 +192,6 @@ Work is in an isolated branch `t08/source-regions-pilot-2026-11-05`; nothing is 
   participation; journal-vocabulary constraint; poem 100 from poems 1–99. Markov/n-gram text,
   sensors, location/weather, reconstructed strokes and an automatic misread generator are not built
   and must not be inferred from the contract.
-||||||| 038d01f
 
 ## T10 technical preparation — 2026-11-05 review baseline
 
@@ -196,7 +200,6 @@ The later roots/glyphs work in #12 and research follow-ups in #33 now have an is
 The proposal keeps realization revisions independent from editorial poem versions, matches the proposed T05 source fingerprint, and hands schema/font interfaces to T02 for review. Current public output is empty pending T03's actual manifest-based clearance adapter. LingFrame was inspected at a pinned commit; a narrow local diagnostic interface is proposed, with no repository coupling. Optional weekly practice fields remain the author's work. Current journal/grant follow-ups are sourced in the T10 packet; no application, inquiry, schedule or publication is authorized by those findings.
 
 Next author input can be one exact line, its source/version association, language/script/orthography and operation, plus only its necessary glyph samples. Preserve the earlier history above; its proposals and historical approvals do not become new authority. #12 and #33 remain open with existing ownership.
-||||||| 038d01f
 
 ## T09 addendum · 2026-11-05 · private audio pilot
 
