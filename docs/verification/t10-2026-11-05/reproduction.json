@@ -1,0 +1,14 @@
+{
+  "fixtureAt": "2026-11-06T01:44:21Z",
+  "fileCount": 6,
+  "allFileBytesEqual": true,
+  "files": {
+    "index.html": "ecb0e53d8abf2c6c0562b66acf420e8d9aa70f38f19ef26cb65ab1a64a6e7193",
+    "public-projection.json": "47eb096a863e029ba81ad38deef4d750fca8272d25108cb6dcbc531345e25ef3",
+    "realization.json": "a1502336f922c2869e8036820af85220cd6532c540f00b5de482697bc13d5ce1",
+    "report.json": "e5645fd21ac4565e9410db833f085b180559d05296c9b3d7a9e2721d8de44497",
+    "store/t10-latn-fixture-r1.json": "561332223ef286822fcaf487900c292fc8467246d7ce167d22c8c218ddf0a645",
+    "assets/font-ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc.otf": "ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc"
+  },
+  "scope": "new fixture generated from the preserved font and current exact source, then compared to delivered packet"
+}

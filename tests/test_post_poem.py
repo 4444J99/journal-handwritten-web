@@ -252,6 +252,15 @@ class Base(unittest.TestCase):
         eff = subprocess.run(["git", "-C", str(public), "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
         return mock.patch.object(post_poem, "effective_url_ok", lambda u, _eff=eff: u == _eff or post_poem.remote_is_public_repo(u))
 
+    def built_output(self):
+        """Run the dry run and return (src, build dir, published blocks, authorised texts) exactly as the run computed them."""
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        src, out = post_poem.Source(self.root), self.work / "build"
+        pub = json.loads((out / "data" / "j.json").read_text())
+        published = {(pg["id"], bi) for pg in pub["pages"] for bi, b in enumerate(pg["B"]) if any(b["L"])}
+        texts_ok = {t for (pg, bi) in published for t in src.jpages[pg]["B"][bi]["L"]}
+        return src, out, published, texts_ok
+
     def pubjson(self):
         return json.loads((self.work / "build" / "data" / "j.json").read_text())
 
@@ -1523,6 +1532,161 @@ class HardenedPostingTests(Base):
         ready_db(one / "exports" / "only", pids=("p001",), _root=self.root)
         self.assertEqual(self.go("p001", db=one), 0, self.out)  # exactly one nested export is found
 
+    # ---- B1. a release file whose name only RESEMBLES a piece id must not hide a Reserve document
+    RESEMBLING_NAMES = ["P001.json", "p001.JSON", "p001 .json", " p001.json", "p001.json ", "p001.json.bak", "p001.json~", "p001", "p001.txt",
+                        "\uff50\uff10\uff10\uff11.json",            # fullwidth p001
+                        "p\u0660\u0660\u0661.json",                  # Arabic-Indic digits
+                        "p0\u200b01.json",                            # zero-width space
+                        "p001\u202f.json", "notes.txt", ".DS_store", "README.md", "x-diary2.json", "b-1.json", "p.json", "p-1.json"]
+
+    def hidden_reserve_case(self, name, as_dir=False):
+        """The export has release documents, a Series one for another piece, none named exactly for p001, and a Reserve
+        document for p001 under a name that only looks like p001's."""
+        self.prepare(release={"p003": {"pool": "series"}})
+        (self.db / "release" / "p001.json").unlink()
+        target = self.db / "release" / name
+        if as_dir:
+            target.mkdir()
+        else:
+            target.write_text(json.dumps({"pool": "reserve"}))
+        return target
+
+    def test_a_release_entry_not_named_exactly_p_digits_json_is_a_hard_stop_that_force_cannot_override(self):
+        for name in self.RESEMBLING_NAMES:
+            with self.subTest(name=name):
+                self.fresh()
+                self.hidden_reserve_case(name)
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-shared-scan", "p002,p003,p004,p006,p007"), 3, self.out)
+                self.assertIn("is not a release document name", self.out)
+                self.assertIn(repr(name), self.out)  # the message names the file
+
+    # ---- B1 (second form). the right SHAPE is not enough: the name must be a piece id that exists in site/data/j.json
+    def test_a_release_entry_that_names_no_piece_is_a_hard_stop_that_force_cannot_override(self):
+        # p0001, p1 and a zero-padded name have the shape p<digits>.json, but no piece has that id: the document would be
+        # ignored, p001 would read as unsorted, and --force would post it although a Reserve document sits there
+        for name in ("p0001.json", "p1.json", "p01.json", "p000.json", "p" + "0" * 240 + "1.json", "p999.json", "p0002.json"):
+            with self.subTest(name=name[:20] + ("..." if len(name) > 20 else "")):
+                self.fresh()
+                self.hidden_reserve_case(name)
+                self.assertEqual(self.go("p001"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertEqual(self.go("p001", "--force", "--accept-shared-scan", "p002,p003,p004,p006,p007"), 3, self.out)
+                self.assertIn("names no piece", self.out)
+                self.assertIn(repr(name)[:30], self.out)  # the message names the file
+
+    def test_a_stale_release_document_of_a_piece_that_no_longer_exists_is_a_hard_stop(self):
+        self.prepare(release={"p003": {"pool": "series"}, "p120": {"pool": "series"}})  # p120 is not in this site/data/j.json
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("names no piece", self.out)
+
+    def test_an_unknown_id_is_a_hard_stop_on_the_already_public_path_too(self):
+        self.prepare()  # p002 is already public
+        (self.db / "release" / "p0002.json").write_text('{"pool": "reserve"}')
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("names no piece", self.out)
+
+    def test_a_real_run_with_a_zero_padded_reserve_document_pushes_nothing(self):
+        self.hidden_reserve_case("p0001.json")
+        self.fake_gh()
+        self.clone, self.bare = make_public(self.tmp)
+        rel_before = (self.root / "release" / "public.json").read_bytes()
+        refs_before = git(self.bare, "for-each-ref")
+        self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", dry=False, public=self.clone), 3, self.out)
+        self.assertEqual(git(self.bare, "for-each-ref"), refs_before)
+        self.assertEqual(git(self.clone, "branch", "--list", "post/p001"), "")
+        self.assertEqual((self.root / "release" / "public.json").read_bytes(), rel_before)
+
+    def test_only_a_regular_file_called_exactly_dot_ds_store_is_tolerated_in_the_release_folder(self):
+        self.prepare()
+        (self.db / "release" / ".DS_Store").write_bytes(b"\x00\x00\x00\x01Bud1")  # Finder creates it
+        self.assertEqual(self.go("p001"), 0, self.out)
+        for name in (".DS_store", ".ds_store", ".DS_Store "):
+            with self.subTest(name=name):
+                self.fresh()
+                self.prepare()
+                (self.db / "release" / name).write_bytes(b"x")
+                self.assertEqual(self.go("p001"), 3, self.out)
+        self.fresh()
+        self.prepare()
+        (self.db / "release" / ".DS_Store").mkdir()  # a DIRECTORY with that name is not Finder's file
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.fresh()
+        self.prepare()
+        (self.tmp / "target").write_text("x")
+        (self.db / "release" / ".DS_Store").symlink_to(self.tmp / "target")
+        self.assertEqual(self.go("p001"), 3, self.out)
+
+    def test_a_directory_or_a_symlink_in_the_release_folder_is_a_hard_stop(self):
+        self.hidden_reserve_case("p001.json", as_dir=True)  # a DIRECTORY called p001.json
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a regular file", self.out)
+        self.fresh()
+        self.prepare(release={"p003": {"pool": "series"}})
+        (self.tmp / "elsewhere.json").write_text('{"pool": "reserve"}')
+        (self.db / "release" / "p001.json").unlink()
+        (self.db / "release" / "p001.json").symlink_to(self.tmp / "elsewhere.json")
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a regular file", self.out)
+
+    def test_a_reserve_document_under_a_resembling_name_never_reaches_a_push(self):
+        target = self.hidden_reserve_case("P001.json")
+        self.fake_gh()
+        self.clone, self.bare = make_public(self.tmp)
+        before_refs = git(self.bare, "for-each-ref")
+        self.assertEqual(self.go("p001", "--force", "--accept-embedded-font", dry=False, public=self.clone), 3, self.out)
+        self.assertEqual(git(self.bare, "for-each-ref"), before_refs)  # nothing was pushed
+        self.assertEqual(git(self.clone, "branch", "--list", "post/p001"), "")
+        self.assertTrue(target.exists())
+
+    def test_the_resembling_name_check_covers_the_already_public_rebuild_path_too(self):
+        self.prepare()  # p002 is already public and has no release document of its own here
+        (self.db / "release" / "P002.json").write_text('{"pool": "reserve"}')  # ... except one under a name that only resembles p002's
+        self.assertEqual(self.go("p001", "--force"), 3, self.out)
+        self.assertIn("is not a release document name", self.out)
+
+    def test_a_folder_that_only_resembles_a_collection_name_is_a_hard_stop(self):
+        for look_alike in ("release ", " release", "Release.", "\uff52elease", "reviews "):
+            with self.subTest(folder=look_alike):
+                self.fresh()
+                self.prepare(release={"p003": {"pool": "series"}})
+                (self.db / look_alike).mkdir()
+                (self.db / look_alike / "p001.json").write_text('{"pool": "reserve"}')
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+                self.assertIn("looks like the collection", self.out)
+
+    def test_a_legitimate_release_folder_still_passes_and_a_missing_document_is_still_the_forceable_gate(self):
+        self.prepare(release={"p006": {"pool": "series"}, "p003": {"pool": "series"}})
+        self.assertEqual(self.go("p001"), 0, self.out)
+        self.fresh()
+        self.prepare(release={"p003": {"pool": "series"}})
+        (self.db / "release" / "p001.json").unlink()  # NO document for p001: unsorted, a gate, forceable (the brief's design)
+        self.assertEqual(self.go("p001"), 2, self.out)
+        self.assertEqual(self.go("p001", "--force"), 0, self.out)
+        self.assertIn("no release document (unsorted)", self.out)
+
+    def test_pool_values_series_with_other_case_or_a_trailing_space_are_refused_not_accepted(self):
+        for value in ("Series", "SERIES", "series ", " series"):
+            with self.subTest(pool=value):
+                self.fresh()
+                self.prepare(release={"p001": {"pool": value}})
+                self.assertEqual(self.go("p001", "--force"), 3, self.out)
+
+    def test_a_build_folder_that_is_a_symlink_gets_a_readable_message(self):
+        self.prepare()
+        work = self.tmp / "w"
+        work.mkdir()
+        (work / ".post-poem-workdir").write_text("x")  # a marker from an earlier run
+        (self.tmp / "target").mkdir()
+        (work / "build").symlink_to(self.tmp / "target")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = post_poem.main(["p001", "--db", str(self.db), "--source", str(self.root), "--workdir", str(work), "--dry-run"])
+        self.assertEqual(code, 64, buf.getvalue())
+        self.assertIn("is a symbolic link", buf.getvalue())
+        self.assertTrue((self.tmp / "target").is_dir())
+
     def test_the_resolved_export_and_its_counts_are_printed(self):
         self.prepare()
         self.assertEqual(self.go("p001"), 0, self.out)
@@ -1896,6 +2060,199 @@ class HardenedPostingTests(Base):
         out = self.tmp / "o"
         build_public.build(out, ["p001"], site=self.root / "site", select={"p001": [1]}, corrections={("pg2", 0, 0): "THE QUOTED PASSAGE"})
         self.assertNotIn("THE QUOTED PASSAGE", self.all_text(out))
+
+    # ---- round 3: findings of the adversarial verifier on e5ae157
+    def bare_repo(self, name):
+        path = self.tmp / name
+        subprocess.run(["git", "init", "-q", "--bare", str(path)], check=True)
+        return path
+
+    def pushed_ok(self, clone, bare):
+        return git(bare, "rev-parse", "post/p001") == git(clone, "rev-parse", "post/p001")
+
+    # M1. git push sends to EVERY push url: more than one is a hard stop, whatever the first one is
+    def test_two_push_urls_are_a_hard_stop_and_nothing_reaches_the_second(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        evil = self.bare_repo("evil.git")
+        git(clone, "config", "--add", "remote.origin.pushurl", str(bare))
+        git(clone, "config", "--add", "remote.origin.pushurl", str(evil))
+        self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("exactly one", self.out)
+        self.assertEqual(git(evil, "for-each-ref"), "")
+        self.assertEqual(git(bare, "for-each-ref", "refs/heads/post"), "")
+
+    def test_two_values_of_remote_origin_url_are_a_hard_stop(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "--add", "remote.origin.url", "https://github.com/4444J99/versforms.git")
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("exactly one", self.out)
+
+    def test_config_injected_through_the_environment_cannot_add_a_push_destination(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        evil = self.bare_repo("evil.git")
+        inject = {"GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_0": "remote.origin.pushurl", "GIT_CONFIG_VALUE_0": str(bare),
+                  "GIT_CONFIG_KEY_1": "remote.origin.pushurl", "GIT_CONFIG_VALUE_1": str(evil)}
+        with mock.patch.dict(os.environ, inject):
+            code = self.go("p001", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(git(evil, "for-each-ref"), "", self.out)  # whatever the exit code, nothing went to the second destination
+        self.assertIn(code, (0, 3), self.out)
+
+    # M2. a worktree that fails to be created may still have created the branch
+    def test_a_failing_post_checkout_hook_does_not_leave_the_branch_behind(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        hook = clone / ".git" / "hooks" / "post-checkout"
+        hook.write_text("#!/bin/sh\necho refused >&2\nexit 1\n")
+        hook.chmod(0o755)
+        before = git(clone, "for-each-ref")
+        self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertEqual(git(clone, "branch", "--list", "post/p001"), "")
+        self.assertEqual(git(clone, "for-each-ref"), before)
+        self.assertIn("removed again", self.out)
+        self.assertEqual(git(clone, "worktree", "list").count("\n"), 0)
+        hook.unlink()
+        self.assertEqual(self.run_real("--no-pr", public=clone), 0, self.out)  # a rerun is not refused
+
+    # M3. variables that move git to another repository or index must not reach the git calls
+    def test_git_dir_in_the_environment_cannot_redirect_the_commit_onto_the_clones_main(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        main_before = git(clone, "rev-parse", "main")
+        with mock.patch.dict(os.environ, {"GIT_DIR": str(clone / ".git")}):
+            code = self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(code, 0, self.out)
+        self.assertEqual(git(clone, "rev-parse", "main"), main_before)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+        self.assertEqual(git(clone, "log", "-1", "--format=%s", "post/p001"), "Post p001")
+
+    def test_git_index_file_in_the_environment_cannot_make_the_clone_look_dirty(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        with mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(self.tmp / "other-index")}):
+            code = self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(code, 0, self.out)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+        self.assertEqual(git(clone, "rev-parse", "--abbrev-ref", "HEAD"), "main")
+
+    # m2. tags and mirrors
+    def test_push_follow_tags_does_not_send_a_local_tag_to_origin(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "push.followTags", "true")
+        git(clone, "tag", "-a", "local-only-tag", "-m", "x", "main")
+        self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        self.assertEqual(git(bare, "tag", "--list"), "")
+        self.assertTrue(self.pushed_ok(clone, bare))
+
+    def test_remote_origin_mirror_is_a_hard_stop(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "remote.origin.mirror", "true")
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("remote.origin.mirror is not set", self.out)
+
+    # m3. the committed BYTES are compared with the build, not only paths and sizes
+    def test_a_clean_filter_that_changes_bytes_without_changing_sizes_is_refused(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        (clone / ".gitattributes").write_text("*.json filter=evil\n")
+        git(clone, "add", ".gitattributes")
+        git(clone, "commit", "-q", "-m", "attributes")
+        git(clone, "push", "-q", "origin", "main")
+        git(clone, "config", "filter.evil.clean", "tr a-y b-z")
+        before_refs = git(clone, "for-each-ref")
+        self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertIn("differs from the build output", self.out)
+        self.assertEqual(git(clone, "for-each-ref"), before_refs)
+
+    # m1. a scan that says it is the whole spread but whose other half cannot be found
+    def test_a_whole_spread_page_with_no_other_half_is_a_hard_stop(self):
+        self.prepare(pids=("p003",), public=(), release={"p007": {"pool": "reserve"}})
+        def alone(j):
+            for pg in j["pages"]:
+                if pg["id"] == "pg3":
+                    pg["sp"] = {"s": "whole spread", "cb": None, "f": None, "k": "nobody-else.jpg"}
+        self.edit_j(alone)
+        self.assertEqual(self.go("p003"), 3, self.out)
+        self.assertEqual(self.go("p003", "--force"), 3, self.out)
+        self.assertIn("whole spread", self.out)
+
+    # m4. a secret that straddles the end of an authorised line is not excused by that line
+    def test_a_secret_that_straddles_an_authorised_line_is_still_found(self):
+        secret = "word word word word"
+        self.prepare()
+        def put(j):
+            for pg in j["pages"]:
+                if pg["id"] == "pg1":
+                    pg["B"][0]["L"][0] = secret
+                if pg["id"] == "pg2":
+                    pg["B"][0]["L"][0] = "x " + secret
+        self.edit_j(put)
+        ready_db(self.db, pids=("p001",), _root=self.root)
+        src, out, published, texts_ok = self.built_output()
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
+        (out / "data" / "extra.txt").write_text("x " + secret + " word word")  # the second occurrence runs past the authorised line
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [secret])
+
+    # m5. clean stops instead of tracebacks
+    def test_an_unreadable_release_document_is_a_clean_stop(self):
+        self.prepare()
+        doc = self.db / "release" / "p001.json"
+        doc.chmod(0)
+        self.addCleanup(doc.chmod, 0o644)
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("cannot read", self.out)
+
+    def test_a_workdir_that_is_a_file_is_a_usage_error_not_a_traceback(self):
+        self.prepare()
+        f = self.tmp / "afile"
+        f.write_text("x")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = post_poem.main(["p001", "--db", str(self.db), "--source", str(self.root), "--workdir", str(f), "--dry-run"])
+        self.assertEqual(code, 64, buf.getvalue())
+
+    def test_site_data_without_pieces_is_a_clean_stop(self):
+        self.prepare()
+        self.edit_j(lambda j: j.pop("pieces"))
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("unexpected shape", self.out)
+
+    def test_a_release_list_that_cannot_be_written_after_the_pull_request_is_reported_not_raised(self):
+        self.prepare()
+        self.fake_gh()
+        with mock.patch.object(post_poem, "update_release_list", side_effect=OSError("disk full")):
+            code = self.run_real()
+        self.assertEqual(code, 1, self.out)
+        self.assertIn("pull request exists", self.out)
+        self.assertIn("release/public.json could NOT be updated", self.out)
+
+    # m6. no page or line ids of unpublished material in the public text
+    def test_the_pull_request_text_has_no_line_ids_of_unpublished_pages_and_no_facing_page_ids(self):
+        ctx = dict(pids=["p001"], versions={"p001": dict(how="top", indices=[1], total=2, newest=1, top=1, unpublished_corrected=0)},
+                   pages=["pg2"], diff=dict(added=[], changed=[], removed=[], bytes=0), results=[
+                       ("gate", "p001", "(b) every line confirmed or corrected", False, "1 of 9 lines not confirmed or corrected (first: pg1-0-1, pg1-0-2)", True)],
+                   checks=[], counts={"p001": dict(confirmed=1, corrected=0, unreviewed=0, withheld=0)}, sha="0" * 64,
+                   shared=[dict(page="pg2", id="p002", status="ok", reason=""), dict(page="pgx-facing", id="pgx-facing", status="accepted", reason="")],
+                   font_notes=[], warnings=[], audit=[("title", "versforms")], new_pieces=["p001"], changed_pieces=[])
+        body = post_poem.render_pr_body(ctx)
+        for secret in ("pg1-0-1", "pg1-0-2", "pgx-facing"):
+            self.assertNotIn(secret, body)
+        self.assertIn("1 of 9 lines not confirmed or corrected", body)
+        self.assertIn("pg2", body)  # a published page is public anyway
+
+    # m7. a partial credential
+    def test_redact_hides_a_password_that_contains_at_or_slash(self):
+        out = post_poem._redact("https://user:pa@ss/word@github.com/4444J99/versforms.git")
+        self.assertNotIn("pa@ss", out)
+        self.assertNotIn("ss/word", out)
+        self.assertIn("github.com/4444J99/versforms.git", out)
 
     # ---- release list change is described
     def test_the_pull_request_lists_new_pieces_and_rebuilt_pieces_whose_data_changed(self):

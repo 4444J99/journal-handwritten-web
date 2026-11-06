@@ -1,5 +1,13 @@
 # Handwritten journal: plan and state
 
+## T06 identity and audience update — 2026-11-05 (America/New_York)
+
+This dated addendum narrows the historical identity/audience items below; it does not approve a release or replace T03's clearance procedure. The current author-directed identity is `vers.forms`, public title `versforms`, public font `ajp-scribbles`; earlier naming candidates remain history. Account/email control and a custom domain are not established by an old availability result. The existing `versforms.pages.dev` endpoint is the no-spend destination option.
+
+T06 prepared a private identity/status record, avatar provenance/T07 handoff, weekly posting/reply/review SOP, finite decision register, inactive optional-tool brief, later press criteria and a disposition for #4/#43/#49–#51/#57–#61/#70. See [the T06 packet](../docs/audience/README.md). The existing #61 research is retained; the first-12-poems no-analytics rule was proposed, not accepted, and #59's older scheduled-agent proposal is superseded. No optional automation is active.
+
+The author still chooses account separation, slot/reply window, observation thresholds, all public copy, exposure response, exact scan use and optional tools. Avatar arm treatment awaits author/T07 review; inaccessible original/v2 sources are identified rather than regenerated. One future release consumes T03's exact version/output clearance and T07's approved media manifest. No account change, spending, outreach, issue closure, merge, deploy or public posting is authorized by this addendum.
+
 Working document for the journal-handwritten-web project. Last updated 2026-10-28.
 
 ## T03 preparation addendum — 2026-11-05
@@ -119,3 +127,44 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 ## Rebuild order (technical)
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
+## T10 technical preparation — 2026-11-05 review baseline
+
+The later roots/glyphs work in #12 and research follow-ups in #33 now have an isolated, private script-realization fixture and author-glyph workflow. See [the T10 record](../docs/t10-script-realizations.md). This is technical preparation: exact existing `p001` / `p001-diary1-0`, English/Latin, unchanged source reading, original supplied font. It is not adoption of Greek-first, a translated poem, an expanded multi-script font, or a release decision.
+
+The proposal keeps realization revisions independent from editorial poem versions, matches the proposed T05 source fingerprint, and hands schema/font interfaces to T02 for review. Current public output is empty pending T03's actual manifest-based clearance adapter. LingFrame was inspected at a pinned commit; a narrow local diagnostic interface is proposed, with no repository coupling. Optional weekly practice fields remain the author's work. Current journal/grant follow-ups are sourced in the T10 packet; no application, inquiry, schedule or publication is authorized by those findings.
+
+Next author input can be one exact line, its source/version association, language/script/orthography and operation, plus only its necessary glyph samples. Preserve the earlier history above; its proposals and historical approvals do not become new authority. #12 and #33 remain open with existing ownership.
+||||||| 038d01f
+
+## T09 addendum · 2026-11-05 · private audio pilot
+
+This dated addendum preserves the earlier plan as history. The current scoped request is issues
+#23, #24 and #35: prepare the acquisition/processing tools before requesting a recording. Sources,
+author decisions, proposals and fixture verification are separated in `docs/audio/README.md`.
+
+- **Author decisions retained:** use his own recordings for both forward/backward speech and
+  voice-derived ambience; reusable methods; creative performance and text remain his.
+- **Engineering preparation:** bounded manifest-driven renderer, explicit alignment/cutter,
+  calibration fixtures, prompt packet and private local listening/prompter workbench. Test scope
+  and limitations are recorded in `docs/verification/t09-audio/README.md`. Fixture results do not
+  establish a finished or intelligible author voice bank.
+- **Proposal replacing two recording requests:** one 50-prompt session designed for approximately
+  30 minutes (2 calibration, 24 speech-transition, 24 texture prompts). Existing equipment only;
+  record after choosing the finite acquisition inputs. This is not full-bank acquisition.
+- **Author inputs still open:** the 14-choice sheet in `docs/audio/author-decisions.md`, actual
+  recordings, reviewed pronunciations/labels and a listening decision naming exact render hashes.
+- **Sequence:** prepared tools → combined author pilot → labeled comparable samples → author
+  listening selection → revised full-bank scope and one reader/studio playback integration.
+  Performed supplements and release follow their own author choices.
+- **Integration owners retained:** T02 source/version identity; T04 reader lifecycle/hidden controls;
+  T03 exact-output publication eligibility; shared studio UI through its single integrator. No
+  production audio or new studio collection is enabled by this draft.
+- **Privacy and identity:** raw masters are held private and outside served paths. Raw-bank sharing,
+  voice reuse and release of rendered audio remain separate decisions. The journal is a distinct
+  body of work in `versforms`, separate from ETCETER4. No merge, deployment, release or issue closure is part of T09.
+- **Context limit:** shared packet `2026-10-16-v1.1` / projection `2026-10-16-v1.1-r2` remained
+  inaccessible; no claims or approvals are attributed to unseen contents.
+
+## Integration execution — 2026-11-06 (partial)
+
+Remote `main` is `8cd9872acbccd28db9736c2340cdac9d1ba65f91`. Merged PR #127 (audio filename contract) and #128 (fingerprint v2 incl. breakBefore). `tools/check.py` and `tools/ci_local.py` pass. Remaining tranche work remains open.

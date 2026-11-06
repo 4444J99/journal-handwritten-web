@@ -1,0 +1,128 @@
+{
+  "schema": "versforms.t08-pilot-inventory.v1",
+  "pilot": {
+    "piece_id": "p001",
+    "version_id": "p001-diary1-0",
+    "page_id": "diary1"
+  },
+  "status": "private-pilot-inventory-not-a-release-record",
+  "source_inputs": {
+    "owner_artifact_ref": "proto/alive/atoms-p001.json",
+    "owner_artifact_commit": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+    "owner_artifact_sha256": "ed379ac4ccee98d06d392149e99299d8fd8d961d19e7c169513fcf45572ffca6",
+    "source_scan_path": "site/img/p/diary1.jpg",
+    "source_scan_sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5",
+    "source_scan_size": 200203
+  },
+  "manifest_content_sha256": "36aeffd79bf0f33479fefabc4c9fc6baded22dfd21a6e40329996e5111e18937",
+  "files": [
+    {
+      "path": "docs/pilots/t08-p001/README.md",
+      "size": 6432,
+      "sha256": "6039210d9f5587a4c99eaeef707c30ca1d13a6d8a24018644186b2e1655f5be3"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/combinations-private.json",
+      "size": 1137,
+      "sha256": "0fbc6a5abf4e7d096013f5940cbeade27fef62eb3ccc3b99af2463ea278635d8"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/combinations-public.json",
+      "size": 69553,
+      "sha256": "6552a619c8f0f588603cc1d7fe2857d55af9e434a12bd182642a2a656f138be9"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/private-local.json",
+      "size": 1137,
+      "sha256": "2900c8006c90cb551ef554b76b12d63e2353b29ae9319f9776399e2095e0bf98"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/public-release.json",
+      "size": 68561,
+      "sha256": "88126349a37aac81221320982f095260b5832c73a591fbc88fcb3a8fffb57726"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/reserve-private.json",
+      "size": 1137,
+      "sha256": "455e0b6399494f6d755a48f52da7103e724342af7aa11f8bd4180318be552f9f"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/strike-veto-private.json",
+      "size": 3119,
+      "sha256": "174c199e48c3199ed86b2ce24dc434207156734e97b97e9bba12a04e33209f52"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/verify.json",
+      "size": 315,
+      "sha256": "f30655f1a4ac0fbde0c80a078993f75c58ba727b4b2c138ebde2f5c298bb5edf"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/version-excluded-private.json",
+      "size": 57762,
+      "sha256": "8cb1dff69401e8a70009fcb1daab130f62c92e0e757ac7217469ad5f867bbe2f"
+    },
+    {
+      "path": "docs/pilots/t08-p001/checks/withheld-asset-private.json",
+      "size": 45389,
+      "sha256": "7b976e17c8eb67a548a74ea39430561cc91dd956311707dad39b028cb010e322"
+    },
+    {
+      "path": "docs/pilots/t08-p001/decision-map.md",
+      "size": 11175,
+      "sha256": "f735a461d4ad178f82fff33ed380501464f9efd2999d7411406982e98723af61"
+    },
+    {
+      "path": "docs/pilots/t08-p001/evidence/alive-runtime.json",
+      "size": 2784,
+      "sha256": "a51fcb695dcbee8fbda2b5f524f45a77bf519ca069dbca14cfa773be11ee62bb"
+    },
+    {
+      "path": "docs/pilots/t08-p001/evidence/owner-lane.md",
+      "size": 3813,
+      "sha256": "f7d18c59df23a054335b9b59a2fc4b634b01c58a7c3bfc1994ee49ec5712f75f"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/policy-reserve.json",
+      "size": 854,
+      "sha256": "d8059235a7f1fbc0fa36f5f3c4f1481790cd22502d72c8bd70aedc90dd334f6c"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/policy-shared-scan.json",
+      "size": 1096,
+      "sha256": "a0ca6e1c76d27ce650a66f55b953cbe2f5bb25f3d6cb5b0f8d0a148a0fa5743a"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/policy-strike-veto.json",
+      "size": 1232,
+      "sha256": "9678fa35b18ca53712a84eb5cb4b9437a83c818aa3b591896b25438d4278bef5"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/policy-version-excluded.json",
+      "size": 1112,
+      "sha256": "75bb6eba09b8105df03e0230116467831ca26f02178bb78352745265bf5c31ec"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/policy-withheld-asset.json",
+      "size": 876,
+      "sha256": "99e2dd2ba27c0cc891dfad64bb9381b109878c5e121c8cb8dbcdd068977d5032"
+    },
+    {
+      "path": "docs/pilots/t08-p001/fixtures/synthetic-combinations.source-regions.json",
+      "size": 750336,
+      "sha256": "f8a329278186ff49c520b55bd07aa1443e635cf9ba59a479f42367ca45c9163c"
+    },
+    {
+      "path": "docs/pilots/t08-p001/p001.source-regions.json",
+      "size": 741162,
+      "sha256": "620e2bee5b0689476be20b2685087f59afe453e29935e8f1abc8ae77cfd16ff0"
+    },
+    {
+      "path": "docs/pilots/t08-p001/visibility-policy.json",
+      "size": 2411,
+      "sha256": "45e5414441baa9fb7706ca37be3134956805da585860dd7b5662dcac97efe652"
+    }
+  ],
+  "counts": {
+    "files": 21
+  }
+}

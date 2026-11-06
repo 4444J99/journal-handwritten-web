@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>T09 · Private audio pilot</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="playback.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<header>
+  <p class="eyebrow">journal-handwritten-web · T09 · private workbench</p>
+  <h1>Voice / audio pilot</h1>
+  <p>Prepare technical takes and compare rendered samples. This workbench is local, separate from the reader and studio. Listening feedback does not authorize full-bank acquisition or release.</p>
+  <p id="fixture-status" class="notice">No recording or receipt loaded. No author voice bank is claimed.</p>
+</header>
+<main>
+<section aria-labelledby="inputs-heading">
+  <h2 id="inputs-heading">1. Load a local packet</h2>
+  <button id="load-data">Load receipt and prompts from local server</button>
+  <p>Direct file mode: select the receipt, prompt packet, and only its rendered sample WAVs. Original recordings stay outside this workbench.</p>
+  <div class="inputs">
+    <label>Listening receipt (.json)<input id="receipt-file" type="file" accept=".json,application/json"></label>
+    <label>Prompt packet (.json)<input id="prompts-file" type="file" accept=".json,application/json"></label>
+    <label>Rendered samples (.wav)<input id="sample-files" type="file" accept=".wav,audio/wav" multiple></label>
+  </div>
+  <p id="data-status" role="status">Sound is off. No audio is fetched on opening this page.</p>
+  <div id="diagnostics" aria-live="polite"></div>
+</section>
+<section aria-labelledby="listening-heading">
+  <h2 id="listening-heading">2. Compare one sample at a time</h2>
+  <label>Rendered sample<select id="sample-select" disabled><option value="">Load a receipt first</option></select></label>
+  <div class="controls">
+    <button id="load-sample" disabled>Load selected sample</button>
+    <button id="start-playback" disabled>Start</button>
+    <button id="stop-playback">Stop</button>
+    <label>Listening gain <input id="volume" type="range" min="0" max="1" step="0.05" value="0.25"></label>
+  </div>
+  <p id="playback-state" role="status" aria-live="polite">OFF · Sound is off.</p>
+  <p class="small">Loading decodes audio without playing it. Changing samples, hiding or leaving this page, or an audio interruption stops playback. Returning never resumes it. iPhone silent-switch behavior remains untested; no playback override is applied.</p>
+  <pre id="sample-details">No sample selected.</pre>
+  <details><summary>Receipt, sources and processing parameters</summary><pre id="provenance">No receipt loaded.</pre></details>
+  <h3>Listening notes</h3>
+  <label>Response<select id="feedback-choice"><option value="undecided">Undecided</option><option value="compare-again">Compare again</option><option value="revise">Revise this sample</option><option value="candidate">Candidate for an author listening decision</option></select></label>
+  <label>Your notes<textarea id="feedback-notes" rows="3" placeholder="Your own listening observations"></textarea></label>
+  <button id="export-feedback" disabled>Export local listening feedback</button>
+  <p class="small">The export includes the exact sample and manifest identities. It is feedback only, not an acceptance record, release authorization, or a creative caption.</p>
+</section>
+<section aria-labelledby="prompter-heading">
+  <h2 id="prompter-heading">3. Recorder prompter</h2>
+  <p>Use your existing recorder. This page does not access a microphone or record audio. Start the external recorder yourself after resolving the prompt’s required author decisions.</p>
+  <p id="packet-status">No prompt packet loaded.</p>
+  <details><summary>Required author choices</summary><pre id="author-decisions">Not loaded.</pre></details>
+  <article id="prompt-card" aria-live="polite">Load a prompt packet to rehearse.</article>
+  <div class="controls">
+    <button id="prompt-prev" disabled>Previous</button>
+    <button id="prompt-next" disabled>Next</button>
+    <button id="prompt-rehearse" disabled>Rehearse</button>
+    <button id="prompt-pause" disabled>Pause</button>
+  </div>
+  <p id="prompt-status" role="status">Preparation only. No takes recorded by this page.</p>
+  <label>External take ID<input id="take-id" type="text" maxlength="120" placeholder="For example: recorder file name / take number"></label>
+  <label>Take notes<textarea id="take-notes" rows="2" placeholder="Your own recorder notes"></textarea></label>
+  <div class="controls"><button id="prompt-log" disabled>Log external take</button><button id="prompt-repeat" disabled>Log repeat needed</button><button id="export-progress" disabled>Export local progress</button></div>
+</section>
+</main>
+<footer>No uploads, accounts, CDN, or analytics. Keep this private listening service on loopback. Fixture results demonstrate the pipeline only; they cannot select an author voice or palette.</footer>
+</body>
+</html>
