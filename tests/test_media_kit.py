@@ -145,6 +145,40 @@ class MediaKitTests(unittest.TestCase):
             _, sources = kit.output_provenance(src, f"reel/_frames/f{index:04d}.png")
             self.assertEqual({s["page_id"] for s in sources}, expected)
 
+    def test_accepted_readings_override_raw_lines_without_rewriting_them(self):
+        later = kit.SourcePackage(REPO, config("p001")).later_source()
+        before = copy.deepcopy(later.page["B"])
+        expected = [later.j.get("acceptedReadings", {}).get(f"diary62a-{b}-{i}", raw)
+                    for b in later.version_blocks() for i, raw in enumerate(later.page["B"][b]["L"])]
+        self.assertEqual(later.text(later.version_blocks()), expected)
+        self.assertNotEqual(expected, [line for b in later.version_blocks() for line in later.page["B"][b]["L"]])
+        self.assertEqual(later.page["B"], before)
+
+    def test_accepted_readings_follow_explicit_line_ids_before_legacy_ids(self):
+        src = kit.SourcePackage(REPO, config("p004"))
+        src.page["B"][1]["lineIds"] = [f"supplied-line-{i}" for i in range(9)]
+        src.j["acceptedReadings"] = {"supplied-line-0": "TECHNICAL ACCEPTED READING",
+                                      "diary3-1-0": "STALE LEGACY TEST KEY"}
+        self.assertEqual(src.text([1])[0], "TECHNICAL ACCEPTED READING")
+        self.assertEqual(src.text([1])[1:], src.page["B"][1]["L"][1:])
+
+    def test_each_manifest_selection_binds_its_own_v2_logical_source(self):
+        src = kit.SourcePackage(REPO, config("p001"))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            stills = kit.render_still_set(src, out, None, src.cfg)
+            widget = kit.make_widget_kit(src, out, src.cfg)
+            qa = kit.run_qa(src, out, stills, src.cfg)
+            manifest = kit.build_manifest(src, out, src.cfg, stills, {}, {}, widget, qa, REPO)
+            expected = [kit.source_binding(kit.source_snapshot(REPO, "p001", vid))
+                        for vid in ("p001-diary1-0", "p001-diary62a-0")]
+            self.assertEqual(manifest["source_bindings"], expected)
+            self.assertEqual(checker.verify_export(out, manifest), [])
+            later = next(e for e in manifest["assets"] if e["path"] == "carousel/carousel-05-version.jpg")
+            self.assertEqual(later["sources"][0]["source_binding"], expected[1])
+            later["sources"][0]["source_binding"] = expected[0]
+            self.assertTrue(any("logical source selection differs" in e for e in checker.verify_export(out, manifest)))
+
 
 if __name__ == "__main__":
     unittest.main()

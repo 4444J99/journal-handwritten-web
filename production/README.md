@@ -76,6 +76,14 @@ version stop the run. Raw input records are separate from each consumer asset's
 `sources` selections: page, version, block ids, raw-image hash, and the exact
 crop in normalized and original-image pixel coordinates.
 
+Each selected version also carries the T02 v2 logical `source_binding`, both
+in the manifest's `source_bindings` list and in its individual crop selections.
+This binding uses the accepted source snapshot and stays separate from scan
+hashes and geometry. The manifest records the current reader and review input
+bytes and the two logical-source helper code hashes. A source selection from
+another version fails the substitution check even when its raw scan is a
+declared input.
+
 Every p004 consumer crop selects only block 1 of diary3, including its page
 cover and page widget. The full preserved scan remains unchanged. The p001
 later-version slide selects diary62a blocks 0–2, bounded above the recorded p126
@@ -91,6 +99,9 @@ resolve unknown geometry or author clearance for the shared scans.
 ## Phone-size readability
 
 QA uses each image's own source page, crop dimensions and reviewed lines. It
+reads `acceptedReadings` by explicit block line IDs, with the preserved
+page/block/line ID convention as a legacy fallback, and leaves raw `B.L`
+transcriptions untouched. It
 reports the 8 px threshold for **measured** ink boxes at 390 px display width.
 Whole-selection readability is `null` whenever any reviewed line lacks a
 recorded box. In the current data, p001's primary version has 21 measured boxes

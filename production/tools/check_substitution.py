@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -47,6 +48,13 @@ def verify_export(root: Path, manifest: dict) -> list[str]:
     later = candidate.get("later_version")
     if later:
         versions[later["version_id"]] = (later["page_id"], later["blocks"], later["source"])
+    bindings = manifest.get("source_bindings", [])
+    binding_by_version = {b.get("versionId"): b for b in bindings if isinstance(b, dict)}
+    if (manifest.get("logical_source_fingerprint_version") != 2 or len(bindings) != len(versions)
+            or set(binding_by_version) != set(versions)
+            or any(b.get("pieceId") != candidate["piece_id"] or not re.fullmatch(r"sha256:[0-9a-f]{64}", str(b.get("sourceFingerprint", "")))
+                   for b in binding_by_version.values())):
+        errors.append("missing or invalid v2 logical source bindings")
     inputs = {e["path"]: e["sha256"] for e in manifest["source_inputs"]}
     for entry in manifest["assets"]:
         rel = entry["path"]
@@ -68,6 +76,8 @@ def verify_export(root: Path, manifest: dict) -> list[str]:
                 errors.append(f"undeclared source bytes: {rel}")
             if source.get("kind") == "identity":
                 continue
+            if source.get("source_binding") != binding_by_version.get(source.get("version_id")):
+                errors.append(f"logical source selection differs: {rel}")
             version = versions.get(source.get("version_id"))
             if (source.get("piece_id") != candidate["piece_id"] or version is None
                     or source.get("page_id") != version[0]

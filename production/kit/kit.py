@@ -47,6 +47,9 @@ FPS = 30
 KIT_DIR = Path(__file__).resolve().parent
 PRODUCTION_DIR = KIT_DIR.parent
 DEFAULT_REPO = PRODUCTION_DIR.parent
+sys.path.insert(0, str(DEFAULT_REPO / "tools"))
+from script_realizations import source_snapshot
+from source_fingerprint import source_binding
 
 
 # --------------------------------------------------------------------------
@@ -222,6 +225,8 @@ class SourcePackage:
         self.image = rgb(Image.open(self.source_path))
         self.src_w, self.src_h = self.image.size
         self._validate()
+        self.logical_source = source_snapshot(repo, cfg["piece_id"], cfg["version_id"])
+        self.source_binding = source_binding(self.logical_source)
 
     def _piece(self, pid):
         for p in self.j["pieces"]:
@@ -296,7 +301,18 @@ class SourcePackage:
         return page_row_boxes(self.page, block_ids=set(block_ids))
 
     def text(self, block_ids):
-        return [ln for b in self.blocks(block_ids) for ln in b["L"]]
+        readings = self.j.get("acceptedReadings", {})
+        result = []
+        for block_id in block_ids:
+            block = self.page["B"][block_id]
+            explicit = block.get("lineIds", [])
+            for line_index, raw in enumerate(block["L"]):
+                line_id = explicit[line_index] if line_index < len(explicit) else f"{self.page['id']}-{block_id}-{line_index}"
+                reading = readings.get(line_id, raw)
+                if not isinstance(reading, str):
+                    raise ValueError(f"accepted reading is not text: {line_id}")
+                result.append(reading)
+        return result
 
     def norm_to_px(self, box):
         return (
@@ -356,6 +372,7 @@ class SourcePackage:
     def selection(self, block_ids, pad=(0.012, 0.018)):
         box = self.selection_box(block_ids, pad)
         return {"piece_id": self.cfg["piece_id"], "version_id": self.version["id"],
+                "source_binding": dict(self.source_binding),
                 "page_id": self.page["id"], "source": self.cfg["source"],
                 "source_sha256": sha256(self.source_path), "blocks": list(block_ids),
                 "crop_box_norm": list(box),
@@ -1215,6 +1232,8 @@ def build_manifest(src: SourcePackage, out: Path, cfg: dict, stills: dict,
                 raise ValueError(f"output symlink is not a generated asset: {path}")
             entries.append(entry(path))
     source_inputs = [dict(e) for e in cfg["source_inputs"]]
+    if not any(e["path"] == "studio/data/review.json" for e in source_inputs):
+        source_inputs.append({"path": "studio/data/review.json", "role": "accepted reading and logical source provenance"})
     for e in source_inputs:
         path = src._resolve(e["path"])
         e.update(sha256=sha256(path), bytes=path.stat().st_size)
@@ -1224,12 +1243,16 @@ def build_manifest(src: SourcePackage, out: Path, cfg: dict, stills: dict,
         "kit_version": "t07-media-kit-v2",
         "source_revision": git_head(repo),
         "builder": {"kit_py_sha256": sha256(KIT_DIR / "kit.py"),
-                    "config_sha256": sha256(Path(cfg.get("_config_path", KIT_DIR / "config" / cfg["_config_name"])))},
+                    "config_sha256": sha256(Path(cfg.get("_config_path", KIT_DIR / "config" / cfg["_config_name"]))),
+                    "logical_source_code_sha256": {name: sha256(DEFAULT_REPO / "tools" / name)
+                        for name in ("script_realizations.py", "source_fingerprint.py")}},
         "candidate": {"piece_id": cfg["piece_id"], "version_id": cfg["version_id"],
                       "page_id": cfg["page_id"], "version_blocks": src.version_blocks(),
                       "pool_clearance": clear["pool"], "selection_provenance": cfg["selection_provenance"],
                       "later_version": cfg.get("later_version")},
         "source_inputs": source_inputs,
+        "logical_source_fingerprint_version": 2,
+        "source_bindings": [dict(src.source_binding)] + ([dict(src.later_source().source_binding)] if cfg.get("later_version") else []),
         "assets": entries,
         "coverage": {"scope": "every regular output file, including encoder frames, posters, layers, QA and archive",
                      "excluded": ["manifest.json"], "reason": "manifest cannot hash itself"},
@@ -1291,7 +1314,7 @@ def write_manifest_md(out: Path, report: dict):
         f"- author clearance: `null`",
         f"- filing evidence: `null`",
         f"- shared scan: {report['clearance']['shared_scan_resolution']}",
-        f"- complete technical exclusion: `false` (T03's 13 withheld page ids and PAL/HF metadata are outside this kit's scope)",
+        "- complete technical exclusion: `false`; exposure acceptance for this exact kit remains unverified. The November 5 T03 packet's metadata findings are historical, not a claim about the current reader build.",
         f"- may publish: `false`",
         "",
         "## QA",
