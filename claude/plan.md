@@ -140,3 +140,7 @@ author decisions, proposals and fixture verification are separated in `docs/audi
   body of work in `versforms`, separate from ETCETER4. No merge, deployment, release or issue closure is part of T09.
 - **Context limit:** shared packet `2026-10-16-v1.1` / projection `2026-10-16-v1.1-r2` remained
   inaccessible; no claims or approvals are attributed to unseen contents.
+
+## Integration execution — 2026-11-06 (partial)
+
+Remote `main` is `8cd9872acbccd28db9736c2340cdac9d1ba65f91`. Merged PR #127 (audio filename contract) and #128 (fingerprint v2 incl. breakBefore). `tools/check.py` and `tools/ci_local.py` pass. Remaining tranche work remains open.
