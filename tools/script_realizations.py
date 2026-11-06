@@ -108,7 +108,7 @@ def _unique(items, key, what):
     return result
 
 
-from source_fingerprint import source_fingerprint, source_fingerprint_v1
+from source_fingerprint import source_fingerprint, source_fingerprint_v1, source_binding
 
 
 def private_db(path, piece_ids):
@@ -137,7 +137,7 @@ def private_db(path, piece_ids):
         raise Invalid("invalid studio export names") from error
 
 
-def source_snapshot(repo, piece_id, version_id, db=None):
+def source_snapshot(repo, piece_id, version_id, db=None, *, correction_values=None):
     """Exact existing membership plus current, attributable exported corrections."""
     repo = Path(repo)
     paths = ["site/data/j.json", "studio/data/review.json"]
@@ -145,7 +145,16 @@ def source_snapshot(repo, piece_id, version_id, db=None):
     pieces = _unique(site["pieces"], "id", "piece")
     _unique([v for p in site["pieces"] for v in p["V"]], "id", "version")
     pages = _unique(review["pages"], "id", "page")
-    _unique([l for p in review["pages"] for b in p["blocks"] for l in b["lines"]], "id", "line")
+    line_map = _unique([l for p in review["pages"] for b in p["blocks"] for l in b["lines"]], "id", "line")
+    if correction_values is not None:
+        if not isinstance(correction_values, dict) or set(correction_values) - set(line_map):
+            raise Invalid("output corrections must name existing explicit source line IDs")
+        quotation_ids = {l["id"] for p in review["pages"] for b in p["blocks"] if b.get("t") == "quotation" for l in b["lines"]}
+        if set(correction_values) & quotation_ids:
+            raise Invalid("output corrections cannot replace protected quotation markers")
+        for text in correction_values.values():
+            scalar_text(text, empty=True)
+        reader_pages = _unique(site["pages"], "id", "reader page")
     version = next((v for v in pieces.get(piece_id, {}).get("V", []) if v["id"] == version_id), None)
     if version is None:
         raise Invalid("unknown exact piece/version")
@@ -168,6 +177,10 @@ def source_snapshot(repo, piece_id, version_id, db=None):
                 if line.get("transcriptionStatus") == "untranscribed":
                     raise Invalid("untranscribed source line; explicit transcription required")
                 original = scalar_text(line["tx"], empty=True)
+                if correction_values is not None and block.get("t") != "quotation":
+                    reader_original = reader_pages[page_id]["B"][bi]["L"][li]
+                    if reader_original != original:
+                        raise Invalid("reader and studio raw originals differ; output binding is unavailable")
                 text = original
                 correction = corrections.get(line["id"])
                 if correction is not None:
@@ -180,6 +193,8 @@ def source_snapshot(repo, piece_id, version_id, db=None):
                         if correction["original"] != original:
                             raise Invalid("stale correction; source must be resolved explicitly")
                         text = scalar_text(correction["text"], empty=True)
+                if correction_values is not None:
+                    text = correction_values.get(line["id"], original)
                 rows.append({"lineId": line["id"], "text": text, "originalText": original,
                              "blockType": block.get("t") or "text",
                              "breakBefore": line.get("breakBefore", bool(rows) and li == 0)})
@@ -192,6 +207,8 @@ def source_snapshot(repo, piece_id, version_id, db=None):
                     "reviewRecords": review_evidence,
                     "readingStatus": "existing-transcription-with-exported-corrections; not a new author verification"}}
     snapshot["versionFingerprint"] = source_fingerprint(snapshot)
+    if correction_values is not None:
+        snapshot["provenance"]["readingStatus"] = "exact caller-validated output corrections; preserved originals retained; not a new author verification"
     return snapshot
 
 
@@ -395,6 +412,10 @@ def projection(envelope, current_sources, policies, *, audience="private", relea
             reasons.append("missing-source")
         else:
             _validate_source(current, doc["pieceId"], doc["versionId"])
+            try:
+                source_binding(current)
+            except ValueError:
+                reasons.append("current-source-requires-v2-rebind")
             if current["versionFingerprint"] != rev["source"]["versionFingerprint"]:
                 reasons.append("source-changed")
         if not isinstance(policy, dict) or set(policy) != {"pool", "visibility"} or policy["pool"] not in {"series", "reserve", "archive", "unsorted"} or policy["visibility"] not in {"private", "withheld", "public"}:

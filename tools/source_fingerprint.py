@@ -34,6 +34,17 @@ def source_fingerprint_v1(source):
 
 
 def source_binding(source):
-    """Exact release/media binding; calculating it grants no clearance."""
+    """Current v2 release/media binding, never a silent historical rebind.
+
+    A raw logical payload may be bound explicitly. A preserved snapshot that
+    already declares a digest must agree with v2; callers retain v1 history and
+    create a new explicit rebind instead of treating its old digest as current.
+    """
+    current = source_fingerprint(source)
+    if source.get("fingerprintVersion", 2) != 2:
+        raise ValueError("current source requires explicit v2 rebind")
+    for key in ("versionFingerprint", "sourceFingerprint"):
+        if key in source and source[key] != current:
+            raise ValueError("current source is stale or requires explicit v2 rebind")
     return {"pieceId": source["pieceId"], "versionId": source["versionId"],
-            "sourceFingerprint": source_fingerprint(source)}
+            "sourceFingerprint": current}
