@@ -35,6 +35,13 @@ MANIFEST_SCHEMA = "versforms.source-region-manifest.v1"
 POLICY_SCHEMA = "versforms.visibility-policy.v1"
 REPORT_SCHEMA = "versforms.source-eligibility-report.v1"
 PRIVATE_PREVIEW_SCHEMA = "versforms.private-region-preview.v1"
+# Match site/reader-packages.js: the manifest has its own fetch budget and is
+# excluded from the aggregate declared-payload budget.
+PRIVATE_PREVIEW_MAX_MANIFEST_BYTES = 64 * 1024
+PRIVATE_PREVIEW_MAX_FILE_BYTES = 16 * 1024 * 1024
+PRIVATE_PREVIEW_MAX_TOTAL_BYTES = 32 * 1024 * 1024
+PRIVATE_PREVIEW_MAX_FILES = 20
+PRIVATE_PREVIEW_MAX_IMAGE_PIXELS = 40_000_000
 SCOPES = ("private-local", "author-cut-private", "public-release", "cipher-public")
 PRIVATE_SCOPES = {"private-local", "author-cut-private"}
 PUBLIC_SCOPES = {"public-release", "cipher-public"}
@@ -1183,6 +1190,41 @@ def review_page_geometry(page):
                 for line in block["lines"]]} for index, block in enumerate(page["blocks"])]}
 
 
+def _private_preview_policy(policy, piece_ids):
+    """Validate reader-consumed policy shapes without changing general defaults."""
+    def strings(record, key):
+        values = record.get(key, [])
+        if not isinstance(values, list) or any(not isinstance(v, str) or not v for v in values):
+            raise ValueError("private preview policy requires nonempty string identifiers in " + key)
+
+    if not isinstance(policy, dict) or not isinstance(policy.get("pieces"), dict):
+        raise ValueError("private preview policy requires explicit piece records")
+    for key in ("withheld_assets", "withheld_pages"):
+        strings(policy, key)
+    for piece_id in piece_ids:
+        piece = policy["pieces"].get(piece_id)
+        if not isinstance(piece, dict) or "pool" not in piece:
+            raise ValueError("private preview policy requires an explicit pool for " + piece_id)
+        if not isinstance(piece["pool"], str) or piece["pool"] not in ("unassigned", "series", "reserve", "archive", "withheld", "deleted"):
+            raise ValueError("private preview policy has an unknown pool for " + piece_id)
+        strings(piece, "withheld_versions")
+        for key in ("excluded_versions", "piece_vetoes", "strike_through_vetoes"):
+            entries = piece.get(key, [])
+            if not isinstance(entries, list):
+                raise ValueError("private preview policy requires an array for " + key)
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    raise ValueError("private preview policy requires object entries in " + key)
+                scopes = entry.get("scopes", [])
+                if not isinstance(scopes, list) or any(not isinstance(s, str) or s not in ("all", *SCOPES) for s in scopes):
+                    raise ValueError("private preview policy has invalid scopes in " + key)
+                # Validate even unrelated/public-only entries; retain their
+                # original values and let evaluate apply the existing scope.
+                if key != "excluded_versions":
+                    strings(entry, "atom_ids")
+                    strings(entry, "line_ids")
+
+
 def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=None, expected=None):
     """Export one real region's private full-image preview, without inventing a crop.
 
@@ -1198,12 +1240,14 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     result = verify_manifest(manifest, repo=repo)
     if not result["ok"]:
         raise ValueError("invalid region manifest: " + "; ".join(result["errors"][:4]))
-    if not isinstance(atom_id, str):
-        raise ValueError("selected region identity must be a string")
+    if not isinstance(atom_id, str) or not re.fullmatch(r"vf:atom:[A-Za-z0-9_./:-]+", atom_id):
+        raise ValueError("bounded private preview requires a supported selected region identity")
     selected = [a for a in manifest["atoms"] if a["atom_id"] == atom_id]
     if len(selected) != 1:
         raise ValueError("selected region is unavailable")
     atom = selected[0]
+    if any((a["piece_id"], a["version_id"]) != (atom["piece_id"], atom["version_id"]) for a in manifest["atoms"]):
+        raise ValueError("bounded private preview requires one exact current piece/version")
     line_id = atom.get("source_ids", {}).get("line_id")
     if not isinstance(line_id, str):
         raise ValueError("private preview requires a line-anchored region")
@@ -1211,6 +1255,7 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     foundation.validate(canonical)
     if foundation.rebuild(canonical, repo)["changed"]:
         raise ValueError("canonical source and current reader/studio outputs differ; rebuild before preview")
+    _private_preview_policy(policy, {atom["piece_id"]})
     report = evaluate(manifest, policy, "private-local", release_context={"source_repo": repo, "source_db": db})
     if not report["allowed"]:
         reasons = report["manifest_reasons"] + [r for group in report["atom_reasons"].values() for r in group]
@@ -1221,11 +1266,19 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     source_policy = release_policy(repo, atom["piece_id"], db)
     if source_policy["visibility"] == "withheld":
         raise ValueError("current source policy withholds this private preview")
+    current_lines = {l["lineId"] for l in snapshot["lines"]}
+    if any(((a.get("source_ids") or {}).get("line_id") is not None and a["source_ids"]["line_id"] not in current_lines)
+           or set(a.get("lineage", {}).get("source_line_ids") or []) - current_lines for a in manifest["atoms"]):
+        raise ValueError("bounded private preview lineage is outside its exact current source")
     lines = {line["id"]: line for line in canonical["lines"]}
     line = lines.get(line_id)
-    if not line or line["pageId"] != atom["page_id"] or line_id not in {l["lineId"] for l in snapshot["lines"]}:
+    if not line or line["pageId"] != atom["page_id"] or line_id not in current_lines:
         raise ValueError("region does not belong to the current canonical source line")
     page = next(p for p in canonical["pages"] if p["id"] == atom["page_id"])
+    block_index = atom["source_ids"].get("block_index")
+    if type(block_index) not in (int, float) or block_index != page["blockIds"].index(line["blockId"]) or not any(
+            member[0] == page["id"] and block_index in member[1] for member in snapshot["members"]):
+        raise ValueError("bounded private preview selected line/block membership disagrees with canonical source")
     review = foundation.read_json(repo / "studio/data/review.json")
     review_page = next(p for p in review["pages"] if p["id"] == atom["page_id"])
     anchor_geometry = line["geometry"]
@@ -1248,12 +1301,21 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     if len(asset_ids) != 1 or asset_ids[0] not in assets:
         raise ValueError("bounded private preview requires one declared source image")
     asset, image_bytes = assets[asset_ids[0]]
+    page_assets = [a for a in manifest["source_assets"]
+                   if a.get("page_id") == page["id"] and a.get("kind") == "page-scan" and a.get("tier") == "p"]
+    if len(page_assets) != 1 or page_assets[0]["asset_id"] != asset_ids[0]:
+        raise ValueError("bounded private preview requires exactly one selected-page page-scan/p asset")
     current_asset = next((a for a in canonical["assets"] if a["path"] == asset["path"]), None)
     media_digest = "sha256:" + hashlib.sha256(image_bytes).hexdigest()
     if asset.get("page_id") != page["id"] or not current_asset or current_asset.get("pageId") != page["id"] or current_asset["sha256"] != media_digest or current_asset["bytes"] != len(image_bytes):
         raise ValueError("source-asset differs from current canonical image lineage")
+    width, height = review_page["w"], review_page["h"]
+    # JSON 8000 and 8000.0 are both safe integer-valued Numbers in the reader;
+    # booleans, fractions and non-finite/nonpositive dimensions are not.
+    if any(type(value) not in (int, float) or not 1 <= value <= PRIVATE_PREVIEW_MAX_IMAGE_PIXELS or int(value) != value for value in (width, height)) or width * height > PRIVATE_PREVIEW_MAX_IMAGE_PIXELS:
+        raise ValueError("private region preview requires positive integer dimensions within 40,000,000 pixels")
     with Image.open(io.BytesIO(image_bytes)) as image:
-        if image.format != "JPEG" or image.size != (review_page["w"], review_page["h"]):
+        if image.format != "JPEG" or image.size != (width, height):
             raise ValueError("source-asset is not the declared full JPEG page")
         image.verify()
     geometry = {"atomId": atom_id, "region": copy.deepcopy(atom["region"]),
@@ -1268,6 +1330,13 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     files = {"region-manifest.json": encode(manifest), "policy.json": encode(policy),
              "source.json": encode({"snapshot": snapshot, "sourcePolicy": source_policy}),
              "geometry.json": encode(geometry), "assets/source.jpg": image_bytes}
+    if not 1 <= len(files) <= PRIVATE_PREVIEW_MAX_FILES:
+        raise ValueError("private region package requires 1 through 20 payload files")
+    for name, data in files.items():
+        if not 1 <= len(data) <= PRIVATE_PREVIEW_MAX_FILE_BYTES:
+            raise ValueError("private region package payload must contain 1 byte through 16 MiB: " + name)
+    if sum(map(len, files.values())) > PRIVATE_PREVIEW_MAX_TOTAL_BYTES:
+        raise ValueError("private region package payload exceeds 32 MiB")
     hashes = {name: "sha256:" + hashlib.sha256(data).hexdigest() for name, data in files.items()}
     package = {"schema": PRIVATE_PREVIEW_SCHEMA, "audience": "private", "fixture": True,
         "mayPublish": False, "scope": "private-local", "source": source, "sourcePolicy": source_policy,
@@ -1276,6 +1345,8 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
         "image": {"path": "assets/source.jpg", "width": review_page["w"], "height": review_page["h"], "display": "full-source-image-no-crop"},
         "files": [{"path": name, "sha256": hashes[name], "bytes": len(files[name])} for name in sorted(files)]}
     package_bytes = encode(package)
+    if len(package_bytes) > PRIVATE_PREVIEW_MAX_MANIFEST_BYTES:
+        raise ValueError("private region package manifest exceeds 64 KiB")
     descriptor = {key: copy.deepcopy(package[key]) for key in ("source", "sourcePolicy", "atomId", "manifestDigest", "geometryDigest", "mediaDigest", "policyDigest")}
     descriptor["package"] = {"manifestUrl": "region-preview.json", "sha256": "sha256:" + hashlib.sha256(package_bytes).hexdigest()}
     if expected is not None and (not isinstance(expected, dict) or not isinstance(expected.get("package"), dict) or any(expected.get(key) != value for key, value in descriptor.items() if key != "package") or expected["package"].get("sha256") != descriptor["package"]["sha256"]):

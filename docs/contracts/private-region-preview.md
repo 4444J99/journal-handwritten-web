@@ -38,6 +38,30 @@ that validation. Private inspection can retain known Reserve/Archive material
 under the existing private contract; withheld sources/assets and explicit
 scope/version/line vetoes refuse. A policy change requires fresh inspection.
 
+This bounded reader route requires every atom and its source-line lineage to
+belong to the selected current piece/version. The selected line's block index
+must agree with both canonical membership and the current source snapshot. Its
+atom ID uses `vf:atom:` followed by letters, digits, `_`, `.`, `/`, `:`, or `-`.
+There must be exactly one `page-scan` asset at tier `p` on the selected page,
+and it must be the selected atom's declared source image. Broader compositions
+remain valid for the general T08 evaluator; this exporter refuses shapes the
+bounded reader cannot display.
+
+Each manifest piece needs an explicit known policy pool. Missing, null or
+unknown pools are refused without normalization; known `withheld` and `deleted`
+pools remain denied by eligibility. Withheld/veto identifier lists contain
+nonempty strings. Exclusion and veto entries must be objects with array scopes
+drawn from `all`, `private-local`, `author-cut-private`, `public-release`, and
+`cipher-public`; absent or empty scopes retain the existing `all` default.
+These shapes are checked even for unrelated target versions. General evaluator
+defaults are unchanged.
+
+Separate `release_gate` evidence is preserved in the original policy and is
+not an additional private-inspection gate. Its permission flags neither grant
+nor revoke this private route. The package remains nonpublishing, the manifest
+scope stays `private-local` with `may_publish:false`, and
+`policy.publication.enabled` must remain `false`.
+
 ## Package contract
 
 `region-preview.json` has schema `versforms.private-region-preview.v1`, audience
@@ -46,6 +70,19 @@ scope/version/line vetoes refuse. A policy change requires fresh inspection.
 and an exhaustive `files` list. Each file record has a safe relative `path`,
 integer `bytes` and strict `sha256:` hash. The manifest excludes itself; the
 descriptor's `package.sha256` hashes the exact manifest bytes.
+
+The exporter and reader share the same inclusive size limits: `region-preview.json`
+is at most **64 KiB**; each declared payload is **1 byte through 16 MiB**; the
+declared payloads total at most **32 MiB**. The separate manifest is excluded
+from that total. The reader accepts 1 through 20 declared files; this region
+format always exports the five listed below. JPEG width and height must be
+positive integers whose product is at most **40,000,000 pixels**. The source
+archive's larger generic read limit does not grant preview eligibility.
+
+Every byte and image limit is checked before creating the output directory or
+its parents. Refusal leaves source files and an existing destination untouched;
+the CLI reports the violated budget and exits 2. The exporter does not resize,
+recompress or truncate source material to make an oversized package fit.
 
 | File | Verified content / top-level digest |
 |---|---|
