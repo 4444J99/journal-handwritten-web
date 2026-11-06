@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://versforms.invalid/schemas/source-region-v1.schema.json",
+  "title": "Versforms shared source-region manifest v1",
+  "description": "Normative shape of a T08 source-region manifest. The executable validator is tools/source_regions.py verify; this schema is the readable companion. No atom may carry transcribed poem text: reading.text_ref points at a separate, author-reviewed text store.",
+  "type": "object",
+  "required": [
+    "schema", "status", "scope", "piece", "source_assets", "derivations",
+    "methods", "uncertainties", "atoms", "structure", "counts", "integrity"
+  ],
+  "properties": {
+    "schema": { "const": "versforms.source-region-manifest.v1" },
+    "status": {
+      "type": "string",
+      "description": "e.g. private-pilot, synthetic-fixture-for-tests-not-authored-work"
+    },
+    "scope": {
+      "type": "object",
+      "required": ["distribution", "may_publish"],
+      "properties": {
+        "distribution": { "enum": ["private-local"] },
+        "may_publish": { "const": false },
+        "serve_on": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "piece": {
+      "type": "object",
+      "required": ["piece_id", "version_id", "page_id"],
+      "properties": {
+        "piece_id": { "type": "string" },
+        "version_id": { "type": "string" },
+        "version_index": { "type": "integer", "minimum": 0 },
+        "page_id": { "type": "string" },
+        "pool": { "type": "string", "description": "not-recorded-here; visibility lives in the policy file" },
+        "pool_source": { "type": "string" }
+      }
+    },
+    "source_assets": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/source_asset" } },
+    "derivations": { "type": "array", "items": { "$ref": "#/$defs/derivation" } },
+    "methods": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/method" } },
+    "uncertainties": { "type": "array", "items": { "$ref": "#/$defs/uncertainty" } },
+    "atoms": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/atom" } },
+    "structure": {
+      "type": "object",
+      "required": ["model", "axis", "building_width_px", "floors"],
+      "properties": {
+        "model": { "const": "centered-line-length-v1" },
+        "axis": { "const": "building-center" },
+        "building_width_px": { "type": "number", "exclusiveMinimum": 0 },
+        "floor_world_height": { "type": "number" },
+        "floor_gap_world": { "type": "number" },
+        "stanza_setback_world": { "type": "number" },
+        "floors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["line_atom_id", "line_id", "width_px", "floor_left_px", "floor_right_px"],
+            "properties": {
+              "line_atom_id": { "type": "string" },
+              "line_id": { "type": "string" },
+              "width_px": { "type": "number" },
+              "floor_left_px": { "type": "number" },
+              "floor_right_px": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["atoms", "poems", "stanzas", "lines", "words", "glyphs", "marks", "uncertainties"],
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["content_sha256"],
+      "properties": {
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of canonical JSON (sorted keys, compact separators) of the manifest without this field"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "source_asset": {
+      "type": "object",
+      "required": ["asset_id", "kind", "path", "sha256", "size", "visibility", "owner"],
+      "properties": {
+        "asset_id": { "type": "string", "examples": ["scan:p/diary1"] },
+        "kind": { "enum": ["page-scan", "spread-scan", "font", "derived-image"] },
+        "path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "size": { "type": "integer", "minimum": 0 },
+        "visibility": { "enum": ["private-source", "public-source"] },
+        "owner": { "type": "string" },
+        "page_id": { "type": "string" },
+        "tier": { "enum": ["p", "i", "m", "s", "h", "a"] },
+        "withheld": { "type": "boolean" }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "required": ["derivation_id", "kind", "artifact_ref", "artifact_sha256"],
+      "properties": {
+        "derivation_id": { "type": "string" },
+        "kind": { "type": "string" },
+        "artifact_ref": { "type": "string" },
+        "artifact_commit": { "type": ["string", "null"] },
+        "artifact_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "owner": { "type": "string" },
+        "reused_not_reimplemented": { "type": "boolean" },
+        "t08_note": { "type": "string" }
+      }
+    },
+    "method": {
+      "type": "object",
+      "required": ["method_id", "kind", "implementation", "status", "limits"],
+      "properties": {
+        "method_id": { "type": "string", "pattern": "^method:" },
+        "kind": { "type": "string" },
+        "implementation": { "type": "string" },
+        "implementation_commit": { "type": ["string", "null"] },
+        "status": { "type": "string" },
+        "parameters": { "type": "object" },
+        "limits": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["uncertainty_id", "page_id", "kind", "status", "evidence_ref"],
+      "properties": {
+        "uncertainty_id": { "type": "string" },
+        "page_id": { "type": "string" },
+        "line_id": { "type": ["string", "null"] },
+        "kind": { "enum": ["uncertain-reading", "source-damage", "seam-cut", "other"] },
+        "status": { "enum": ["open", "resolved-by-author", "withdrawn"] },
+        "evidence_ref": { "type": "string" },
+        "note_scope": { "type": "string" },
+        "mapping_status": { "type": "string" }
+      }
+    },
+    "region": {
+      "type": "object",
+      "required": ["frame", "bbox", "method_id"],
+      "properties": {
+        "frame": { "const": "source-pixels" },
+        "bbox": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": { "type": "number" },
+          "description": "[x0,y0,x1,y1], x1/y1 exclusive, origin top-left"
+        },
+        "polygon": {
+          "type": ["array", "null"],
+          "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+          "description": "Optional authoritative ink region. Boxes may overlap; polygons must not."
+        },
+        "polygon_frame": { "const": "source-pixels" },
+        "ink_px": { "type": "integer", "minimum": 0 },
+        "components": { "type": "integer", "minimum": 0 },
+        "method_id": { "type": "string" }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["parent_atom_id", "input_atom_ids", "root_source_asset_ids", "source_line_ids", "method_id", "derivation_ids"],
+      "properties": {
+        "parent_atom_id": { "type": ["string", "null"] },
+        "input_atom_ids": { "type": "array", "items": { "type": "string" } },
+        "root_source_asset_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "source_line_ids": { "type": "array", "items": { "type": "string" } },
+        "method_id": { "type": "string" },
+        "derivation_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "reading": {
+      "type": "object",
+      "required": ["transcription_state", "review_state", "uncertainty_ids", "deliberate_misread", "text_ref"],
+      "properties": {
+        "transcription_state": { "type": "string" },
+        "review_state": { "type": "string" },
+        "uncertainty_ids": { "type": "array", "items": { "type": "string" } },
+        "deliberate_misread": {
+          "type": ["object", "null"],
+          "description": "A machine misreading kept as a deliberate, labelled state. Separate from source uncertainty and never enabled without an author rule.",
+          "properties": {
+            "rule_id": { "type": "string" },
+            "status": { "enum": ["unresolved", "cleared", "withdrawn"] },
+            "source": { "type": "string" },
+            "text_ref": { "type": ["string", "null"] }
+          }
+        },
+        "text_ref": {
+          "type": ["string", "null"],
+          "description": "Pointer into an author-reviewed text store. The text itself never lives in this manifest."
+        }
+      }
+    },
+    "credit": {
+      "type": "object",
+      "required": ["origin_kind", "source_atom_ids", "credit_required", "credit_style"],
+      "properties": {
+        "origin_kind": { "enum": ["author", "borrowed", "reader", "community", "public-domain"] },
+        "source_atom_ids": { "type": "array", "items": { "type": "string" } },
+        "credit_required": { "type": "boolean" },
+        "credit_style": { "type": ["string", "null"] }
+      }
+    },
+    "atom": {
+      "type": "object",
+      "required": ["atom_id", "unit", "piece_id", "version_id", "page_id", "source_ids", "region", "source_asset_ids", "lineage", "reading", "credit"],
+      "properties": {
+        "atom_id": {
+          "type": "string",
+          "pattern": "^vf:atom:",
+          "description": "Stable, path-like identity. T02 owns the final identifier contract; T08 uses the existing j.json piece/version/page/line ids provisionally."
+        },
+        "unit": { "enum": ["poem", "stanza", "line", "word", "glyph", "mark", "combination"] },
+        "piece_id": { "type": "string" },
+        "version_id": { "type": "string" },
+        "page_id": { "type": "string" },
+        "parent_atom_id": { "type": ["string", "null"] },
+        "source_ids": {
+          "type": "object",
+          "properties": {
+            "piece_id": { "type": "string" },
+            "version_id": { "type": "string" },
+            "page_id": { "type": "string" },
+            "line_id": { "type": "string" },
+            "block_index": { "type": "integer" },
+            "line_index": { "type": "integer" },
+            "global_line_index": { "type": "integer" },
+            "word_ordinal": { "type": "integer" },
+            "glyph_ordinal": { "type": "integer" },
+            "mark_ordinal": { "type": "integer" }
+          }
+        },
+        "region": { "$ref": "#/$defs/region" },
+        "author_box": {
+          "type": "object",
+          "properties": {
+            "bbox": { "type": ["array", "null"] },
+            "state": { "enum": ["present-in-site-data", "missing-in-site-data"] },
+            "iou_with_owner_box": { "type": ["number", "null"] },
+            "ink_x1_minus_author_x1": { "type": ["number", "null"] }
+          }
+        },
+        "source_asset_ids": { "type": "array", "items": { "type": "string" } },
+        "lineage": { "$ref": "#/$defs/lineage" },
+        "reading": { "$ref": "#/$defs/reading" },
+        "credit": { "$ref": "#/$defs/credit" },
+        "structure": { "type": "object" },
+        "combination": {
+          "type": "object",
+          "required": ["operation", "input_atom_ids", "operator"],
+          "properties": {
+            "operation": { "enum": ["cut", "fold-in", "erasure", "cipher", "misread", "borrowed"] },
+            "input_atom_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "operator": { "enum": ["author", "external"] },
+            "rule": { "type": ["string", "null"], "description": "Chance or rule, as the author recorded it. The tool never chooses." },
+            "seed": { "type": ["integer", "null"] },
+            "text_ref": { "type": ["string", "null"] }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "unit": { "const": "combination" } } },
+          "then": { "required": ["combination"] }
+        }
+      ]
+    }
+  }
+}

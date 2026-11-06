@@ -1,5 +1,9 @@
 # Handwritten journal: plan and state
 
+Working document for the journal-handwritten-web project. Last updated 2026-11-05.
+||||||| 038d01f
+Working document for the journal-handwritten-web project. Last updated 2026-10-28.
+
 ## T06 identity and audience update — 2026-11-05 (America/New_York)
 
 This dated addendum narrows the historical identity/audience items below; it does not approve a release or replace T03's clearance procedure. The current author-directed identity is `vers.forms`, public title `versforms`, public font `ajp-scribbles`; earlier naming candidates remain history. Account/email control and a custom domain are not established by an old availability result. The existing `versforms.pages.dev` endpoint is the no-spend destination option.
@@ -113,6 +117,32 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 ## Rebuild order (technical)
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
+## T08 source-region contract and private pilot (2026-11-05)
+
+Work is in an isolated branch `t08/source-regions-pilot-2026-11-05`; nothing is merged or published.
+
+- **Contract**: one atom identity/region/method/lineage/credit model for line, word, glyph, mark and
+  derived combinations; a separate, dateable visibility policy. Implemented in
+  `tools/source_regions.py`, documented in `docs/contracts/source-regions.md`, tested in
+  `tests/test_source_regions.py`.
+- **Pilot**: `p001` / `p001-diary1-0` / page `diary1`, 441 atoms, 22 lines, centered line-length
+  structure, no poem text. Owner segmentation reused read-only from `alive-prototype` (HEAD
+  `eece4f5`), not reimplemented.
+- **Eligibility**: the derived policy allows a private-local build and refuses public release
+  (`pool: unassigned`, empty whitelist, no clearance). A successful check is not artistic approval.
+- **Evidence**: owner prototype reproduced headless — 0 atlas pixels outside 22 line regions, all 22
+  source line ids used, no console errors (`docs/pilots/t08-p001/evidence/`).
+- **Hand-offs**: Cut and Key Sheet/page:line:word cipher contracts are prepared for author-operated
+  tools and staged through the studio integrator; no UI is built. T02's identifier/deposit contract
+  was not located, so ids stay provisional. T03's clearance contract is a draft (PR #119), not
+  authority.
+- **Open artistic questions** remain as mapped in `docs/pilots/t08-p001/decision-map.md`: chance vs
+  rule; revised/struck/inserted atoms; borrowed-line credit; puzzle locks/hints/solver credit;
+  participation; journal-vocabulary constraint; poem 100 from poems 1–99. Markov/n-gram text,
+  sensors, location/weather, reconstructed strokes and an automatic misread generator are not built
+  and must not be inferred from the contract.
+||||||| 038d01f
+
 ## T10 technical preparation — 2026-11-05 review baseline
 
 The later roots/glyphs work in #12 and research follow-ups in #33 now have an isolated, private script-realization fixture and author-glyph workflow. See [the T10 record](t10-script-realizations.md). This is technical preparation: exact existing `p001` / `p001-diary1-0`, English/Latin, unchanged source reading, original supplied font. It is not adoption of Greek-first, a translated poem, an expanded multi-script font, or a release decision.
