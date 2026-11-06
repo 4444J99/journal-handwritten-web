@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Notes · private studio</title>
+  <link rel="stylesheet" href="notes.css">
+  <script src="cf-adapter.js"></script>
+  <script type="module" src="notes-workbench.mjs"></script>
+</head>
+<body>
+<header><div><p class="eyebrow">Private studio</p><h1>Notes &amp; contributions</h1></div><a href="index.html">Return to review studio</a></header>
+<main>
+  <p id="connection" role="status" aria-live="polite">Connecting to the studio…</p>
+  <p class="boundary">Each save keeps a new revision. Review and clearance enable a private preview. Publication remains a separate release step.</p>
+  <nav aria-label="Workbench sections">
+    <a href="#editor">Write &amp; revise</a><a href="#history">History</a><a href="#preview">Reader preview</a><a href="#participation">Participation choices</a><a href="#backup">Export &amp; restore</a>
+  </nav>
+  <div class="workspace">
+    <aside aria-labelledby="source-title">
+      <h2 id="source-title">Source</h2>
+      <label for="piece">Poem</label><select id="piece"></select>
+      <label for="version">Source version</label><select id="version"></select>
+      <label for="line">Anchor</label><select id="line"><option value="">Whole version</option></select>
+      <details><summary>Word or phrase anchor</summary>
+        <p>Choose a line first. A repeated phrase needs explicit start and end positions. The stored selection will be checked against the source.</p>
+        <label for="word-quote">Exact word or phrase</label><input id="word-quote" type="text" autocomplete="off">
+        <div class="columns"><div><label for="word-start">Start (0-based Unicode code points)</label><input id="word-start" type="number" min="0"></div><div><label for="word-end">End (exclusive)</label><input id="word-end" type="number" min="1"></div></div>
+      </details>
+      <p id="source-status" class="subtle"></p>
+      <ol id="source-lines" class="source-lines"></ol>
+    </aside>
+    <section id="editor" aria-labelledby="editor-title">
+      <h2 id="editor-title">Write &amp; revise</h2>
+      <label for="record">Existing record</label><select id="record"><option value="">New note or contribution</option></select>
+      <p id="record-status" class="subtle" aria-live="polite"></p>
+      <form id="note-form">
+        <fieldset id="editing" disabled>
+          <div class="columns"><div><label for="family">Record</label><select id="family"><option value="note">Note</option><option value="contribution">Contribution</option></select></div><div><label for="kind">Type</label><select id="kind"></select></div></div>
+          <div class="columns"><div><label for="author-id">Author / contributor ID</label><input id="author-id" required autocomplete="off" value="4444J99"></div><div><label for="credit">Credit as displayed</label><input id="credit" required autocomplete="off" value="Anthony James Padavano"></div></div>
+          <div class="columns"><div><label for="poem-date">Poem date (leave blank if unknown)</label><input id="poem-date" type="text" placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"></div><div><label for="date-certainty">Poem date certainty</label><select id="date-certainty"><option value="unknown">Unknown</option><option value="recorded">Recorded</option><option value="approximate">Approximate</option></select></div><div><label for="note-date">Note / contribution date</label><input id="note-date" type="date" required></div></div>
+          <label for="note-text">Your text</label><textarea id="note-text" rows="9" required></textarea>
+          <p class="subtle">Creative and interpretive text comes from its author. The workbench does not generate it.</p>
+          <label for="content-provenance">Content provenance</label><select id="content-provenance"><option value="author-supplied">Supplied by the author</option><option value="contributor-supplied">Supplied by the contributor</option><option value="technical-fixture">Technical fixture · always excluded from public output</option></select>
+          <details><summary>Citation or source reference</summary><label for="citation-label">Citation / reference as supplied</label><input id="citation-label"><label for="citation-url">Source URL (optional)</label><input id="citation-url" type="url"><label for="citation-locator">Page, section or source locator (optional)</label><input id="citation-locator"></details>
+          <label for="visibility">Visibility intent</label><select id="visibility"><option value="private">Private</option><option value="public-candidate">Candidate for release review</option></select>
+          <label for="change-reason">Revision reason</label><input id="change-reason" required value="Initial note">
+          <label id="reanchor-label" hidden><input id="reanchor" type="checkbox"> I reviewed the selected source; save a new anchor with this revision</label>
+          <p id="anchor-warning" class="subtle" aria-live="polite"></p>
+          <div id="contribution-fields" hidden>
+            <h3>Contribution permissions</h3>
+            <p>Participation stays around the author’s 100. Saving this record does not create or number a poem.</p>
+            <label for="permission-state">Permission status</label><select id="permission-state"><option value="pending">Pending</option><option value="granted">Granted</option><option value="revoked">Revoked</option></select>
+            <label><input id="permission-web" type="checkbox"> Permission covers website display</label>
+            <label><input id="permission-print" type="checkbox"> Permission covers print</label>
+            <label for="permission-evidence">Private permission evidence / locator</label><textarea id="permission-evidence" rows="2"></textarea>
+          </div>
+          <div class="actions"><button type="submit" id="save-note">Save new revision</button><button type="button" id="new-note" class="secondary">New record</button><button type="button" id="discard-draft" class="secondary" disabled>Discard unsaved edits</button></div>
+        </fieldset>
+      </form>
+      <p id="save-status" role="status" aria-live="polite"></p>
+      <section aria-labelledby="review-title">
+        <h3 id="review-title">Review selected revision</h3>
+        <p class="subtle">Acceptance and clearance are recorded separately. Editing the text resets both.</p>
+        <label for="reviewer">Editor / reviewer ID</label><input id="reviewer" value="4444J99" disabled>
+        <fieldset id="reviewing" disabled>
+          <div class="actions"><button id="accept-note" type="button">Accept editorially</button><button id="clear-note" type="button" class="secondary">Clear for release review</button><button id="hold-note" type="button" class="secondary">Hold / revoke clearance</button></div>
+          <p>No publication is performed here.</p>
+        </fieldset>
+      </section>
+    </section>
+  </div>
+  <section id="history"><h2>Revision history</h2><div id="history-content"><p>Select a saved record to inspect its history.</p></div></section>
+  <section id="preview"><h2>Reader preview</h2>
+    <p>This private preview only admits the selected version’s accepted, cleared records. Technical fixtures are labeled and cannot enter public output.</p>
+    <label for="preview-placement">Placement preview · does not save a placement decision</label><select id="preview-placement"><option value="below">Below the poem · current prototype</option><option value="margin">Beside the poem · margin proposal</option></select>
+    <p class="subtle">Both layouts show the same cleared records and source anchors. The margin proposal stacks below the poem on a narrow screen. Inline word marks remain a reader integration decision.</p>
+    <div class="actions"><button type="button" id="reveal-notes">Reveal notes</button><button type="button" id="hide-notes" class="secondary">Hide notes</button></div>
+    <div id="reader-surface" class="reader-surface" data-placement="below"><div id="reader-poem"></div><div id="reader-notes"></div></div>
+    <p id="preview-status" role="status"></p>
+  </section>
+  <section id="participation"><h2>Participation choices · previews</h2>
+    <p>The default is participation <strong>around the author’s 100</strong>, derived by Claude on November 5, 2026. The participation format remains undecided.</p>
+    <div class="option-grid">
+      <article><h3>Author-only notes</h3><p>Private writing, revision, citations, and a separate release review. Available in this workbench.</p></article>
+      <article><h3>Invited contributions</h3><p>Contributor identity → permission and credit → editorial review → publication clearance. Invitations and intake remain inactive.</p><button disabled>Invitations pending author decision</button></article>
+      <article><h3>Open submissions</h3><p>A submission would enter a private review queue. Accepted work would still require permission, credit and explicit release.</p><button disabled>Submissions pending author decision</button></article>
+    </div>
+    <details><summary>Placement and reflection timing</summary>
+      <p><strong>Footnote:</strong> a line or word anchor, revealed only on request. <strong>Endnote:</strong> a version-associated note revealed after the poem. <strong>Reflection:</strong> a dated personal note; endnote placement is a proposal.</p>
+      <p><strong>Immediate reflection:</strong> record the note date when written. <strong>After a gap:</strong> add a later revision with its own note date. Neither option changes the poem’s recorded date. No delay is selected automatically.</p>
+      <div class="columns timing-fixtures"><article><h3>Same-day note</h3><p class="subtle">Technical fixture dates</p><dl><dt>Poem date</dt><dd>2026-11-05</dd><dt>Note date</dt><dd>2026-11-05</dd></dl></article><article><h3>Later note</h3><p class="subtle">Technical fixture dates</p><dl><dt>Poem date</dt><dd>2020-03-01</dd><dt>Note date</dt><dd>2026-11-05</dd></dl></article></div>
+      <p>Possible contribution types include response poems, prompts, readings, music, hand-copies and critical notes. A co-writing proposal remains outside the numbered 100 until the author decides its treatment.</p>
+      <p>Reading, music and hand-copy records currently hold text and source references. Media uploads and contributor intake are pending integration decisions.</p>
+    </details>
+  </section>
+  <section id="backup"><h2>Export &amp; restore</h2><p>Export includes every note and contribution revision, including private text and permission evidence. Keep the backup private. Restore adds missing revisions and refuses conflicting IDs.</p>
+    <div class="actions"><button id="export-notes" type="button" disabled>Export private backup</button><label class="file-label" for="restore-notes">Restore backup<input id="restore-notes" type="file" accept="application/json,.json" disabled></label></div><p id="backup-status" role="status"></p>
+  </section>
+</main>
+</body>
+</html>
