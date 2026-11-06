@@ -1240,6 +1240,11 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     result = verify_manifest(manifest, repo=repo)
     if not result["ok"]:
         raise ValueError("invalid region manifest: " + "; ".join(result["errors"][:4]))
+    for member in manifest["atoms"]:
+        if not isinstance(member["atom_id"], str) or not member["atom_id"] or any(
+                not isinstance(member[key], str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", member[key])
+                for key in ("piece_id", "version_id", "page_id")):
+            raise ValueError("bounded private preview requires supported atom identities")
     if not isinstance(atom_id, str) or not re.fullmatch(r"vf:atom:[A-Za-z0-9_./:-]+", atom_id):
         raise ValueError("bounded private preview requires a supported selected region identity")
     selected = [a for a in manifest["atoms"] if a["atom_id"] == atom_id]
@@ -1288,14 +1293,16 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     # A partially aligned block cannot establish which surviving box belongs to
     # each transcript line. Match the current reader's whole-block fallback.
     block = next(b for b in canonical["blocks"] if b["id"] == line["blockId"])
+    for member_id in block["lineIds"]:
+        geometry = lines[member_id]["geometry"]
+        if geometry["status"] == "available":
+            box = geometry["studioBox"]
+            if not isinstance(box, list) or len(box) != 4 or any(type(v) not in (int, float) for v in box) or not (0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1):
+                raise ValueError("canonical source anchor is invalid: " + member_id)
     if any(lines[lid]["geometry"]["status"] != "available" for lid in block["lineIds"]):
         anchor.update(status="unavailable", box=None)
         if not anchor["reason"]:
             anchor["reason"] = "block-source-geometry-incomplete"
-    if anchor["status"] == "available":
-        box = anchor["box"]
-        if not isinstance(box, list) or len(box) != 4 or any(type(v) not in (int, float) for v in box) or not (0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1):
-            raise ValueError("canonical source anchor is invalid")
     assets = _checked_source_assets(manifest, repo)
     asset_ids = atom.get("source_asset_ids", [])
     if len(asset_ids) != 1 or asset_ids[0] not in assets:

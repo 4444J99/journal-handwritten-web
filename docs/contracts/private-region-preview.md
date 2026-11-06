@@ -39,7 +39,10 @@ under the existing private contract; withheld sources/assets and explicit
 scope/version/line vetoes refuse. A policy change requires fresh inspection.
 
 This bounded reader route requires every atom and its source-line lineage to
-belong to the selected current piece/version. The selected line's block index
+belong to the selected current piece/version. Every atom ID must be a nonempty
+string; every atom's piece, version and page IDs must start with a letter or
+digit, contain only letters, digits, `_`, `.`, or `-`, and be at most 128
+characters. These checks include nonselected atoms. The selected line's block index
 must agree with both canonical membership and the current source snapshot. Its
 atom ID uses `vf:atom:` followed by letters, digits, `_`, `.`, `/`, `:`, or `-`.
 There must be exactly one `page-scan` asset at tier `p` on the selected page,
@@ -122,7 +125,10 @@ invalidate the preview even when the logical source fingerprint is unchanged.
 An unavailable canonical anchor has `box:null`; if any line in its block lacks
 geometry, the whole block remains unavailable, matching the reader's refusal to
 guess alignment from mismatched line/box counts. The old atom's inferred polygon
-must never replace it. The package retains the source image for byte/provenance
+must never replace it. Every line marked available in the selected block must
+also have a valid normalized box; an invalid peer box refuses export before any
+output is created, without changing its geometry status or inventing a box.
+The package retains the source image for byte/provenance
 verification, but an unavailable-anchor view displays the explicit unavailable
 state instead of an image or substituted crop. Available views identify the
 image as full source, not selected-region exclusion proof.

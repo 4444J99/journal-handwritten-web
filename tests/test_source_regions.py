@@ -696,6 +696,50 @@ class PrivateRegionPreviewTests(unittest.TestCase):
             self.assertEqual(len(general["source_bindings"]), 2)
             self.assert_preview_refusal_preserves_files(manifest, policy, repo, folder, "bounded private preview")
 
+    def test_private_preview_refuses_nonselected_reader_page_identities_before_writes(self):
+        for page_id in ("diary1/bounded-unsupported", "_diary1", "d" * 129, "", None):
+            with self.subTest(page_id=page_id), tempfile.TemporaryDirectory() as tmp:
+                folder = Path(tmp); repo = self.copied_source(folder)
+                manifest = copy.deepcopy(self.manifest)
+                next(a for a in manifest["atoms"] if a["unit"] == "poem")["page_id"] = page_id
+                manifest = reseal(manifest)
+                self.assertTrue(sr.verify_manifest(manifest, repo=repo)["ok"])
+                self.assertTrue(sr.evaluate(manifest, self.policy, "private-local",
+                    release_context={"source_repo": repo})["allowed"])
+                self.assert_preview_refusal_preserves_files(manifest, self.policy, repo, folder,
+                    "bounded private preview requires supported atom identities")
+
+    def test_private_preview_accepts_nonselected_reader_page_identity_boundary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo = self.copied_source(folder)
+            manifest = copy.deepcopy(self.manifest)
+            poem = next(a for a in manifest["atoms"] if a["unit"] == "poem")
+            poem["page_id"] = "d" + "_.-9" * 31 + "abc"
+            self.assertEqual(len(poem["page_id"]), 128)
+            manifest = reseal(manifest)
+            out = folder / "preview"
+            sr.export_private_preview(manifest, self.policy, self.atom_id, out, repo=repo)
+            self.assertEqual(load(out / "region-manifest.json"), manifest)
+
+    def test_private_preview_refuses_invalid_available_peer_box_before_writes(self):
+        import source_foundation as foundation
+        for box in ([0, 0, 2, 1], [0, 0, 0, 1], [False, 0, 1, 1]):
+            with self.subTest(box=box), tempfile.TemporaryDirectory() as tmp:
+                folder = Path(tmp); repo = self.copied_source(folder)
+                canonical = load(repo / "source/canonical.json")
+                peer = next(line for line in canonical["lines"] if line["id"] == "diary1-0-1")
+                self.assertEqual(peer["geometry"]["status"], "available")
+                peer["geometry"]["studioBox"] = box
+                (repo / "source/canonical.json").write_text(json.dumps(canonical))
+                foundation.validate(canonical)
+                foundation.rebuild(canonical, repo, write=True)
+                self.assertEqual(foundation.rebuild(canonical, repo)["changed"], [])
+                self.assertTrue(sr.verify_manifest(self.manifest, repo=repo)["ok"])
+                self.assertTrue(sr.evaluate(self.manifest, self.policy, "private-local",
+                    release_context={"source_repo": repo})["allowed"])
+                self.assert_preview_refusal_preserves_files(self.manifest, self.policy, repo, folder,
+                    "canonical source anchor is invalid")
+
     def test_private_preview_refuses_malformed_consumed_policy_before_writes(self):
         cases = ["missing-pool", "unknown-pool", "null-pool", "empty-pool", "array-pool",
                  "null-scopes", "unknown-scopes", "string-scopes", "empty-withheld-asset",
