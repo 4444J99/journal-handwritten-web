@@ -1854,7 +1854,7 @@ class HardenedPostingTests(Base):
         with mock.patch.object(post_poem, "git", spy):
             self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
         pushes = [c for c in calls if c and c[0] == "push"]
-        self.assertEqual(pushes, [("push", "origin", "refs/heads/post/p001:refs/heads/post/p001")])
+        self.assertEqual(pushes, [("push", "--no-follow-tags", "origin", "refs/heads/post/p001:refs/heads/post/p001")])
         self.assertEqual(git(bare, "rev-parse", "main"), before)
         self.assertEqual(git(bare, "rev-parse", "post/p001"), git(clone, "rev-parse", "post/p001"))
 
@@ -2155,7 +2155,7 @@ class HardenedPostingTests(Base):
         clone, bare = make_public(self.tmp)
         git(clone, "config", "remote.origin.mirror", "true")
         self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
-        self.assertIn("remote.origin.mirror is not set", self.out)
+        self.assertIn("remote.origin.mirror is disabled or unset", self.out)
 
     # m3. the committed BYTES are compared with the build, not only paths and sizes
     def test_a_clean_filter_that_changes_bytes_without_changing_sizes_is_refused(self):
