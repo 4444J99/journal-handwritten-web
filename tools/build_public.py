@@ -291,6 +291,49 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                     owner[(pg, b)] = (npi, newv[old], st.index(newv[old]))
     pages = [p for p in d["pages"] if p["id"] in keep]
 
+    # Resolve current accepted readings before creating any output. Explicit
+    # corrections still win; preserved raw lines are never changed in place.
+    effective_lines, version_lines = {}, {}
+    for p in pages:
+        selected_blocks = keep[p["id"]]
+        if (p.get("sourceStatus") == "staged-untranscribed"
+                or not isinstance(p.get("a"), list) or len(p["a"]) != 5
+                or any(p["B"][b].get("transcriptionStatus") == "staged-untranscribed" for b in selected_blocks)):
+            sys.exit(f"selected source {p['id']} is untranscribed or has no verified atlas; output unchanged")
+        for bi in selected_blocks:
+            block = p["B"][bi]
+            for li, original in enumerate(block["L"]):
+                line_id = block.get("lineIds", [])[li] if "lineIds" in block else f"{p['id']}-{bi}-{li}"
+                key = (p["id"], bi, li)
+                if block.get("t") != 4:
+                    if key not in corrections and line_id in d.get("acceptedReadings", {}):
+                        corrections[key] = d["acceptedReadings"][line_id]
+                    if key in corrections:
+                        if not isinstance(corrections[key], str):
+                            sys.exit(f"nontext correction for {line_id}; output unchanged")
+                        effective_lines[line_id] = corrections[key]
+                for k, selected in chosen.items():
+                    for vi in selected:
+                        version = pieces[k]["V"][vi]
+                        if any(pg == p["id"] and bi in bs for pg, bs in version["P"]):
+                            version_lines.setdefault((k, version["id"]), set()).add(line_id)
+    unknown_corrections = set(corrections) - {
+        (p["id"], bi, li) for p in pages for bi in keep[p["id"]]
+        for li in range(len(p["B"][bi]["L"]))}
+    if unknown_corrections:
+        sys.exit(f"corrections for lines outside the published blocks: {sorted(unknown_corrections)[:5]}")
+
+    # Generate current v2 bindings from preserved studio originals and the exact
+    # output readings. Never copy a caller-supplied digest or a withheld version.
+    bindings = {}
+    if (site.parent / "studio/data/review.json").is_file():
+        from script_realizations import source_snapshot
+        from source_fingerprint import source_binding
+        for (piece_id, version_id), line_ids in version_lines.items():
+            snapshot = source_snapshot(site.parent, piece_id, version_id,
+                correction_values={lid: value for lid, value in effective_lines.items() if lid in line_ids})
+            bindings[f"{piece_id}/{version_id}"] = source_binding(snapshot)
+
     # which other pieces (and unpublished versions of published pieces) share a published page
     shared, siblings = {}, {}
     for p in d["pieces"]:
@@ -375,6 +418,13 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
         "pieces": out_pieces,
         "prov": prov,
     }
+    if bindings:
+        pub["sourceBindings"] = bindings
+    selected_line_ids = set().union(*version_lines.values()) if version_lines else set()
+    unavailable = {lid: {"status": "unavailable"} for lid, anchor in d.get("sourceAnchors", {}).items()
+                   if lid in selected_line_ids and anchor.get("status") == "unavailable"}
+    if unavailable:
+        pub["sourceAnchors"] = unavailable
     (out / "data" / "j.json").write_text(json.dumps(pub, ensure_ascii=False, separators=(",", ":")))
 
     fonts, font_error = [], None

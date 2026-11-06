@@ -3,10 +3,14 @@ import json
 from pathlib import Path
 import re
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from build_public import filter_reader_metadata
+from build_public import build
+from script_realizations import source_snapshot
+from source_fingerprint import source_binding
 
 
 class MetadataFiltering(unittest.TestCase):
@@ -48,6 +52,45 @@ class MetadataFiltering(unittest.TestCase):
         self.assertEqual(self.parse(out, "PAL"), [])
         self.assertEqual(self.parse(out, "HF"), [])
         self.assertNotIn('"diary53a"', out)
+
+    def test_filtered_output_binds_only_exact_selected_effective_readings(self):
+        root = Path(__file__).resolve().parents[1]
+        original = json.loads((root / "site/data/j.json").read_text())
+        piece = next(p for p in original["pieces"] if p["id"] == "p001")
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp) / "output"
+            build(out, ["p001"], site=root / "site", select={"p001": [0]},
+                  corrections={("diary1", 0, 0): "synthetic technical fixture"}, rename_fonts=False)
+            data = json.loads((out / "data/j.json").read_text())
+            version = piece["V"][0]["id"]
+            expected = source_binding(source_snapshot(root, "p001", version,
+                correction_values={"diary1-0-0": "synthetic technical fixture"}))
+            self.assertEqual(data["sourceBindings"], {f"p001/{version}": expected})
+            self.assertNotEqual(expected, original["sourceBindings"][f"p001/{version}"])
+            self.assertEqual(data["pages"][0]["B"][0]["L"][0], "synthetic technical fixture")
+            self.assertEqual(data["sourceAnchors"]["diary1-2-3"], {"status": "unavailable"})
+            self.assertNotIn("acceptedReadings", data)
+            self.assertTrue(all(key.startswith("diary1-") for key in data["sourceAnchors"]))
+            build(out, ["p001"], site=root / "site", select={"p001": [1]}, rename_fonts=False)
+            data = json.loads((out / "data/j.json").read_text())
+            for lid, value in original["acceptedReadings"].items():
+                pg, bi, li = lid.rsplit("-", 2)
+                if pg == "diary62a":
+                    page = next(p for p in data["pages"] if p["id"] == pg)
+                    self.assertEqual(page["B"][int(bi)]["L"][int(li)], value)
+
+    def test_staged_photo_refusal_preserves_existing_output(self):
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / "site/data/j.json").read_text())
+        next(p for p in data["pages"] if p["id"] == "diary1")["a"] = None
+        with tempfile.TemporaryDirectory() as temp:
+            site, out = Path(temp) / "site", Path(temp) / "output"
+            (site / "data").mkdir(parents=True); out.mkdir()
+            (site / "data/j.json").write_text(json.dumps(data))
+            (out / "sentinel").write_text("preserve prior output")
+            with self.assertRaisesRegex(SystemExit, "untranscribed or has no verified atlas"):
+                build(out, ["p001"], site=site, select={"p001": [0]}, rename_fonts=False)
+            self.assertEqual((out / "sentinel").read_text(), "preserve prior output")
 
 
 if __name__ == "__main__":
