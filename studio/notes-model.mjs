@@ -1,6 +1,6 @@
-// T05 proposed notes contract. Existing piece/version/line IDs are preserved;
-// fingerprints and word selectors await T02 acceptance. No publication authority
-// is conferred by these local filters (see the proposed T03 clearance contract).
+// T05 notes use the T02 v2 logical source contract. Existing IDs and v1 history
+// are preserved; a legacy anchor needs an explicit source rebind. These local
+// source checks confer no publication authority.
 export const NOTE_KINDS = Object.freeze(['footnote', 'endnote', 'reflection', 'research-dossier', 'critical-note', 'factual-citation']);
 export const CONTRIBUTION_TYPES = Object.freeze(['response-poem', 'prompt', 'reading', 'music', 'hand-copy', 'critical-note', 'co-writing-proposal']);
 export const PARTICIPATION_DEFAULT = Object.freeze({
@@ -27,40 +27,8 @@ function uuid(prefix) {
   if (!globalThis.crypto?.randomUUID) throw new Error('Supply an explicit ID when crypto.randomUUID is unavailable.');
   return prefix + '-' + globalThis.crypto.randomUUID();
 }
-export function stableJSON(value) {
-  if (Array.isArray(value)) return '[' + value.map(stableJSON).join(',') + ']';
-  if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + stableJSON(value[k])).join(',') + '}';
-  return JSON.stringify(value);
-}
-
-// Synchronous SHA-256 keeps source construction identical in browsers and Node.
-// It is a change detector, not a signature or evidence of author clearance.
-export function sha256(text) {
-  const bytes = new TextEncoder().encode(text), length = bytes.length;
-  const padded = new Uint8Array(Math.ceil((length + 9) / 64) * 64);
-  padded.set(bytes); padded[length] = 128;
-  const view = new DataView(padded.buffer);
-  view.setUint32(padded.length - 8, Math.floor(length / 0x20000000));
-  view.setUint32(padded.length - 4, (length * 8) >>> 0);
-  const k = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
-  const h = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]), w = new Uint32Array(64);
-  const r = (n, bits) => (n >>> bits) | (n << (32 - bits));
-  for (let offset = 0; offset < padded.length; offset += 64) {
-    for (let i = 0; i < 16; i++) w[i] = view.getUint32(offset + 4 * i);
-    for (let i = 16; i < 64; i++) {
-      const a = w[i - 15], b = w[i - 2];
-      w[i] = (w[i - 16] + (r(a,7) ^ r(a,18) ^ (a >>> 3)) + w[i - 7] + (r(b,17) ^ r(b,19) ^ (b >>> 10))) >>> 0;
-    }
-    let [a,b,c,d,e,f,g,z] = h;
-    for (let i = 0; i < 64; i++) {
-      const t1 = (z + (r(e,6) ^ r(e,11) ^ r(e,25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) >>> 0;
-      const t2 = ((r(a,2) ^ r(a,13) ^ r(a,22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
-      z=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;
-    }
-    [a,b,c,d,e,f,g,z].forEach((n,i) => { h[i] = (h[i] + n) >>> 0; });
-  }
-  return 'sha256:' + [...h].map(n => n.toString(16).padStart(8,'0')).join('');
-}
+import {stableJSON, sha256, sourceFingerprint, sourceFingerprintV1} from './source-fingerprint.mjs';
+export {stableJSON, sha256} from './source-fingerprint.mjs';
 const digest = value => sha256(stableJSON(value));
 
 function dateValue(value) {
@@ -74,7 +42,8 @@ function instant(value) {
 }
 
 /** Build only from existing exact V[].P membership; review stack order is unused. */
-export function buildSourceCatalog(site, review, { reviews = {} } = {}) {
+export function buildSourceCatalog(site, review, { reviews = null } = {}) {
+  reviews = {...(site?.acceptedReviews || {}), ...(review?.acceptedReviews || {}), ...(reviews || {})};
   if (!Array.isArray(site?.pieces) || !Array.isArray(review?.pages)) throw new Error('Existing pieces and review pages are required.');
   const pages = new Map(), lineCounts = new Map();
   for (const page of review.pages) {
@@ -98,28 +67,31 @@ export function buildSourceCatalog(site, review, { reviews = {} } = {}) {
           const key = pageId + '/' + blockIndex, block = page.blocks?.[blockIndex];
           if (!block || seen.has(key)) { issues.push('missing-or-duplicate-block:' + key); continue; }
           seen.add(key);
-          for (const line of block.lines || []) {
+          for (const [lineIndex, line] of (block.lines || []).entries()) {
+            if (line.transcriptionStatus === 'untranscribed') issues.push('untranscribed-line:' + line.id);
             if (!validID(line.id) || lineCounts.get(line.id) !== 1 || typeof line.tx !== 'string') { issues.push('invalid-or-duplicate-line:' + line.id); continue; }
             let text = line.tx;
             const correction = own(reviews, line.id) ? reviews[line.id] : null;
             if (block.t !== 'quotation' && correction?.status === 'corrected') {
               if (typeof correction.text !== 'string' || typeof correction.original !== 'string') issues.push('invalid-review:' + line.id);
-              else if (correction.original !== line.tx && correction.text !== line.tx) issues.push('stale-review:' + line.id);
+              else if (correction.original !== line.tx) issues.push('stale-review:' + line.id);
               else text = correction.text;
             }
-            lines.push({ lineId: line.id, text, originalText: line.tx, pageId, blockIndex, blockType: block.t || 'text' });
+            lines.push({ lineId: line.id, text, originalText: line.tx, pageId, blockIndex, blockType: block.t || 'text',
+              breakBefore: typeof line.breakBefore === 'boolean' ? line.breakBefore : lines.length > 0 && lineIndex === 0 });
           }
         }
       }
       if (!lines.length) issues.push('empty-version');
-      const fingerprint = digest({ pieceId: piece.id, versionId: version.id, members, lines: lines.map(({lineId,text,blockType}) => ({lineId,text,blockType})) });
+      const logical = {pieceId:piece.id, versionId:version.id, members, lines};
+      const fingerprint = sourceFingerprint(logical), legacyFingerprint = sourceFingerprintV1(logical);
       const sourceDate = version.d ?? null;
-      return { pieceId: piece.id, versionId: version.id, members, lines, fingerprint, issues,
+      return { pieceId: piece.id, versionId: version.id, members, lines, fingerprint, sourceFingerprint:fingerprint, fingerprintVersion:2, legacyFingerprint, issues,
         poemDate: dateValue(sourceDate) ? {certainty:'recorded',value:sourceDate} : {certainty:'unknown',value:null}, sourceDate };
     });
     return { pieceId: piece.id, versions };
   });
-  return freeze({ format: 'versforms-notes-sources', version: 1, pieces,
+  return freeze({ format: 'versforms-notes-sources', version: 2, pieces,
     fingerprint: digest(pieces.map(p => ({pieceId:p.pieceId,versions:p.versions.map(v => ({versionId:v.versionId,fingerprint:v.fingerprint,issues:v.issues}))}))),
     provenance: clone(site.provenance || {kind:'existing-source-catalog'}) });
 }
@@ -149,7 +121,7 @@ export function createAnchor(catalog, {pieceId,versionId,lineId=null,word=null})
   const line = lineId === null ? null : version.lines.find(l => l.lineId === lineId);
   if (lineId !== null && !line) throw new Error('Line is not a member of this source version.');
   if (word && !line) throw new Error('A word selector requires an exact source line.');
-  return freeze({ schemaVersion:1, pieceId, versionId, versionFingerprint:version.fingerprint,
+  return freeze({ schemaVersion:1, fingerprintVersion:2, pieceId, versionId, versionFingerprint:version.fingerprint,
     members:clone(version.members), lineId, lineText:line?.text ?? null,
     word:word ? wordSelector(line.text,word) : null, sourceProvenance:clone(catalog.provenance) });
 }
@@ -161,6 +133,7 @@ export function validateAnchor(catalog, anchor) {
     else {
       reasons.push(...version.issues);
       if (stableJSON(anchor.members) !== stableJSON(version.members)) reasons.push('source-membership-changed');
+      if ((anchor.fingerprintVersion ?? 1) === 1) reasons.push('legacy-fingerprint-rebind-required');
       if (anchor.versionFingerprint !== version.fingerprint) reasons.push('source-version-changed');
       if (anchor.lineId !== null) {
         const line = version.lines.find(l => l.lineId === anchor.lineId);
@@ -189,7 +162,8 @@ function plainJSON(value, errors, path='$', seen=new Set()) {
 }
 function anchorErrors(anchor) {
   const errors = [];
-  if (!keys(anchor,['schemaVersion','pieceId','versionId','versionFingerprint','members','lineId','lineText','word','sourceProvenance'],'anchor',errors)) return errors;
+  if (!keys(anchor,['schemaVersion','fingerprintVersion','pieceId','versionId','versionFingerprint','members','lineId','lineText','word','sourceProvenance'],'anchor',errors)) return errors;
+  if (anchor.fingerprintVersion !== undefined && ![1,2].includes(anchor.fingerprintVersion)) errors.push('invalid anchor fingerprint version');
   if (anchor.schemaVersion !== 1 || !validID(anchor.pieceId) || !validID(anchor.versionId) || !HASH.test(anchor.versionFingerprint)) errors.push('invalid anchor identity/fingerprint');
   if (!Array.isArray(anchor.members) || !anchor.members.length || !anchor.members.every(m => Array.isArray(m) && m.length === 2 && typeof m[0] === 'string' && ID.test(m[0]) && Array.isArray(m[1]) && m[1].length && m[1].every(i => Number.isInteger(i) && i >= 0))) errors.push('invalid anchor membership');
   if (anchor.lineId === null) {

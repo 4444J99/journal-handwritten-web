@@ -1,0 +1,246 @@
+{
+  "schema": "versforms.source-review-report.v1",
+  "changed": [
+    {
+      "lineId": "diary1-0-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:d203677e25eeef761d5a83fe58f1a646471a4821e92f386b55b25b5a473d17ce"
+    },
+    {
+      "lineId": "diary1-0-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:a00a9e5669ea53540cb217a636562385a72dbd419b6acb1062dbb8997a99cce9"
+    },
+    {
+      "lineId": "diary1-0-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:a361c49bb09a693a7f3c438cb06d9a1438ec9146354fbd9c545225220372acd5"
+    },
+    {
+      "lineId": "diary1-1-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:d54c02d6a6c1f7445d0ca89ef1606d60ebaa1736f69437ca2f74316264da7591"
+    },
+    {
+      "lineId": "diary1-1-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:68ce2203977f7ec3c2d1fd1de7a01ff17fb2af29894f0dea4987024dd45d4120"
+    },
+    {
+      "lineId": "diary1-1-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:c14c9b7da93073547177ae37960c4d0a132020ebb83066bd9c9a3053bdf82b27"
+    },
+    {
+      "lineId": "diary1-1-3",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:597b092c97dcf2842170e51bc8593919327f4b99b3148b9880219bc7b5c4c79c"
+    },
+    {
+      "lineId": "diary1-2-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:3de80ff765ef55f23684430a1812b28e6dab0304996fc8166c4c737c41c6e4e7"
+    },
+    {
+      "lineId": "diary1-2-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:271cd669c197a35e749c6ffe8e521595696dcdbee780827299416e69611faa17"
+    },
+    {
+      "lineId": "diary1-2-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:e5903ce3871104e6b289a446a576bb2700cbe4edf9f530694deca5bdac8e151a"
+    },
+    {
+      "lineId": "diary1-2-3",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:f12a05024c586d5413c9cd1917a833a1736cf8267f0ed4d28933578247d988b0"
+    },
+    {
+      "lineId": "diary1-3-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:76ae347b5abfcaeb9e05920caad95d436e558fe2287f1fe6c1e273078b68d523"
+    },
+    {
+      "lineId": "diary1-3-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:7d6d2cbc53807522ce4b72d9412664b10f666e5b716e920d68e645692fa6d23f"
+    },
+    {
+      "lineId": "diary1-3-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:4c964acf89aaeed8bdc40e10133cdc1256eae4086ad2329708ee6ca2e2747c5b"
+    },
+    {
+      "lineId": "diary1-3-3",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:968d5ecd399734fabf0cdf5350dc4d9675fb4660d5a83509de4c32e922217dd9"
+    },
+    {
+      "lineId": "diary1-4-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:f974d71d23b7cde61ae54d5629c5de11bf77f3da1460034c9b896d4873c0c3df"
+    },
+    {
+      "lineId": "diary1-4-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:ed776590dae105c161bf25cce844dd720e334b6dd5750827a0f75fd1625b61ee"
+    },
+    {
+      "lineId": "diary1-4-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:9f327e7c73c7d46f2d97990332be316d07d0517257cd50d2668e3704e4564093"
+    },
+    {
+      "lineId": "diary1-5-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:d71028522958aabe459a49f97c4b0a0c86f870aa10c1bd9efc578b4ac9197ed0"
+    },
+    {
+      "lineId": "diary1-5-1",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:24f8d209f7846bd96ded1e2c511a03813e80bc4ab2cdd24ebae1f98a4e2e5227"
+    },
+    {
+      "lineId": "diary1-5-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:d4376b41bb86d0dc52c43420706e87500bae5388c5ddb3f3e477aaee99dfc0dc"
+    },
+    {
+      "lineId": "diary1-5-3",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:be975c552f1dde82a956733ac90badbcdeacae4ec44ceb3c8de5e32564810ed5"
+    },
+    {
+      "lineId": "diary62a-0-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:b276097c10f4e44c22266dc739162975eae5fc49a40f2100129de30d3bec8ccb"
+    },
+    {
+      "lineId": "diary62a-0-1",
+      "status": "corrected",
+      "previousDigest": null,
+      "documentDigest": "sha256:4ff72b9f7deba835aa054fc08f4c76c14d5dc82d997358ea304efac2cd8ff10f"
+    },
+    {
+      "lineId": "diary62a-0-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:aa885d69f020a5ccfe0f372d345ea24a1004850307736473b9ff8d14f693057e"
+    },
+    {
+      "lineId": "diary62a-0-3",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:b51f2c0e5a1c7440b781fcf31ae72e3cae8e11d567d5d1f815b003cb463c09c9"
+    },
+    {
+      "lineId": "diary62a-0-4",
+      "status": "corrected",
+      "previousDigest": null,
+      "documentDigest": "sha256:519ff640d574563c6e0dd78f5a9736b089245423194a33fb91850ebacb49e1a0"
+    },
+    {
+      "lineId": "diary62a-1-0",
+      "status": "corrected",
+      "previousDigest": null,
+      "documentDigest": "sha256:6781934bf1a65ee1c70cdb854dbbf4f4d5b83b32df70fa85175f14ff9a5ade96"
+    },
+    {
+      "lineId": "diary62a-2-0",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:3a2cc4bcd70652f9e746c737aa977f56885a002b837c8fb0307bf1a283238782"
+    },
+    {
+      "lineId": "diary62a-2-1",
+      "status": "corrected",
+      "previousDigest": null,
+      "documentDigest": "sha256:29b61152d7145a853c459826c72d49de52180885e7bba878b7773a748c92c814"
+    },
+    {
+      "lineId": "diary62a-2-2",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:c023cbc8e905488d461f119ba97e1e9c45d4beaa9abf0fbcc8eb9ed5de2e1e5d"
+    },
+    {
+      "lineId": "diary62a-2-3",
+      "status": "corrected",
+      "previousDigest": null,
+      "documentDigest": "sha256:7f8c33cc061e686b9342a17558647e2f84c7e5f4b5a8dea066b6cf3978764a68"
+    },
+    {
+      "lineId": "diary62a-2-4",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:bf39dec60a4a314b19cf05f3a7796706de6f560a02b968f3793b258fa13b05ed"
+    },
+    {
+      "lineId": "diary62a-2-5",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:c421d5d6c6c3c4fbba70512468c19e65ef5787ed93249fc922e2c5100ee2f965"
+    },
+    {
+      "lineId": "diary62a-2-6",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:d256eaa81e8f6141026a8a04e92fbdb5f87f30102175bc5eebb0bc6983a5567d"
+    },
+    {
+      "lineId": "diary62a-2-7",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:5f3101463454ede2e1a0c8fa9972e33020c36a224dd04019be3cc06bddb4d98c"
+    },
+    {
+      "lineId": "diary62a-2-8",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:b4a62be4696a7b0f001f51ea5deca0707dcdd0e30a61ace096c9ea1110f6ead5"
+    },
+    {
+      "lineId": "diary62a-2-9",
+      "status": "confirmed",
+      "previousDigest": null,
+      "documentDigest": "sha256:a8101034fb7fa82965a0ef9457566f46cc54160cdd94a4946850c41e059e6a01"
+    }
+  ],
+  "unchanged": [],
+  "rawOriginalsChanged": 0,
+  "before": "sha256:d51b9b8a9b0ee36d84aee70d5ddd233bb356756626dafa9b674c95a5da8b798d",
+  "after": "sha256:218cec8908ac04cf9a89b483db29a2ceb32f321b399d7e340e7cf0eab5d197e8",
+  "counts": {
+    "pages": 123,
+    "pieces": 126,
+    "versions": 156,
+    "lines": 2190,
+    "reviews": 38,
+    "unavailableAnchors": 589
+  },
+  "mode": "dry-run"
+}

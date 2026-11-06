@@ -1,0 +1,43 @@
+✔ pack/unpack CLI preserves every revision, source, date, identity and approval field (313.063929ms)
+✔ an old export without notes or contributions packs and restores as empty collections (162.138459ms)
+✔ existing output files, empty directories, populated directories and symlinks are never overwritten (445.120521ms)
+✔ pack and unpack reject non-directory exports and symlinked inputs (454.128631ms)
+✔ unsafe revision IDs, unexpected entries and filename/ID mismatches produce no output (226.131698ms)
+✔ missing parents and revision collisions fail full graph validation before pack/unpack writes (353.931054ms)
+✔ invalid backup and revision shapes are rejected before a destination is created (455.796377ms)
+✔ malformed UTF-8 in a document or backup is rejected without replacing author text (161.200125ms)
+✔ pack refuses an envelope larger than the 32 MiB unpack limit before creating output (2379.212663ms)
+✔ SHA-256 agrees with the runtime for Unicode and multi-block snapshots (4.580628ms)
+✔ legacy source records without notes retain exact IDs and remain unchanged (4.188226ms)
+✔ current repository IDs resolve by exact membership, independent of review stack order (61.836322ms)
+✔ anchors survive geometry changes but invalidate for source text or membership changes (1.888814ms)
+✔ effective author corrections invalidate old anchors; stale corrections block new anchors (1.849575ms)
+✔ wrong versions, foreign lines and ambiguous quotes are blocked without retargeting (0.755287ms)
+✔ creation is private, edits are append-only held drafts, and approval events retain original dates (4.108457ms)
+✔ private dossiers, unreviewed content, uncleared content and invalidated sources never project (5.189113ms)
+✔ projection whitelists display fields and excludes identity, permission evidence and history (2.620756ms)
+✔ fixture provenance cannot be removed through edits or imported descendants (1.075951ms)
+✔ forks are retained through backup/restore and block output until an explicit merge (3.242443ms)
+✔ export/restore preserves dates, sources, authorship, approval references and every revision (5.042873ms)
+✔ foreign parents, cycles and approval transfers across histories fail closed (2.996953ms)
+✔ contributions require explicit web permission and credit and never change poem count (2.50998ms)
+✔ safe structural validation rejects bad IDs, dates, scripts, unknown fields and changed approved payloads (2.386744ms)
+✔ public output needs released state, exact versions and revision-bound evidence even without fixtures (4.907109ms)
+✔ export waits for a complete initial snapshot; no false saved state without a database (3.420281ms)
+✔ same revision retries once; a changed revision ID collision preserves original history (1.428511ms)
+✔ restore preflights all existing revisions before writing any new history (0.607535ms)
+✔ interrupted restore can be retried without losing imported or prior revisions (0.878092ms)
+✔ read-only, unknown collection and oversized revisions cannot mutate storage (2.029576ms)
+✔ a failed save leaves no optimistic revision in the exported history (0.409858ms)
+✔ T02 shared vectors have identical Python and JS v1/v2 logical digests (6.184152ms)
+✔ catalog uses v2, preserves v1 history, and requires an explicit legacy rebind (3.856488ms)
+✔ only changing a stanza boundary invalidates a current anchor (0.732803ms)
+✔ accepted overlays preserve raw text and a stale original cannot pass by matching corrected text (0.623649ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5173.794307

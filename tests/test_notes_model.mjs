@@ -110,6 +110,9 @@ test('effective author corrections invalidate old anchors; stale corrections blo
   assert.equal(validateAnchor(buildSourceCatalog(source,review,{reviews:changedAgain}),correctedAnchor).valid,false);
   const stale={[id]:{status:'corrected',original:'unrelated original',text:'unrelated correction'}};
   assert.throws(()=>createAnchor(buildSourceCatalog(source,review,{reviews:stale}),selector),/stale-review/);
+  stale[id].text=original;
+  assert.throws(()=>createAnchor(buildSourceCatalog(source,review,{reviews:stale}),selector),/stale-review/);
+  assert.equal(correctedAnchor.fingerprintVersion,2);
   const quotation={'diary1-1-0':{status:'corrected',original:'ignored',text:'ignored'}};
   assert.equal(buildSourceCatalog(source,review,{reviews:quotation}).fingerprint,catalog.fingerprint);
 });

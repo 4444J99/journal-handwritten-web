@@ -108,22 +108,7 @@ def _unique(items, key, what):
     return result
 
 
-def source_fingerprint_v1(source):
-    # Historical v1 fingerprint: stanza boundaries (breakBefore) were ignored.
-    # Retained for readable history and explicit migration/rebind only.
-    return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
-                   "members": source["members"], "lines": [
-                       {k: line[k] for k in ("lineId", "text", "blockType")}
-                       for line in source["lines"]]})
-
-
-def source_fingerprint(source):
-    # v2 logical-structure digest: includes stanza boundaries (breakBefore).
-    # Coordinates, page dimensions, and display order do not define identity.
-    return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
-                   "members": source["members"], "lines": [
-                       {k: line[k] for k in ("lineId", "text", "blockType", "breakBefore")}
-                       for line in source["lines"]]})
+from source_fingerprint import source_fingerprint, source_fingerprint_v1
 
 
 def private_db(path, piece_ids):
@@ -164,11 +149,11 @@ def source_snapshot(repo, piece_id, version_id, db=None):
     version = next((v for v in pieces.get(piece_id, {}).get("V", []) if v["id"] == version_id), None)
     if version is None:
         raise Invalid("unknown exact piece/version")
-    corrections = {}
+    corrections = {**site.get("acceptedReviews", {}), **review.get("acceptedReviews", {})}
     if db is not None:
         # Reuse the current strict export loader (including malformed release-name
         # hard stops). Importing it has no publication/network side effects.
-        corrections = private_db(db, set(pieces))["reviews"]
+        corrections.update(private_db(db, set(pieces))["reviews"])
     rows, seen, review_evidence = [], set(), []
     for member in version["P"]:
         if not isinstance(member, list) or len(member) != 2 or member[0] not in pages or not isinstance(member[1], list):
@@ -180,6 +165,8 @@ def source_snapshot(repo, piece_id, version_id, db=None):
             seen.add((page_id, bi))
             block = pages[page_id]["blocks"][bi]
             for li, line in enumerate(block["lines"]):
+                if line.get("transcriptionStatus") == "untranscribed":
+                    raise Invalid("untranscribed source line; explicit transcription required")
                 original = scalar_text(line["tx"], empty=True)
                 text = original
                 correction = corrections.get(line["id"])
@@ -190,16 +177,17 @@ def source_snapshot(repo, piece_id, version_id, db=None):
                     if block.get("t") != "quotation" and correction.get("status") == "corrected":
                         if not isinstance(correction.get("original"), str) or not isinstance(correction.get("text"), str):
                             raise Invalid("malformed corrected review")
-                        if correction["original"] != original and correction["text"] != original:
+                        if correction["original"] != original:
                             raise Invalid("stale correction; source must be resolved explicitly")
                         text = scalar_text(correction["text"], empty=True)
                 rows.append({"lineId": line["id"], "text": text, "originalText": original,
-                             "blockType": block.get("t") or "text", "breakBefore": bool(rows) and li == 0})
+                             "blockType": block.get("t") or "text",
+                             "breakBefore": line.get("breakBefore", bool(rows) and li == 0)})
     if not rows:
         raise Invalid("empty source version")
     snapshot = {"pieceId": piece_id, "versionId": version_id, "members": copy.deepcopy(version["P"]),
                 "lines": rows, "versionFingerprint": "", "provenance": {
-                    "repository": "4444J99/journal-handwritten-web", "contract": "T05-proposed-fingerprint-v2",
+                    "repository": "4444J99/journal-handwritten-web", "contract": "versforms.logical-source.v2",
                     "files": [{"path": p, "sha256": file_hash(repo / p)} for p in paths],
                     "reviewRecords": review_evidence,
                     "readingStatus": "existing-transcription-with-exported-corrections; not a new author verification"}}
