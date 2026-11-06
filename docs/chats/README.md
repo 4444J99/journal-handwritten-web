@@ -43,9 +43,10 @@ Conventions
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
 | 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
+| 2026-11-05 | [Local agent: T08 source-region model and private pilot](2026-11-05-t08-source-regions-pilot.md) | Pilot, contract and tests done in an isolated branch; draft PR only; public release correctly refused; T02 hand-off and author inputs open |
 
 ## Repository state (checked 2026-11-05)
-- `main` at `06dccc0` (the posting script, #101), with a `local-ci` status; every suite passes locally.
+- `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
 - GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
 - Issue #1 closed by #114; draft PR #2 closed as superseded.

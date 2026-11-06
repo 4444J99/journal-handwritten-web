@@ -1,0 +1,137 @@
+{
+  "schema": "versforms.t08-alive-reproduction.v1",
+  "date": "2026-11-06T01:55:39.414Z",
+  "scope": "read-only; owner lane reused, not modified",
+  "owner_repo": "/Volumes/Archive4T/Projects/journal-handwritten-web--alive-proto",
+  "owner_head": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+  "atoms": {
+    "path": "proto/alive/atoms-p001.json",
+    "sha256": "ed379ac4ccee98d06d392149e99299d8fd8d961d19e7c169513fcf45572ffca6",
+    "line_count": 22
+  },
+  "server_url": "http://127.0.0.1:49626/",
+  "checks": {
+    "ready": {
+      "pass": true,
+      "observed": "227ms"
+    },
+    "city": {
+      "pass": true,
+      "observed": "p001; failed=[]"
+    },
+    "atlas_leak": {
+      "pass": true,
+      "observed": "22 lines; outside total 0; regions 22"
+    },
+    "sources_used": {
+      "pass": true,
+      "observed": "22 ids, 0 unknown"
+    },
+    "line_regions": {
+      "pass": true,
+      "observed": "22 regions, 22 with polygons"
+    },
+    "console": {
+      "pass": true,
+      "observed": "no console errors or exceptions"
+    }
+  },
+  "facts": {
+    "state": {
+      "view": "architecture",
+      "city": "p001",
+      "unit": "line",
+      "pieces": 1,
+      "readyPieces": 1,
+      "failed": [],
+      "spriteCount": 0,
+      "spriteSources": {
+        "line": 0,
+        "word": 0,
+        "glyph": 0
+      },
+      "viewport": {
+        "w": 756,
+        "h": 469,
+        "dpr": 1
+      }
+    },
+    "sources_used": [
+      "diary1-0-0",
+      "diary1-0-1",
+      "diary1-0-2",
+      "diary1-1-0",
+      "diary1-1-1",
+      "diary1-1-2",
+      "diary1-1-3",
+      "diary1-2-0",
+      "diary1-2-1",
+      "diary1-2-2",
+      "diary1-2-3",
+      "diary1-3-0",
+      "diary1-3-1",
+      "diary1-3-2",
+      "diary1-3-3",
+      "diary1-4-0",
+      "diary1-4-1",
+      "diary1-4-2",
+      "diary1-5-0",
+      "diary1-5-1",
+      "diary1-5-2",
+      "diary1-5-3"
+    ],
+    "sources_used_count": 22,
+    "sources_used_reading_times": [
+      0,
+      2,
+      6,
+      12,
+      24,
+      48
+    ],
+    "atlas_leak_lines": 22,
+    "atlas_leak_outside_total": 0,
+    "atlas_leak_outside_per_line": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "line_regions": 22,
+    "line_regions_with_polygon": 22,
+    "regions_read": 22,
+    "buildings": [
+      {
+        "id": "p001",
+        "lines": 22,
+        "x0": 0,
+        "x1": 1088
+      }
+    ]
+  },
+  "chrome": {
+    "product": "Chrome/156.0.8078.80",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "protocol": "1.3"
+  },
+  "errors": [],
+  "ok": true
+}

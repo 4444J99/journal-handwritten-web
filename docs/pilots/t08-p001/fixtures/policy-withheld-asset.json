@@ -1,0 +1,39 @@
+{
+  "schema": "versforms.visibility-policy.v1",
+  "policy_id": "t08-fixture-withheld-asset-2026-11-05",
+  "status": "synthetic-fixture-for-rejection-test-not-a-decision",
+  "publication": {
+    "enabled": false
+  },
+  "author_clearance": {
+    "status": "none",
+    "covers_manifest_sha256": null,
+    "statement_ref": null
+  },
+  "machine_misread": {
+    "status": "unresolved"
+  },
+  "shared_scan_resolution": {
+    "status": "none",
+    "pages": {}
+  },
+  "public_whitelist": [
+    "p001"
+  ],
+  "withheld_pages": [
+    "diary1"
+  ],
+  "withheld_assets": [
+    "scan:p/diary1"
+  ],
+  "pieces": {
+    "p001": {
+      "pool": "series",
+      "pool_source": "synthetic fixture only; proves an asset withheld from a private build is refused",
+      "withheld_versions": [],
+      "excluded_versions": [],
+      "strike_through_vetoes": [],
+      "piece_vetoes": []
+    }
+  }
+}

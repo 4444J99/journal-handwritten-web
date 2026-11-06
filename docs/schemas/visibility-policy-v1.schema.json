@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://versforms.invalid/schemas/visibility-policy-v1.schema.json",
+  "title": "Versforms visibility policy v1",
+  "description": "The external, dateable record that decides whether a source-region manifest may be built, shown privately, enciphered or published. A successful eligibility check is not artistic approval. The executable evaluator is tools/source_regions.py check.",
+  "type": "object",
+  "required": [
+    "schema", "policy_id", "publication", "author_clearance", "machine_misread",
+    "shared_scan_resolution", "public_whitelist", "withheld_pages", "withheld_assets", "pieces"
+  ],
+  "properties": {
+    "schema": { "const": "versforms.visibility-policy.v1" },
+    "policy_id": { "type": "string" },
+    "status": {
+      "type": "string",
+      "description": "Derived defaults and synthetic fixtures must say so here (e.g. derived-pilot-defaults-not-author-decisions)."
+    },
+    "sources": { "type": "array", "items": { "type": "string" } },
+    "publication": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean", "description": "Must stay false for any private preview." },
+        "note": { "type": "string" }
+      }
+    },
+    "author_clearance": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["none", "cleared", "withdrawn", "expired"] },
+        "covers_manifest_sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Clearance binds an exact manifest digest, not a folder or a promise."
+        },
+        "statement_ref": { "type": ["string", "null"] },
+        "dated": { "type": ["string", "null"] },
+        "note": { "type": "string" }
+      }
+    },
+    "release_gate": {
+      "type": "object",
+      "description": "Optional T03 release-clearance record. When present, public output requires status cleared and may_publish true. T08 does not create the filing, exposure, acceptance or rollback evidence.",
+      "required": ["contract", "status", "may_publish"],
+      "properties": {
+        "contract": { "const": "versforms.release-clearance.v1" },
+        "status": { "enum": ["awaiting-author-and-evidence", "cleared", "withdrawn", "expired"] },
+        "may_publish": { "type": "boolean" },
+        "may_schedule_external_actions": { "type": "boolean" },
+        "input_manifest_sha256": { "type": ["string", "null"] },
+        "exposure_manifest_sha256": { "type": ["string", "null"] },
+        "filing_evidence_ref": { "type": ["string", "null"] },
+        "acceptance_receipt_ref": { "type": ["string", "null"] },
+        "rollback_record_ref": { "type": ["string", "null"] },
+        "note": { "type": "string" }
+      }
+    },
+    "machine_misread": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["unresolved", "cleared", "withdrawn"] },
+        "source": { "type": "string" },
+        "rule_id": { "type": "string" }
+      }
+    },
+    "shared_scan_resolution": {
+      "type": "object",
+      "required": ["status", "pages"],
+      "properties": {
+        "status": { "enum": ["none", "cleared", "partial"] },
+        "pages": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "resolution_id": { "type": "string" },
+              "source": { "type": "string" },
+              "neighbours": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "description": "page_id -> author-approved page-level remedy for pieces sharing a scan."
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "public_whitelist": { "type": "array", "items": { "type": "string" } },
+    "withheld_pages": { "type": "array", "items": { "type": "string" } },
+    "withheld_assets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "asset_id or repository path; refuses both private and public builds."
+    },
+    "pieces": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/piece_policy" }
+    }
+  },
+  "$defs": {
+    "piece_policy": {
+      "type": "object",
+      "required": ["pool"],
+      "properties": {
+        "pool": {
+          "enum": ["series", "reserve", "archive", "withheld", "deleted", "unassigned"],
+          "description": "Only series may appear publicly. unassigned is the derived default when no author decision exists."
+        },
+        "pool_source": { "type": "string" },
+        "withheld_versions": { "type": "array", "items": { "type": "string" } },
+        "excluded_versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["version_id", "scopes"],
+            "properties": {
+              "version_id": { "type": "string" },
+              "scopes": {
+                "type": "array",
+                "items": { "enum": ["all", "private-local", "author-cut-private", "public-release", "cipher-public"] }
+              },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "strike_through_vetoes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/veto" },
+          "description": "Author-private vetoes. A veto with no atom_ids or line_ids covers the whole piece."
+        },
+        "piece_vetoes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/veto" }
+        }
+      }
+    },
+    "veto": {
+      "type": "object",
+      "required": ["veto_id"],
+      "properties": {
+        "veto_id": { "type": "string" },
+        "atom_ids": { "type": "array", "items": { "type": "string" } },
+        "line_ids": { "type": "array", "items": { "type": "string" } },
+        "version_id": { "type": ["string", "null"] },
+        "scopes": {
+          "type": "array",
+          "items": { "enum": ["all", "private-local", "author-cut-private", "public-release", "cipher-public"] },
+          "default": ["all"]
+        },
+        "source": { "type": "string" }
+      }
+    }
+  }
+}

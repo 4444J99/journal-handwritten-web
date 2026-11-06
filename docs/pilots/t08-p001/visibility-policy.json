@@ -1,0 +1,64 @@
+{
+  "schema": "versforms.visibility-policy.v1",
+  "policy_id": "t08-p001-derived-2026-11-05",
+  "status": "derived-pilot-defaults-not-author-decisions",
+  "sources": [
+    "release/public.json (empty pieces list, read 2026-11-05)",
+    "docs/plan.md Open item 8 (Series / Reserve / Archive not yet decided)",
+    "docs/releases/release-clearance-contract.md at 8d16284 (T03 draft, not merged and not an author decision)",
+    "docs/chats/2026-11-05-local-session-finish-and-launch.md (design direction and owner issues)"
+  ],
+  "publication": {
+    "enabled": false,
+    "note": "No publication, deployment, scheduling or external action is authorized by this pilot."
+  },
+  "author_clearance": {
+    "status": "none",
+    "covers_manifest_sha256": null,
+    "statement_ref": null,
+    "note": "A successful check is not artistic approval or release clearance."
+  },
+  "release_gate": {
+    "contract": "versforms.release-clearance.v1",
+    "status": "awaiting-author-and-evidence",
+    "may_publish": false,
+    "may_schedule_external_actions": false,
+    "input_manifest_sha256": null,
+    "exposure_manifest_sha256": null,
+    "filing_evidence_ref": null,
+    "acceptance_receipt_ref": null,
+    "rollback_record_ref": null,
+    "note": "T03's draft release record is evidence, not authority; T08 does not create filing or acceptance evidence."
+  },
+  "machine_misread": {
+    "status": "unresolved",
+    "source": "issue #109 question 1 / issue #56; no author ruling recorded"
+  },
+  "shared_scan_resolution": {
+    "status": "none",
+    "pages": {},
+    "note": "No page-level neighbour clearance is recorded."
+  },
+  "public_whitelist": [],
+  "withheld_pages": [],
+  "withheld_assets": [],
+  "pieces": {
+    "p001": {
+      "pool": "unassigned",
+      "pool_source": "derived: release/public.json is empty and docs/plan.md Open item 8 is undecided; no studio release record supplies a pool. This is not an author decision.",
+      "withheld_versions": [],
+      "excluded_versions": [
+        {
+          "version_id": "p001-diary62a-0",
+          "scopes": [
+            "public-release",
+            "cipher-public"
+          ],
+          "source": "derived pilot scope: the pilot uses p001-diary1-0 only. The T03 draft packet also omits this version, but that packet is a proposal, not this pilot's authority."
+        }
+      ],
+      "strike_through_vetoes": [],
+      "piece_vetoes": []
+    }
+  }
+}

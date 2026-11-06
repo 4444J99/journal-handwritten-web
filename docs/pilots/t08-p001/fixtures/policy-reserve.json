@@ -1,0 +1,35 @@
+{
+  "schema": "versforms.visibility-policy.v1",
+  "policy_id": "t08-fixture-reserve-2026-11-05",
+  "status": "synthetic-fixture-for-rejection-test-not-a-decision",
+  "publication": {
+    "enabled": false
+  },
+  "author_clearance": {
+    "status": "none",
+    "covers_manifest_sha256": null,
+    "statement_ref": null
+  },
+  "machine_misread": {
+    "status": "unresolved"
+  },
+  "shared_scan_resolution": {
+    "status": "none",
+    "pages": {}
+  },
+  "public_whitelist": [
+    "p001"
+  ],
+  "withheld_pages": [],
+  "withheld_assets": [],
+  "pieces": {
+    "p001": {
+      "pool": "reserve",
+      "pool_source": "synthetic fixture only: proves the engine refuses Reserve public output; not the author's pool for p001",
+      "withheld_versions": [],
+      "excluded_versions": [],
+      "strike_through_vetoes": [],
+      "piece_vetoes": []
+    }
+  }
+}
