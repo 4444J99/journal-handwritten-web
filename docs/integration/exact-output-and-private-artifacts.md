@@ -13,6 +13,13 @@ author, pool, filing-workflow, image-exposure, identity-metadata and device
 evidence. The validator compares freshly resolved source bindings. The Python
 entry point can also compare the actual output directory with the inventory.
 
+Digest input uses the explicitly specified `versforms.typed-json.v1` encoding
+in the Python/JavaScript canonical helpers. Every value is type tagged; finite
+numbers use normalized IEEE-754 binary64 bytes, integers must be in the safe
+range, and object keys sort by UTF-16. This keeps geometry values such as `1.0`
+and `1e-7` identical across runtimes. Lone surrogates, cycles and lossy/hidden
+JavaScript values are refused. This is an internal encoding, not RFC 8785/JCS.
+
 Hashes identify bytes; they do not authenticate a person. Clearance record
 validation never supplies execution authority. A valid record cannot schedule,
 publish, deploy, post a message or change an account. Those actions remain

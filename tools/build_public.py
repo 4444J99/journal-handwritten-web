@@ -53,6 +53,60 @@ DATA_URI_RE = re.compile(r"data:([a-z0-9/+.-]+);base64,([A-Za-z0-9+/=]+)", re.I)
 FONT_MAGIC = (b"wOF2", b"wOFF", b"OTTO", b"\x00\x01\x00\x00", b"true", b"ttcf")
 PROV_KEEP = ("tdate", "verified")  # prov.repo / commit / path name the source repository and stay private
 
+
+def filter_reader_metadata(html, pages, published):
+    """Restrict template navigation metadata to exact published page/block membership.
+
+    A revision witness is indivisible: a missing page or block removes that
+    witness. A comparison needs at least two complete witnesses. This never
+    converts an omitted version into a different available version.
+    """
+    by_id = {p["id"]: p for p in pages}
+    allowed = {}
+    for page, block in published:
+        allowed.setdefault(page, set()).add(block)
+
+    def literal(name):
+        match = re.search(r"\bconst\s+" + name + r"\s*=\s*(\[[\s\S]*?\]);", html)
+        if not match:
+            return None, None
+        # These two source constants contain only JSON values and bare object
+        # keys. Refuse a changed grammar instead of evaluating JavaScript.
+        value = re.sub(r'([,{]\s*)([A-Za-z_]\w*)\s*:', r'\1"\2":', match.group(1))
+        try:
+            return match, json.loads(value)
+        except ValueError as exc:
+            raise ValueError("Unsupported reader metadata literal: " + name) from exc
+
+    def complete_member(member):
+        if not isinstance(member, list) or len(member) != 2:
+            return False
+        page, blocks = member
+        if page not in by_id or page not in allowed:
+            return False
+        if blocks == "all":
+            blocks = list(range(len(by_id[page]["B"])))
+        return (isinstance(blocks, list) and bool(blocks)
+                and all(type(b) is int and b in allowed[page] for b in blocks))
+
+    match, values = literal("PAL")
+    if match:
+        kept = []
+        for value in values:
+            if not isinstance(value, dict) or set(value) != {"id", "witnesses"}:
+                raise ValueError("Unsupported PAL witness schema")
+            witnesses = [w for w in value["witnesses"] if isinstance(w, list) and w
+                         and all(complete_member(m) for m in w)]
+            if len(witnesses) >= 2:
+                kept.append({"id": value["id"], "witnesses": witnesses})
+        html = html[:match.start(1)] + json.dumps(kept, separators=(",", ":")) + html[match.end(1):]
+    match, values = literal("HF")
+    if match:
+        kept = [page for page in values if isinstance(page, str)
+                and page in by_id and complete_member([page, "all"])]
+        html = html[:match.start(1)] + json.dumps(kept, separators=(",", ":")) + html[match.end(1):]
+    return html
+
 SHELL = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -256,13 +310,13 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     atlas, applied = [], 0
     if pages:
         from PIL import Image
-        srcs = {kind: [Image.open(site / "img" / "a" / f"{kind}{n}.jpg") for n in range(len(d["atlas"]))] for kind in ("t", "k")}
         pos, size = pack([(p["id"], p["a"][3], p["a"][4]) for p in pages])
         for kind in ("t", "k"):
             im = Image.new("RGB", size, "white")
             for p in pages:
                 n, x, y, w, h = p["a"]
-                im.paste(srcs[kind][n].crop((x, y, x + w, y + h)), pos[p["id"]])
+                with Image.open(site / "img" / "a" / f"{kind}{n}.jpg") as original:
+                    im.paste(original.crop((x, y, x + w, y + h)), pos[p["id"]])
             (out / "img" / "a").mkdir(parents=True, exist_ok=True)
             im.save(out / "img" / "a" / f"{kind}0.jpg", quality=90)
         atlas = [list(size)]
@@ -276,7 +330,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 if own is None:
                     # not published: no text, no number of lines, no link to a piece or version, no reading note
                     b["L"] = []
-                    for key in ("g", "v", "u"):
+                    for key in ("g", "v", "u", "lineIds", "transcriptionStatus", "sourceAnchor"):
                         b.pop(key, None)
                     continue
                 if b.get("g"):
@@ -326,6 +380,12 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     fonts, font_error = [], None
     if want:
         html = rebrand((site / "index.html").read_text(encoding="utf-8"))
+        html = filter_reader_metadata(html, d["pages"], owner)
+        for asset in ("reader-features.js",):
+            if (site / asset).is_file():
+                shutil.copy2(site / asset, out / asset)
+            elif asset in html:
+                raise FileNotFoundError("Reader module is referenced but missing: " + asset)
         if rename_fonts:
             try:
                 html, fonts = rename_embedded_fonts(html)

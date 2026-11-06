@@ -28,6 +28,14 @@ POLICY = ROOT / "docs/pilots/t08-p001/visibility-policy.json"
 FIXTURES = ROOT / "docs/pilots/t08-p001/fixtures"
 COMBO_PREFIX = "vf:atom:p001/p001-diary1-0/diary1/combination"
 
+sys.path.insert(0, str(ROOT / "tests"))
+import release_fixtures
+
+
+def evaluate(manifest, policy, scope):
+    context = release_fixtures.regions(manifest) if policy.get("status") == "synthetic-fixture-for-tests-not-a-decision" else None
+    return sr.evaluate(manifest, policy, scope, release_context=context)
+
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -203,12 +211,12 @@ class EligibilityTests(unittest.TestCase):
         cls.combos = load(COMBOS)
 
     def test_private_local_is_allowed_by_the_derived_defaults(self):
-        report = sr.evaluate(self.manifest, self.derived, "private-local")
+        report = evaluate(self.manifest, self.derived, "private-local")
         self.assertTrue(report["allowed"], report["manifest_reasons"])
         self.assertEqual(report["summary"]["inherited_pool"], "unassigned")
 
     def test_public_release_is_refused_by_the_derived_defaults(self):
-        report = sr.evaluate(self.manifest, self.derived, "public-release")
+        report = evaluate(self.manifest, self.derived, "public-release")
         self.assertFalse(report["allowed"])
         self.assertIn("author-clearance:missing", report["manifest_reasons"])
         self.assertIn("pool:unassigned-is-not-series", report["atom_reasons"][self.manifest["atoms"][0]["atom_id"]])
@@ -217,7 +225,7 @@ class EligibilityTests(unittest.TestCase):
         self.assertIn("Record the author's Series/Reserve/Archive decision", " ".join(report["required_actions"]))
 
     def test_cleared_public_policy_is_a_positive_control(self):
-        report = sr.evaluate(self.manifest, cleared_policy(self.manifest), "public-release")
+        report = evaluate(self.manifest, cleared_policy(self.manifest), "public-release")
         self.assertTrue(report["allowed"], report["manifest_reasons"])
         self.assertEqual(report["atom_reasons"], {})
         self.assertIn("reading:open-uncertainty-present", report["warnings"])
@@ -226,33 +234,33 @@ class EligibilityTests(unittest.TestCase):
         policy = cleared_policy(self.manifest)
         policy["release_gate"]["status"] = "awaiting-author-and-evidence"
         policy["release_gate"]["may_publish"] = False
-        report = sr.evaluate(self.manifest, policy, "public-release")
+        report = evaluate(self.manifest, policy, "public-release")
         self.assertFalse(report["allowed"])
         self.assertIn("release-gate:not-cleared", report["manifest_reasons"])
         self.assertIn("Complete the T03 release record", " ".join(report["required_actions"]))
 
     def test_unknown_scope_is_refused(self):
         with self.assertRaises(ValueError):
-            sr.evaluate(self.manifest, self.derived, "publish-everywhere")
+            evaluate(self.manifest, self.derived, "publish-everywhere")
 
     def test_reserve_inherits_privately_but_never_publishes(self):
         policy = load(FIXTURES / "policy-reserve.json")
-        private = sr.evaluate(self.manifest, policy, "private-local")
+        private = evaluate(self.manifest, policy, "private-local")
         self.assertTrue(private["allowed"], private["manifest_reasons"])
         self.assertEqual(private["summary"]["inherited_pool"], "reserve")
-        public = sr.evaluate(self.manifest, policy, "public-release")
+        public = evaluate(self.manifest, policy, "public-release")
         self.assertFalse(public["allowed"])
         self.assertTrue(any(r.startswith("pool:reserve") for r in public["atom_reasons"][self.manifest["atoms"][0]["atom_id"]]))
 
     def test_withheld_asset_and_page_are_refused_even_privately(self):
-        report = sr.evaluate(self.manifest, load(FIXTURES / "policy-withheld-asset.json"),
+        report = evaluate(self.manifest, load(FIXTURES / "policy-withheld-asset.json"),
                              "private-local")
         self.assertFalse(report["allowed"])
         self.assertIn("source-asset:withheld:scan:p/diary1", report["manifest_reasons"])
         self.assertIn("page:withheld:diary1", report["manifest_reasons"])
 
     def test_version_exclusion_is_scope_aware(self):
-        report = sr.evaluate(self.manifest, load(FIXTURES / "policy-version-excluded.json"),
+        report = evaluate(self.manifest, load(FIXTURES / "policy-version-excluded.json"),
                              "private-local")
         self.assertFalse(report["allowed"])
         self.assertTrue(all(any("version:excluded-for-private-local" in r for r in reasons)
@@ -266,11 +274,11 @@ class EligibilityTests(unittest.TestCase):
             "scopes": ["private-local"],
             "source": "synthetic test only",
         }]
-        private = sr.evaluate(self.manifest, private_only, "private-local")
+        private = evaluate(self.manifest, private_only, "private-local")
         self.assertFalse(private["allowed"])
         self.assertTrue(any("strike-through-veto:synthetic-private-veto" in r
                             for r in private["atom_reasons"].values()))
-        public = sr.evaluate(self.manifest, private_only, "public-release")
+        public = evaluate(self.manifest, private_only, "public-release")
         self.assertTrue(public["allowed"], public["manifest_reasons"])
 
         public_only = cleared_policy(self.manifest)
@@ -280,8 +288,8 @@ class EligibilityTests(unittest.TestCase):
             "scopes": ["public-release"],
             "source": "synthetic test only",
         }]
-        self.assertTrue(sr.evaluate(self.manifest, public_only, "private-local")["allowed"])
-        public = sr.evaluate(self.manifest, public_only, "public-release")
+        self.assertTrue(evaluate(self.manifest, public_only, "private-local")["allowed"])
+        public = evaluate(self.manifest, public_only, "public-release")
         self.assertFalse(public["allowed"])
         self.assertTrue(any("strike-through-veto:synthetic-public-veto" in r
                             for r in public["atom_reasons"].values()))
@@ -314,7 +322,7 @@ class EligibilityTests(unittest.TestCase):
             "p126": {"pool": "reserve", "withheld_versions": [], "excluded_versions": [],
                      "strike_through_vetoes": [], "piece_vetoes": []},
         }
-        report = sr.evaluate(shared, cleared_policy(shared, pieces=pieces,
+        report = evaluate(shared, cleared_policy(shared, pieces=pieces,
                                                     whitelist=["p001", "p126"]),
                              "public-release")
         self.assertFalse(report["allowed"])
@@ -324,14 +332,14 @@ class EligibilityTests(unittest.TestCase):
         policy = cleared_policy(shared, pieces=pieces, whitelist=["p001", "p126"])
         policy["shared_scan_resolution"] = {"status": "cleared", "pages": {"diary1": {
             "resolution_id": "synthetic-page-resolution", "source": "synthetic test only"}}}
-        resolved = sr.evaluate(shared, policy, "public-release")
+        resolved = evaluate(shared, policy, "public-release")
         self.assertTrue(resolved["allowed"], resolved["manifest_reasons"])
 
     def test_borrowed_line_needs_credit_style_for_public_output(self):
         borrowed = atom(self.combos, "borrowed-synthetic-1")["atom_id"]
         cut = atom(self.combos, "cut-synthetic-1")["atom_id"]
         cipher = atom(self.combos, "cipher-synthetic-1")["atom_id"]
-        report = sr.evaluate(self.combos, cleared_policy(self.combos), "public-release")
+        report = evaluate(self.combos, cleared_policy(self.combos), "public-release")
         self.assertFalse(report["allowed"])
         self.assertIn("borrowed-line:credit-style-unresolved", report["atom_reasons"][borrowed])
         self.assertNotIn(cut, report["atom_reasons"])
@@ -340,21 +348,21 @@ class EligibilityTests(unittest.TestCase):
         fixed = copy.deepcopy(self.combos)
         atom(fixed, "borrowed-synthetic-1")["credit"]["credit_style"] = "epigraph-with-source"
         fixed = reseal(fixed)
-        allowed = sr.evaluate(fixed, cleared_policy(fixed), "public-release")
+        allowed = evaluate(fixed, cleared_policy(fixed), "public-release")
         self.assertTrue(allowed["allowed"], allowed["atom_reasons"])
 
     def test_deliberate_misread_needs_an_author_rule_for_public_output(self):
         misread = atom(self.combos, "misread-synthetic-1")["atom_id"]
         policy = cleared_policy(self.combos)
         policy["machine_misread"] = {"status": "unresolved"}
-        report = sr.evaluate(self.combos, policy, "public-release")
+        report = evaluate(self.combos, policy, "public-release")
         self.assertIn("machine-misread:unresolved-author-rule", report["atom_reasons"][misread])
         policy["machine_misread"] = {"status": "cleared"}
-        report = sr.evaluate(self.combos, policy, "public-release")
+        report = evaluate(self.combos, policy, "public-release")
         self.assertNotIn(misread, report["atom_reasons"])
 
     def test_combination_fixture_is_allowed_privately(self):
-        report = sr.evaluate(self.combos, self.derived, "private-local")
+        report = evaluate(self.combos, self.derived, "private-local")
         self.assertTrue(report["allowed"], report["manifest_reasons"])
 
     def test_combination_lineage_includes_every_input(self):

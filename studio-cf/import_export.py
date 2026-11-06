@@ -43,8 +43,8 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import sqlguard  # noqa: E402
 
-COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions")
-IMMUTABLE_COLLECTIONS = ("notes", "contributions")
+COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts")
+IMMUTABLE_COLLECTIONS = ("notes", "contributions", "artifacts")
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
 MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
@@ -87,7 +87,7 @@ def compact_size(data):
 
 def valid_revision(collection, doc_id, data):
     """Minimum persistence envelope. The studio model validates the full record."""
-    family = "note" if collection == "notes" else "contribution"
+    family = {"notes": "note", "contributions": "contribution", "artifacts": "artifact"}.get(collection)
     def valid_id(value):
         return isinstance(value, str) and DOC_ID_RE.fullmatch(value) and value not in (".", "..")
     parents = data.get("parents")

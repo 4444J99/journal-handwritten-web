@@ -14,7 +14,7 @@ import sqlguard
 
 
 def revision(collection, revision_id="fixture-revision-1"):
-    return {"schemaVersion": 1, "family": "note" if collection == "notes" else "contribution",
+    return {"schemaVersion": 1, "family": {"notes": "note", "contributions": "contribution", "artifacts": "artifact"}[collection],
             "recordId": "fixture-record", "revisionId": revision_id, "parents": [],
             "author": {"id": "fixture-author", "name": "Technical fixture"},
             "poemDate": "2020-01-01", "noteDate": "2026-11-05",
@@ -32,7 +32,7 @@ class ImmutableRestoreTests(unittest.TestCase):
         self.db = sqlite3.connect(":memory:")
         self.addCleanup(self.db.close)
 
-    def test_all_eight_collections_export_restore_and_revision_history(self):
+    def test_all_nine_collections_export_restore_and_revision_history(self):
         docs = documents()
         for c in ie.COLLECTIONS:
             if c in ie.IMMUTABLE_COLLECTIONS:
@@ -58,9 +58,9 @@ class ImmutableRestoreTests(unittest.TestCase):
         self.assertEqual(list(other.execute(ex.QUERY)), list(self.db.execute(ex.QUERY)))
         # Retrying the restore retains every immutable row byte-for-byte, including
         # database timestamps/revs, while legacy collection semantics remain intact.
-        before = list(self.db.execute("SELECT * FROM vf_docs WHERE collection IN ('notes','contributions') ORDER BY collection,id"))
+        before = list(self.db.execute("SELECT * FROM vf_docs WHERE collection IN ('notes','contributions','artifacts') ORDER BY collection,id"))
         self.db.executescript(ie.build_sql(restored, "retry"))
-        after = list(self.db.execute("SELECT * FROM vf_docs WHERE collection IN ('notes','contributions') ORDER BY collection,id"))
+        after = list(self.db.execute("SELECT * FROM vf_docs WHERE collection IN ('notes','contributions','artifacts') ORDER BY collection,id"))
         self.assertEqual(after, before)
         self.assertEqual(dict(self.db.execute("SELECT collection,rev FROM vf_revs")),
                          {c: 1 if c in ie.IMMUTABLE_COLLECTIONS else 2 for c in ie.COLLECTIONS})

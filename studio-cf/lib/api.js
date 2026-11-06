@@ -1,8 +1,8 @@
 // JSON API for the review studio: collections of documents in D1, photos in R2.
 // Every function here runs after the middleware has authenticated the caller.
 
-export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions']);
-export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions']);
+export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts']);
+export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions', 'artifacts']);
 export const DOC_ID_RE = /^[A-Za-z0-9_.-]{1,128}$/;
 export const ASSET_ID_RE = /^[a-f0-9]{32}$/;
 export const MAX_DOC_BYTES = 64 * 1024;
@@ -77,7 +77,7 @@ function sameDocument(a, b) {
 }
 
 async function putRevision(env, coll, id, doc, text, now) {
-  const family = coll === 'notes' ? 'note' : 'contribution';
+  const family = coll === 'notes' ? 'note' : coll === 'contributions' ? 'contribution' : 'artifact';
   if (doc.schemaVersion !== 1 || doc.family !== family || doc.revisionId !== id ||
       typeof doc.recordId !== 'string' || !DOC_ID_RE.test(doc.recordId) || ['.', '..'].includes(doc.recordId) ||
       !Array.isArray(doc.parents) || doc.parents.some(p => typeof p !== 'string' || !DOC_ID_RE.test(p) || ['.', '..', id].includes(p)) ||

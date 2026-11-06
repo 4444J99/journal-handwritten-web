@@ -866,7 +866,11 @@ def _veto_matches(veto: dict, atom: dict, version_id: str, scope: str) -> bool:
     return False
 
 
-def evaluate(manifest: dict, policy: dict, scope: str) -> dict:
+def region_component_id(piece_id, version_id):
+    return "regions:" + piece_id + ":" + version_id
+
+
+def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) -> dict:
     if scope not in SCOPES:
         raise ValueError(f"unknown scope {scope!r}; expected one of {', '.join(SCOPES)}")
     if policy.get("schema") != POLICY_SCHEMA:
@@ -886,6 +890,27 @@ def evaluate(manifest: dict, policy: dict, scope: str) -> dict:
 
     clearance = policy.get("author_clearance") or {}
     if scope in PUBLIC_SCOPES:
+        import release_contract
+        context = release_context or {}
+        output_manifest = context.get("manifest")
+        bindings = context.get("current_sources")
+        checked = release_contract.evaluate(output_manifest, context.get("clearance"),
+            current_sources=bindings, root=context.get("output_root"))
+        manifest_reasons.extend("release-contract:" + r for r in checked["reasons"])
+        if checked["eligible"]:
+            by_source = {(s["pieceId"], s["versionId"]): s for s in bindings}
+            for piece_id, version_id in sorted({(a["piece_id"], a["version_id"]) for a in manifest.get("atoms", [])}):
+                component_id = region_component_id(piece_id, version_id)
+                approved = next((c for c in output_manifest["components"]
+                                 if c.get("kind") == "regions" and c.get("id") == component_id), None)
+                source = by_source.get((piece_id, version_id))
+                if approved is None or source is None:
+                    manifest_reasons.append("release-contract:missing-region-component")
+                    continue
+                component = {**approved, **source, "revisionDigest": "sha256:" + digest}
+                result = release_contract.evaluate(output_manifest, context.get("clearance"),
+                    current_sources=bindings, component=component)
+                manifest_reasons.extend("release-contract:" + r for r in result["reasons"])
         if clearance.get("status") != "cleared":
             manifest_reasons.append("author-clearance:missing")
         elif clearance.get("covers_manifest_sha256") != digest:
@@ -1101,6 +1126,7 @@ def main(argv: list[str] | None = None) -> int:
     p_check.add_argument("--manifest", required=True, type=Path)
     p_check.add_argument("--policy", required=True, type=Path)
     p_check.add_argument("--scope", required=True, choices=SCOPES)
+    p_check.add_argument("--release-context", type=Path, help="Exact output manifest, attributable clearance and freshly resolved current_sources; required for public scopes")
     p_check.add_argument("--out", type=Path, default=None)
     p_check.add_argument("--require-allowed", action="store_true")
 
@@ -1133,7 +1159,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "check":
             manifest = _load_manifest(args.manifest)
             policy = read_json(args.policy)
-            report = evaluate(manifest, policy, args.scope)
+            report = evaluate(manifest, policy, args.scope,
+                              release_context=read_json(args.release_context) if args.release_context else None)
             if args.out:
                 write_json(args.out, report)
             print(json.dumps({k: report[k] for k in ("scope", "allowed", "summary",

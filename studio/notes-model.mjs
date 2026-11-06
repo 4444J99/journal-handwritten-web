@@ -382,6 +382,8 @@ export function heads(value) {
 }
 export const summarizeRecords = heads;
 
+import {evaluateRelease, contractDigest} from './release-contract.mjs';
+
 function verifiedApproval(doc, approval, group, field) {
   if (!approval || approval.contentDigest !== contentDigest(doc)) return false;
   const byId=new Map(group.revisions.map(r => [r.revisionId,r])), ancestors=new Set();
@@ -391,7 +393,7 @@ function verifiedApproval(doc, approval, group, field) {
   return !!reference && ancestors.has(approval.revisionId) && contentDigest(reference) === approval.contentDigest && stableJSON(field(reference)) === stableJSON(approval);
 }
 /** A local eligibility filter only. It never grants publication authority. */
-export function projectRecords(value, catalog, {mode='preview',versions,allowFixtures=false} = {}) {
+export function projectRecords(value, catalog, {mode='preview',versions,allowFixtures=false,releaseContext} = {}) {
   if (!['preview','public'].includes(mode)) throw new Error('Unknown projection mode.');
   if (versions !== undefined && (!Array.isArray(versions) || !versions.every(v => object(v) && typeof v.pieceId === 'string' && typeof v.versionId === 'string'))) throw new Error('Use an exact piece/version allowlist.');
   const allowed=versions ? new Set(versions.map(v => v.pieceId + '/' + v.versionId)) : null;
@@ -410,6 +412,20 @@ export function projectRecords(value, catalog, {mode='preview',versions,allowFix
       if ((mode === 'public' && !allowed) || (allowed && !allowed.has(doc.anchor.pieceId + '/' + doc.anchor.versionId))) reasons.push('exact source version is not allowed');
       if (doc.family === 'contribution' && (doc.permission.status !== 'granted' || !doc.permission.scopes.includes('web'))) reasons.push('web permission is not granted');
       reasons.push(...validateAnchor(catalog,doc.anchor).reasons);
+      if (mode === 'public') {
+        const {manifest,clearance,event}=releaseContext || {};
+        const approved=manifest?.components?.find(c => c.kind === doc.family && c.id === doc.recordId);
+        const source=catalog.pieces.find(p => p.pieceId === doc.anchor.pieceId)?.versions.find(v => v.versionId === doc.anchor.versionId);
+        const currentSources=manifest?.sources?.map(s => ({...s,sourceFingerprint:catalog.pieces.find(p => p.pieceId === s.pieceId)?.versions.find(v => v.versionId === s.versionId)?.fingerprint ?? null}));
+        const component=approved && {...approved,revisionDigest:contentDigest(doc),fixture:doc.fixture,
+          pieceId:doc.anchor.pieceId,versionId:doc.anchor.versionId,sourceFingerprint:source?.fingerprint};
+        if (!component || !event) reasons.push('exact output and observed publication event are required');
+        else {
+          const checked=evaluateRelease(manifest,clearance,{currentSources,component,event});
+          reasons.push(...checked.reasons);
+          if (doc.release.publication?.evidence !== 'release-event:'+contractDigest(event)) reasons.push('publication event is unbound');
+        }
+      }
     }
     if (reasons.length || !doc) { excluded.push({recordId:group.recordId,reasons:[...new Set(reasons)]}); continue; }
     records.push({id:doc.recordId,revisionId:doc.revisionId,family:doc.family,kind:doc.family === 'note' ? doc.kind : doc.type,

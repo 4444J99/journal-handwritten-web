@@ -387,11 +387,11 @@ def fixture(source, asset, at="2026-11-05T23:00:00Z"):
         "pieceId": source["pieceId"], "versionId": source["versionId"], "revisions": [revision]}]})
 
 
-def projection(envelope, current_sources, policies, *, audience="private"):
+def projection(envelope, current_sources, policies, *, audience="private", release_context=None):
     """Small render DTO. Storage/history/provenance never leaks into a public DTO.
 
-    Public output is deliberately closed until T03 supplies its real manifest and
-    clearance adapter. A public-proposed label is not an authorization mechanism.
+    Public output needs attributable clearance for the exact output inventory.
+    A public-proposed label is not an authorization mechanism.
     """
     validate(envelope)
     if audience not in {"private", "public"}:
@@ -421,7 +421,27 @@ def projection(envelope, current_sources, policies, *, audience="private"):
         if any(asset["visibility"] == "withheld" for asset in rev["glyphAssets"]):
             reasons.append("withheld-glyph-asset")
         if audience == "public":
-            reasons.append("t03-manifest-clearance-adapter-pending")
+            import release_contract
+            context = release_context or {}
+            manifest = context.get("manifest")
+            approved = next((c for c in (manifest or {}).get("components", [])
+                             if c.get("kind") == "realization" and c.get("id") == doc["id"]), None)
+            if approved is None or current is None:
+                reasons.append("exact-output-manifest-missing-realization")
+            else:
+                component = {**approved, "pieceId": doc["pieceId"], "versionId": doc["versionId"],
+                             "sourceFingerprint": current["versionFingerprint"],
+                             "revisionDigest": rev["digest"], "fixture": rev["fixture"]}
+                bindings = [{**s, "sourceFingerprint": (current_sources.get((s["pieceId"], s["versionId"])) or {}).get("versionFingerprint")}
+                            for s in manifest.get("sources", [])]
+                checked = release_contract.evaluate(manifest, context.get("clearance"),
+                    current_sources=bindings, component=component, root=context.get("output_root"))
+                reasons.extend(checked["reasons"])
+                for asset in rev["glyphAssets"]:
+                    if not any(f.get("path") == asset["path"] and f.get("sha256") == asset["sha256"] for f in manifest.get("files", [])):
+                        reasons.append("glyph-bytes-not-in-output-manifest")
+            if not policy or policy.get("pool") != "series" or policy.get("visibility") != "public":
+                reasons.append("source-not-cleared-public-series")
             if rev["fixture"]:
                 reasons.append("technical-fixture")
             if rev["visibility"] != "public-proposed":
@@ -431,9 +451,13 @@ def projection(envelope, current_sources, policies, *, audience="private"):
         if reasons:
             exclusions.append({"id": doc["id"], "reasons": reasons})
             continue
-        output.append({"id": doc["id"], "revisionId": rev["id"], "revisionDigest": rev["digest"],
+        item = {"id": doc["id"], "revisionId": rev["id"], "revisionDigest": rev["digest"],
                        "pieceId": doc["pieceId"], "versionId": doc["versionId"],
-                       **{k: copy.deepcopy(rev[k]) for k in ("language", "script", "mode", "layout", "lines", "glyphAssets", "fixture")}})
+                       **{k: copy.deepcopy(rev[k]) for k in ("language", "script", "mode", "layout", "lines", "glyphAssets", "fixture")}}
+        if audience == "public":
+            item["glyphAssets"] = [{k: asset[k] for k in ("id", "kind", "path", "sha256")}
+                                   for asset in rev["glyphAssets"]]
+        output.append(item)
     result = {"format": "versforms-script-projection", "schemaVersion": 1, "audience": audience,
               "realizations": output}
     if audience == "private":
@@ -652,7 +676,7 @@ def make_pilot(repo, db, font, output, source_locator, *, piece_id="p001", versi
     report = {"fixture": True, "fixtureAt": at, "sourcePieceId": piece_id, "sourceVersionId": version_id,
               "sourceFingerprint": source["versionFingerprint"], "revisionDigest": envelope["realizations"][0]["revisions"][0]["digest"],
               "roundTripEqual": True, "publicRecordCount": len(public["realizations"]),
-              "publicExcludedReasons": ["t03-manifest-clearance-adapter-pending", "technical-fixture",
+              "publicExcludedReasons": ["exact-output-manifest-missing-realization", "technical-fixture",
                                         "private-realization", "private-glyph-asset"], "rendering": rendering,
               "authorLanguageDecision": "pending", "translationProduced": False}
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
