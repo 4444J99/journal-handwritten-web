@@ -15,6 +15,8 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
+import shutil
 import unittest
 from pathlib import Path
 
@@ -415,6 +417,134 @@ class CliTests(unittest.TestCase):
         public = subprocess.run(base + ["--scope", "public-release"],
                                 capture_output=True, text=True)
         self.assertEqual(public.returncode, 3, public.stderr)
+
+
+class PrivateRegionPreviewTests(unittest.TestCase):
+    """Actual T08 inputs through current T02 source and a bounded private package."""
+    atom_id = "vf:atom:p001/p001-diary1-0/diary1/line-0-0"
+
+    def setUp(self):
+        self.manifest, self.policy = load(PILOT), load(POLICY)
+
+    def copied_source(self, folder):
+        repo = folder / "source-checkout"
+        for name in ("source/canonical.json", "site/data/j.json", "studio/data/review.json",
+                     "studio/data/notes-versions.json", "site/img/p/diary1.jpg"):
+            target = repo / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / name, target)
+        return repo
+
+    def test_private_current_source_context_is_not_ignored(self):
+        for context in ({"source_snapshots": []}, {"source_repo": "/missing-current-source"},
+                        {"current_sources": [{"pieceId": "p001", "versionId": "p001-diary1-0",
+                                              "sourceFingerprint": "sha256:" + "f" * 64}]}):
+            with self.subTest(context=context):
+                result = sr.evaluate(self.manifest, self.policy, "private-local", release_context=context)
+                self.assertFalse(result["allowed"])
+                self.assertTrue(any(reason.startswith("source-binding:") for reason in result["manifest_reasons"]))
+
+    def test_actual_package_binds_current_source_geometry_policy_and_every_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "preview"
+            descriptor = sr.export_private_preview(self.manifest, self.policy, self.atom_id, out)
+            package = load(out / "region-preview.json")
+            self.assertEqual(package["source"], sr.current_source_bindings(self.manifest)[0])
+            self.assertEqual(package["sourceAnchor"]["box"], [0.0416, 0.0137, 0.3278, 0.0467])
+            self.assertFalse(package["mayPublish"])
+            self.assertEqual(package["image"]["display"], "full-source-image-no-crop")
+            listed = {f["path"]: f for f in package["files"]}
+            actual = {p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file()}
+            self.assertEqual(actual, set(listed) | {"region-preview.json"})
+            for path, record in listed.items():
+                self.assertEqual(record["sha256"], "sha256:" + sr.sha256_file(out / path))
+                self.assertEqual(record["bytes"], (out / path).stat().st_size)
+            self.assertEqual(descriptor["package"]["sha256"], "sha256:" + sr.sha256_file(out / "region-preview.json"))
+            geometry = load(out / "geometry.json")
+            self.assertEqual(geometry["reviewPageGeometry"]["blocks"][0]["lines"][0]["lineId"], "diary1-0-0")
+
+    def test_unknown_canonical_geometry_never_becomes_the_old_atom_box(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "preview"
+            sr.export_private_preview(self.manifest, self.policy,
+                "vf:atom:p001/p001-diary1-0/diary1/line-2-3", out)
+            package = load(out / "region-preview.json")
+            self.assertEqual(package["sourceAnchor"]["status"], "unavailable")
+            self.assertIsNone(package["sourceAnchor"]["box"])
+            self.assertEqual(load(out / "geometry.json")["sourceAnchor"], package["sourceAnchor"])
+
+    def test_changed_atom_or_coordinate_only_geometry_refuses_old_descriptor(self):
+        import source_foundation as foundation
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo = self.copied_source(folder)
+            original = sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "first", repo=repo)
+            changed = copy.deepcopy(self.manifest)
+            next(a for a in changed["atoms"] if a["atom_id"] == self.atom_id)["region"]["bbox"][0] += 1
+            changed = reseal(changed)
+            with self.assertRaisesRegex(ValueError, "stale.*descriptor"):
+                sr.export_private_preview(changed, self.policy, self.atom_id, folder / "changed-atom", repo=repo, expected=original)
+            canonical = load(repo / "source/canonical.json")
+            line = next(l for l in canonical["lines"] if l["id"] == "diary1-0-0")
+            line["geometry"]["readerRow"][2] += 0.001
+            line["geometry"]["studioBox"][0] += 0.001
+            (repo / "source/canonical.json").write_text(json.dumps(canonical))
+            foundation.rebuild(canonical, repo, write=True)
+            with self.assertRaisesRegex(ValueError, "stale.*descriptor"):
+                sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "changed-geometry", repo=repo, expected=original)
+            current = sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "fresh-geometry", repo=repo)
+            self.assertEqual(current["source"], original["source"])
+            self.assertNotEqual(current["geometryDigest"], original["geometryDigest"])
+            self.assertFalse((folder / "changed-atom").exists())
+            self.assertFalse((folder / "changed-geometry").exists())
+
+    def test_changed_media_scope_and_withholding_refuse_before_writes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo = self.copied_source(folder)
+            image = repo / "site/img/p/diary1.jpg"
+            original = image.read_bytes(); image.write_bytes(original + b"changed")
+            with self.assertRaisesRegex(ValueError, "source.asset"):
+                sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "changed-media", repo=repo)
+            image.write_bytes(original)
+            for name, manifest, policy in (
+                ("changed-scope", {**self.manifest, "scope": {"distribution": "public", "may_publish": True}}, self.policy),
+                ("withheld", self.manifest, {**self.policy, "withheld_assets": ["scan:p/diary1"]}),
+                ("publishing", self.manifest, {**self.policy, "publication": {"enabled": True}}),
+            ):
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    sr.export_private_preview(reseal(manifest), policy, self.atom_id, folder / name, repo=repo)
+                self.assertFalse((folder / name).exists())
+
+    def test_live_review_or_source_policy_changes_require_a_fresh_descriptor(self):
+        import source_foundation as foundation
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo = self.copied_source(folder)
+            original = sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "initial", repo=repo)
+            db = folder / "db"
+            (db / "reviews").mkdir(parents=True)
+            (db / "reviews/diary1-0-0.json").write_text(json.dumps({"status": "corrected", "original": "The walls", "text": "TECHNICAL TEST UPDATED READING", "at": "2026-11-06T00:00:00Z"}))
+            canonical, _ = foundation.apply_reviews(load(repo / "source/canonical.json"), db)
+            (repo / "source/canonical.json").write_text(json.dumps(canonical))
+            foundation.rebuild(canonical, repo, write=True)
+            with self.assertRaisesRegex(ValueError, "stale.*descriptor"):
+                sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "stale-source", repo=repo, expected=original)
+            fresh = sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "fresh-source", repo=repo)
+            self.assertNotEqual(fresh["source"], original["source"])
+            (db / "release").mkdir()
+            (db / "release/p001.json").write_text(json.dumps({"pool": "reserve", "publicStatus": "private"}))
+            with self.assertRaisesRegex(ValueError, "stale.*descriptor"):
+                sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "stale-policy", repo=repo, db=db, expected=fresh)
+            (db / "release/p001.json").write_text(json.dumps({"pool": "reserve", "publicStatus": "withheld"}))
+            with self.assertRaisesRegex(ValueError, "withholds"):
+                sr.export_private_preview(self.manifest, self.policy, self.atom_id, folder / "withheld-source", repo=repo, db=db)
+            for name in ("stale-source", "stale-policy", "withheld-source"):
+                self.assertFalse((folder / name).exists())
+
+    def test_private_cli_honors_explicit_current_source_checkout(self):
+        result = subprocess.run([sys.executable, str(ROOT / "tools/source_regions.py"), "check",
+            "--manifest", str(PILOT), "--policy", str(POLICY), "--scope", "private-local",
+            "--source-repo", "/missing-current-source"], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 3, result.stderr or result.stdout)
+        self.assertIn("source-binding:current-v2-source-unavailable", result.stdout)
 
 
 if __name__ == "__main__":
