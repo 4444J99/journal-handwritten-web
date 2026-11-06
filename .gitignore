@@ -2,3 +2,6 @@
 __pycache__/
 _studio_publish/
 .post-poem-work/
+
+# T07 build artifacts
+production/tools/.build/
