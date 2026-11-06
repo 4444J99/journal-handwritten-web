@@ -655,8 +655,19 @@ function prepData(d){
   P = d.pages.map((p, i) => {
     const mx = Math.max(p.iw, p.ih);
     const o = Object.assign({}, p, {i, mh:p.ih * 600 / mx, mw:p.iw * 600 / mx, fh:p.ih * 1200 / mx});
-    o.B.forEach(b => { b._n = b.L.map(parse); });
-    o.box = {}; for (const e of p.x) o.box[e[0] + "-" + e[1]] = e;
+    o.B.forEach((b, bi) => { b._n = b.L.map((raw, li) => {
+      const lineId = b.lineIds?.[li] || `${p.id}-${bi}-${li}`;
+      const accepted = d.acceptedReadings && d.acceptedReadings[lineId];
+      return parse(typeof accepted === "string" ? accepted : raw);
+    }); });
+    o.box = {}; o.unalignedBlocks = new Set();
+    o.B.forEach((b, bi) => {
+      const boxes = p.x.filter(e => e[0] === bi);
+      const unavailable = b.L.some((_, li) => d.sourceAnchors?.[b.lineIds?.[li] || `${p.id}-${bi}-${li}`]?.status === "unavailable");
+      if (unavailable || boxes.length !== b.L.length || new Set(boxes.map(e => e[1])).size !== b.L.length || boxes.some(e => !Number.isInteger(e[1]) || e[1] < 0 || e[1] >= b.L.length)) o.unalignedBlocks.add(bi);
+    });
+    o.validBoxes = p.x.filter(e => !o.unalignedBlocks.has(e[0]));
+    for (const e of o.validBoxes) o.box[e[0] + "-" + e[1]] = e;
     BYID[p.id] = o; return o;
   });
   NJP = P.filter(p => !p.xv).length;
@@ -1169,15 +1180,18 @@ function homeOf(it, p){ const cs = Math.cos(p.dr), sn = Math.sin(p.dr), lx = it.
 function homeOfT(it, p){ const cs = Math.cos(p.r), sn = Math.sin(p.r), lx = it.lx * p.s, ly = it.ly * p.s; return {x:p.x + lx * cs - ly * sn, y:p.y + lx * sn + ly * cs, r:p.r, s:p.s}; }
 let stTok = 0;
 function setState(c, a, o = {}){
+  // A request for the already-visible layout must still cancel an older
+  // asynchronous request (for example Spiral -> Poem before Spiral resolves).
+  const tok = ++stTok;
   const animate = o.animate !== false;
   const reroll = (a === "poem" || a === "scatter") && (a !== arr || o.reroll);
-  if (c === content && a === arr && !reroll && !o.seed) return;
+  if (c === content && a === arr && !reroll && !o.seed){ syncControls(); return; }
   let sd = seed;
   if (o.seed) sd = o.seed;
   else if (reroll){ sd = NEXT[a] || newSeed(); NEXT[a] = null; }
-  const tok = ++stTok;
   const go = () => {
-    if (tok !== stTok) return;
+    if (tok !== stTok || side !== "canvas") return;
+    sourceChanged();
     const anchor = viewFrac() < .35 ? nearestCenter() : null;
     releaseFocus(false);
     content = c; arr = a; seed = sd;
@@ -1425,7 +1439,13 @@ function uprightAt(it, hpx){
   return sstep(60, 110, hpx);
 }
 function lineSrc(it, need, tile, prio){
-  const p = P[it.pi], c = it.crop, a = p.a, at = ATL.k[a[0]];
+  const p = P[it.pi], c = it.crop, a = p.a;
+  if (!a){
+    const key = "L" + it.li + ":source", saved = SP.get(key);
+    if (saved){ saved.u = frameNo; return [saved.b, 0, 0, saved.w, saved.h]; }
+    need_(key, {url:absURL(`img/i/${p.id}.jpg`), crop:c, feather:true}, prio); return null;
+  }
+  const at = ATL.k[a[0]];
   const raw = at ? [at, a[1] + c[0] * a[3], a[2] + c[1] * a[4], (c[2] - c[0]) * a[3], (c[3] - c[1]) * a[4]] : null;
   if (tile || need < 9) return raw;
   const ch = c[3] - c[1];
@@ -1447,7 +1467,13 @@ function lineSrc(it, need, tile, prio){
 }
 const need_ = need;
 function pageSrc(it, need, tile, prio){
-  const p = P[it.pi], c = p.c, a = p.a, at = ATL.t[a[0]];
+  const p = P[it.pi], c = p.c, a = p.a;
+  if (!a){
+    const key = "P" + it.pi + ":source", saved = SP.get(key);
+    if (saved){ saved.u = frameNo; return [saved.b, 0, 0, saved.w, saved.h]; }
+    need_(key, {url:absURL(`img/p/${p.id}.jpg`), crop:c, max:800, feather:false}, prio); return null;
+  }
+  const at = ATL.t[a[0]];
   const raw = at ? [at, a[1] + c[0] * a[3], a[2] + c[1] * a[4], (c[2] - c[0]) * a[3], (c[3] - c[1]) * a[4]] : null;
   if (tile) return raw;
   const ah = (c[3] - c[1]) * a[4];
@@ -1737,7 +1763,7 @@ function makeStk(it){
   const t = stackXf(it.sl.k, W0, H0, sg), cs = Math.cos(t.r), sn = Math.sin(t.r);
   const lx = t.x + it.sl.lx * cs - it.sl.ly * sn, ly = t.y + it.sl.lx * sn + it.sl.ly * cs;
   const base = settled && it.tg.a > 0 ? it.tg : {x:it.dx, y:it.dy};
-  return {kind:it.kind, g:it.L.piece, layers, W0, H0, sg, set, cx:base.x - lx, cy:base.y - ly, p:0, pt:0, dir:-1};
+  return {kind:it.kind, g:it.L.piece, layers, W0, H0, sg, set, cx:base.x - lx, cy:base.y - ly, p:it.sl.k, pt:it.sl.k, dir:-1};
 }
 function layerXf(S, k){
   const d = k - S.p;
@@ -1771,56 +1797,57 @@ function frontLead(){ const S = focus && focus.stk; if (!S) return null; const l
 function peelStep(d){
   const S = focus && !focus.out && focus.stk; if (!S) return false;
   S.dir = -1; S.pt = clamp(Math.round(S.pt) + d, 0, S.layers.length - 1); if (!MOTION) S.p = S.pt;
-  verUI(); setDirty(); return true;
+  sourceChanged(); frameStack(S); verUI(); setHash(); setDirty(); return true;
 }
 function peelToVersion(vi){
   const S = focus && !focus.out && focus.stk; if (!S) return;
   const pc = PIECES[S.g], k = S.layers.findIndex(ly => pc.st[ly.v] === vi); if (k < 0) return;
-  S.dir = -1; S.pt = k; if (!MOTION) S.p = k; verUI(); setDirty();
+  S.dir = -1; S.pt = k; if (!MOTION) S.p = k; sourceChanged(); frameStack(S); verUI(); setHash(); setDirty();
 }
 /* reading a long version: a comfortable line size, and the scroll range of the top sheet */
+function selectedLayer(S){ return S.layers[clamp(Math.round(S.pt), 0, S.layers.length - 1)]; }
 function readScale(S){
-  const hs = S.layers[0].items.map(x => x.kind === "f" ? x.fs : x.h * .6).sort((a, b) => a - b), h = hs[hs.length >> 1] || 34;
+  const hs = selectedLayer(S).items.map(x => x.kind === "f" ? x.fs : x.h * .6).sort((a, b) => a - b), h = hs[hs.length >> 1] || 34;
   return (PHONE ? 22 : 27) / h; // screen px of a line's letters
 }
 const stkMargin = () => Math.max(40, VH * .09);
-function stkTop(S, s){ return S.cy - S.H0 / 2 + (VH / 2 - stkMargin()) / s; }
-function stkBottom(S, s){ const t = stackXf(S.layers.length - 1, S.W0, S.H0, S.sg); return S.cy + S.H0 / 2 + Math.max(0, t.y) - (VH / 2 - stkMargin()) / s; }
-function stkTall(){ const S = focus && !focus.out && focus.stk; return S && (S.H0 + 2 * stkMargin() / cam.s) * cam.s > VH ? S : null; }
+function stkTop(S, s){ return S.cy - selectedLayer(S).h / 2 + (VH / 2 - stkMargin()) / s; }
+function stkBottom(S, s){ return S.cy + selectedLayer(S).h / 2 - (VH / 2 - stkMargin()) / s; }
+function stkTall(){ const S = focus && !focus.out && focus.stk; return S && (selectedLayer(S).h + 2 * stkMargin() / cam.s) * cam.s > VH ? S : null; }
 function clampStk(){ const S = stkTall(); if (!S) return; const a = stkTop(S, cam.s), b = Math.max(a, stkBottom(S, cam.s)); cam.y = clamp(cam.y, a, b); }
+function frameStack(S, instant = false){
+  const ly = selectedLayer(S), s = Math.min(VW * .88 / (ly.w + 60), VH * .8 / (ly.h + 60)), sr = readScale(S);
+  const reading = s < sr * .9, scale = reading ? Math.min(sr, VW * .92 / (ly.w + 40)) : s;
+  animCam({x:S.cx, y:reading ? stkTop(S, scale) : S.cy, s:scale}, MOTION && !instant ? 500 : 0);
+}
 function focusScale(it){
   const s = it.kind === "p" ? Math.min(VW * .92 / it.w, VH * .86 / it.h) : Math.min(VW * .9 / it.w, VH * (it.kind === "f" ? .12 : .2) / it.h);
   return s / it.ds;
 }
 function focusOn(it, instant){
+  sourceChanged();
   const prev = focus && !focus.out ? focus.f : 0;
   const stk = makeStk(it);
   focus = {it, f:0, f0:it === (focus && focus.it) && !stk ? prev : 0, t0:performance.now(), out:false, stk};
   if (!MOTION || instant) focus.f = focus.f0 = 1;
   if (!instant) hideUI(); // the work alone; a tap brings the controls back
-  if (stk){ // frame the top version, the sheets beneath it in view
-    const t = stackXf(stk.layers.length - 1, stk.W0, stk.H0, stk.sg);
-    const s = Math.min(VW * .88 / (stk.W0 + 60 + Math.abs(t.x)), VH * .8 / (stk.H0 + 60 + t.y));
-    const sr = readScale(stk);
-    if (s >= sr * .9) animCam({x:stk.cx + t.x / 2, y:stk.cy + t.y / 2, s}, MOTION && !instant ? 900 : 0);
-    else { // too long to read whole: open at reading size on the first lines; wheel, drag or arrows scroll down
-      const s2 = Math.min(sr, VW * .92 / (stk.W0 + 40));
-      animCam({x:stk.cx, y:stkTop(stk, s2), s:s2}, MOTION && !instant ? 900 : 0);
-    }
-    verUI(); setDirty(); return;
+  if (stk){
+    frameStack(stk, instant);
+    verUI(); setHash(); setDirty(); return;
   }
   const s = focusScale(it);
   let T = {x:it.dx, y:it.dy};
   if (it.mode === "morph"){ const p = PAGES[it.pi]; T = lerpS(homeOfT(it, p.tg), it.tg, lineT(it, morphT(s))); }
   else if (settled) T = it.tg;
   animCam({x:T.x, y:T.y, s}, MOTION && !instant ? 900 : 0);
-  setDirty();
+  setHash(); setDirty();
 }
 function releaseFocus(animate){
   if (!focus || focus.out) return;
+  sourceChanged();
   if (focus.stk) focus.stk.pt = 0; // the newest returns
-  if (!animate || !MOTION){ focus = null; verUI(); setDirty(); return; }
-  focus.f0 = focus.f; focus.out = true; focus.t0 = performance.now(); verUI(); setDirty();
+  if (!animate || !MOTION){ focus = null; verUI(); setHash(); setDirty(); return; }
+  focus.f0 = focus.f; focus.out = true; focus.t0 = performance.now(); verUI(); setHash(); setDirty();
 }
 // iOS / Android: no page zoom, no pull-to-refresh, no double-tap zoom
 for (const ev of ["gesturestart", "gesturechange", "gestureend"]) document.addEventListener(ev, e => { e.preventDefault(); if (ev === "gesturechange" && side === "book" && e.scale < .72) pinchClose(); }, {passive:false});
@@ -1843,6 +1870,7 @@ function resize(){
     const k = Math.sqrt((VW * VH) / (oW * oH));
     if (fin(k) && k > 0){ if (camTw) camTw.t.s *= k; cam.s = clamp(cam.s * k, minS(), maxS()); }
   }
+  if (focus && !focus.out && focus.stk && side === "canvas") frameStack(focus.stk, true);
   setDirty();
 }
 addEventListener("resize", () => later("resize", () => { resize(); if (side === "book") bookResize(); }, 80));
@@ -1902,7 +1930,7 @@ function geom(v){
 }
 function rectsSVG(p, cls = ""){
   let r = "";
-  for (const e of p.x){ const [b, l, x0, y0, x1, y1] = e;
+  for (const e of p.validBoxes){ const [b, l, x0, y0, x1, y1] = e;
     r += `<rect data-k="${b}-${l}" x="${(x0 * p.iw).toFixed(1)}" y="${(y0 * p.ih).toFixed(1)}" width="${((x1 - x0) * p.iw).toFixed(1)}" height="${((y1 - y0) * p.ih).toFixed(1)}" rx="${(.004 * p.iw).toFixed(1)}"></rect>`; }
   return `<svg viewBox="0 0 ${p.iw} ${p.ih}" preserveAspectRatio="none" aria-hidden="true" class="${cls}">${r}</svg>`;
 }
@@ -1913,6 +1941,7 @@ function leafHTML(g){
 }
 function wordsHTML(p){
   if (!p) return `<div class="sheet blank"></div>`;
+  if (p.sourceStatus === "staged-untranscribed") return `<div class="sheet" data-pid="${esc(p.id)}"><p role="status">Transcription is unavailable for this staged source.</p></div>`;
   let h = "";
   const ctx = {mode:B.clean ? "clean" : "dip"};
   p.B.forEach((b, bi) => {
@@ -1945,12 +1974,14 @@ function studyTextHTML(p){
   return h;
 }
 function thumbStyle(p, H){
+  if (!p.a) return `width:${(p.iw * H / p.ih).toFixed(1)}px;height:${H}px;background-image:url(img/m/${esc(p.id)}.jpg);background-size:contain;background-position:center`;
   const a = p.a, AW = ATLAS_SZ[a[0]], f = H / a[4];
   return `width:${(a[3] * f).toFixed(1)}px;height:${H}px;background-image:url(img/a/t${a[0]}.jpg);background-size:${(AW[0] * f).toFixed(1)}px ${(AW[1] * f).toFixed(1)}px;background-position:${(-a[1] * f).toFixed(1)}px ${(-a[2] * f).toFixed(1)}px`;
 }
 function curPage(){ return BYID[B.pid] || P[0]; }
 function renderBook(dir = 0){
   if (B.mode !== "journal") return;
+  if (B.unavailableHash){ renderUnavailable(); return; }
   if (B.view === "study") return renderStudy(dir);
   B.vi = viewOf(B.pid);
   const v = viewFor(B.pid); if (!v) return;
@@ -1977,6 +2008,7 @@ function swapView(el, dir){
   applyFocus(el, true);
 }
 function pageChanged(pages){
+  sourceChanged();
   markStrip(); verUI();
   $("#live").textContent = "Page " + pages.map(p => label(p.id)).join(", ");
   fillPageInfo(pages);
@@ -2026,13 +2058,13 @@ function applyFocus(rootEl = document, scroll = false){
 function goPage(pid, dir){
   if (!BYID[pid] || pid === B.pid) return;
   if (dir === undefined) dir = BYID[pid].i > curPage().i ? 1 : -1;
-  B.pid = pid; B.focus = null; renderBook(dir);
+  B.unavailableHash = null; B.pid = pid; B.focus = null; renderBook(dir);
 }
 function step(d){
   if (B.mode === "journal"){
     if (curPage().xv){ goPage(B.ret && BYID[B.ret] ? B.ret : P[NJP - 1].id, d); return; } // a new version: back to the notebook
     if (B.view === "study"){ const p = P[clamp(curPage().i + d, 0, NJP - 1)]; goPage(p.id, d); }
-    else { const vi = clamp(viewOf(B.pid) + d, 0, B.views.length - 1); const v = B.views[vi]; if (v && !v.pages.some(p => p.id === B.pid)){ B.pid = v.pages[0].id; B.focus = null; renderBook(d); } }
+    else { const vi = clamp(viewOf(B.pid) + d, 0, B.views.length - 1); const v = B.views[vi]; if (v && !v.pages.some(p => p.id === B.pid)){ B.unavailableHash = null; B.pid = v.pages[0].id; B.focus = null; renderBook(d); } }
   } else if (B.mode === "rev"){ stopPlay(); goStep(B.palStep + d, d > 0); }
 }
 /* strip */
@@ -2126,12 +2158,14 @@ function bookResize(){
   if (B.mode === "journal") renderBook(0); else if (B.mode === "rev") renderPal(false); else if (B.mode === "hf") layoutHF();
 }
 function setMode(m){
+  sourceChanged();
   stopPlay(); stopHF();
+  B.hf = null; B.unavailableHash = null;
   B.mode = m;
   body.classList.remove("m-journal", "m-rev", "m-hf"); body.classList.add("m-" + m);
-  bst.innerHTML = "";
+  bst.innerHTML = ""; bst.removeAttribute("role");
   if (m === "journal") renderBook(0);
-  else if (m === "rev") choosePal(B.palId || PAL[0].id);
+  else if (m === "rev") choosePal(B.palId || (PAL[0] && PAL[0].id));
   else if (m === "hf") layoutHF();
   syncControls(); setHash();
 }
@@ -2230,6 +2264,8 @@ $("#pplay").addEventListener("click", () => { if (B.playing) stopPlay(); else st
 function choosePal(id){
   stopPlay();
   const cfg = PAL.find(p => p.id === id) || PAL[0];
+  if (!cfg){ B.pal = null; B.palId = null; bst.textContent = "Revisions are unavailable in this release."; bst.setAttribute("role", "status"); return; }
+  bst.removeAttribute("role");
   B.palId = cfg.id; B.pal = buildSet(cfg);
   $$("#palsets button").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === cfg.id ? "true" : "false"));
   $("#ticks .tk").innerHTML = B.pal.steps.map(s => `<i class="${s.cert === "evid" ? "" : s.cert}"></i>`).join("");
@@ -2351,12 +2387,15 @@ $("#hfpages").addEventListener("click", e => { const b = e.target.closest("butto
 $("#hfrange").addEventListener("input", e => { stopHF(); setHF(+e.target.value / 1000); poke(); });
 $("#hfplay").addEventListener("click", () => { playHF(); poke(); });
 function layoutHF(){
-  const id = B.hfId && BYID[B.hfId] ? B.hfId : HF[0], p = BYID[id];
+  stopHF(); B.hf = null;
+  const id = B.hfId && HF.includes(B.hfId) && BYID[B.hfId] ? B.hfId : HF.find(id => BYID[id]), p = BYID[id];
   B.hfId = id;
+  $("#hfrange").disabled = $("#hfplay").disabled = !p || !p.validBoxes.length;
+  if (!p || !p.validBoxes.length){ bst.textContent = "Hand ↔ Font is unavailable for this source."; bst.setAttribute("role", "status"); return; }
+  bst.removeAttribute("role");
   $$("#hfpages button").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === id ? "true" : "false"));
   bst.innerHTML = `<div class="hfstage view" id="hfstage" style="inset:auto"></div>`;
   const st = $("#hfstage");
-  if (!p || !p.x.length) return;
   const W = p.iw, H = p.ih, ink = p.pl || "#2a2c33";
   const vw = innerWidth, vh = innerHeight, dockH = body.classList.contains("ui") ? 190 : 40;
   const top = Math.max(20, vh * .05), avW = vw - 2 * Math.max(12, vw * .05), avH = vh - top - Math.max(40, Math.min(dockH, vh * .3)) - 12;
@@ -2364,7 +2403,7 @@ function layoutHF(){
   st.style.cssText = `width:${W * s}px;height:${H * s}px;left:${(vw - W * s) / 2}px;top:${top + (avH - H * s) / 2}px`;
   let h = `<img class="plate" src="img/h/${esc(id)}.jpg" alt="Page ${esc(label(id))}" draggable="false">`;
   const L = [];
-  p.x.forEach((e, i) => {
+  p.validBoxes.forEach((e, i) => {
     const [b, l, x0, y0, x1, y1, core, xhF] = e, xh = xhF * H;
     const ex0 = Math.max(0, Math.floor(x0 * W - 1.2 * xh)), ey0 = Math.max(0, Math.floor(y0 * H - .9 * xh));
     const ex1 = Math.min(W, Math.floor(x1 * W + 1.2 * xh)), ey1 = Math.min(H, Math.floor(y1 * H + 1.1 * xh));
@@ -2380,7 +2419,12 @@ function layoutHF(){
   const r0 = $("#hfrange");
   B.hf = {id, L, t:r0 ? +r0.value / 1000 : 0};
   const fit = () => {
-    if (!$("#hfstage")) return;
+    if (!st.isConnected || $("#hfstage") !== st || !B.hf || B.hf.id !== id || B.mode !== "hf") return;
+    if (document.fonts && !document.fonts.check('34px "Etceter4 Diary"')){
+      setHF(0); $("#hfrange").disabled = $("#hfplay").disabled = true;
+      const fallback = document.createElement("p"); fallback.setAttribute("role", "status");
+      fallback.textContent = "Handwriting shown; font rendering is unavailable."; st.append(fallback); return;
+    }
     const cw = st.clientWidth; if (!cw) return;
     $$(".fl", st).forEach(el => { const d = L[+el.dataset.i]; el.style.transform = ""; const r = el.scrollWidth / cw; el.dataset.sx = Math.max(.6, Math.min(1.6, d.w / (r || 1))).toFixed(3); });
     setHF(B.hf.t);
@@ -2403,6 +2447,7 @@ function setHF(t){
 }
 function playHF(){
   stopHF();
+  if (!B.hf) return;
   const from = B.hf ? B.hf.t : 0, to = from < .5 ? 1 : 0;
   if (!MOTION){ setHF(to); return; }
   const t0 = performance.now(), D = 2600;
@@ -2475,20 +2520,23 @@ function anchorFrom(it){
   return {pid:p.id, k:it.L.b + "-" + it.L.l, it};
 }
 function openBookFrom(it){
+  if (focus && !focus.out && focus.stk) it = frontLead() || it;
   if (!it){ const n = nearestCenter(); it = n; }
   const a = anchorFrom(it) || {pid:P[0].id, k:null};
   openBook(a);
 }
 function openBook(a, opts = {}){
   if (xfer) return;
+  ++stTok; B.unavailableHash = null; sourceChanged();
   closePanels(); hideUI(true);
   cancel("tap", "lp", "drift"); vel.on = false; camTw = null;
   B.pid = a.pid; B.focus = a.k ? {pid:a.pid, k:a.k} : null;
-  if (opts.mode && opts.mode !== "journal"){ side = "book"; enterBookDOM(); setMode(opts.mode); return; }
+  if (opts.mode && opts.mode !== "journal"){ releaseFocus(false); side = "book"; enterBookDOM(); setMode(opts.mode); return; }
   if (B.mode !== "journal"){ B.mode = "journal"; body.classList.remove("m-rev", "m-hf"); body.classList.add("m-journal"); }
   if (opts.view) B.view = opts.view;
   const anim = MOTION && a.it && side === "canvas";
   const srcs = anim ? collectCanvasFlyers(a) : [];
+  releaseFocus(false);
   side = "book"; enterBookDOM();
   bst.innerHTML = ""; renderBook(0);
   syncControls(); setHash();
@@ -2561,7 +2609,7 @@ function finishToBook(){
 function pinchClose(){ if (side === "book" && !xfer) closeBook(); }
 function closeBook(){
   if (xfer || side !== "book") return;
-  closePanels(); hideUI(true); stopPlay(); stopHF();
+  closePanels(); hideUI(true); stopPlay(); stopHF(); sourceChanged(); B.unavailableHash = null;
   // anchor: the highlighted line, else the page in view
   let pid = B.mode === "journal" ? B.pid : B.mode === "hf" ? B.hfId : (() => { const Pp = B.pal; if (!Pp) return B.pid; const s = Pp.steps[Math.max(0, B.palStep - 1)]; return s ? Pp.W[s.k].lines[s.lines[0]].page : B.pid; })();
   if (!BYID[pid]) pid = P[0].id;
@@ -2743,7 +2791,7 @@ function goVersion(g, vi){
   const cur = curPage();
   if (to.xv && !cur.xv) B.ret = cur.id;
   const dir = to.i > cur.i ? 1 : to.i < cur.i ? -1 : 0;
-  B.pid = pid; B.focus = to.B[b] && to.B[b].L.length ? {pid, k:b + "-0"} : null;
+  B.unavailableHash = null; B.pid = pid; B.focus = to.B[b] && to.B[b].L.length ? {pid, k:b + "-0"} : null;
   renderBook(dir); applyFocus(document, true); setHash(); verUI();
 }
 function bookVerStep(d){ const g = bookPiece(); if (g === null) return; const vi = bookCurVer(g) + d; if (vi >= 0 && vi < PIECES[g].n) goVersion(g, vi); }
@@ -2781,7 +2829,25 @@ $("#dock-ver").addEventListener("click", e => {
   else bookVerStep(d);
 });
 /* panels: search + info */
+let privateFeaturePreview = null;
+async function mountPrivateFeatures(options = {}){
+  const loopback = ["127.0.0.1", "localhost", "[::1]"].includes(location.hostname);
+  if (!loopback || new URLSearchParams(location.search).get("private-features") !== "1" || options.fixture !== true) throw new Error("Private fixture previews require explicit loopback opt-in.");
+  const source = selectedSourceBinding(), epoch = sourceEpoch;
+  if (!source) throw new Error("A current canonical source binding is unavailable for this reader version.");
+  if (source.pieceId !== options.source?.pieceId || source.versionId !== options.source?.versionId || source.sourceFingerprint !== options.source?.sourceFingerprint) throw new Error("Preview source must match the current canonical reader binding.");
+  privateFeaturePreview?.destroy();
+  const {mountPrivateFeaturePreview} = await import("./reader-features.js");
+  const current = selectedSourceBinding();
+  if (epoch !== sourceEpoch || !current || current.pieceId !== source.pieceId || current.versionId !== source.versionId || current.sourceFingerprint !== source.sourceFingerprint) throw new Error("Reader source changed while the preview was loading.");
+  let host = $("#private-features");
+  if (!host){ host = document.createElement("div"); host.id = "private-features"; $("#infop").append(host); }
+  privateFeaturePreview = mountPrivateFeaturePreview(host, {...options, source, enabled:true});
+  $("#infop").hidden = false; $("#b-info").setAttribute("aria-expanded", "true"); showUI();
+  return privateFeaturePreview;
+}
 function closePanels(){
+  privateFeaturePreview?.lifecycle.close("reader-panels", false);
   $("#searchp").hidden = true; $("#infop").hidden = true;
   $("#b-search").setAttribute("aria-expanded", "false"); $("#b-info").setAttribute("aria-expanded", "false");
 }
@@ -2870,7 +2936,11 @@ document.addEventListener("keydown", e => {
     if (e.target.closest && e.target.closest("button") && e.key === "Enter") return;
     interacted();
     const k = e.key, stp = Math.min(VW, VH) * .18;
-    const pan = (dx, dy) => animCam({x:(camTw ? camTw.t.x : cam.x) + dx / cam.s, y:(camTw ? camTw.t.y : cam.y) + dy / cam.s, s:camTw ? camTw.t.s : cam.s}, MOTION ? 220 : 0);
+    const pan = (dx, dy) => {
+      const target = {x:(camTw ? camTw.t.x : cam.x) + dx / cam.s, y:(camTw ? camTw.t.y : cam.y) + dy / cam.s, s:camTw ? camTw.t.s : cam.s};
+      const S = stkTall(); if (S && dy) target.y = clamp(target.y, stkTop(S, target.s), Math.max(stkTop(S, target.s), stkBottom(S, target.s)));
+      animCam(target, MOTION ? 220 : 0);
+    };
     if (k === "ArrowLeft"){ pan(-stp, 0); e.preventDefault(); }
     else if (k === "ArrowRight"){ pan(stp, 0); e.preventDefault(); }
     else if (k === "ArrowUp"){ pan(0, -stp); e.preventDefault(); }
@@ -2889,17 +2959,53 @@ document.addEventListener("keydown", e => {
   if (B.mode === "journal" && (e.key === "[" || e.key === "]")){ bookVerStep(e.key === "[" ? -1 : 1); e.preventDefault(); }
 });
 
-/* ---------- hash: a bare token of letters, digits and hyphens ---------- */
+/* ---------- stable source links and legacy layout/page links ---------- */
+let sourceEpoch = 0;
+function sourceChanged(){ sourceEpoch++; document.dispatchEvent(new CustomEvent("reader:sourcechange")); }
+function selectedSource(){
+  const S = side === "canvas" && focus && !focus.out && focus.stk;
+  if (S){ const pc = PIECES[S.g]; return {pieceId:pc.id, versionId:pc.V[pc.st[selectedLayer(S).v]].id}; }
+  const L = side === "canvas" ? focus && !focus.out && focus.it.L : B.focus && LNK[B.focus.pid + ":" + B.focus.k];
+  if (!L || !PIECES[L.piece] || L.vi === undefined) return null;
+  return {pieceId:PIECES[L.piece].id, versionId:PIECES[L.piece].V[L.vi].id};
+}
+function selectedSourceBinding(){
+  const source = selectedSource(); if (!source) return null;
+  const binding = DATA?.sourceBindings?.[source.pieceId + "/" + source.versionId];
+  if (!binding || binding.pieceId !== source.pieceId || binding.versionId !== source.versionId || !/^sha256:[a-f0-9]{64}$/.test(binding.sourceFingerprint)) return null;
+  return {pieceId:binding.pieceId, versionId:binding.versionId, sourceFingerprint:binding.sourceFingerprint};
+}
+function sourceHash(source){ return "piece/" + encodeURIComponent(source.pieceId) + "/" + encodeURIComponent(source.versionId); }
+function renderUnavailable(){
+  bst.replaceChildren();
+  const message = document.createElement("p"); message.setAttribute("role", "status");
+  message.style.cssText = "margin:20vh auto;padding:2rem;max-width:36rem;text-align:center";
+  message.textContent = "This source version is unavailable in this release.";
+  bst.append(message);
+}
 function setHash(){
   let h;
-  if (side === "canvas") h = content + "-" + arr + (arr === "spiral" ? "" : "-" + seed);
-  else if (B.mode === "rev") h = B.palId || "rev-13";
-  else if (B.mode === "hf") h = "hand-" + (B.hfId || HF[0]);
+  const source = selectedSource();
+  if (B.unavailableHash && side === "book") h = B.unavailableHash;
+  else if (source && (side === "canvas" || B.mode === "journal")) h = sourceHash(source);
+  else if (side === "canvas") h = content + "-" + arr + (arr === "spiral" ? "" : "-" + seed);
+  else if (B.mode === "rev") h = B.palId || "rev-unavailable";
+  else if (B.mode === "hf") h = "hand-" + (B.hfId || "unavailable");
   else { h = (B.view === "scan" ? "read" : B.view) + "-" + B.pid; if (B.focus && B.focus.pid === B.pid) h += "-" + B.focus.k; }
   if (("#" + h) === location.hash) return;
   try { history.replaceState(null, "", "#" + h); } catch(e){}
 }
 function readHash(){
+  const raw = (location.hash || "").slice(1);
+  if (raw.startsWith("piece/")){
+    let parts; try { parts = raw.split("/").map(decodeURIComponent); } catch (_) { return {unavailable:true, requested:raw}; }
+    const pc = parts.length === 3 && PIECES.find(p => p.id === parts[1]);
+    const vi = pc ? pc.V.findIndex(v => v.id === parts[2]) : -1;
+    if (!pc || vi < 0) return {unavailable:true, requested:raw};
+    const V = pc.V[vi], pid = V.s === "j" ? V.P[0]?.[0] : V.pg, b = V.s === "j" ? V.P[0]?.[1]?.[0] : 0;
+    if (!BYID[pid] || !BYID[pid].B[b]) return {unavailable:true, requested:raw};
+    return {side:"book", mode:"journal", view:BYID[pid].sourceStatus === "staged-untranscribed" ? "scan" : "words", pid, k:b + "-0"};
+  }
   const t = (location.hash || "").slice(1).toLowerCase().replace(/[^a-z0-9-]/g, "").split("-").filter(Boolean);
   const alias = {zoom:"unfold", font:"type"};
   const c = alias[t[0]] || t[0];
@@ -2913,14 +3019,23 @@ function readHash(){
     return {side:"book", mode:"journal", view:t[0] === "read" ? "scan" : t[0], pid:t[1], k:k && LNK[t[1] + ":" + k] || (k && BYID[t[1]].box[k]) ? k : null};
   }
   if (t[0] === "rev" && t[1] && PAL.find(p => p.id === "rev-" + t[1])) return {side:"book", mode:"rev", pal:"rev-" + t[1]};
-  if (t[0] === "hand") return {side:"book", mode:"hf", hf:BYID[t[1]] ? t[1] : HF[0]};
+  if (t[0] === "hand" && HF.includes(t[1]) && BYID[t[1]]) return {side:"book", mode:"hf", hf:t[1]};
+  if (["read", "words", "study", "rev", "hand"].includes(t[0])) return {unavailable:true, requested:raw};
   return {side:"canvas", c:"lines", a:"poem", seed:null};
 }
 function applyHash(h, animate){
+  sourceChanged();
+  if (h.unavailable){
+    ++stTok; releaseFocus(false); stopPlay(); stopHF(); B.focus = null; B.hf = null;
+    side = "book"; B.mode = "journal"; B.unavailableHash = h.requested;
+    body.classList.remove("m-rev", "m-hf"); body.classList.add("m-journal");
+    enterBookDOM(); renderUnavailable(); syncControls(); setHash(); return;
+  }
+  B.unavailableHash = null;
   if (h.side === "canvas"){
     if (side === "book"){ B.focus = null; closeBook(); }
     const reroll = !h.seed && h.a !== "spiral" && (h.a !== arr || h.c !== content);
-    if (h.c !== content || h.a !== arr || (h.seed && h.seed !== seed) || reroll) setState(h.c, h.a, {animate, seed:h.seed || undefined, reroll});
+    setState(h.c, h.a, {animate, seed:h.seed || undefined, reroll});
   } else {
     if (h.mode === "journal"){ B.view = h.view; if (side === "canvas") openBook({pid:h.pid, k:h.k}, {view:h.view}); else { B.pid = h.pid; B.focus = h.k ? {pid:h.pid, k:h.k} : null; if (B.mode !== "journal") setMode("journal"); else renderBook(0); syncControls(); } }
     else if (h.mode === "rev"){ B.palId = h.pal; if (side === "canvas") openBook({pid:B.pid || P[0].id, k:null}, {mode:"rev"}); else setMode("rev"); }
@@ -2949,9 +3064,9 @@ async function boot(){
   else seed = newSeed();
   applyLayout(false);
   startCam(false);
-  syncControls(); setHash();
+  syncControls();
   setDirty(); interacted();
-  if (h.side === "book") applyHash(h, false);
+  if (h.side === "book" || h.unavailable) applyHash(h, false); else setHash();
   later("prefetch", prefetchLayouts, 1200);
   if (MOTION && store.get("jc.hint") !== "1" && h.side === "canvas"){
     const el = document.createElement("div"); el.className = "hint"; body.appendChild(el);
@@ -2963,6 +3078,10 @@ rmq.addEventListener && rmq.addEventListener("change", () => { MOTION = !rmq.mat
 
 /* test hooks (no visible effect) */
 window.__jc = {stats, cam, get state(){ return content + "-" + arr; }, get seed(){ return seed; }, get side(){ return side; }, get settled(){ return settled; },
+  source: selectedSource, sourceBinding:selectedSourceBinding, sourceLink(source = selectedSource()){ return source ? "#" + sourceHash(source) : null; },
+  mountFeatures:mountPrivateFeatures,
+  selectVersion(vi){ peelToVersion(vi); }, setState, setMode,
+  stackBounds(){ const S = focus && !focus.out && focus.stk; return S ? {width:selectedLayer(S).w, height:selectedLayer(S).h, top:stkTop(S, cam.s), bottom:stkBottom(S, cam.s), tall:!!stkTall()} : null; },
   zoom(f){ zoomAt(VW / 2, VH / 2, f); }, tapAt(x, y){ singleTap(x, y); }, perf(){ stats.n = 0; stats.sum = 0; stats.max = 0; stats.tileRenders = 0; },
   centerOn(k){ const it = BY[k]; if (it){ cam.x = it.tg.a > 0 ? it.tg.x : it.dx; cam.y = it.tg.a > 0 ? it.tg.y : it.dy; setDirty(); } },
   items(){ return ITEMS.filter(i => i.da > .5).length; }, quad(k){ const it = BY[k]; return it ? itemQuad(it) : null; },

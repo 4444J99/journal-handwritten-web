@@ -108,22 +108,7 @@ def _unique(items, key, what):
     return result
 
 
-def source_fingerprint_v1(source):
-    # Historical v1 fingerprint: stanza boundaries (breakBefore) were ignored.
-    # Retained for readable history and explicit migration/rebind only.
-    return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
-                   "members": source["members"], "lines": [
-                       {k: line[k] for k in ("lineId", "text", "blockType")}
-                       for line in source["lines"]]})
-
-
-def source_fingerprint(source):
-    # v2 logical-structure digest: includes stanza boundaries (breakBefore).
-    # Coordinates, page dimensions, and display order do not define identity.
-    return digest({"pieceId": source["pieceId"], "versionId": source["versionId"],
-                   "members": source["members"], "lines": [
-                       {k: line[k] for k in ("lineId", "text", "blockType", "breakBefore")}
-                       for line in source["lines"]]})
+from source_fingerprint import source_fingerprint, source_fingerprint_v1, source_binding
 
 
 def private_db(path, piece_ids):
@@ -152,7 +137,7 @@ def private_db(path, piece_ids):
         raise Invalid("invalid studio export names") from error
 
 
-def source_snapshot(repo, piece_id, version_id, db=None):
+def source_snapshot(repo, piece_id, version_id, db=None, *, correction_values=None):
     """Exact existing membership plus current, attributable exported corrections."""
     repo = Path(repo)
     paths = ["site/data/j.json", "studio/data/review.json"]
@@ -160,15 +145,24 @@ def source_snapshot(repo, piece_id, version_id, db=None):
     pieces = _unique(site["pieces"], "id", "piece")
     _unique([v for p in site["pieces"] for v in p["V"]], "id", "version")
     pages = _unique(review["pages"], "id", "page")
-    _unique([l for p in review["pages"] for b in p["blocks"] for l in b["lines"]], "id", "line")
+    line_map = _unique([l for p in review["pages"] for b in p["blocks"] for l in b["lines"]], "id", "line")
+    if correction_values is not None:
+        if not isinstance(correction_values, dict) or set(correction_values) - set(line_map):
+            raise Invalid("output corrections must name existing explicit source line IDs")
+        quotation_ids = {l["id"] for p in review["pages"] for b in p["blocks"] if b.get("t") == "quotation" for l in b["lines"]}
+        if set(correction_values) & quotation_ids:
+            raise Invalid("output corrections cannot replace protected quotation markers")
+        for text in correction_values.values():
+            scalar_text(text, empty=True)
+        reader_pages = _unique(site["pages"], "id", "reader page")
     version = next((v for v in pieces.get(piece_id, {}).get("V", []) if v["id"] == version_id), None)
     if version is None:
         raise Invalid("unknown exact piece/version")
-    corrections = {}
+    corrections = {**site.get("acceptedReviews", {}), **review.get("acceptedReviews", {})}
     if db is not None:
         # Reuse the current strict export loader (including malformed release-name
         # hard stops). Importing it has no publication/network side effects.
-        corrections = private_db(db, set(pieces))["reviews"]
+        corrections.update(private_db(db, set(pieces))["reviews"])
     rows, seen, review_evidence = [], set(), []
     for member in version["P"]:
         if not isinstance(member, list) or len(member) != 2 or member[0] not in pages or not isinstance(member[1], list):
@@ -180,7 +174,13 @@ def source_snapshot(repo, piece_id, version_id, db=None):
             seen.add((page_id, bi))
             block = pages[page_id]["blocks"][bi]
             for li, line in enumerate(block["lines"]):
+                if line.get("transcriptionStatus") == "untranscribed":
+                    raise Invalid("untranscribed source line; explicit transcription required")
                 original = scalar_text(line["tx"], empty=True)
+                if correction_values is not None and block.get("t") != "quotation":
+                    reader_original = reader_pages[page_id]["B"][bi]["L"][li]
+                    if reader_original != original:
+                        raise Invalid("reader and studio raw originals differ; output binding is unavailable")
                 text = original
                 correction = corrections.get(line["id"])
                 if correction is not None:
@@ -190,20 +190,25 @@ def source_snapshot(repo, piece_id, version_id, db=None):
                     if block.get("t") != "quotation" and correction.get("status") == "corrected":
                         if not isinstance(correction.get("original"), str) or not isinstance(correction.get("text"), str):
                             raise Invalid("malformed corrected review")
-                        if correction["original"] != original and correction["text"] != original:
+                        if correction["original"] != original:
                             raise Invalid("stale correction; source must be resolved explicitly")
                         text = scalar_text(correction["text"], empty=True)
+                if correction_values is not None:
+                    text = correction_values.get(line["id"], original)
                 rows.append({"lineId": line["id"], "text": text, "originalText": original,
-                             "blockType": block.get("t") or "text", "breakBefore": bool(rows) and li == 0})
+                             "blockType": block.get("t") or "text",
+                             "breakBefore": line.get("breakBefore", bool(rows) and li == 0)})
     if not rows:
         raise Invalid("empty source version")
     snapshot = {"pieceId": piece_id, "versionId": version_id, "members": copy.deepcopy(version["P"]),
                 "lines": rows, "versionFingerprint": "", "provenance": {
-                    "repository": "4444J99/journal-handwritten-web", "contract": "T05-proposed-fingerprint-v2",
+                    "repository": "4444J99/journal-handwritten-web", "contract": "versforms.logical-source.v2",
                     "files": [{"path": p, "sha256": file_hash(repo / p)} for p in paths],
                     "reviewRecords": review_evidence,
                     "readingStatus": "existing-transcription-with-exported-corrections; not a new author verification"}}
     snapshot["versionFingerprint"] = source_fingerprint(snapshot)
+    if correction_values is not None:
+        snapshot["provenance"]["readingStatus"] = "exact caller-validated output corrections; preserved originals retained; not a new author verification"
     return snapshot
 
 
@@ -387,11 +392,11 @@ def fixture(source, asset, at="2026-11-05T23:00:00Z"):
         "pieceId": source["pieceId"], "versionId": source["versionId"], "revisions": [revision]}]})
 
 
-def projection(envelope, current_sources, policies, *, audience="private"):
+def projection(envelope, current_sources, policies, *, audience="private", release_context=None):
     """Small render DTO. Storage/history/provenance never leaks into a public DTO.
 
-    Public output is deliberately closed until T03 supplies its real manifest and
-    clearance adapter. A public-proposed label is not an authorization mechanism.
+    Public output needs attributable clearance for the exact output inventory.
+    A public-proposed label is not an authorization mechanism.
     """
     validate(envelope)
     if audience not in {"private", "public"}:
@@ -407,6 +412,10 @@ def projection(envelope, current_sources, policies, *, audience="private"):
             reasons.append("missing-source")
         else:
             _validate_source(current, doc["pieceId"], doc["versionId"])
+            try:
+                source_binding(current)
+            except ValueError:
+                reasons.append("current-source-requires-v2-rebind")
             if current["versionFingerprint"] != rev["source"]["versionFingerprint"]:
                 reasons.append("source-changed")
         if not isinstance(policy, dict) or set(policy) != {"pool", "visibility"} or policy["pool"] not in {"series", "reserve", "archive", "unsorted"} or policy["visibility"] not in {"private", "withheld", "public"}:
@@ -421,7 +430,27 @@ def projection(envelope, current_sources, policies, *, audience="private"):
         if any(asset["visibility"] == "withheld" for asset in rev["glyphAssets"]):
             reasons.append("withheld-glyph-asset")
         if audience == "public":
-            reasons.append("t03-manifest-clearance-adapter-pending")
+            import release_contract
+            context = release_context or {}
+            manifest = context.get("manifest")
+            approved = next((c for c in (manifest or {}).get("components", [])
+                             if c.get("kind") == "realization" and c.get("id") == doc["id"]), None)
+            if approved is None or current is None:
+                reasons.append("exact-output-manifest-missing-realization")
+            else:
+                component = {**approved, "pieceId": doc["pieceId"], "versionId": doc["versionId"],
+                             "sourceFingerprint": current["versionFingerprint"],
+                             "revisionDigest": rev["digest"], "fixture": rev["fixture"]}
+                bindings = [{**s, "sourceFingerprint": (current_sources.get((s["pieceId"], s["versionId"])) or {}).get("versionFingerprint")}
+                            for s in manifest.get("sources", [])]
+                checked = release_contract.evaluate(manifest, context.get("clearance"),
+                    current_sources=bindings, component=component, root=context.get("output_root"))
+                reasons.extend(checked["reasons"])
+                for asset in rev["glyphAssets"]:
+                    if not any(f.get("path") == asset["path"] and f.get("sha256") == asset["sha256"] for f in manifest.get("files", [])):
+                        reasons.append("glyph-bytes-not-in-output-manifest")
+            if not policy or policy.get("pool") != "series" or policy.get("visibility") != "public":
+                reasons.append("source-not-cleared-public-series")
             if rev["fixture"]:
                 reasons.append("technical-fixture")
             if rev["visibility"] != "public-proposed":
@@ -431,9 +460,13 @@ def projection(envelope, current_sources, policies, *, audience="private"):
         if reasons:
             exclusions.append({"id": doc["id"], "reasons": reasons})
             continue
-        output.append({"id": doc["id"], "revisionId": rev["id"], "revisionDigest": rev["digest"],
+        item = {"id": doc["id"], "revisionId": rev["id"], "revisionDigest": rev["digest"],
                        "pieceId": doc["pieceId"], "versionId": doc["versionId"],
-                       **{k: copy.deepcopy(rev[k]) for k in ("language", "script", "mode", "layout", "lines", "glyphAssets", "fixture")}})
+                       **{k: copy.deepcopy(rev[k]) for k in ("language", "script", "mode", "layout", "lines", "glyphAssets", "fixture")}}
+        if audience == "public":
+            item["glyphAssets"] = [{k: asset[k] for k in ("id", "kind", "path", "sha256")}
+                                   for asset in rev["glyphAssets"]]
+        output.append(item)
     result = {"format": "versforms-script-projection", "schemaVersion": 1, "audience": audience,
               "realizations": output}
     if audience == "private":
@@ -652,7 +685,7 @@ def make_pilot(repo, db, font, output, source_locator, *, piece_id="p001", versi
     report = {"fixture": True, "fixtureAt": at, "sourcePieceId": piece_id, "sourceVersionId": version_id,
               "sourceFingerprint": source["versionFingerprint"], "revisionDigest": envelope["realizations"][0]["revisions"][0]["digest"],
               "roundTripEqual": True, "publicRecordCount": len(public["realizations"]),
-              "publicExcludedReasons": ["t03-manifest-clearance-adapter-pending", "technical-fixture",
+              "publicExcludedReasons": ["exact-output-manifest-missing-realization", "technical-fixture",
                                         "private-realization", "private-glyph-asset"], "rendering": rendering,
               "authorLanguageDecision": "pending", "translationProduced": False}
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")

@@ -15,7 +15,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
+import zipfile
 from pathlib import Path
 
 ROLES = {"still", "carousel", "reel", "story", "widget-tile", "downloadable-kit"}
@@ -34,6 +36,86 @@ def load(root: Path) -> dict:
         return json.load(fh)
 
 
+def verify_export(root: Path, manifest: dict) -> list[str]:
+    """Verify exhaustive bytes and source selections, not just listed hashes."""
+    errors = []
+    listed = set()
+    candidate = manifest["candidate"]
+    primary_inputs = [e["path"] for e in manifest["source_inputs"] if e.get("role") == "primary scan"]
+    if len(primary_inputs) != 1:
+        return ["exactly one primary scan input is required"]
+    versions = {candidate["version_id"]: (candidate["page_id"], candidate["version_blocks"], primary_inputs[0])}
+    later = candidate.get("later_version")
+    if later:
+        versions[later["version_id"]] = (later["page_id"], later["blocks"], later["source"])
+    bindings = manifest.get("source_bindings", [])
+    binding_by_version = {b.get("versionId"): b for b in bindings if isinstance(b, dict)}
+    if (manifest.get("logical_source_fingerprint_version") != 2 or len(bindings) != len(versions)
+            or set(binding_by_version) != set(versions)
+            or any(b.get("pieceId") != candidate["piece_id"] or not re.fullmatch(r"sha256:[0-9a-f]{64}", str(b.get("sourceFingerprint", "")))
+                   for b in binding_by_version.values())):
+        errors.append("missing or invalid v2 logical source bindings")
+    inputs = {e["path"]: e["sha256"] for e in manifest["source_inputs"]}
+    for entry in manifest["assets"]:
+        rel = entry["path"]
+        path = Path(rel)
+        if path.is_absolute() or ".." in path.parts or rel in listed:
+            errors.append(f"unsafe or duplicate output path: {rel}")
+            continue
+        listed.add(rel)
+        path = root / path
+        if path.is_symlink() or not path.is_file():
+            errors.append(f"missing or linked output: {rel}")
+            continue
+        if sha256(path) != entry["sha256"] or path.stat().st_size != entry["bytes"]:
+            errors.append(f"output bytes differ: {rel}")
+        if entry["role"] in ROLES and not any(s.get("kind") != "identity" for s in entry.get("sources", [])):
+            errors.append(f"missing source selection: {rel}")
+        for source in entry.get("sources", []):
+            if inputs.get(source["source"]) != source["source_sha256"]:
+                errors.append(f"undeclared source bytes: {rel}")
+            if source.get("kind") == "identity":
+                continue
+            if source.get("source_binding") != binding_by_version.get(source.get("version_id")):
+                errors.append(f"logical source selection differs: {rel}")
+            version = versions.get(source.get("version_id"))
+            if (source.get("piece_id") != candidate["piece_id"] or version is None
+                    or source.get("page_id") != version[0]
+                    or source.get("source") != version[2]
+                    or not source.get("blocks")
+                    or not set(source["blocks"]).issubset(version[1])):
+                errors.append(f"wrong piece/version/blocks: {rel}")
+        if path.suffix == ".zip":
+            with zipfile.ZipFile(path) as archive:
+                actual = [{"path": i.filename, "bytes": i.file_size,
+                           "sha256": hashlib.sha256(archive.read(i)).hexdigest()}
+                          for i in archive.infolist()]
+                if actual != entry.get("archive_members"):
+                    errors.append(f"archive member manifest differs: {rel}")
+                for item in actual:
+                    member = Path(item["path"])
+                    if member.is_absolute() or ".." in member.parts:
+                        errors.append(f"unsafe archive member: {rel}")
+                        continue
+                    unpacked = path.parent / member
+                    if not unpacked.is_file() or sha256(unpacked) != item["sha256"]:
+                        errors.append(f"archive does not match loose output: {rel}:{member}")
+    actual_paths = {p.relative_to(root).as_posix() for p in root.rglob("*")
+                    if p.is_file() and p != root / "manifest.json"}
+    if listed != actual_paths:
+        errors.append(f"coverage mismatch: unlisted={sorted(actual_paths - listed)[:4]}, "
+                      f"missing={sorted(listed - actual_paths)[:4]}")
+    for role in ("reel", "story"):
+        movies = [e for e in manifest["assets"] if e["role"] == role]
+        if movies:
+            movie = movies[0]
+            frames = [e for e in manifest["assets"] if e["role"] == role + "-frame"]
+            expected = round(movie["fps"] * movie["duration_seconds"])
+            if sorted(e.get("frame_index", -1) for e in frames) != list(range(expected)):
+                errors.append(f"incomplete encoder frame sequence: {role}")
+    return errors
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--primary", default="production/exports/p001")
@@ -50,9 +132,9 @@ def main() -> int:
 
     check("same kit version", a["kit_version"] == b["kit_version"],
           f"{a['kit_version']} / {b['kit_version']}")
-    check("same generator bytes",
-          a["builder"]["kit_py_sha256"] == b["builder"]["kit_py_sha256"],
-          "kit.py hash differs")
+    same_generator = a["builder"]["kit_py_sha256"] == b["builder"]["kit_py_sha256"]
+    check("same generator bytes", same_generator,
+          "kit.py hashes match" if same_generator else "kit.py hash differs")
     check("same clearance schema",
           a["clearance"]["schema"] == b["clearance"]["schema"])
     check("both private",
@@ -63,6 +145,10 @@ def main() -> int:
           f"{a['candidate']['piece_id']} / {b['candidate']['piece_id']}")
     check("different version ids",
           a["candidate"]["version_id"] != b["candidate"]["version_id"])
+    coverage = [f"{label}: {error}" for label, root, manifest in
+                (("primary", a_root, a), ("substitute", b_root, b))
+                for error in verify_export(root, manifest)]
+    check("complete output coverage and source selections", not coverage, "; ".join(coverage[:8]))
 
     roles_a = {e["role"] for e in a["assets"]}
     roles_b = {e["role"] for e in b["assets"]}
@@ -96,9 +182,11 @@ def main() -> int:
     check("paths, chains and hashes", not bad, "; ".join(bad[:6]))
 
     # No output should be byte-identical across the two pieces.
-    hashes_a = {e["sha256"]: e["path"] for e in a["assets"]}
+    # Technical documents and empty placeholder layers may legitimately match.
+    # The actual publication candidates must differ between the two pieces.
+    hashes_a = {e["sha256"]: e["path"] for e in a["assets"] if e["role"] in ROLES}
     shared = [f"{e['path']} == {hashes_a[e['sha256']]}" for e in b["assets"]
-              if e["sha256"] in hashes_a]
+              if e["role"] in ROLES and e["sha256"] in hashes_a]
     check("no shared output bytes", not shared, "; ".join(shared[:4]))
 
     # Numbering: numeric n/100 is not identity. Neither manifest should carry
@@ -119,9 +207,15 @@ def main() -> int:
         if not targets:
             geom.append(f"{label}: no QA targets")
         for name, t in targets.items():
-            if t.get("geometry_readable_at_390") is not True:
-                geom.append(f"{label}:{name} below 8 px")
-    check("phone-size geometry", not geom, "; ".join(geom))
+            if t.get("measured_geometry_readable_at_390") is not True:
+                geom.append(f"{label}:{name} measured boxes below 8 px")
+            missing = t.get("missing_line_geometry", [])
+            if t.get("expected_lines") != t.get("measured_lines", 0) + len(missing):
+                geom.append(f"{label}:{name} incomplete geometry accounting")
+            if missing and (t.get("geometry_complete") is not False
+                            or t.get("geometry_readable_at_390") is not None):
+                geom.append(f"{label}:{name} missing geometry presented as measured")
+    check("phone-size measured geometry and unknowns", not geom, "; ".join(geom))
 
     # Same shape per role. Two intentional differences: the optional
     # carousel-05 slot is `version` vs `detail`, and a single-block substitute
@@ -154,7 +248,8 @@ def main() -> int:
         "note": (
             "Structural and hash check of two exports from the same generator. "
             "Re-run each config with production/kit/kit.py to reproduce. "
-            "A pass is not a clearance."
+            "A pass is not a clearance or a whole-selection readability claim. "
+            "Missing geometry, skipped OCR and physical-device review remain explicit in each export."
         ),
     }
     out = Path(args.out)

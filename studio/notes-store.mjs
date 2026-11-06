@@ -11,21 +11,23 @@ export function stableJSON(value) {
   return JSON.stringify(value);
 }
 
-export function createRevisionStore({ db, canWrite = false, validate = () => {}, onChange = () => {}, onError = () => {} }) {
+export function createRevisionStore({ db, canWrite = false, validate = () => {}, onChange = () => {}, onError = () => {}, collections = NOTE_COLLECTIONS, backupFormat = 'versforms-notes-backup' }) {
   if (!db || typeof db.collection !== 'function') throw new Error('A connected studio database is required.');
-  const state = Object.fromEntries(NOTE_COLLECTIONS.map(c => [c, new Map()]));
+  const collectionNames = Object.freeze([...collections]);
+  if (!collectionNames.length || new Set(collectionNames).size !== collectionNames.length) throw new Error('Use unique revision collections.');
+  const state = Object.fromEntries(collectionNames.map(c => [c, new Map()]));
   const ready = new Set(), unsubscribers = [], chains = new Map();
   let stopped = false;
   function assertCollection(collection) {
-    if (!NOTE_COLLECTIONS.includes(collection)) throw new Error('Unknown notes collection.');
+    if (!collectionNames.includes(collection)) throw new Error('Unknown notes collection.');
   }
-  function notify() { onChange(snapshot(), ready.size === NOTE_COLLECTIONS.length); }
+  function notify() { onChange(snapshot(), ready.size === collectionNames.length); }
   function snapshot() {
-    return Object.fromEntries(NOTE_COLLECTIONS.map(c => [c, [...state[c].values()].map(x => structuredClone(x))]));
+    return Object.fromEntries(collectionNames.map(c => [c, [...state[c].values()].map(x => structuredClone(x))]));
   }
   function start() {
     if (unsubscribers.length || stopped) throw new Error('This store has already been started or stopped.');
-    for (const collection of NOTE_COLLECTIONS) {
+    for (const collection of collectionNames) {
       const unsub = db.collection(collection).onSnapshot(snap => {
         if (stopped) return;
         try {
@@ -56,7 +58,7 @@ export function createRevisionStore({ db, canWrite = false, validate = () => {},
   async function append(collection, revision) {
     assertCollection(collection);
     if (stopped || !canWrite) throw new Error('This view is read-only.');
-    if (ready.size !== NOTE_COLLECTIONS.length) throw new Error('Wait for both collections to finish loading before saving.');
+    if (ready.size !== collectionNames.length) throw new Error('Wait for all revision collections to finish loading before saving.');
     validate(collection, revision);
     const id = revision.revisionId;
     if (typeof id !== 'string' || !/^[A-Za-z0-9_.-]{1,128}$/.test(id) || id === '.' || id === '..') throw new Error('Invalid revision ID.');
@@ -82,9 +84,9 @@ export function createRevisionStore({ db, canWrite = false, validate = () => {},
   }
   async function restore(envelope) {
     if (stopped || !canWrite) throw new Error('This view is read-only.');
-    if (!envelope || envelope.format !== 'versforms-notes-backup' || envelope.version !== 1) throw new Error('Unsupported notes backup.');
+    if (!envelope || envelope.format !== backupFormat || envelope.version !== 1) throw new Error('Unsupported notes backup.');
     const entries = [], seen = new Map();
-    for (const collection of NOTE_COLLECTIONS) {
+    for (const collection of collectionNames) {
       if (!Array.isArray(envelope[collection])) throw new Error('Missing backup collection: ' + collection);
       for (const record of envelope[collection]) {
         validate(collection, record);
@@ -109,8 +111,8 @@ export function createRevisionStore({ db, canWrite = false, validate = () => {},
     return { added, unchanged };
   }
   function exportBackup(at = new Date().toISOString()) {
-    if (ready.size !== NOTE_COLLECTIONS.length) throw new Error('Wait for both collections to finish loading before export.');
-    return { format: 'versforms-notes-backup', version: 1, exportedAt: at, ...snapshot() };
+    if (ready.size !== collectionNames.length) throw new Error('Wait for all revision collections to finish loading before export.');
+    return { format: backupFormat, version: 1, exportedAt: at, ...snapshot() };
   }
-  return { start, stop, append, restore, snapshot, exportBackup, get ready() { return ready.size === NOTE_COLLECTIONS.length; } };
+  return { start, stop, append, restore, snapshot, exportBackup, get ready() { return ready.size === collectionNames.length; } };
 }

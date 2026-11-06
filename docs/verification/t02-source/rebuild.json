@@ -1,0 +1,32 @@
+{
+  "schema": "versforms.source-build-report.v1",
+  "write": true,
+  "changed": [
+    {
+      "path": "site/data/j.json",
+      "before": "sha256:2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+      "after": "sha256:ffa0ad8910a6b4a8767cddbe30917f3c2c3b17172b5bc753a2920db1caed2bc1"
+    },
+    {
+      "path": "studio/data/review.json",
+      "before": "sha256:d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353",
+      "after": "sha256:49017ca86b4a25f1570c5291ae6432af27751123d807f86aaa64b0cfa0acd0f4"
+    },
+    {
+      "path": "studio/data/notes-versions.json",
+      "before": "sha256:c7127478768ba5ffd591c5bc2f16ee90ed0b60539109333b1f791503ec5f792a",
+      "after": "sha256:48f57684d32beb29f734b2f7df56892f70c8d3f77a327130c6d6a2b318a0effd"
+    }
+  ],
+  "counts": {
+    "pages": 123,
+    "pieces": 126,
+    "versions": 156,
+    "lines": 2190,
+    "reviews": 38,
+    "unavailableAnchors": 589
+  },
+  "templatesModified": [],
+  "imagesModified": [],
+  "fontsModified": []
+}

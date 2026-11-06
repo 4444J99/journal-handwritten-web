@@ -380,6 +380,13 @@
         },
         "sourceProvenance": {
           "type": "object"
+        },
+        "fingerprintVersion": {
+          "enum": [
+            1,
+            2
+          ],
+          "description": "Absent means legacy v1; live use requires explicit rebind to v2."
         }
       },
       "required": [

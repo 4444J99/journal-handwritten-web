@@ -1,0 +1,43 @@
+{
+  "schema": "versforms.source-preservation-receipt.v1",
+  "counts": {
+    "pages": 123,
+    "pieces": 126,
+    "versions": 156,
+    "lines": 2190,
+    "reviews": 38,
+    "unavailableAnchors": 589
+  },
+  "templates": [
+    {
+      "path": "site/index.html",
+      "sha256": "sha256:7c3e286252e2760085cb420b292b199f3235a80a64f1a2fb96fedd4b51bcc3cc",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "studio/index.html",
+      "sha256": "sha256:91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+      "unchangedFromBase": true
+    }
+  ],
+  "originalSourceBytesReconstructed": [
+    {
+      "path": "site/data/j.json",
+      "sha256": "sha256:2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+    },
+    {
+      "path": "studio/data/review.json",
+      "sha256": "sha256:d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+    }
+  ],
+  "imageAssetsVerified": 505,
+  "noNewAuthorText": true,
+  "newPhotoFixtureLocation": "temporary test directories only",
+  "privateOnly": true,
+  "p001VersionSourceBinding": {
+    "pieceId": "p001",
+    "versionId": "p001-diary1-0",
+    "sourceFingerprint": "sha256:17a2950bf426bc437f00ef97c550c2ef017c734b7d50bf20c4606a01907b9a1b"
+  },
+  "diary1GeometryFingerprint": "sha256:493a12604d0910f82982794551bf1bb52aaba12aa84f02144fde3fbe83a9d8d8"
+}

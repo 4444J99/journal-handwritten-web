@@ -22,6 +22,8 @@ from pathlib import Path
 
 import build_public
 import post_poem as posting
+import release_contract
+import script_realizations
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_RECORD = "docs/chats/2026-11-05-local-session-finish-and-launch.md"
@@ -49,7 +51,7 @@ def inventory(root):
 
 def source_inputs(src, db_root):
     paths = set()
-    for folder in [src.site, src.root / "studio", db_root]:
+    for folder in [src.site, src.root / "studio", src.root / "source", db_root]:
         paths.update(p.resolve() for p in folder.rglob("*") if p.is_file())
     paths.add(src.release_path.resolve())
     return {str(p): digest(p) for p in sorted(paths)}
@@ -97,14 +99,15 @@ def engine_metadata_exposure(src, html_path, included_pages):
         match = re.search(r"const " + name + r" = (\[[\s\S]*?\n?\]);", text)
         if match:
             literals[name] = match.group(1)
-    named = set(re.findall(r"\bdiary\d+[a-z]?\b", text)) & set(src.jpages)
+    output_text = "\n".join(p.read_text(encoding="utf-8") for p in posting._text_files(Path(html_path).parent))
+    named = set(re.findall(r"\bdiary\d+[a-z]?\b", output_text)) & set(src.jpages)
     withheld = sorted(named - set(included_pages))
     return {"path": "index.html", "literals": literals,
             "withheld_page_ids": withheld,
             "piece_ids_on_named_pages": sorted({pid for pid, pc in src.pieces.items()
                 if any(pg in withheld for v in pc["V"] for pg, _ in v["P"])}),
-            "clearance": "awaiting author rule or T04/builder removal and re-verification",
-            "limit": "Identifier/block structure remains; this does not imply that those pages' text or images is bundled."}
+            "clearance": "withheld metadata remains; author rule or removal required" if withheld else "withheld identifiers excluded; remaining identity metadata awaits author review",
+            "limit": "This scans the actual filtered engine; image and font metadata have separate checks."}
 
 
 def catalog(src, db):
@@ -243,6 +246,7 @@ def exposure_map(src, selection):
 
 def expected_files(src, result):
     names = {"index.html", "_headers", "data/j.json", "img/a/t0.jpg", "img/a/k0.jpg"}
+    names.update(asset for asset in ("reader-features.js",) if (src.site / asset).is_file())
     for pid in result["pages"]:
         names.update(f"img/{s}/{pid}.jpg" for s in ("p", "i", "m"))
         page = src.jpages[pid]
@@ -348,6 +352,10 @@ def private_report(out, packet, queue, candidates, comparison):
     candidate = esc(packet["candidate"])
     selected = esc(", ".join(packet["preview"]["selected_version_ids"]))
     metadata_ids = ", ".join(packet["preview"]["engine_metadata_exposure"]["withheld_page_ids"])
+    metadata_report = ("The filtered reader retains withheld identifiers: <code>" + esc(metadata_ids) +
+        "</code>. Complete metadata exclusion has not passed; inspect the exact literals in packet.json.") if metadata_ids else (
+        "The filtered reader contains no withheld page identifiers. PAL/HF entries are retained only when their complete source pages and blocks are selected. "
+        "Font metadata, title and info-panel wording remain separate author decisions; this check grants no release clearance.")
     version_caveat = "Inspect every proposed version and its image exposure before choosing it."
     if packet["candidate"] == "p001" and comparison:
         reviewed = comparison["review_counts_for_selected_versions"]
@@ -379,7 +387,7 @@ body{{margin:0;background:#f6f3ec;color:#242b2c;font:16px/1.6 system-ui,sans-ser
 <p>The full queue preserves source identifiers and page sequence. The separate 100-slot tracker assigns no publication numbers or dates. Weekly cadence begins only on an author-confirmed date after the gates are met.</p>
 <h2>Decisions needed for this candidate</h2><ol><li>Confirm {candidate} for Series and choose {selected} or another explicitly reviewed version. {version_caveat}</li><li>Confirm the documented filed/registered workflow and supply the actual batch/deposit/evidence record before release. A database status is not filing evidence.</li><li>Review this exact preview, the downloadable font metadata, title and info-panel wording; confirm any permitted exposure.</li><li>Confirm the derived as-posted numbering and around-the-100 participation defaults when relevant. Select a first-post date only after clearance; past dates are historical.</li><li>Confirm Site versus social recording semantics before automation consumes publication flags.</li></ol>
 <h2>Technical checks for the bounded preview</h2><table><tr><th>Check</th><th>Result</th></tr>{checks}</table>
-<h2>Reader metadata still bundled</h2><p>The reader engine retains these withheld page identifiers and its PAL/HF revision-block structure: <code>{esc(metadata_ids or 'none found')}</code>. Their source transcripts and scans are not thereby bundled, but complete metadata exclusion has not passed. The exact literals are in packet.json. Obtain an explicit author ruling or a reviewed T04/builder removal and rerun the output checks; this packet grants no metadata clearance.</p>
+<h2>Reader metadata exclusion</h2><p>{metadata_report}</p>
 {comparison_html}<h2>Review queue</h2><p>{len(queue)} finite records with stable source locators: uncertainty, line reviews, version choices, possible pairs, quotation/echo checks, flagged page visibility and pool classification. Categories describe pending work, not editorial judgments.</p>
 <h2>Scope</h2><p>The preview reuses the existing reader and PR #101 builder. No source scan, transcript, studio record, public whitelist, account or deployment was changed. noindex is retained; it is an indexing directive, not access control.</p></main></body></html>"""
     (out / "index.html").write_text(document)
@@ -429,8 +437,9 @@ def prepare(source, database, candidate, output):
                                          "a/release/public.json", "b/release/public.json"))
     (output / "proposed-whitelist.patch").write_text(patch)
     revision = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
-    code_paths = ["tools/prepare_release_packet.py", "tools/post_poem.py", "tools/build_public.py", "tools/font_rename.py",
+    code_paths = ["tools/prepare_release_packet.py", "tools/post_poem.py", "tools/build_public.py", "tools/font_rename.py", "tools/release_contract.py", "tools/release_canonical.py", "tools/script_realizations.py",
                   "studio-cf/import_export.py", "studio-cf/sqlguard.py"]
+    code_paths += [p for p in ("tools/source_foundation.py", "tools/source_fingerprint.py", "studio/source-fingerprint.mjs", "site/reader-features.js") if (source / p).is_file()]
     code_hashes = {p: digest(source / p) for p in code_paths}
     after = source_inputs(src, posting.find_db_root(database))
     if before != after:
@@ -439,6 +448,15 @@ def prepare(source, database, candidate, output):
     for path, sha in before.items():
         p = Path(path)
         relative_inputs[str(p.relative_to(source)) if source in p.parents else str(p)] = sha
+    bindings = []
+    for vi in idx:
+        version_id = src.pieces[candidate]["V"][vi]["id"]
+        snapshot = script_realizations.source_snapshot(source, candidate, version_id, database)
+        bindings.append({"pieceId": candidate, "versionId": version_id,
+                         "sourceFingerprint": snapshot["versionFingerprint"]})
+    output_manifest = release_contract.prepare(output / "preview", sources=bindings,
+        inputs=relative_inputs, code={"revision": revision, "sha256": code_hashes}, exposure=preview["exposure"])
+    write_json(output / "preview-manifest.json", output_manifest)
     packet = {"schema": "versforms.release-preparation.v1", "prepared_at": dt.datetime.now(dt.timezone.utc).isoformat(),
               "status": "private-preparation-only", "release_clearance": False,
               "repository": "4444J99/journal-handwritten-web", "tested_source_revision": revision,
@@ -457,6 +475,9 @@ def prepare(source, database, candidate, output):
               "actual_gated_dry_run": {"argv": gated_command, "exit_code": run.returncode,
                                       "public_repo_checks": "not run: no public clone supplied", "log": "gated-dry-run.txt"},
               "preview": preview, "queue_categories": dict(collections.Counter(r["category"] for r in queue)),
+              "output_contract": {"schema": release_contract.SCHEMA, "path": "preview-manifest.json",
+                                  "manifestDigest": output_manifest["manifestDigest"], "source_bindings": bindings,
+                                  "clearance": release_contract.evaluate(output_manifest, None, current_sources=bindings, root=output / "preview")},
               "queue_records": len(queue), "inputs_unchanged": before == after,
               "proposal": {"whitelist": proposed, "applied": False, "first_post_date": None,
                            "cadence_days": 7, "schedule_basis": "author-confirmed start after clearance; no commitment"},

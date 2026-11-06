@@ -1,0 +1,495 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/4444J99/journal-handwritten-web/blob/main/docs/schemas/canonical-source-v1.schema.json",
+  "title": "Versforms canonical source v1",
+  "description": "Private preserved originals, accepted review history, stable identities and explicit geometry/image lineage. Application validation additionally checks exact membership, history and asset closure.",
+  "type": "object",
+  "required": [
+    "schema",
+    "fingerprintVersion",
+    "provenance",
+    "pages",
+    "blocks",
+    "lines",
+    "pieces",
+    "versions",
+    "order",
+    "reader",
+    "studio",
+    "reviews",
+    "assets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "versforms.canonical-source.v1"
+    },
+    "fingerprintVersion": {
+      "const": 2
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/line"
+      }
+    },
+    "pieces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/piece"
+      }
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/version"
+      }
+    },
+    "order": {
+      "type": "object",
+      "required": [
+        "pages",
+        "studioPages",
+        "pieces"
+      ],
+      "properties": {
+        "pages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "studioPages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "pieces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "reader": {
+      "type": "object"
+    },
+    "studio": {
+      "type": "object"
+    },
+    "reviews": {
+      "type": "object",
+      "required": [
+        "current",
+        "history"
+      ],
+      "properties": {
+        "current": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/review"
+          }
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "lineId",
+              "document",
+              "documentDigest",
+              "provenance"
+            ],
+            "properties": {
+              "lineId": {
+                "$ref": "#/$defs/id"
+              },
+              "document": {
+                "$ref": "#/$defs/review"
+              },
+              "documentDigest": {
+                "$ref": "#/$defs/hash"
+              },
+              "provenance": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "id",
+        "blockIds",
+        "reader",
+        "studio",
+        "geometryOrder",
+        "uncertainty",
+        "origin",
+        "cleanedImage",
+        "imageLineage"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "blockIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "reader": {
+          "type": "object"
+        },
+        "studio": {
+          "type": "object"
+        },
+        "geometryOrder": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "uncertainty": {
+          "type": "array"
+        },
+        "origin": {
+          "type": "string"
+        },
+        "cleanedImage": {
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "imageLineage": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "block": {
+      "type": "object",
+      "required": [
+        "id",
+        "pageId",
+        "lineIds",
+        "type",
+        "reader",
+        "studio"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "pageId": {
+          "$ref": "#/$defs/id"
+        },
+        "lineIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "type": {
+          "type": "string"
+        },
+        "reader": {
+          "type": "object"
+        },
+        "readerKeyOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "studio": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "line": {
+      "type": "object",
+      "required": [
+        "id",
+        "pageId",
+        "blockId",
+        "originalText",
+        "readerOriginalText",
+        "transcriptionStatus",
+        "studio",
+        "geometry"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "pageId": {
+          "$ref": "#/$defs/id"
+        },
+        "blockId": {
+          "$ref": "#/$defs/id"
+        },
+        "originalText": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "readerOriginalText": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transcriptionStatus": {
+          "enum": [
+            "existing-transcription-unverified",
+            "untranscribed"
+          ]
+        },
+        "studio": {
+          "type": "object"
+        },
+        "geometry": {
+          "type": "object",
+          "required": [
+            "readerRow",
+            "studioBox",
+            "status",
+            "reason"
+          ],
+          "properties": {
+            "readerRow": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              }
+            },
+            "studioBox": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "number"
+              }
+            },
+            "status": {
+              "enum": [
+                "available",
+                "unavailable"
+              ]
+            },
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "piece": {
+      "type": "object",
+      "required": [
+        "id",
+        "versionIds",
+        "reader"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "versionIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "reader": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "version": {
+      "type": "object",
+      "required": [
+        "id",
+        "pieceId",
+        "members",
+        "reader"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "pieceId": {
+          "$ref": "#/$defs/id"
+        },
+        "reader": {
+          "type": "object"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "pageId",
+              "blockIds"
+            ],
+            "properties": {
+              "pageId": {
+                "$ref": "#/$defs/id"
+              },
+              "blockIds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "at",
+        "original",
+        "status"
+      ],
+      "properties": {
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "original": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "corrected"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "asset": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "sha256",
+        "bytes",
+        "pageId",
+        "role",
+        "sourceAssetIds",
+        "recipe",
+        "evidence",
+        "clearance",
+        "generative"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pageId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role": {
+          "type": "string"
+        },
+        "sourceAssetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recipe": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "clearance": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "generative": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

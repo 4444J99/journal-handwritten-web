@@ -110,6 +110,9 @@ test('effective author corrections invalidate old anchors; stale corrections blo
   assert.equal(validateAnchor(buildSourceCatalog(source,review,{reviews:changedAgain}),correctedAnchor).valid,false);
   const stale={[id]:{status:'corrected',original:'unrelated original',text:'unrelated correction'}};
   assert.throws(()=>createAnchor(buildSourceCatalog(source,review,{reviews:stale}),selector),/stale-review/);
+  stale[id].text=original;
+  assert.throws(()=>createAnchor(buildSourceCatalog(source,review,{reviews:stale}),selector),/stale-review/);
+  assert.equal(correctedAnchor.fingerprintVersion,2);
   const quotation={'diary1-1-0':{status:'corrected',original:'ignored',text:'ignored'}};
   assert.equal(buildSourceCatalog(source,review,{reviews:quotation}).fingerprint,catalog.fingerprint);
 });
@@ -264,7 +267,7 @@ test('safe structural validation rejects bad IDs, dates, scripts, unknown fields
   assert.ok(validateRevision(approved).errors.some(e=>e.includes('does not cover')));
 });
 
-test('public output needs released state, exact versions and revision-bound evidence even without fixtures', () => {
+test('externally labelled released records still need the exact output contract', () => {
   // Synthetic external-contract simulation: no real release record is created.
   const seed=copy(note({visibility:'public-candidate'}));
   seed.fixture=false; seed.author.provenance='author-supplied'; seed.author.id='synthetic-contract-actor';
@@ -276,7 +279,7 @@ test('public output needs released state, exact versions and revision-bound evid
   const all=[...history,released];
   assert.equal(projectRecords(all,catalog,{mode:'public'}).records.length,0);
   assert.equal(projectRecords(all,catalog,{mode:'public',versions:[{pieceId:'p001',versionId:'p001-diary2-0'}]}).records.length,0);
-  assert.equal(projectRecords(all,catalog,{mode:'public',versions}).records.length,1);
-  // Eligibility is a pure local filter, not T03 clearance or publication.
+  assert.equal(projectRecords(all,catalog,{mode:'public',versions}).records.length,0);
+  // A free-form external reference cannot replace T03's bound manifest/event.
   assert.equal(source.pieces.length,2);
 });

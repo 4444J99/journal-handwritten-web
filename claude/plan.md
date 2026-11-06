@@ -1,5 +1,33 @@
 # Handwritten journal: plan and state
 
+## Private integration update — November 6, 2026
+
+This dated update supersedes earlier statements that the source foundation and
+reader adapters were unimplemented. The integration reconstructs the missing
+source/review/rebuild path, applies all 38 preserved reviews without changing raw
+originals, retains 123 pages / 126 pieces / 156 versions / 2,190 line IDs, and
+provides independent source and nine-collection database recovery. Original
+missing generators and the reported T04 local patch were not recovered; their
+bounded replacements are identified as new implementation.
+
+Current source bindings include stanza boundaries and are checked against exact
+selected versions. Reader, private notes/artifact workbenches, media provenance,
+source regions and script/audio adapters share these identities. Exact-output
+clearance binds files and revisions; fixture approval and outward execution are
+separate. The private public-build candidate now excludes withheld PAL/HF
+metadata. Missing geometry stays unavailable, with page/text fallback.
+
+The release whitelist is still empty. The author retains classification, final
+version, filing, public metadata/wording, device acceptance and final output
+clearance. Creative choices, author recordings, new glyphs, avatar treatment and
+clips remain unfulfilled. Historical dates do not create a new posting schedule.
+Hosted Access/write checks and runner/account decisions remain separately owned.
+No public deployment, new service, account change or retained-ref cleanup is part
+of this integration.
+
+The current evidence and issue-by-issue dispositions are linked from
+[the integration closeout](../docs/chats/2026-11-06-integration-closeout.md). Earlier dated claims below remain historical evidence.
+
 ## Launch code reconciliation — 2026-11-06
 
 This dated update supersedes the repository-status assertions in older sections, while retaining their history. Live private main was `ef3d263c455788c769547df9e1e6010a54b7719a`: PR #131 posting hardening and #119 T03 release packet had already merged. #119's account attribution does not establish an explicit owner keep/discard decision. The final alive work and README fix exist remotely at `eece4f56ffaae81500aaf94fd18852b2038e06d6`; #102 is now updated at `0561f712e0061db5317115097af72e874c9652d9`, retained as a draft private prototype with byte-identical atom reproduction and a passing 12-case local rendering matrix.

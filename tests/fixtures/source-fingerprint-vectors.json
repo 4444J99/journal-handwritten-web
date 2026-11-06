@@ -1,0 +1,204 @@
+{
+  "schema": "versforms.logical-source-vectors.v1",
+  "vectors": [
+    {
+      "name": "base",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀",
+            "blockType": "text",
+            "breakBefore": false
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": true
+          }
+        ]
+      },
+      "v1": "sha256:fb4a4239f2f8d044c0c5307999fc35acee5de3e2115126a7a09a407128247bba",
+      "v2": "sha256:9c5b9bc2251eb2d726784b7e1fafd3fa3df53b76f817d9dbe8acd8f04b8e9833"
+    },
+    {
+      "name": "geometry-only",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀",
+            "blockType": "text",
+            "breakBefore": false,
+            "box": [
+              100,
+              200,
+              300,
+              400
+            ]
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": true
+          }
+        ],
+        "imageHash": "different-image"
+      },
+      "v1": "sha256:fb4a4239f2f8d044c0c5307999fc35acee5de3e2115126a7a09a407128247bba",
+      "v2": "sha256:9c5b9bc2251eb2d726784b7e1fafd3fa3df53b76f817d9dbe8acd8f04b8e9833"
+    },
+    {
+      "name": "stanza-only",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀",
+            "blockType": "text",
+            "breakBefore": false
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": false
+          }
+        ]
+      },
+      "v1": "sha256:fb4a4239f2f8d044c0c5307999fc35acee5de3e2115126a7a09a407128247bba",
+      "v2": "sha256:ee24abd27999147c2ce6438d68983f816d65d1cdb1c1e499a8af9e326178f87b"
+    },
+    {
+      "name": "text-only",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀 changed",
+            "blockType": "text",
+            "breakBefore": false
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": true
+          }
+        ]
+      },
+      "v1": "sha256:8094bae47403f51f1c114f53e891f9d9d0ce57ac6b582d06ed19f8e12ef5b1ca",
+      "v2": "sha256:d6e766f03f913d0492a2e0c5ebac879f9eb568424909eceb2bc684236fda428c"
+    },
+    {
+      "name": "block-type",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀",
+            "blockType": "title",
+            "breakBefore": false
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": true
+          }
+        ]
+      },
+      "v1": "sha256:6845f7936ce0637e51ee7391fd9ec160600f15e57b99c351d1f09e988b02e22c",
+      "v2": "sha256:a4e4bab543e829eea9f6836d7b7f6235d3a7d2d05ec166b600ed71f3166fd083"
+    },
+    {
+      "name": "membership",
+      "source": {
+        "pieceId": "fixture-piece",
+        "versionId": "fixture-version",
+        "members": [
+          [
+            "fixture-page",
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "lines": [
+          {
+            "lineId": "fixture-line-a",
+            "text": "[TECHNICAL FIXTURE] A 😀",
+            "blockType": "text",
+            "breakBefore": false
+          },
+          {
+            "lineId": "fixture-line-b",
+            "text": "[TECHNICAL FIXTURE] B",
+            "blockType": "text",
+            "breakBefore": true
+          }
+        ]
+      },
+      "v1": "sha256:e2b6e0395070a10425fb1ada22a5d033c743c0a43793073df07c5ce2bd3c71d9",
+      "v2": "sha256:2fb81f8e723e15e7744862ec192895f40b86bb053ecf30b4195d4b8f23cf21cb"
+    }
+  ]
+}

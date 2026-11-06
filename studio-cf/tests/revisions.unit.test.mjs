@@ -34,7 +34,7 @@ function localD1() {
 }
 
 function revision(collection, id = 'fixture-revision-1') {
-  return { schemaVersion: 1, family: collection === 'notes' ? 'note' : 'contribution',
+  return { schemaVersion: 1, family: collection === 'notes' ? 'note' : collection === 'contributions' ? 'contribution' : 'artifact',
     recordId: 'fixture-record', revisionId: id, parents: [],
     source: { pieceId: 'fixture-piece', versionId: 'fixture-version' },
     author: { id: 'fixture-author', name: 'Technical fixture' },
@@ -42,7 +42,7 @@ function revision(collection, id = 'fixture-revision-1') {
     visibility: 'private', nested: { b: [1, true, null], a: 'test' } };
 }
 
-for (const collection of ['notes', 'contributions']) {
+for (const collection of ['notes', 'contributions', 'artifacts']) {
   test(`${collection}: append, semantic retry, immutable collision and forbidden delete`, async t => {
     const h = localD1(); t.after(() => h.sqlite.close());
     const doc = revision(collection);
@@ -96,14 +96,14 @@ test('six legacy collections retain full replacement and deletion', async t => {
   }
 });
 
-test('browser adapter exposes both collections and reports collisions without retrying', async t => {
+test('browser adapter exposes all immutable collections and reports collisions without retrying', async t => {
   const h = localD1(); t.after(() => h.sqlite.close());
   const adapter = createAdapter({
     fetch: (path, init = {}) => handleApi(new Request('https://studio.example.test' + path, init), h.env, { canWrite: true }),
     setTimeout, clearTimeout, isHidden: () => false, onVisible: () => {},
   });
   const db = await adapter.use('db');
-  for (const c of ['notes', 'contributions']) {
+  for (const c of ['notes', 'contributions', 'artifacts']) {
     const doc = revision(c);
     await db.collection(c).doc(doc.revisionId).set(doc);
     assert.deepEqual((await db.collection(c).doc(doc.revisionId).get()).data(), doc);

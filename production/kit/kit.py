@@ -47,6 +47,9 @@ FPS = 30
 KIT_DIR = Path(__file__).resolve().parent
 PRODUCTION_DIR = KIT_DIR.parent
 DEFAULT_REPO = PRODUCTION_DIR.parent
+sys.path.insert(0, str(DEFAULT_REPO / "tools"))
+from script_realizations import source_snapshot
+from source_fingerprint import source_binding
 
 
 # --------------------------------------------------------------------------
@@ -222,6 +225,8 @@ class SourcePackage:
         self.image = rgb(Image.open(self.source_path))
         self.src_w, self.src_h = self.image.size
         self._validate()
+        self.logical_source = source_snapshot(repo, cfg["piece_id"], cfg["version_id"])
+        self.source_binding = source_binding(self.logical_source)
 
     def _piece(self, pid):
         for p in self.j["pieces"]:
@@ -250,6 +255,28 @@ class SourcePackage:
         return p
 
     def _validate(self):
+        # A declared source hash is an input contract, not a label to copy into
+        # the output manifest. Check every preserved input before rendering.
+        declared = {e["path"]: e for e in self.cfg["source_inputs"]}
+        if self.cfg["source"] not in declared:
+            raise ValueError("source image has no declared hash")
+        for rel, entry in declared.items():
+            path = self._resolve(rel)
+            expected = entry.get("sha256")
+            if expected == "GENERATED_AT_BUILD" and rel == "site/data/j.json":
+                continue
+            if not re.fullmatch(r"[0-9a-f]{64}", expected or ""):
+                raise ValueError(f"invalid source hash: {rel}")
+            if sha256(path) != expected:
+                raise ValueError(f"source hash mismatch: {rel}")
+            if "bytes" in entry and path.stat().st_size != entry["bytes"]:
+                raise ValueError(f"source byte count mismatch: {rel}")
+        selected = self.version_blocks()
+        if not selected or any(i < 0 or i >= len(self.page["B"]) for i in selected):
+            raise ValueError("version does not select valid blocks on this page")
+        for key in ("cover_block", "detail_block"):
+            if key in self.cfg and self.cfg[key] not in selected:
+                raise ValueError(f"{key} is outside the selected version")
         # j.json page dimensions are the web tier. The original scan has the
         # same aspect ratio; a mismatch means the wrong file was supplied.
         want = self.page["iw"] / self.page["ih"]
@@ -274,13 +301,85 @@ class SourcePackage:
         return page_row_boxes(self.page, block_ids=set(block_ids))
 
     def text(self, block_ids):
-        return [ln for b in self.blocks(block_ids) for ln in b["L"]]
+        readings = self.j.get("acceptedReadings", {})
+        result = []
+        for block_id in block_ids:
+            block = self.page["B"][block_id]
+            explicit = block.get("lineIds", [])
+            for line_index, raw in enumerate(block["L"]):
+                line_id = explicit[line_index] if line_index < len(explicit) else f"{self.page['id']}-{block_id}-{line_index}"
+                reading = readings.get(line_id, raw)
+                if not isinstance(reading, str):
+                    raise ValueError(f"accepted reading is not text: {line_id}")
+                result.append(reading)
+        return result
 
     def norm_to_px(self, box):
         return (
             box[0] * self.src_w, box[1] * self.src_h,
             box[2] * self.src_w, box[3] * self.src_h,
         )
+
+    def later_source(self):
+        later = self.cfg.get("later_version")
+        if not later:
+            return None
+        if hasattr(self, "_later_source"):
+            return self._later_source
+        cfg = {**self.cfg, **later, "later_version": None}
+        cfg.pop("cover_block", None)
+        cfg.pop("detail_block", None)
+        other = SourcePackage(self.repo, cfg)
+        if later["blocks"] != other.version_blocks():
+            raise ValueError("later blocks do not match the selected piece/version")
+        self._later_source = other
+        return other
+
+    def geometry(self, block_ids):
+        expected = {(b, i) for b in block_ids for i in range(len(self.page["B"][b]["L"]))}
+        measured = {(r[0], r[1]) for r in self.rows(block_ids)}
+        return {"expected_lines": len(expected), "measured_lines": len(measured),
+                "missing_line_geometry": [list(key) for key in sorted(expected - measured)],
+                "geometry_complete": expected == measured}
+
+    def selection_box(self, block_ids, pad=(0.012, 0.018)):
+        """Crop only this version's selected blocks; exclude known neighbours.
+
+        Missing line geometry remains unknown in provenance and QA. These bounds
+        establish exclusion of recorded neighbour boxes, not public clearance.
+        """
+        if not block_ids or not set(block_ids).issubset(self.version_blocks()):
+            raise ValueError("crop blocks are outside the selected version")
+        core = union_box(self.rows(block_ids))
+        box = list(clamp_box(core, *pad))
+        for row in self.page.get("x", []):
+            if row[0] in block_ids:
+                continue
+            x0, y0, x1, y1 = row[2:6]
+            if box[0] < x1 and box[2] > x0 and box[1] < y1 and box[3] > y0:
+                if y1 <= core[1]:
+                    box[1] = max(box[1], y1)
+                elif y0 >= core[3]:
+                    box[3] = min(box[3], y0)
+                elif x1 <= core[0]:
+                    box[0] = max(box[0], x1)
+                elif x0 >= core[2]:
+                    box[2] = min(box[2], x0)
+                else:
+                    raise ValueError("selected crop overlaps a different block")
+        return tuple(box)
+
+    def selection(self, block_ids, pad=(0.012, 0.018)):
+        box = self.selection_box(block_ids, pad)
+        return {"piece_id": self.cfg["piece_id"], "version_id": self.version["id"],
+                "source_binding": dict(self.source_binding),
+                "page_id": self.page["id"], "source": self.cfg["source"],
+                "source_sha256": sha256(self.source_path), "blocks": list(block_ids),
+                "crop_box_norm": list(box),
+                "crop_box_pixels": [round(v) for v in self.norm_to_px(box)],
+                "excluded_blocks": sorted(set(range(len(self.page["B"]))) - set(block_ids)),
+                "exclusion_scope": "recorded line boxes; unknown geometry is not inferred",
+                **self.geometry(block_ids)}
 
 
 # --------------------------------------------------------------------------
@@ -290,12 +389,11 @@ class SourcePackage:
 def render_page(source: SourcePackage, block_ids=None, canvas_size=(W4, H4),
                 margin=MARGIN, crop_blocks=None) -> Image.Image:
     canvas = page_canvas(*canvas_size)
-    if crop_blocks:
-        rows = source.rows(crop_blocks)
-        box = clamp_box(union_box(rows), 0.012, 0.018)
-        page_im = crop_norm(source.image, box)
-    else:
-        page_im = source.image.copy()
+    selected = crop_blocks if crop_blocks is not None else block_ids
+    if selected is None:
+        selected = source.version_blocks()
+    box = source.selection_box(selected)
+    page_im = crop_norm(source.image, box)
     max_w = canvas.width - margin * 2
     max_h = canvas.height - margin * 2
     card = fit_contain(page_im, max_w, max_h)
@@ -307,8 +405,7 @@ def render_page(source: SourcePackage, block_ids=None, canvas_size=(W4, H4),
 
 def render_line(source: SourcePackage, block_ids, canvas_size=(W4, H4),
                 pad=(0.030, 0.020), max_w=W4 - 2 * MARGIN) -> Image.Image:
-    rows = source.rows(block_ids)
-    box = clamp_box(union_box(rows), pad[0], pad[1])
+    box = source.selection_box(block_ids, pad)
     crop = crop_norm(source.image, box)
     canvas = page_canvas(*canvas_size)
     crop = fit_contain(crop, max_w, canvas.height - 2 * MARGIN)
@@ -322,7 +419,7 @@ def render_line(source: SourcePackage, block_ids, canvas_size=(W4, H4),
 def render_stack(source: SourcePackage, block_ids, avatar_path: Path | None,
                  canvas_size=(W4, H4)) -> Image.Image:
     rows = source.rows(block_ids)
-    page_box = clamp_box(union_box(rows), 0.020, 0.020)
+    page_box = source.selection_box(block_ids, (0.020, 0.020))
     page_im = crop_norm(source.image, page_box)
 
     # layer 3: the same scan, blurred and darkened, filling the frame
@@ -360,19 +457,10 @@ def render_detail(source: SourcePackage, block_ids, canvas_size=(W4, H4)) -> Ima
 def render_version_page(source: SourcePackage, page_id, block_ids,
                         canvas_size=(W4, H4)) -> Image.Image:
     """A later/alternate version, cropped to the p001 blocks only (neighbour excluded)."""
-    pg = source._page(page_id)
-    rows = page_row_boxes(pg, block_ids=set(block_ids))
-    box = clamp_box(union_box(rows), 0.012, 0.018)
-    im = rgb(Image.open(source._resolve(source.cfg["later_version"]["source"])))
-    # scale factors for this page
-    px = (box[0] * im.width, box[1] * im.height, box[2] * im.width, box[3] * im.height)
-    crop = im.crop(tuple(round(v) for v in px))
-    canvas = page_canvas(*canvas_size)
-    card = fit_contain(crop, canvas.width - 2 * MARGIN, canvas.height - 2 * MARGIN)
-    x = (canvas.width - card.width) // 2
-    y = (canvas.height - card.height) // 2
-    paste_card(canvas, card, x, y, pad=36, blur=14, opacity=84)
-    return canvas
+    later = source.later_source()
+    if later is None or later.page["id"] != page_id or block_ids != later.version_blocks():
+        raise ValueError("later render does not match configured piece/version/page")
+    return render_page(later, block_ids, canvas_size=canvas_size)
 
 
 def render_still_set(src: SourcePackage, out: Path, avatar: Path | None,
@@ -462,13 +550,13 @@ def make_reel(out: Path, a: Image.Image, b: Image.Image, piece_id: str,
     mp4 = out / f"{piece_id}-version-reel-1080x1920.mp4"
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
-         "-i", str(frames_dir / "f%04d.png"), "-c:v", "libx264",
+         "-i", str(frames_dir / "f%04d.png"), "-c:v", "libx264", "-threads", "2",
          "-pix_fmt", "yuv420p", "-crf", "20", "-preset", "medium",
          "-movflags", "+faststart", "-an", str(mp4)],
         check=True,
     )
     fa.save(out / "poster-1080x1920.jpg", quality=JPEG_QUALITY)
-    shutil.rmtree(frames_dir)
+    # Keep the actual encoder inputs so every frame can be byte-verified.
     return {
         "file": mp4.name, "width": W9, "height": H9, "fps": FPS,
         "duration_seconds": duration, "codec": "h264", "audio": "none",
@@ -488,7 +576,7 @@ def make_story(out: Path, src: SourcePackage, avatar: Path | None, cfg: dict) ->
 
     primary_blocks = src.version_blocks()
     rows = src.rows(primary_blocks)
-    page_box = clamp_box(union_box(rows), 0.020, 0.020)
+    page_box = src.selection_box(primary_blocks, (0.020, 0.020))
     page_crop = crop_norm(src.image, page_box)
 
     # background still: full-bleed, blurred scan (ordinary scan movement only)
@@ -589,18 +677,20 @@ def make_story(out: Path, src: SourcePackage, avatar: Path | None, cfg: dict) ->
     mp4 = out / f"{cfg['piece_id']}-story-assembly-provisional-1080x1920.mp4"
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
-         "-i", str(frames_dir / "f%04d.png"), "-c:v", "libx264",
+         "-i", str(frames_dir / "f%04d.png"), "-c:v", "libx264", "-threads", "2",
          "-pix_fmt", "yuv420p", "-crf", "21", "-preset", "medium",
          "-movflags", "+faststart", "-an", str(mp4)],
         check=True,
     )
     poster = Image.open(frames_dir / "f0000.png").convert("RGB")
     poster.save(out / "poster-1080x1920.jpg", quality=JPEG_QUALITY)
-    shutil.rmtree(frames_dir)
+    # Encoder inputs remain part of the private, hashed output package.
 
     spec = {
         "canvas": {"width": W9, "height": H9, "fps": FPS},
         "duration_seconds": duration,
+        "geometry": src.geometry(primary_blocks),
+        "geometry_note": "Only recorded line boxes are revealed; unmeasured lines remain unknown.",
         "layers": [
             {"order": 3, "name": "background", "kind": "clip slot",
              "intended_loop_seconds": 4.5, "supplied": False,
@@ -648,6 +738,13 @@ def widget_tile(im: Image.Image, w: int, h: int, pad=(0.04, 0.04)) -> Image.Imag
     return canvas
 
 
+def contained_tile(crop: Image.Image, width: int, height: int) -> Image.Image:
+    tile = page_canvas(width, height)
+    card = fit_contain(crop, width, height)
+    tile.paste(card, ((width - card.width) // 2, (height - card.height) // 2))
+    return tile
+
+
 def make_widget_kit(src: SourcePackage, out: Path, cfg: dict) -> dict:
     base = out / "widget"
     made = []
@@ -667,10 +764,9 @@ def make_widget_kit(src: SourcePackage, out: Path, cfg: dict) -> dict:
     if not same_block:
         wide_blocks.append(("detail-line", cfg["detail_block"]))
     for label, block in wide_blocks:
-        rows = src.rows([block])
-        box = clamp_box(union_box(rows), 0.05, 0.05)
+        box = src.selection_box([block], (0.05, 0.05))
         crop = crop_norm(src.image, box)
-        tile = fit_cover(crop, 1600, 760)
+        tile = contained_tile(crop, 1600, 760)
         save_tile(f"2x1/{label}.jpg", tile, 1600, 760)
 
     # 1x1: stanza detail
@@ -678,10 +774,9 @@ def make_widget_kit(src: SourcePackage, out: Path, cfg: dict) -> dict:
     if not same_block:
         square_blocks.append(("opening", cfg["cover_block"]))
     for label, block in square_blocks:
-        rows = src.rows([block])
-        box = clamp_box(union_box(rows), 0.06, 0.05)
+        box = src.selection_box([block], (0.06, 0.05))
         crop = crop_norm(src.image, box)
-        tile = fit_cover(crop, 1080, 1080)
+        tile = contained_tile(crop, 1080, 1080)
         save_tile(f"1x1/{label}.jpg", tile, 1080, 1080)
 
     # 2x2: page
@@ -689,8 +784,7 @@ def make_widget_kit(src: SourcePackage, out: Path, cfg: dict) -> dict:
     save_tile("2x2/page.jpg", page_tile, 1080, 1080)
 
     # wide: opening with deliberate negative space
-    rows = src.rows([cfg["cover_block"]])
-    box = clamp_box(union_box(rows), 0.08, 0.025)
+    box = src.selection_box([cfg["cover_block"]], (0.08, 0.025))
     crop = crop_norm(src.image, box)
     tile = fit_contain(crop, 1600 - 96, 760 - 96)
     wide = page_canvas(1600, 760)
@@ -788,6 +882,8 @@ def ink_metrics(src: SourcePackage, block_ids, card_height_px, canvas_w=W4,
 
 
 def ensure_vision_ocr() -> Path | None:
+    if sys.platform != "darwin":
+        return None
     swift = PRODUCTION_DIR / "tools" / "vision_ocr.swift"
     if not swift.exists():
         return None
@@ -831,102 +927,68 @@ def word_recall(expected: list[str], got: list[str]) -> float:
     return round(hit / len(exp), 3)
 
 
+def still_recipe(src: SourcePackage, name: str):
+    """Return the exact page, blocks, crop padding and card bounds for a still."""
+    cfg = src.cfg
+    primary = src.version_blocks()
+    if name in ("cover-stack", "carousel-01-cover"):
+        return src, primary, (0.020, 0.020), W4 - 270, H4 - 196
+    if name in ("cover-page", "carousel-02-page"):
+        return src, primary, (0.012, 0.018), W4 - 2 * MARGIN, H4 - 2 * MARGIN
+    if name in ("cover-line", "carousel-03-line"):
+        return src, [cfg["cover_block"]], (0.030, 0.020), W4 - 2 * MARGIN, H4 - 2 * MARGIN
+    if name in ("carousel-04-detail", "carousel-05-detail"):
+        blocks = [cfg["detail_block"]] if name == "carousel-04-detail" else [primary[-1]]
+        return src, blocks, (0.025, 0.018), W4 - 108, H4 - 2 * MARGIN
+    if name == "carousel-05-version":
+        later = src.later_source()
+        if later is None:
+            raise ValueError("later-version still without a later version")
+        return later, later.version_blocks(), (0.012, 0.018), W4 - 2 * MARGIN, H4 - 2 * MARGIN
+    raise ValueError(f"unknown still recipe: {name}")
+
+
 def run_qa(src: SourcePackage, out: Path, still_paths: dict, cfg: dict) -> dict:
-    binary = ensure_vision_ocr()
+    binary = None if cfg.get("_no_ocr") else ensure_vision_ocr()
     qa_dir = out / "qa"
     (qa_dir / "phone-390").mkdir(parents=True, exist_ok=True)
     report = {
         "display_width_px": 390,
-        "method": (
-            "PIL ink-box geometry at a 390 px display width, plus Apple Vision "
-            "OCR on the 390 px preview. Geometry is a proxy; physical-device "
-            "review is still required."
-        ),
-        "ocr_note": (
-            "Apple Vision accurate mode with language correction off. Cursive, "
-            "faint or overlapping lines under-read, so recall is a lower bound "
-            "on content legibility, not a publishability score."
-        ),
-        "readability_rule": (
-            "Readable on a 390 px phone width when the smallest ink box is at "
-            "least 8 px high; OCR recall is reported separately."
-        ),
+        "method": "PIL recorded ink-box geometry on each asset's own source page at 390 px width. "
+                  "Geometry is a proxy; physical-device review is still required.",
+        "ocr": {"status": "available" if binary else "skipped",
+                "reason": None if binary else ("disabled by --no-ocr" if cfg.get("_no_ocr")
+                    else "Apple Vision OCR requires macOS and a working Swift toolchain")},
+        "ocr_note": "OCR recall uses the selected version's own reviewed lines; it is not clearance.",
+        "readability_rule": "Measured ink boxes must be at least 8 px high. Missing line geometry "
+                            "leaves whole-selection readability unknown.",
+        "physical_device_review": "not performed",
         "targets": {},
     }
-    primary = src.version_blocks()
-    later = cfg.get("later_version")
-    later_size = None
-    if later:
-        later_size = Image.open(src._resolve(later["source"])).size
-
-    def page_dims(is_later=False):
-        return later_size if is_later else (src.src_w, src.src_h)
-
-    def crop_px(block_ids, dims, pad):
-        rows = src.rows(block_ids)
-        box = clamp_box(union_box(rows), pad[0], pad[1])
-        return ((box[2] - box[0]) * dims[0], (box[3] - box[1]) * dims[1])
-
-    def line_card_height(block_ids, pad=(0.030, 0.020), max_w=W4 - 2 * MARGIN):
-        w, h = crop_px(block_ids, page_dims(), pad)
-        return min(H4 - 2 * MARGIN, (max_w / w) * h)
-
-    def page_card_height(block_ids, max_w, max_h, pad=(0.012, 0.018),
-                         is_later=False):
-        w, h = crop_px(block_ids, page_dims(is_later), pad)
-        return min(max_h, max_w / (w / h))
-
-    def full_page_card_height(max_w, max_h):
-        w, h = page_dims()
-        return min(max_h, max_w / (w / h))
-
-    specs = {}
-    specs["cover-page"] = (primary, full_page_card_height(
-        W4 - 2 * MARGIN, H4 - 2 * MARGIN), src.src_h, src.src_h)
-    specs["cover-line"] = (
-        [cfg["cover_block"]], line_card_height([cfg["cover_block"]]),
-        crop_px([cfg["cover_block"]], page_dims(), (0.030, 0.020))[1], src.src_h,
-    )
-    specs["cover-stack"] = (
-        primary,
-        page_card_height(primary, W4 - 270, H4 - 196, pad=(0.020, 0.020)),
-        crop_px(primary, page_dims(), (0.020, 0.020))[1], src.src_h,
-    )
-    specs["carousel-04-detail"] = (
-        [cfg["detail_block"]],
-        line_card_height([cfg["detail_block"]], pad=(0.025, 0.018),
-                         max_w=W4 - 2 * 54),
-        crop_px([cfg["detail_block"]], page_dims(), (0.025, 0.018))[1], src.src_h,
-    )
-    if later:
-        specs["carousel-05-version"] = (
-            later["blocks"],
-            page_card_height(later["blocks"], W4 - 2 * MARGIN,
-                             H4 - 2 * MARGIN, is_later=True),
-            crop_px(later["blocks"], page_dims(True), (0.012, 0.018))[1],
-            later_size[1],
-        )
-
-    for name, (blocks, card_h, page_px_h, src_h) in specs.items():
-        p = out / "4x5" / f"{name}.jpg"
-        if not p.exists():
-            p = out / "carousel" / f"{name}.jpg"
-        if not p.exists():
-            continue
-        im = Image.open(p)
-        prev = phone_preview(im)
-        prev.save(qa_dir / "phone-390" / f"{name}.jpg", quality=90)
-        m = ink_metrics(src, blocks, card_h, page_px_h=page_px_h, src_h=src_h)
-        m["geometry_readable_at_390"] = (
-            m.get("min_ink_height_px_at_390", 0) >= 8
-        )
+    for rel in still_paths:
+        name = Path(rel).stem
+        own, blocks, pad, max_w, max_h = still_recipe(src, name)
+        selection = own.selection(blocks, pad)
+        x0, y0, x1, y1 = selection["crop_box_pixels"]
+        width, height = x1 - x0, y1 - y0
+        card_height = max(1, round(height * min(max_w / width, max_h / height)))
+        p = out / rel
+        with Image.open(p) as im:
+            prev = phone_preview(im)
+        preview_path = qa_dir / "phone-390" / (name + ".jpg")
+        prev.save(preview_path, quality=90)
+        m = {**ink_metrics(own, blocks, card_height, page_px_h=height),
+             **own.geometry(blocks), "selection": selection}
+        m["measured_geometry_readable_at_390"] = m.get("min_ink_height_px_at_390", 0) >= 8.0
+        m["geometry_readable_at_390"] = (m["measured_geometry_readable_at_390"]
+                                           if m["geometry_complete"] else None)
+        m["ocr_status"] = "skipped"
         if binary:
-            got = ocr_words(binary, qa_dir / "phone-390" / f"{name}.jpg")
+            got = ocr_words(binary, preview_path)
+            m["ocr_status"] = "completed"
             m["ocr_words"] = len(got)
-            m["ocr_word_recall"] = word_recall(src.text(blocks), got)
+            m["ocr_word_recall"] = word_recall(own.text(blocks), got)
         report["targets"][name] = m
-
-    # contact sheet
     make_contact_sheet(out, still_paths, qa_dir)
     return report
 
@@ -1056,117 +1118,165 @@ def prune_stale(out: Path, cfg: dict) -> list[str]:
     return removed
 
 
+def output_provenance(src: SourcePackage, rel: str):
+    """Describe actual render inputs, keeping raw input hashes separate from crops."""
+    cfg = src.cfg
+    primary = src.selection(src.version_blocks(), (0.020, 0.020))
+    identity = []
+    if cfg.get("identity"):
+        path = cfg["identity"]["asset"]
+        identity = [{"kind": "identity", "source": path,
+                     "source_sha256": sha256(src._resolve(path))}]
+
+    def still(name):
+        own, blocks, pad, _, _ = still_recipe(src, name)
+        sources = [own.selection(blocks, pad)]
+        if name in ("cover-stack", "carousel-01-cover"):
+            # The blurred background uses an unpadded crop of the same blocks.
+            sources += [own.selection(blocks, (0, 0))] + identity
+        return sources
+
+    def widget(name):
+        if name == "2x2/page.jpg":
+            return [src.selection(src.version_blocks())]
+        block = cfg["detail_block"] if "detail" in name else cfg["cover_block"]
+        pad = (0.05, 0.05) if name.startswith("2x1/") else (0.06, 0.05)
+        if name.startswith("wide/"):
+            pad = (0.08, 0.025)
+        return [src.selection([block], pad)]
+
+    if rel.startswith(("4x5/", "carousel/")):
+        return ("still" if rel.startswith("4x5/") else "carousel"), still(Path(rel).stem)
+    if rel.startswith("widget/tiles/"):
+        return "widget-tile", widget(rel[len("widget/tiles/"):])
+    if rel.startswith("widget/"):
+        sources = []
+        names = ["2x1/opening-line.jpg", "1x1/detail.jpg", "2x2/page.jpg", "wide/opening.jpg"]
+        if cfg["cover_block"] != cfg["detail_block"]:
+            names += ["2x1/detail-line.jpg", "1x1/opening.jpg"]
+        for name in names:
+            sources += widget(name)
+        return ("downloadable-kit" if rel.endswith(".zip") else "widget-document"), sources
+    if rel.startswith("reel/"):
+        a = still("cover-line")
+        b = still("carousel-05-version" if cfg.get("later_version") else "cover-page")
+        if "/_frames/" in rel:
+            t = int(Path(rel).stem[1:]) / FPS
+            sources = a if t < 0.75 or t >= 3.75 else b if 1.5 <= t < 3 else a + b
+            return "reel-frame", sources
+        if "poster" in rel:
+            return "reel-poster", a
+        return "reel", a + b
+    if rel.startswith("story/"):
+        if rel.endswith("02-photo-slot-empty.png"):
+            return "story-placeholder", []
+        if "/_frames/" in rel:
+            return "story-frame", [primary]
+        if "/layers/" in rel:
+            return "story-layer", [primary]
+        if rel.endswith("assembly-frame-provisional.jpg"):
+            return "story-preview", [primary] + identity
+        if rel.endswith(".json"):
+            return "story-specification", [primary]
+        return ("story-poster" if "poster" in rel else "story"), [primary]
+    if rel.startswith("qa/phone-390/"):
+        return "qa-preview", still(Path(rel).stem)
+    if rel.startswith("qa/") or rel == "MANIFEST.md":
+        all_stills = []
+        for name in ("cover-stack", "cover-page", "cover-line", "carousel-04-detail",
+                     "carousel-05-version" if cfg.get("later_version") else "carousel-05-detail"):
+            all_stills += still(name)
+        return "qa-document" if rel.endswith((".json", ".md")) else "qa-contact-sheet", all_stills
+    raise ValueError(f"unrecognised output file: {rel}; use a fresh private output directory")
+
+
 def build_manifest(src: SourcePackage, out: Path, cfg: dict, stills: dict,
                    reel: dict, story: dict, widget: dict, qa: dict,
                    repo: Path) -> dict:
     clear = cfg["clearance"]
+    save_json(out / "qa" / "readability.json", qa)
     entries = []
-    for rel in stills:
-        p = out / rel
-        role = "still" if rel.startswith("4x5") else "carousel"
-        entries.append(asset_entry(
-            p, out, role,
-            [f"page:{cfg['page_id']}", f"version:{cfg['version_id']}",
-             f"source:{cfg['source']}"],
-            clear["default"],
-        ))
-    for d, role in [(reel, "reel"), (story, "story")]:
-        if not d:
-            continue
-        p = out / role / d["file"]
-        entries.append(media_entry(
-            p, out, role,
-            [f"page:{cfg['page_id']}", f"version:{cfg['version_id']}",
-             f"source:{cfg['source']}"],
-            clear["motion"],
-            {"width": d.get("width"), "height": d.get("height"),
-             "duration_seconds": d.get("duration_seconds"),
-             "audio": d.get("audio")},
-        ))
-        poster = out / role / "poster-1080x1920.jpg"
-        if poster.exists():
-            entries.append(media_entry(
-                poster, out, f"{role}-poster",
-                [f"page:{cfg['page_id']}", f"version:{cfg['version_id']}",
-                 f"source:{cfg['source']}"],
-                clear["motion"],
-                {"width": W9, "height": H9},
-            ))
-    for rel, w, h in widget["tiles"]:
-        p = out / rel
-        entries.append(asset_entry(
-            p, out, "widget-tile",
-            [f"page:{cfg['page_id']}", f"version:{cfg['version_id']}",
-             f"source:{cfg['source']}"],
-            clear["widget"],
-        ))
-    zp = out / widget["zip"]
-    entries.append({
-        "path": widget["zip"], "sha256": sha256(zp), "bytes": zp.stat().st_size,
-        "role": "downloadable-kit", "source_chain": [f"page:{cfg['page_id']}"],
-        "clearance": clear["download"],
-    })
 
-    qa_path = out / "qa" / "readability.json"
+    def entry(path):
+        rel = path.relative_to(out).as_posix()
+        role, sources = output_provenance(src, rel)
+        chain = [f"piece:{cfg['piece_id']}"]
+        for source in sources:
+            for key, prefix in (("page_id", "page"), ("version_id", "version"), ("source", "source")):
+                value = source.get(key)
+                token = f"{prefix}:{value}"
+                if value and token not in chain:
+                    chain.append(token)
+        scope = "download" if role == "downloadable-kit" else "widget" if role.startswith("widget") else (
+            "motion" if role.startswith(("reel", "story")) else "default")
+        e = media_entry(path, out, role, chain, clear[scope], {"sources": sources})
+        if path.suffix.lower() in (".jpg", ".png"):
+            with Image.open(path) as im:
+                e.update(width=im.width, height=im.height)
+        if role in ("reel", "story"):
+            spec = reel if role == "reel" else story
+            e.update({k: spec.get(k) for k in ("width", "height", "fps", "duration_seconds", "audio")})
+        if role.endswith("-frame"):
+            e["frame_index"] = int(path.stem[1:])
+            e["time_seconds"] = e["frame_index"] / FPS
+        if path.suffix == ".zip":
+            with zipfile.ZipFile(path) as archive:
+                e["archive_members"] = [{"path": info.filename, "bytes": info.file_size,
+                    "sha256": hashlib.sha256(archive.read(info)).hexdigest()}
+                    for info in archive.infolist()]
+        return e
+
+    for path in sorted(out.rglob("*")):
+        if path.is_file() and path != out / "manifest.json" and path != out / "MANIFEST.md":
+            if path.is_symlink():
+                raise ValueError(f"output symlink is not a generated asset: {path}")
+            entries.append(entry(path))
     source_inputs = [dict(e) for e in cfg["source_inputs"]]
+    if not any(e["path"] == "studio/data/review.json" for e in source_inputs):
+        source_inputs.append({"path": "studio/data/review.json", "role": "accepted reading and logical source provenance"})
     for e in source_inputs:
-        if e["path"].endswith("site/data/j.json"):
-            e["sha256"] = src.j_sha
+        path = src._resolve(e["path"])
+        e.update(sha256=sha256(path), bytes=path.stat().st_size)
     report = {
-        "schema": "t07.media-kit-manifest.v1",
+        "schema": "t07.media-kit-manifest.v2",
         "generated_at": iso_now(),
-        "kit_version": "t07-media-kit-v1",
+        "kit_version": "t07-media-kit-v2",
         "source_revision": git_head(repo),
-        "builder": {
-            "kit_py_sha256": sha256(KIT_DIR / "kit.py"),
-            "config_sha256": sha256(KIT_DIR / "config" / cfg["_config_name"]),
-        },
-        "candidate": {
-            "piece_id": cfg["piece_id"],
-            "version_id": cfg["version_id"],
-            "page_id": cfg["page_id"],
-            "version_blocks": src.version_blocks(),
-            "pool_clearance": clear["pool"],
-            "selection_provenance": cfg["selection_provenance"],
-            "later_version": cfg.get("later_version"),
-        },
+        "builder": {"kit_py_sha256": sha256(KIT_DIR / "kit.py"),
+                    "config_sha256": sha256(Path(cfg.get("_config_path", KIT_DIR / "config" / cfg["_config_name"]))),
+                    "logical_source_code_sha256": {name: sha256(DEFAULT_REPO / "tools" / name)
+                        for name in ("script_realizations.py", "source_fingerprint.py")}},
+        "candidate": {"piece_id": cfg["piece_id"], "version_id": cfg["version_id"],
+                      "page_id": cfg["page_id"], "version_blocks": src.version_blocks(),
+                      "pool_clearance": clear["pool"], "selection_provenance": cfg["selection_provenance"],
+                      "later_version": cfg.get("later_version")},
         "source_inputs": source_inputs,
+        "logical_source_fingerprint_version": 2,
+        "source_bindings": [dict(src.source_binding)] + ([dict(src.later_source().source_binding)] if cfg.get("later_version") else []),
         "assets": entries,
+        "coverage": {"scope": "every regular output file, including encoder frames, posters, layers, QA and archive",
+                     "excluded": ["manifest.json"], "reason": "manifest cannot hash itself"},
         "clearance": {
-            "schema": "versforms.release-clearance.v1",
-            "status": "awaiting-author-and-evidence",
-            "candidate": cfg["piece_id"],
-            "candidate_provenance": cfg["selection_provenance"],
-            "proposed_version_ids": [cfg["version_id"]],
-            "public_whitelist_change_applied": False,
-            "author_clearance": None,
-            "filing_evidence": None,
-            "shared_scan_resolution": cfg.get("shared_scan_resolution"),
-            "withheld_metadata_clearance": None,
-            "complete_technical_exclusion": False,
-            "first_confirmed_post_date": None,
-            "may_publish": False,
-            "may_schedule_external_actions": False,
+            "schema": "versforms.release-clearance.v1", "status": "awaiting-author-and-evidence",
+            "candidate": cfg["piece_id"], "candidate_provenance": cfg["selection_provenance"],
+            "proposed_version_ids": [cfg["version_id"]] + ([cfg["later_version"]["version_id"]] if cfg.get("later_version") else []),
+            "public_whitelist_change_applied": False, "author_clearance": None,
+            "filing_evidence": None, "shared_scan_resolution": cfg.get("shared_scan_resolution"),
+            "withheld_metadata_clearance": None, "complete_technical_exclusion": False,
+            "first_confirmed_post_date": None, "may_publish": False, "may_schedule_external_actions": False,
             "pool_clearance": clear["pool"],
-            "per_asset": {
-                "stills": clear["default"],
-                "motion": clear["motion"],
-                "widget_tiles": clear["widget"],
-                "downloadable_kit": clear["download"],
-                "identity": clear["identity"],
-            },
-        },
-        "qa": qa,
-        "missing": cfg["missing"],
-        "substitution": {
-            "config": cfg["_config_name"],
-            "same_code_path": True,
-            "second_piece_check": "production/tools/check_substitution.py",
-        },
+            "per_asset": {"stills": clear["default"], "motion": clear["motion"],
+                          "widget_tiles": clear["widget"], "downloadable_kit": clear["download"],
+                          "identity": clear["identity"]}},
+        "qa": qa, "missing": cfg["missing"],
+        "substitution": {"config": cfg["_config_name"], "same_code_path": True,
+                         "second_piece_check": "production/tools/check_substitution.py"},
     }
-    save_json(out / "manifest.json", report)
+    # The human-readable index describes the already hashed assets. Hash that
+    # index afterwards and write JSON last, avoiding a circular self-hash.
     write_manifest_md(out, report)
-    save_json(qa_path, qa)
+    entries.append(entry(out / "MANIFEST.md"))
+    save_json(out / "manifest.json", report)
     return report
 
 
@@ -1204,7 +1314,7 @@ def write_manifest_md(out: Path, report: dict):
         f"- author clearance: `null`",
         f"- filing evidence: `null`",
         f"- shared scan: {report['clearance']['shared_scan_resolution']}",
-        f"- complete technical exclusion: `false` (T03's 13 withheld page ids and PAL/HF metadata are outside this kit's scope)",
+        "- complete technical exclusion: `false`; exposure acceptance for this exact kit remains unverified. The November 5 T03 packet's metadata findings are historical, not a claim about the current reader build.",
         f"- may publish: `false`",
         "",
         "## QA",
@@ -1218,7 +1328,7 @@ def write_manifest_md(out: Path, report: dict):
         lines.append(
             f"| `{name}` | {m.get('lines','')} | {m.get('min_ink_height_px_at_390','')} | "
             f"{m.get('median_ink_height_px_at_390','')} | "
-            f"{'yes' if m.get('geometry_readable_at_390') else 'no'} | "
+            f"{'unknown' if m.get('geometry_readable_at_390') is None else 'yes' if m['geometry_readable_at_390'] else 'no'} | "
             f"{m.get('ocr_word_recall','not run')} |"
         )
     lines += ["", "## Missing", ""]
@@ -1258,7 +1368,11 @@ def main():
     cfg_path = Path(args.config).resolve()
     cfg = load_json(cfg_path)
     cfg["_config_name"] = cfg_path.name
+    cfg["_config_path"] = str(cfg_path)
+    cfg["_no_ocr"] = args.no_ocr
     out = Path(args.out).resolve() if args.out else PRODUCTION_DIR / "exports" / cfg["piece_id"]
+    if out.exists() and any(out.iterdir()):
+        raise ValueError("output directory must be empty; choose a fresh private --out directory")
     out.mkdir(parents=True, exist_ok=True)
 
     src = SourcePackage(repo, cfg)

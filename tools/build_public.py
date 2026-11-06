@@ -53,6 +53,60 @@ DATA_URI_RE = re.compile(r"data:([a-z0-9/+.-]+);base64,([A-Za-z0-9+/=]+)", re.I)
 FONT_MAGIC = (b"wOF2", b"wOFF", b"OTTO", b"\x00\x01\x00\x00", b"true", b"ttcf")
 PROV_KEEP = ("tdate", "verified")  # prov.repo / commit / path name the source repository and stay private
 
+
+def filter_reader_metadata(html, pages, published):
+    """Restrict template navigation metadata to exact published page/block membership.
+
+    A revision witness is indivisible: a missing page or block removes that
+    witness. A comparison needs at least two complete witnesses. This never
+    converts an omitted version into a different available version.
+    """
+    by_id = {p["id"]: p for p in pages}
+    allowed = {}
+    for page, block in published:
+        allowed.setdefault(page, set()).add(block)
+
+    def literal(name):
+        match = re.search(r"\bconst\s+" + name + r"\s*=\s*(\[[\s\S]*?\]);", html)
+        if not match:
+            return None, None
+        # These two source constants contain only JSON values and bare object
+        # keys. Refuse a changed grammar instead of evaluating JavaScript.
+        value = re.sub(r'([,{]\s*)([A-Za-z_]\w*)\s*:', r'\1"\2":', match.group(1))
+        try:
+            return match, json.loads(value)
+        except ValueError as exc:
+            raise ValueError("Unsupported reader metadata literal: " + name) from exc
+
+    def complete_member(member):
+        if not isinstance(member, list) or len(member) != 2:
+            return False
+        page, blocks = member
+        if page not in by_id or page not in allowed:
+            return False
+        if blocks == "all":
+            blocks = list(range(len(by_id[page]["B"])))
+        return (isinstance(blocks, list) and bool(blocks)
+                and all(type(b) is int and b in allowed[page] for b in blocks))
+
+    match, values = literal("PAL")
+    if match:
+        kept = []
+        for value in values:
+            if not isinstance(value, dict) or set(value) != {"id", "witnesses"}:
+                raise ValueError("Unsupported PAL witness schema")
+            witnesses = [w for w in value["witnesses"] if isinstance(w, list) and w
+                         and all(complete_member(m) for m in w)]
+            if len(witnesses) >= 2:
+                kept.append({"id": value["id"], "witnesses": witnesses})
+        html = html[:match.start(1)] + json.dumps(kept, separators=(",", ":")) + html[match.end(1):]
+    match, values = literal("HF")
+    if match:
+        kept = [page for page in values if isinstance(page, str)
+                and page in by_id and complete_member([page, "all"])]
+        html = html[:match.start(1)] + json.dumps(kept, separators=(",", ":")) + html[match.end(1):]
+    return html
+
 SHELL = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -215,11 +269,24 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
 
     # versions published, per piece (indices into V)
     chosen = {}
+    source_pages = {page["id"]: page for page in d["pages"]}
     for k in want:
         n = len(pieces[k]["V"])
         sel = list(range(n)) if select.get(k) is None else sorted(set(select[k]))
         if not sel or any(not 0 <= i < n for i in sel):
             sys.exit(f"bad version selection for {k}: {sel}")
+        for vi in sel:
+            version = pieces[k]["V"][vi]
+            if version.get("sourceStatus") == "staged-untranscribed":
+                sys.exit(f"selected version {version['id']} is staged-untranscribed; output unchanged")
+            for page_id, blocks in version["P"]:
+                page = source_pages[page_id]
+                if (page.get("sourceStatus") == "staged-untranscribed"
+                        or not isinstance(page.get("a"), list) or len(page["a"]) != 5
+                        or any(page["B"][bi].get("transcriptionStatus") == "untranscribed" for bi in blocks)):
+                    sys.exit(f"selected source {page_id} is untranscribed or has no verified atlas; output unchanged")
+            if vi not in pieces[k]["st"]:
+                sys.exit(f"selected version {version['id']} has no established reading order; output unchanged")
         chosen[k] = sel
 
     # published pieces with the chosen versions renumbered; owner[(page, block)] = (piece index, version, rank)
@@ -236,6 +303,45 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 for b in blocks:
                     owner[(pg, b)] = (npi, newv[old], st.index(newv[old]))
     pages = [p for p in d["pages"] if p["id"] in keep]
+
+    # Resolve current accepted readings before creating any output. Explicit
+    # corrections still win; preserved raw lines are never changed in place.
+    effective_lines, version_lines = {}, {}
+    for p in pages:
+        selected_blocks = keep[p["id"]]
+        for bi in selected_blocks:
+            block = p["B"][bi]
+            for li, original in enumerate(block["L"]):
+                line_id = block.get("lineIds", [])[li] if "lineIds" in block else f"{p['id']}-{bi}-{li}"
+                key = (p["id"], bi, li)
+                if block.get("t") != 4:
+                    if key not in corrections and line_id in d.get("acceptedReadings", {}):
+                        corrections[key] = d["acceptedReadings"][line_id]
+                    if key in corrections:
+                        if not isinstance(corrections[key], str):
+                            sys.exit(f"nontext correction for {line_id}; output unchanged")
+                        effective_lines[line_id] = corrections[key]
+                for k, selected in chosen.items():
+                    for vi in selected:
+                        version = pieces[k]["V"][vi]
+                        if any(pg == p["id"] and bi in bs for pg, bs in version["P"]):
+                            version_lines.setdefault((k, version["id"]), set()).add(line_id)
+    unknown_corrections = set(corrections) - {
+        (p["id"], bi, li) for p in pages for bi in keep[p["id"]]
+        for li in range(len(p["B"][bi]["L"]))}
+    if unknown_corrections:
+        sys.exit(f"corrections for lines outside the published blocks: {sorted(unknown_corrections)[:5]}")
+
+    # Generate current v2 bindings from preserved studio originals and the exact
+    # output readings. Never copy a caller-supplied digest or a withheld version.
+    bindings = {}
+    if (site.parent / "studio/data/review.json").is_file():
+        from script_realizations import source_snapshot
+        from source_fingerprint import source_binding
+        for (piece_id, version_id), line_ids in version_lines.items():
+            snapshot = source_snapshot(site.parent, piece_id, version_id,
+                correction_values={lid: value for lid, value in effective_lines.items() if lid in line_ids})
+            bindings[f"{piece_id}/{version_id}"] = source_binding(snapshot)
 
     # which other pieces (and unpublished versions of published pieces) share a published page
     shared, siblings = {}, {}
@@ -256,13 +362,13 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     atlas, applied = [], 0
     if pages:
         from PIL import Image
-        srcs = {kind: [Image.open(site / "img" / "a" / f"{kind}{n}.jpg") for n in range(len(d["atlas"]))] for kind in ("t", "k")}
         pos, size = pack([(p["id"], p["a"][3], p["a"][4]) for p in pages])
         for kind in ("t", "k"):
             im = Image.new("RGB", size, "white")
             for p in pages:
                 n, x, y, w, h = p["a"]
-                im.paste(srcs[kind][n].crop((x, y, x + w, y + h)), pos[p["id"]])
+                with Image.open(site / "img" / "a" / f"{kind}{n}.jpg") as original:
+                    im.paste(original.crop((x, y, x + w, y + h)), pos[p["id"]])
             (out / "img" / "a").mkdir(parents=True, exist_ok=True)
             im.save(out / "img" / "a" / f"{kind}0.jpg", quality=90)
         atlas = [list(size)]
@@ -276,7 +382,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 if own is None:
                     # not published: no text, no number of lines, no link to a piece or version, no reading note
                     b["L"] = []
-                    for key in ("g", "v", "u"):
+                    for key in ("g", "v", "u", "lineIds", "transcriptionStatus", "sourceAnchor"):
                         b.pop(key, None)
                     continue
                 if b.get("g"):
@@ -321,11 +427,24 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
         "pieces": out_pieces,
         "prov": prov,
     }
+    if bindings:
+        pub["sourceBindings"] = bindings
+    selected_line_ids = set().union(*version_lines.values()) if version_lines else set()
+    unavailable = {lid: {"status": "unavailable"} for lid, anchor in d.get("sourceAnchors", {}).items()
+                   if lid in selected_line_ids and anchor.get("status") == "unavailable"}
+    if unavailable:
+        pub["sourceAnchors"] = unavailable
     (out / "data" / "j.json").write_text(json.dumps(pub, ensure_ascii=False, separators=(",", ":")))
 
     fonts, font_error = [], None
     if want:
         html = rebrand((site / "index.html").read_text(encoding="utf-8"))
+        html = filter_reader_metadata(html, d["pages"], owner)
+        for asset in ("reader-features.js",):
+            if (site / asset).is_file():
+                shutil.copy2(site / asset, out / asset)
+            elif asset in html:
+                raise FileNotFoundError("Reader module is referenced but missing: " + asset)
         if rename_fonts:
             try:
                 html, fonts = rename_embedded_fonts(html)

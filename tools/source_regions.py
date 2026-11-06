@@ -25,6 +25,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Any, Iterable
+from source_fingerprint import source_binding
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_SCHEMA = "versforms.source-region-manifest.v1"
@@ -81,7 +82,7 @@ def _source_asset(asset_id: str, path: Path, kind: str, tier: str | None,
         "sha256": sha256_file(path),
         "size": path.stat().st_size,
         "visibility": "private-source",
-        "owner": "T02 source/build/deposit (identifier owner; no completed T02 agreement located)",
+        "owner": "T02 canonical source contract: docs/contracts/canonical-source.md (2026-11-06)",
         "page_id": page_id,
     }
     if tier:
@@ -866,7 +867,41 @@ def _veto_matches(veto: dict, atom: dict, version_id: str, scope: str) -> bool:
     return False
 
 
-def evaluate(manifest: dict, policy: dict, scope: str) -> dict:
+def region_component_id(piece_id, version_id):
+    return "regions:" + piece_id + ":" + version_id
+
+
+def current_source_bindings(manifest, *, snapshots=None, repo=ROOT, db=None, additional_pairs=()):
+    """Fresh v2 logical bindings, with exact source line-ID membership checks.
+
+    Preserved manifests remain readable; this does not silently rewrite them.
+    API callers may provide current snapshots. The CLI resolves the live source
+    files itself, rather than trusting saved binding strings in a context file.
+    """
+    from script_realizations import source_snapshot
+    pairs = sorted({(a["piece_id"], a["version_id"]) for a in manifest.get("atoms", [])} | set(additional_pairs))
+    if snapshots is None:
+        snapshots = [source_snapshot(repo, piece, version, db) for piece, version in pairs]
+    by_key = {}
+    for snapshot in snapshots:
+        binding = source_binding(snapshot)
+        key = (binding["pieceId"], binding["versionId"])
+        if key in by_key:
+            raise ValueError("duplicate current source snapshot")
+        by_key[key] = (binding, {line["lineId"] for line in snapshot["lines"]})
+    if any(key not in by_key for key in pairs):
+        raise ValueError("missing current source snapshot")
+    all_lines = set().union(*(by_key[key][1] for key in pairs)) if pairs else set()
+    for atom in manifest.get("atoms", []):
+        line_id = (atom.get("source_ids") or {}).get("line_id")
+        if line_id is not None and line_id not in by_key[(atom["piece_id"], atom["version_id"])][1]:
+            raise ValueError("region source line is not in its exact current version")
+        if set((atom.get("lineage") or {}).get("source_line_ids") or []) - all_lines:
+            raise ValueError("region lineage contains an unavailable source line")
+    return [by_key[key][0] for key in pairs]
+
+
+def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) -> dict:
     if scope not in SCOPES:
         raise ValueError(f"unknown scope {scope!r}; expected one of {', '.join(SCOPES)}")
     if policy.get("schema") != POLICY_SCHEMA:
@@ -886,6 +921,38 @@ def evaluate(manifest: dict, policy: dict, scope: str) -> dict:
 
     clearance = policy.get("author_clearance") or {}
     if scope in PUBLIC_SCOPES:
+        import release_contract
+        context = release_context or {}
+        output_manifest = context.get("manifest")
+        bindings = None
+        try:
+            selected = (output_manifest or {}).get("sources", [])
+            resolved = current_source_bindings(manifest, snapshots=context.get("source_snapshots"),
+                repo=context.get("source_repo", ROOT), db=context.get("source_db"),
+                additional_pairs=[(s["pieceId"], s["versionId"]) for s in selected])
+            by_key = {(s["pieceId"], s["versionId"]): s for s in resolved}
+            bindings = [by_key[(s["pieceId"], s["versionId"])] for s in selected]
+            if context.get("current_sources") is not None and context["current_sources"] != bindings:
+                manifest_reasons.append("source-binding:declared-current-source-mismatch")
+        except (ValueError, KeyError, TypeError, OSError):
+            manifest_reasons.append("source-binding:current-v2-source-unavailable")
+        checked = release_contract.evaluate(output_manifest, context.get("clearance"),
+            current_sources=bindings, root=context.get("output_root"))
+        manifest_reasons.extend("release-contract:" + r for r in checked["reasons"])
+        if checked["eligible"]:
+            by_source = {(s["pieceId"], s["versionId"]): s for s in bindings}
+            for piece_id, version_id in sorted({(a["piece_id"], a["version_id"]) for a in manifest.get("atoms", [])}):
+                component_id = region_component_id(piece_id, version_id)
+                approved = next((c for c in output_manifest["components"]
+                                 if c.get("kind") == "regions" and c.get("id") == component_id), None)
+                source = by_source.get((piece_id, version_id))
+                if approved is None or source is None:
+                    manifest_reasons.append("release-contract:missing-region-component")
+                    continue
+                component = {**approved, **source, "revisionDigest": "sha256:" + digest}
+                result = release_contract.evaluate(output_manifest, context.get("clearance"),
+                    current_sources=bindings, component=component)
+                manifest_reasons.extend("release-contract:" + r for r in result["reasons"])
         if clearance.get("status") != "cleared":
             manifest_reasons.append("author-clearance:missing")
         elif clearance.get("covers_manifest_sha256") != digest:
@@ -1101,6 +1168,9 @@ def main(argv: list[str] | None = None) -> int:
     p_check.add_argument("--manifest", required=True, type=Path)
     p_check.add_argument("--policy", required=True, type=Path)
     p_check.add_argument("--scope", required=True, choices=SCOPES)
+    p_check.add_argument("--release-context", type=Path, help="Exact output manifest, attributable clearance and freshly resolved current_sources; required for public scopes")
+    p_check.add_argument("--source-repo", type=Path, default=ROOT, help="Current canonical reader/studio source checkout")
+    p_check.add_argument("--source-db", type=Path, help="Optional current review export")
     p_check.add_argument("--out", type=Path, default=None)
     p_check.add_argument("--require-allowed", action="store_true")
 
@@ -1133,7 +1203,15 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "check":
             manifest = _load_manifest(args.manifest)
             policy = read_json(args.policy)
-            report = evaluate(manifest, policy, args.scope)
+            context = read_json(args.release_context) if args.release_context else None
+            if context is not None:
+                # Context files retain evidence; their snapshots are historical.
+                # Resolve current source from the explicit CLI checkout instead.
+                context.pop("source_snapshots", None)
+                context["source_repo"] = args.source_repo
+                context["source_db"] = args.source_db
+            report = evaluate(manifest, policy, args.scope,
+                              release_context=context)
             if args.out:
                 write_json(args.out, report)
             print(json.dumps({k: report[k] for k in ("scope", "allowed", "summary",
