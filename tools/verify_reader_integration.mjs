@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url), {chromium} = require(arg('--play
 const chrome = arg('--chrome') || process.env.CHROME_BIN;
 if (!chrome) throw new Error('Supply --chrome.');
 const filtered = arg('--filtered');
-const inputFiles = ['site/index.html','site/reader-features.js','studio/notes-reader.mjs'];
+const inputFiles = ['site/index.html','site/data/j.json','site/reader-features.js','studio/notes-reader.mjs'];
 const inputHash = file => createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
 const sourceHashes = Object.fromEntries(inputFiles.map(file => [file,inputHash(file)]));
 const mime = {'.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.json':'application/json', '.jpg':'image/jpeg', '.woff2':'font/woff2', '.css':'text/css'};
@@ -82,14 +82,42 @@ try {
   assert.equal(await page.evaluate(async () => { try { await __jc.mountFeatures({fixture:true}); return false; } catch { return true; } }),true);
   await page.goto(base + '/site/index.html?private-features=1' + selected.link);
   await page.waitForFunction(() => __jc?.side === 'book');
-  await page.evaluate(async () => { const source = {...__jc.source(),sourceFingerprint:'sha256:'+'a'.repeat(64)}; return __jc.mountFeatures({fixture:true, source,audio:{url:'/fixture.wav',source}}); });
+  const actualBinding = await page.evaluate(() => __jc.sourceBinding());
+  const actualData = JSON.parse(fs.readFileSync(path.join(root,'site/data/j.json'),'utf8'));
+  assert.deepEqual(actualBinding, actualData.sourceBindings[selected.source.pieceId + '/' + selected.source.versionId]);
+  assert.equal(await page.evaluate(async () => {
+    const source = {...__jc.sourceBinding(),sourceFingerprint:'sha256:'+'f'.repeat(64)};
+    try { await __jc.mountFeatures({fixture:true,source,audio:{url:'/fixture.wav',source}}); return false; } catch { return true; }
+  }),true);
+  assert.equal(await page.evaluate(async () => {
+    const source = __jc.sourceBinding(), pending = __jc.mountFeatures({fixture:true,source,audio:{url:'/fixture.wav',source}});
+    __jc.setMode('journal'); try { await pending; return false; } catch { return true; }
+  }),true);
+  await page.evaluate(async () => { const source = __jc.sourceBinding(); return __jc.mountFeatures({fixture:true, source,audio:{url:'/fixture.wav',source}}); });
   await page.getByRole('button',{name:'Audio',exact:true}).click();
   assert.equal(await page.locator('audio').evaluate(e => e.paused),true);
   await page.evaluate(() => { location.hash = '#piece/withheld/version-withheld'; });
   await page.getByText('This source version is unavailable in this release.',{exact:true}).waitFor();
   assert.equal(await page.locator('audio').count(),0);
   assert.equal(await page.getByRole('button',{name:'Audio',exact:true}).isDisabled(),true);
-  pass('reader feature adapter requires explicit local fixture opt-in and invalidates controls on source switch');
+  pass('reader feature adapter checks the actual canonical fingerprint and rejects source changes during load');
+  const missingBindingData = structuredClone(actualData);
+  delete missingBindingData.sourceBindings[selected.source.pieceId + '/' + selected.source.versionId];
+  await page.route('**/site/data/j.json', route => route.fulfill({json:missingBindingData}),{times:1});
+  await page.goto(base + '/site/index.html?private-features=1&binding-fixture=missing' + selected.link);
+  await page.waitForFunction(() => __jc?.side === 'book');
+  assert.equal(await page.evaluate(() => __jc.sourceBinding()),null);
+  assert.equal(await page.evaluate(async source => { try { await __jc.mountFeatures({fixture:true,source,audio:{url:'/fixture.wav',source}}); return false; } catch { return true; } },actualBinding),true);
+  pass('missing canonical source binding refuses private features while stable navigation remains available');
+  const unavailableAnchorData = structuredClone(actualData);
+  unavailableAnchorData.sourceAnchors = {...unavailableAnchorData.sourceAnchors, 'diary1-0-0':{status:'unavailable',reason:'technical-browser-fixture'}};
+  assert.ok(unavailableAnchorData.pages.find(p => p.id === 'diary1').x.some(row => row[0] === 0 && row[1] === 0));
+  await page.route('**/site/data/j.json', route => route.fulfill({json:unavailableAnchorData}),{times:1});
+  await page.goto(base + '/site/index.html?anchor-fixture=unavailable#study-diary1');
+  await page.waitForFunction(() => __jc?.side === 'book');
+  assert.equal(await page.locator('#bstage rect[data-k="0-0"]').count(),0);
+  assert.equal(await page.locator('#bstage .ln[data-k="0-0"]').evaluate(e => e.classList.contains('has')),false);
+  pass('canonical unavailable anchors suppress alignment even when a preserved geometry row exists');
   await page.goto(base + '/site/index.html#piece/withheld/version-withheld');
   await page.getByText('This source version is unavailable in this release.',{exact:true}).waitFor();
   assert.equal(await page.evaluate(() => location.hash), '#piece/withheld/version-withheld');

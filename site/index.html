@@ -663,7 +663,8 @@ function prepData(d){
     o.box = {}; o.unalignedBlocks = new Set();
     o.B.forEach((b, bi) => {
       const boxes = p.x.filter(e => e[0] === bi);
-      if (boxes.length !== b.L.length || new Set(boxes.map(e => e[1])).size !== b.L.length || boxes.some(e => !Number.isInteger(e[1]) || e[1] < 0 || e[1] >= b.L.length)) o.unalignedBlocks.add(bi);
+      const unavailable = b.L.some((_, li) => d.sourceAnchors?.[b.lineIds?.[li] || `${p.id}-${bi}-${li}`]?.status === "unavailable");
+      if (unavailable || boxes.length !== b.L.length || new Set(boxes.map(e => e[1])).size !== b.L.length || boxes.some(e => !Number.isInteger(e[1]) || e[1] < 0 || e[1] >= b.L.length)) o.unalignedBlocks.add(bi);
     });
     o.validBoxes = p.x.filter(e => !o.unalignedBlocks.has(e[0]));
     for (const e of o.validBoxes) o.box[e[0] + "-" + e[1]] = e;
@@ -2832,13 +2833,16 @@ let privateFeaturePreview = null;
 async function mountPrivateFeatures(options = {}){
   const loopback = ["127.0.0.1", "localhost", "[::1]"].includes(location.hostname);
   if (!loopback || new URLSearchParams(location.search).get("private-features") !== "1" || options.fixture !== true) throw new Error("Private fixture previews require explicit loopback opt-in.");
-  const source = selectedSource();
-  if (!source || source.pieceId !== options.source?.pieceId || source.versionId !== options.source?.versionId) throw new Error("Preview source must match the selected reader version.");
+  const source = selectedSourceBinding(), epoch = sourceEpoch;
+  if (!source) throw new Error("A current canonical source binding is unavailable for this reader version.");
+  if (source.pieceId !== options.source?.pieceId || source.versionId !== options.source?.versionId || source.sourceFingerprint !== options.source?.sourceFingerprint) throw new Error("Preview source must match the current canonical reader binding.");
   privateFeaturePreview?.destroy();
   const {mountPrivateFeaturePreview} = await import("./reader-features.js");
+  const current = selectedSourceBinding();
+  if (epoch !== sourceEpoch || !current || current.pieceId !== source.pieceId || current.versionId !== source.versionId || current.sourceFingerprint !== source.sourceFingerprint) throw new Error("Reader source changed while the preview was loading.");
   let host = $("#private-features");
   if (!host){ host = document.createElement("div"); host.id = "private-features"; $("#infop").append(host); }
-  privateFeaturePreview = mountPrivateFeaturePreview(host, {...options, enabled:true});
+  privateFeaturePreview = mountPrivateFeaturePreview(host, {...options, source, enabled:true});
   $("#infop").hidden = false; $("#b-info").setAttribute("aria-expanded", "true"); showUI();
   return privateFeaturePreview;
 }
@@ -2956,13 +2960,20 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- stable source links and legacy layout/page links ---------- */
-function sourceChanged(){ document.dispatchEvent(new CustomEvent("reader:sourcechange")); }
+let sourceEpoch = 0;
+function sourceChanged(){ sourceEpoch++; document.dispatchEvent(new CustomEvent("reader:sourcechange")); }
 function selectedSource(){
   const S = side === "canvas" && focus && !focus.out && focus.stk;
   if (S){ const pc = PIECES[S.g]; return {pieceId:pc.id, versionId:pc.V[pc.st[selectedLayer(S).v]].id}; }
   const L = side === "canvas" ? focus && !focus.out && focus.it.L : B.focus && LNK[B.focus.pid + ":" + B.focus.k];
   if (!L || !PIECES[L.piece] || L.vi === undefined) return null;
   return {pieceId:PIECES[L.piece].id, versionId:PIECES[L.piece].V[L.vi].id};
+}
+function selectedSourceBinding(){
+  const source = selectedSource(); if (!source) return null;
+  const binding = DATA?.sourceBindings?.[source.pieceId + "/" + source.versionId];
+  if (!binding || binding.pieceId !== source.pieceId || binding.versionId !== source.versionId || !/^sha256:[a-f0-9]{64}$/.test(binding.sourceFingerprint)) return null;
+  return {pieceId:binding.pieceId, versionId:binding.versionId, sourceFingerprint:binding.sourceFingerprint};
 }
 function sourceHash(source){ return "piece/" + encodeURIComponent(source.pieceId) + "/" + encodeURIComponent(source.versionId); }
 function renderUnavailable(){
@@ -3067,7 +3078,7 @@ rmq.addEventListener && rmq.addEventListener("change", () => { MOTION = !rmq.mat
 
 /* test hooks (no visible effect) */
 window.__jc = {stats, cam, get state(){ return content + "-" + arr; }, get seed(){ return seed; }, get side(){ return side; }, get settled(){ return settled; },
-  source: selectedSource, sourceLink(source = selectedSource()){ return source ? "#" + sourceHash(source) : null; },
+  source: selectedSource, sourceBinding:selectedSourceBinding, sourceLink(source = selectedSource()){ return source ? "#" + sourceHash(source) : null; },
   mountFeatures:mountPrivateFeatures,
   selectVersion(vi){ peelToVersion(vi); }, setState, setMode,
   stackBounds(){ const S = focus && !focus.out && focus.stk; return S ? {width:selectedLayer(S).w, height:selectedLayer(S).h, top:stkTop(S, cam.s), bottom:stkBottom(S, cam.s), tall:!!stkTall()} : null; },
