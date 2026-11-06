@@ -87,7 +87,10 @@ class PacketDryRun(unittest.TestCase):
             self.assertEqual(first["preview"]["engine_metadata_exposure"]["withheld_page_ids"], [])
             self.assertEqual(first["database_documents"]["release"], 0)
             self.assertEqual(first["preview"]["files"], second["preview"]["files"])
-            self.assertEqual(len(first["preview"]["files"]), 8 + int((ROOT / "site/reader-features.js").is_file()))
+            self.assertEqual(len(first["preview"]["files"]), 10)
+            self.assertIn("site/reader-packages.js", first["code_sha256"])
+            self.assertEqual((Path(tmp) / "one/preview/reader-packages.js").read_bytes(),
+                             (ROOT / "site/reader-packages.js").read_bytes())
             self.assertEqual(first["output_contract"]["manifestDigest"], second["output_contract"]["manifestDigest"])
             self.assertFalse(first["output_contract"]["clearance"]["eligible"])
             self.assertEqual(first["preview"]["review_counts_for_selected_versions"]["confirmed"], 22)

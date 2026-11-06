@@ -2830,6 +2830,18 @@ $("#dock-ver").addEventListener("click", e => {
 });
 /* panels: search + info */
 let privateFeaturePreview = null;
+function privateReaderGeometry(pageId){
+  const page = DATA?.pages?.find(p => p.id === pageId), prepared = BYID[pageId];
+  if (!page || !prepared) throw new Error("Current reader page geometry is unavailable.");
+  return {pageId:page.id,width:page.iw,height:page.ih,lines:page.B.flatMap((block,bi) => block.L.map((_,li) => {
+    const lineId = block.lineIds?.[li] || `${page.id}-${bi}-${li}`, row = page.x.find(x => x[0] === bi && x[1] === li) || null;
+    return {lineId,readerRow:row,available:!!row && !prepared.unalignedBlocks.has(bi)};
+  }))};
+}
+function privateReaderMedia(pageId){
+  if (!BYID[pageId] || !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/.test(pageId)) throw new Error("Current reader source image is unavailable.");
+  return new URL("img/p/" + pageId + ".jpg",document.baseURI).href;
+}
 async function mountPrivateFeatures(options = {}){
   const loopback = ["127.0.0.1", "localhost", "[::1]"].includes(location.hostname);
   if (!loopback || new URLSearchParams(location.search).get("private-features") !== "1" || options.fixture !== true) throw new Error("Private fixture previews require explicit loopback opt-in.");
@@ -2842,7 +2854,7 @@ async function mountPrivateFeatures(options = {}){
   if (epoch !== sourceEpoch || !current || current.pieceId !== source.pieceId || current.versionId !== source.versionId || current.sourceFingerprint !== source.sourceFingerprint) throw new Error("Reader source changed while the preview was loading.");
   let host = $("#private-features");
   if (!host){ host = document.createElement("div"); host.id = "private-features"; $("#infop").append(host); }
-  privateFeaturePreview = mountPrivateFeaturePreview(host, {...options, source, enabled:true});
+  privateFeaturePreview = mountPrivateFeaturePreview(host, {...options, source, enabled:true,getCurrentSource:selectedSourceBinding,getCurrentReaderGeometry:privateReaderGeometry,getCurrentRegionMedia:privateReaderMedia});
   $("#infop").hidden = false; $("#b-info").setAttribute("aria-expanded", "true"); showUI();
   return privateFeaturePreview;
 }

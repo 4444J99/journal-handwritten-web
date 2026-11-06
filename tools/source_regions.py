@@ -20,8 +20,11 @@ owner's atoms file is read only for boxes, regions, alignments and methods.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
+import io
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any, Iterable
@@ -31,6 +34,14 @@ ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_SCHEMA = "versforms.source-region-manifest.v1"
 POLICY_SCHEMA = "versforms.visibility-policy.v1"
 REPORT_SCHEMA = "versforms.source-eligibility-report.v1"
+PRIVATE_PREVIEW_SCHEMA = "versforms.private-region-preview.v1"
+# Match site/reader-packages.js: the manifest has its own fetch budget and is
+# excluded from the aggregate declared-payload budget.
+PRIVATE_PREVIEW_MAX_MANIFEST_BYTES = 64 * 1024
+PRIVATE_PREVIEW_MAX_FILE_BYTES = 16 * 1024 * 1024
+PRIVATE_PREVIEW_MAX_TOTAL_BYTES = 32 * 1024 * 1024
+PRIVATE_PREVIEW_MAX_FILES = 20
+PRIVATE_PREVIEW_MAX_IMAGE_PIXELS = 40_000_000
 SCOPES = ("private-local", "author-cut-private", "public-release", "cipher-public")
 PRIVATE_SCOPES = {"private-local", "author-cut-private"}
 PUBLIC_SCOPES = {"public-release", "cipher-public"}
@@ -694,7 +705,8 @@ def _walk_keys(value: Any, path: str = "$") -> Iterable[tuple[str, Any]]:
             yield from _walk_keys(child, f"{path}[{i}]")
 
 
-def verify_manifest(manifest: dict) -> dict:
+def verify_manifest(manifest: dict, *, repo=ROOT) -> dict:
+    """Validate structure and source bytes in the explicitly selected checkout."""
     errors: list[str] = []
     warnings: list[str] = []
     if manifest.get("schema") != MANIFEST_SCHEMA:
@@ -773,15 +785,13 @@ def verify_manifest(manifest: dict) -> dict:
             lineage_closure(manifest, atom_id)
         except (KeyError, ValueError) as exc:
             errors.append(f"{atom_id}: lineage does not close: {exc}")
-    # Region frames: every region is in page pixels; verify against the scan size.
-    for asset in assets.values():
-        if asset.get("kind") != "page-scan":
-            continue
-        path = ROOT / asset["path"]
-        if not path.is_file():
-            errors.append(f"source asset missing on disk: {asset['path']}")
-        elif sha256_file(path) != asset.get("sha256"):
-            errors.append(f"source asset hash changed: {asset['path']}")
+    # Validation and eligibility must resolve the same selected source bytes.
+    # Reuse the strict path/size/hash checks; never fall back to this tool's
+    # checkout when a caller selects another source repository.
+    try:
+        _checked_source_assets(manifest, repo)
+    except (ValueError, TypeError, OSError) as error:
+        errors.append(str(error))
     integrity = manifest.get("integrity") or {}
     unhashed = {k: v for k, v in manifest.items() if k != "integrity"}
     expected = canonical_sha256(unhashed)
@@ -901,6 +911,26 @@ def current_source_bindings(manifest, *, snapshots=None, repo=ROOT, db=None, add
     return [by_key[key][0] for key in pairs]
 
 
+def _checked_source_assets(manifest, repo):
+    """Read the declared current bytes; a recorded hash alone is not proof."""
+    from source_foundation import read_bytes, relative
+    result = {}
+    for asset in manifest.get("source_assets", []):
+        aid, name, expected = asset.get("asset_id"), asset.get("path"), asset.get("sha256")
+        if not isinstance(aid, str) or aid in result or not isinstance(expected, str) or not re.fullmatch(r"[a-f0-9]{64}", expected):
+            raise ValueError("source-asset identity or hash is invalid")
+        try:
+            data = read_bytes(Path(repo) / relative(name))
+        except (OSError, ValueError, TypeError) as error:
+            raise ValueError("source-asset unavailable or unsafe: " + str(aid)) from error
+        if type(asset.get("size")) is not int or len(data) != asset["size"] or hashlib.sha256(data).hexdigest() != expected:
+            raise ValueError("source-asset bytes changed: " + aid)
+        result[aid] = (asset, data)
+    if not result:
+        raise ValueError("source-asset set is empty")
+    return result
+
+
 def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) -> dict:
     if scope not in SCOPES:
         raise ValueError(f"unknown scope {scope!r}; expected one of {', '.join(SCOPES)}")
@@ -912,12 +942,28 @@ def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) 
     atom_reasons: dict[str, list[str]] = {}
     atom_warnings: dict[str, list[str]] = {}
     inherited_pools: dict[str, str] = {}
+    private_bindings = []
 
     if scope in PRIVATE_SCOPES:
-        if (manifest.get("scope") or {}).get("distribution") != "private-local":
+        if (manifest.get("scope") or {}).get("distribution") != "private-local" or (manifest.get("scope") or {}).get("may_publish") is not False:
             manifest_reasons.append("scope:not-private-local")
-        if (policy.get("publication") or {}).get("enabled") is True:
+        if (policy.get("publication") or {}).get("enabled") is not False:
             manifest_reasons.append("policy:publication-must-stay-disabled-for-private-preview")
+        context = release_context or {}
+        try:
+            private_bindings = current_source_bindings(manifest,
+                snapshots=context.get("source_snapshots"), repo=context.get("source_repo", ROOT), db=context.get("source_db"))
+            if context.get("current_sources") is not None and context["current_sources"] != private_bindings:
+                manifest_reasons.append("source-binding:declared-current-source-mismatch")
+        except (ValueError, KeyError, TypeError, OSError):
+            manifest_reasons.append("source-binding:current-v2-source-unavailable")
+
+    # Current source pixels are required in every scope, independently of an
+    # unchanged logical fingerprint or a valid exact-output clearance record.
+    try:
+        _checked_source_assets(manifest, (release_context or {}).get("source_repo", ROOT))
+    except (ValueError, TypeError, OSError) as error:
+        manifest_reasons.append(str(error))
 
     clearance = policy.get("author_clearance") or {}
     if scope in PUBLIC_SCOPES:
@@ -1119,6 +1165,7 @@ def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) 
         "scope": scope,
         "policy_id": policy.get("policy_id"),
         "manifest_sha256": digest,
+        "source_bindings": private_bindings,
         "allowed": allowed,
         "summary": {
             "atoms": len(atom_ids),
@@ -1135,9 +1182,197 @@ def evaluate(manifest: dict, policy: dict, scope: str, *, release_context=None) 
     }
 
 
-def _load_manifest(path: Path) -> dict:
+def review_page_geometry(page):
+    """Text-free projection also derived live by the Studio preview consumer."""
+    return {"pageId": page["id"], "width": page["w"], "height": page["h"],
+            "blocks": [{"index": index, "lines": [{"lineId": line["id"],
+                "box": copy.deepcopy(line.get("box")), "sourceAnchor": copy.deepcopy(line.get("sourceAnchor"))}
+                for line in block["lines"]]} for index, block in enumerate(page["blocks"])]}
+
+
+def _private_preview_policy(policy, piece_ids):
+    """Validate reader-consumed policy shapes without changing general defaults."""
+    def strings(record, key):
+        values = record.get(key, [])
+        if not isinstance(values, list) or any(not isinstance(v, str) or not v for v in values):
+            raise ValueError("private preview policy requires nonempty string identifiers in " + key)
+
+    if not isinstance(policy, dict) or not isinstance(policy.get("pieces"), dict):
+        raise ValueError("private preview policy requires explicit piece records")
+    for key in ("withheld_assets", "withheld_pages"):
+        strings(policy, key)
+    for piece_id in piece_ids:
+        piece = policy["pieces"].get(piece_id)
+        if not isinstance(piece, dict) or "pool" not in piece:
+            raise ValueError("private preview policy requires an explicit pool for " + piece_id)
+        if not isinstance(piece["pool"], str) or piece["pool"] not in ("unassigned", "series", "reserve", "archive", "withheld", "deleted"):
+            raise ValueError("private preview policy has an unknown pool for " + piece_id)
+        strings(piece, "withheld_versions")
+        for key in ("excluded_versions", "piece_vetoes", "strike_through_vetoes"):
+            entries = piece.get(key, [])
+            if not isinstance(entries, list):
+                raise ValueError("private preview policy requires an array for " + key)
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    raise ValueError("private preview policy requires object entries in " + key)
+                scopes = entry.get("scopes", [])
+                if not isinstance(scopes, list) or any(not isinstance(s, str) or s not in ("all", *SCOPES) for s in scopes):
+                    raise ValueError("private preview policy has invalid scopes in " + key)
+                # Validate even unrelated/public-only entries; retain their
+                # original values and let evaluate apply the existing scope.
+                if key != "excluded_versions":
+                    strings(entry, "atom_ids")
+                    strings(entry, "line_ids")
+
+
+def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=None, expected=None):
+    """Export one real region's private full-image preview, without inventing a crop.
+
+    All validation precedes output creation. A supplied earlier descriptor is a
+    stale-work guard, never authority. Current source, canonical geometry, live
+    review export, policy and actual source pixels are independently rechecked.
+    """
+    from PIL import Image
+    import source_foundation as foundation
+    from script_realizations import source_snapshot, release_policy, private_destination
+
+    repo = foundation.no_links(repo)
+    result = verify_manifest(manifest, repo=repo)
+    if not result["ok"]:
+        raise ValueError("invalid region manifest: " + "; ".join(result["errors"][:4]))
+    for member in manifest["atoms"]:
+        if not isinstance(member["atom_id"], str) or not member["atom_id"] or any(
+                not isinstance(member[key], str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", member[key])
+                for key in ("piece_id", "version_id", "page_id")):
+            raise ValueError("bounded private preview requires supported atom identities")
+    if not isinstance(atom_id, str) or not re.fullmatch(r"vf:atom:[A-Za-z0-9_./:-]+", atom_id):
+        raise ValueError("bounded private preview requires a supported selected region identity")
+    selected = [a for a in manifest["atoms"] if a["atom_id"] == atom_id]
+    if len(selected) != 1:
+        raise ValueError("selected region is unavailable")
+    atom = selected[0]
+    if any((a["piece_id"], a["version_id"]) != (atom["piece_id"], atom["version_id"]) for a in manifest["atoms"]):
+        raise ValueError("bounded private preview requires one exact current piece/version")
+    line_id = atom.get("source_ids", {}).get("line_id")
+    if not isinstance(line_id, str):
+        raise ValueError("private preview requires a line-anchored region")
+    canonical = foundation.read_json(repo / "source/canonical.json")
+    foundation.validate(canonical)
+    if foundation.rebuild(canonical, repo)["changed"]:
+        raise ValueError("canonical source and current reader/studio outputs differ; rebuild before preview")
+    _private_preview_policy(policy, {atom["piece_id"]})
+    report = evaluate(manifest, policy, "private-local", release_context={"source_repo": repo, "source_db": db})
+    if not report["allowed"]:
+        reasons = report["manifest_reasons"] + [r for group in report["atom_reasons"].values() for r in group]
+        raise ValueError("private region is ineligible: " + "; ".join(sorted(set(reasons))[:8]))
+
+    snapshot = source_snapshot(repo, atom["piece_id"], atom["version_id"], db)
+    source = source_binding(snapshot)
+    source_policy = release_policy(repo, atom["piece_id"], db)
+    if source_policy["visibility"] == "withheld":
+        raise ValueError("current source policy withholds this private preview")
+    current_lines = {l["lineId"] for l in snapshot["lines"]}
+    if any(((a.get("source_ids") or {}).get("line_id") is not None and a["source_ids"]["line_id"] not in current_lines)
+           or set(a.get("lineage", {}).get("source_line_ids") or []) - current_lines for a in manifest["atoms"]):
+        raise ValueError("bounded private preview lineage is outside its exact current source")
+    lines = {line["id"]: line for line in canonical["lines"]}
+    line = lines.get(line_id)
+    if not line or line["pageId"] != atom["page_id"] or line_id not in current_lines:
+        raise ValueError("region does not belong to the current canonical source line")
+    page = next(p for p in canonical["pages"] if p["id"] == atom["page_id"])
+    block_index = atom["source_ids"].get("block_index")
+    if type(block_index) not in (int, float) or block_index != page["blockIds"].index(line["blockId"]) or not any(
+            member[0] == page["id"] and block_index in member[1] for member in snapshot["members"]):
+        raise ValueError("bounded private preview selected line/block membership disagrees with canonical source")
+    review = foundation.read_json(repo / "studio/data/review.json")
+    review_page = next(p for p in review["pages"] if p["id"] == atom["page_id"])
+    anchor_geometry = line["geometry"]
+    anchor = {"lineId": line_id, "pageId": page["id"], "status": anchor_geometry["status"],
+              "box": copy.deepcopy(anchor_geometry["studioBox"]) if anchor_geometry["status"] == "available" else None,
+              "reason": anchor_geometry.get("reason")}
+    # A partially aligned block cannot establish which surviving box belongs to
+    # each transcript line. Match the current reader's whole-block fallback.
+    block = next(b for b in canonical["blocks"] if b["id"] == line["blockId"])
+    for member_id in block["lineIds"]:
+        geometry = lines[member_id]["geometry"]
+        if geometry["status"] == "available":
+            box = geometry["studioBox"]
+            if not isinstance(box, list) or len(box) != 4 or any(type(v) not in (int, float) for v in box) or not (0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1):
+                raise ValueError("canonical source anchor is invalid: " + member_id)
+    if any(lines[lid]["geometry"]["status"] != "available" for lid in block["lineIds"]):
+        anchor.update(status="unavailable", box=None)
+        if not anchor["reason"]:
+            anchor["reason"] = "block-source-geometry-incomplete"
+    assets = _checked_source_assets(manifest, repo)
+    asset_ids = atom.get("source_asset_ids", [])
+    if len(asset_ids) != 1 or asset_ids[0] not in assets:
+        raise ValueError("bounded private preview requires one declared source image")
+    asset, image_bytes = assets[asset_ids[0]]
+    page_assets = [a for a in manifest["source_assets"]
+                   if a.get("page_id") == page["id"] and a.get("kind") == "page-scan" and a.get("tier") == "p"]
+    if len(page_assets) != 1 or page_assets[0]["asset_id"] != asset_ids[0]:
+        raise ValueError("bounded private preview requires exactly one selected-page page-scan/p asset")
+    current_asset = next((a for a in canonical["assets"] if a["path"] == asset["path"]), None)
+    media_digest = "sha256:" + hashlib.sha256(image_bytes).hexdigest()
+    if asset.get("page_id") != page["id"] or not current_asset or current_asset.get("pageId") != page["id"] or current_asset["sha256"] != media_digest or current_asset["bytes"] != len(image_bytes):
+        raise ValueError("source-asset differs from current canonical image lineage")
+    width, height = review_page["w"], review_page["h"]
+    # JSON 8000 and 8000.0 are both safe integer-valued Numbers in the reader;
+    # booleans, fractions and non-finite/nonpositive dimensions are not.
+    if any(type(value) not in (int, float) or not 1 <= value <= PRIVATE_PREVIEW_MAX_IMAGE_PIXELS or int(value) != value for value in (width, height)) or width * height > PRIVATE_PREVIEW_MAX_IMAGE_PIXELS:
+        raise ValueError("private region preview requires positive integer dimensions within 40,000,000 pixels")
+    with Image.open(io.BytesIO(image_bytes)) as image:
+        if image.format != "JPEG" or image.size != (width, height):
+            raise ValueError("source-asset is not the declared full JPEG page")
+        image.verify()
+    geometry = {"atomId": atom_id, "region": copy.deepcopy(atom["region"]),
+        "authorBox": copy.deepcopy(atom.get("author_box")), "sourceAnchor": anchor,
+        "reviewPageGeometry": review_page_geometry(review_page),
+        "canonicalPage": {"pageId": page["id"], "dimensions": {"width": review_page["w"], "height": review_page["h"]},
+            "lines": [{"lineId": l["id"], "geometry": copy.deepcopy(l["geometry"])} for l in canonical["lines"] if l["pageId"] == page["id"]],
+            "assets": [{"id": a["id"], "sha256": a["sha256"]} for a in canonical["assets"] if a.get("pageId") == page["id"]]}}
+    # These JSON files are raw-byte hashed; consumers need no float-serialization
+    # assumptions when verifying the original manifest or geometry proof.
+    encode = lambda value: (json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n").encode("utf-8")
+    files = {"region-manifest.json": encode(manifest), "policy.json": encode(policy),
+             "source.json": encode({"snapshot": snapshot, "sourcePolicy": source_policy}),
+             "geometry.json": encode(geometry), "assets/source.jpg": image_bytes}
+    if not 1 <= len(files) <= PRIVATE_PREVIEW_MAX_FILES:
+        raise ValueError("private region package requires 1 through 20 payload files")
+    for name, data in files.items():
+        if not 1 <= len(data) <= PRIVATE_PREVIEW_MAX_FILE_BYTES:
+            raise ValueError("private region package payload must contain 1 byte through 16 MiB: " + name)
+    if sum(map(len, files.values())) > PRIVATE_PREVIEW_MAX_TOTAL_BYTES:
+        raise ValueError("private region package payload exceeds 32 MiB")
+    hashes = {name: "sha256:" + hashlib.sha256(data).hexdigest() for name, data in files.items()}
+    package = {"schema": PRIVATE_PREVIEW_SCHEMA, "audience": "private", "fixture": True,
+        "mayPublish": False, "scope": "private-local", "source": source, "sourcePolicy": source_policy,
+        "atomId": atom_id, "manifestDigest": hashes["region-manifest.json"], "geometryDigest": hashes["geometry.json"],
+        "mediaDigest": media_digest, "policyDigest": hashes["policy.json"], "sourceAnchor": anchor,
+        "image": {"path": "assets/source.jpg", "width": review_page["w"], "height": review_page["h"], "display": "full-source-image-no-crop"},
+        "files": [{"path": name, "sha256": hashes[name], "bytes": len(files[name])} for name in sorted(files)]}
+    package_bytes = encode(package)
+    if len(package_bytes) > PRIVATE_PREVIEW_MAX_MANIFEST_BYTES:
+        raise ValueError("private region package manifest exceeds 64 KiB")
+    descriptor = {key: copy.deepcopy(package[key]) for key in ("source", "sourcePolicy", "atomId", "manifestDigest", "geometryDigest", "mediaDigest", "policyDigest")}
+    descriptor["package"] = {"manifestUrl": "region-preview.json", "sha256": "sha256:" + hashlib.sha256(package_bytes).hexdigest()}
+    if expected is not None and (not isinstance(expected, dict) or not isinstance(expected.get("package"), dict) or any(expected.get(key) != value for key, value in descriptor.items() if key != "package") or expected["package"].get("sha256") != descriptor["package"]["sha256"]):
+        raise ValueError("stale private region descriptor; explicitly re-export current source/geometry/media/policy")
+    output = private_destination(output)
+    if output.exists() or output.is_relative_to(repo):
+        raise ValueError("private region preview must be a new directory outside the source checkout")
+    output.mkdir(parents=True)
+    for name, data in {**files, "region-preview.json": package_bytes}.items():
+        path = output / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("xb") as handle:
+            handle.write(data)
+    return descriptor
+
+
+def _load_manifest(path: Path, *, repo=ROOT) -> dict:
     manifest = read_json(path)
-    result = verify_manifest(manifest)
+    result = verify_manifest(manifest, repo=repo)
     if not result["ok"]:
         raise ValueError("manifest is invalid: " + "; ".join(result["errors"][:8]))
     return manifest
@@ -1158,11 +1393,13 @@ def main(argv: list[str] | None = None) -> int:
 
     p_verify = sub.add_parser("verify", help="verify a manifest's structure and hashes")
     p_verify.add_argument("--manifest", required=True, type=Path)
+    p_verify.add_argument("--source-repo", type=Path, default=ROOT, help="Checkout containing the declared source assets")
     p_verify.add_argument("--out", type=Path, default=None)
 
     p_lineage = sub.add_parser("lineage", help="print the closure for one atom")
     p_lineage.add_argument("--manifest", required=True, type=Path)
     p_lineage.add_argument("--atom-id", required=True)
+    p_lineage.add_argument("--source-repo", type=Path, default=ROOT, help="Checkout containing the declared source assets")
 
     p_check = sub.add_parser("check", help="evaluate a scope against a visibility policy")
     p_check.add_argument("--manifest", required=True, type=Path)
@@ -1173,6 +1410,15 @@ def main(argv: list[str] | None = None) -> int:
     p_check.add_argument("--source-db", type=Path, help="Optional current review export")
     p_check.add_argument("--out", type=Path, default=None)
     p_check.add_argument("--require-allowed", action="store_true")
+
+    p_preview = sub.add_parser("preview", help="export a current-source-bound private region/image package")
+    p_preview.add_argument("--manifest", required=True, type=Path)
+    p_preview.add_argument("--policy", required=True, type=Path)
+    p_preview.add_argument("--atom-id", required=True)
+    p_preview.add_argument("--source-repo", type=Path, default=ROOT)
+    p_preview.add_argument("--source-db", type=Path)
+    p_preview.add_argument("--expected-descriptor", type=Path, help="earlier descriptor; refuse any stale identity instead of silently rebinding")
+    p_preview.add_argument("--out", required=True, type=Path)
 
     args = parser.parse_args(argv)
     try:
@@ -1191,25 +1437,24 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "verify":
             manifest = read_json(args.manifest)
-            result = verify_manifest(manifest)
+            result = verify_manifest(manifest, repo=args.source_repo)
             if args.out:
                 write_json(args.out, result)
             print(json.dumps(result, indent=2))
             return 0 if result["ok"] else 1
         if args.command == "lineage":
-            manifest = _load_manifest(args.manifest)
+            manifest = _load_manifest(args.manifest, repo=args.source_repo)
             print(json.dumps(lineage_closure(manifest, args.atom_id), indent=2))
             return 0
         if args.command == "check":
-            manifest = _load_manifest(args.manifest)
+            manifest = _load_manifest(args.manifest, repo=args.source_repo)
             policy = read_json(args.policy)
-            context = read_json(args.release_context) if args.release_context else None
-            if context is not None:
-                # Context files retain evidence; their snapshots are historical.
-                # Resolve current source from the explicit CLI checkout instead.
-                context.pop("source_snapshots", None)
-                context["source_repo"] = args.source_repo
-                context["source_db"] = args.source_db
+            context = read_json(args.release_context) if args.release_context else {}
+            # Context files retain evidence; their snapshots are historical.
+            # Resolve current source in private scopes too, using this checkout.
+            context.pop("source_snapshots", None)
+            context["source_repo"] = args.source_repo
+            context["source_db"] = args.source_db
             report = evaluate(manifest, policy, args.scope,
                               release_context=context)
             if args.out:
@@ -1217,6 +1462,12 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({k: report[k] for k in ("scope", "allowed", "summary",
                                                      "manifest_reasons", "required_actions")}, indent=2))
             return 0 if report["allowed"] else 3
+        if args.command == "preview":
+            descriptor = export_private_preview(_load_manifest(args.manifest, repo=args.source_repo), read_json(args.policy),
+                args.atom_id, args.out, repo=args.source_repo, db=args.source_db,
+                expected=read_json(args.expected_descriptor) if args.expected_descriptor else None)
+            print(json.dumps(descriptor, indent=2))
+            return 0
     except (OSError, ValueError, KeyError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

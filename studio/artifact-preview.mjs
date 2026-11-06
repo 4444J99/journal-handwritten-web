@@ -1,11 +1,11 @@
 import * as Notes from './notes-model.mjs';
-import {createArtifactRevision, artifactHeads} from './artifact-model.mjs';
+import {createArtifactRevision, artifactHeads, assertArtifact} from './artifact-model.mjs';
 import {createArtifactStore} from './artifact-store.mjs';
 import {mountNotesReader} from './notes-reader.mjs';
 import {mountPrivateFeaturePreview} from '../site/reader-features.js';
 
 const $ = id => document.getElementById(id);
-const S = {catalog:null, store:null, canWrite:false, ready:false, sourceReady:false, artifacts:[], notes:[], contributions:[], selected:null, preview:null, busy:false, reviews:{}};
+const S = {catalog:null, store:null, canWrite:false, ready:false, sourceReady:false, policyReady:false, artifacts:[], notes:[], contributions:[], selected:null, preview:null, busy:false, reviews:{}, policies:{}};
 function status(id, message) { $(id).textContent = message; }
 function el(tag, text) { const node = document.createElement(tag); node.textContent = text; return node; }
 function options(select, rows, prior = select.value) { select.replaceChildren(...rows.map(([value, label]) => { const option = el('option', label); option.value = value; return option; })); if (rows.some(([value]) => value === prior)) select.value = prior; }
@@ -14,6 +14,23 @@ function source() { const v = version(); return v && {pieceId:$('piece').value, 
 function sources() { return S.catalog?.pieces.flatMap(p => p.versions.map(v => ({pieceId:p.pieceId, versionId:v.versionId, sourceFingerprint:v.sourceFingerprint || v.fingerprint}))) || []; }
 function groups() { return artifactHeads(S.artifacts, sources()); }
 function chosen() { return groups().find(g => g.recordId === $('record').value); }
+function currentSource() { if (!S.sourceReady || !version() || version().issues?.length) throw new Error('Current source is unavailable or needs review.'); return source(); }
+function currentPolicy() {
+  if (!S.policyReady) throw new Error('Current source policy is unavailable.');
+  const record = Object.hasOwn(S.policies,$('piece').value) ? S.policies[$('piece').value] : {};
+  if (!record || typeof record !== 'object' || Array.isArray(record)) throw new Error('Invalid current source policy.');
+  return {pool:Object.hasOwn(record,'pool') ? record.pool : 'unsorted',visibility:Object.hasOwn(record,'publicStatus') ? record.publicStatus : 'private'};
+}
+function reviewGeometry(pageId) {
+  const page = S.review.pages.find(p => p.id === pageId);
+  if (!page) throw new Error('Current source page is unavailable.');
+  return {pageId:page.id,width:page.w,height:page.h,blocks:page.blocks.map((b,index) => ({index,lines:b.lines.map(l => ({lineId:l.id,box:l.box ?? null,sourceAnchor:l.sourceAnchor ?? null}))}))};
+}
+function currentRegionMedia(pageId) {
+  const page = S.review.pages.find(p => p.id === pageId);
+  if (!page || typeof page.img !== 'string') throw new Error('Current source image is unavailable.');
+  return page.img;
+}
 function enable() { $('editing').disabled = !S.canWrite || !S.ready || !S.sourceReady || S.busy || !version() || !!version()?.issues?.length || !!chosen()?.conflicted; $('export-artifacts').disabled = !S.ready; }
 function clearPreview() { S.preview?.destroy(); S.preview = null; status('preview-status', 'Preview closed after a source or revision change.'); }
 function renderHistory() {
@@ -75,8 +92,16 @@ $('mount-preview').addEventListener('click', () => {
     if (group) for (const descriptor of [config.audio, config.regions, config.realization]) {
       if (descriptor && descriptor.revisionId !== group.heads[0].revisionId) throw new Error('Preview asset references must identify the selected stored artifact revision.');
     }
+    if (config.realization && (!config.realization.package || !group || group.heads[0].kind !== 'realization')) throw new Error('Select a stored realization artifact and its verified package.');
+    if (config.regions && !config.regions.package) throw new Error('Source regions require a verified T08 package.');
+    const selectedRevisionId = group?.heads[0].revisionId, selectedRecordId = group?.recordId;
+    const getStoredArtifact = () => {
+      const selected = chosen();
+      if (!S.ready || !selected || selected.recordId !== selectedRecordId || selected.conflicted || selected.stale || selected.heads.length !== 1 || selected.heads[0].revisionId !== selectedRevisionId || Notes.stableJSON(selected.heads[0].source) !== Notes.stableJSON(currentSource())) throw new Error('The current stored artifact or source changed.');
+      assertArtifact('artifacts',selected.heads[0]); return selected.heads[0];
+    };
     const notes = Notes.projectPreview([...S.notes, ...S.contributions], S.catalog, {versions:[exactSource], allowFixtures:true}).records;
-    S.preview = mountPrivateFeaturePreview($('feature-preview'), {enabled:true, source:exactSource, notes, renderNotes:mountNotesReader, audio:config.audio, regions:config.regions, realization:config.realization});
+    S.preview = mountPrivateFeaturePreview($('feature-preview'), {enabled:true, source:exactSource, notes, renderNotes:mountNotesReader, audio:config.audio, regions:config.regions, realization:config.realization,getCurrentSource:currentSource,getCurrentPolicy:currentPolicy,getStoredArtifact,getCurrentReviewGeometry:reviewGeometry,getCurrentRegionMedia:currentRegionMedia});
     status('preview-status', 'Controls prepared. Choose a feature to reveal it; audio and realizations do not start automatically.');
   } catch (error) { status('preview-status', error.message); }
 });
@@ -91,12 +116,17 @@ try {
   rebuild();
   const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
   S.canWrite = await user.can('data.write') === true;
-  S.store = createArtifactStore({db, canWrite:S.canWrite, onChange(records, ready) { S.artifacts = records.artifacts; S.ready = ready; updateRecords(); if (ready) status('connection', S.canWrite ? 'Connected · private artifact storage' : 'Connected · read-only'); }, onError(error) { S.ready = false; enable(); status('connection', 'Artifact storage unavailable: ' + error.message); }});
+  S.store = createArtifactStore({db, canWrite:S.canWrite, onChange(records, ready) { if (Notes.stableJSON(S.artifacts) !== Notes.stableJSON(records.artifacts)) clearPreview(); S.artifacts = records.artifacts; S.ready = ready; updateRecords(); if (ready) status('connection', S.canWrite ? 'Connected · private artifact storage' : 'Connected · read-only'); }, onError(error) { S.ready = false; clearPreview(); enable(); status('connection', 'Artifact storage unavailable: ' + error.message); }});
   S.store.start();
   db.collection('reviews').onSnapshot(snapshot => {
     const next = Object.fromEntries(snapshot.docs.filter(d => d.exists).map(d => [d.id, d.data()]));
     if (S.sourceReady && Notes.stableJSON(next) === Notes.stableJSON(S.reviews)) return;
     S.reviews = next; S.sourceReady = true; rebuild();
   }, error => { S.sourceReady = false; clearPreview(); enable(); status('connection', 'Source review sync unavailable: ' + error.message); });
+  db.collection('release').onSnapshot(snapshot => {
+    const next = Object.fromEntries(snapshot.docs.filter(d => d.exists).map(d => [d.id,d.data()]));
+    if (S.policyReady && Notes.stableJSON(next) === Notes.stableJSON(S.policies)) return;
+    S.policies = next; S.policyReady = true; clearPreview();
+  }, error => { S.policyReady = false; clearPreview(); status('connection','Source policy sync unavailable: ' + error.message); });
   for (const family of ['notes', 'contributions']) db.collection(family).onSnapshot(snapshot => { const next = snapshot.docs.filter(d => d.exists).map(d => d.data()); if (Notes.stableJSON(next) !== Notes.stableJSON(S[family])) { S[family] = next; clearPreview(); } });
 } catch (error) { S.canWrite = false; status('connection', error.message); enable(); }

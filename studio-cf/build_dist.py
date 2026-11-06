@@ -39,9 +39,8 @@ def main(argv=None):
         if p.is_file():
             published[p.relative_to(ROOT / "studio").as_posix()] = p
     # One lifecycle implementation serves the reader and private Studio adapters.
-    for asset in ("reader-features.js",):
-        if (ROOT / "site" / asset).is_file():
-            published["site/" + asset] = ROOT / "site" / asset
+    for asset in ("reader-features.js", "reader-packages.js"):
+        published["site/" + asset] = ROOT / "site" / asset
     data = json.loads((ROOT / "studio/data/review.json").read_text())
     for page in data["pages"]:
         for pub in filter(None, [page["img"], page["thumb"], (page.get("spread") or {}).get("img")]):
@@ -51,6 +50,8 @@ def main(argv=None):
     missing = sorted(k for k, v in published.items() if not v.is_file())
     for m in missing:
         print(f"MISSING {m}")
+    if missing:
+        return 1
     if out.exists():
         shutil.rmtree(out)
     n = 0

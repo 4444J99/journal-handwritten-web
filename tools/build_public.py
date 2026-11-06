@@ -289,6 +289,18 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 sys.exit(f"selected version {version['id']} has no established reading order; output unchanged")
         chosen[k] = sel
 
+    # Refuse a broken module closure before replacing a previous output. The
+    # package verifier is loaded by the feature adapter, not directly by HTML.
+    reader_assets = ("reader-features.js", "reader-packages.js")
+    if want:
+        reader_text = (site / "index.html").read_text(encoding="utf-8")
+        for asset in reader_assets:
+            if (site / asset).is_file():
+                reader_text += "\n" + (site / asset).read_text(encoding="utf-8")
+        for asset in reader_assets:
+            if asset in reader_text and not (site / asset).is_file():
+                raise FileNotFoundError("Reader module is referenced but missing: " + asset)
+
     # published pieces with the chosen versions renumbered; owner[(page, block)] = (piece index, version, rank)
     keep, owner, out_pieces = {}, {}, []
     for npi, k in enumerate(want):
@@ -440,7 +452,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     if want:
         html = rebrand((site / "index.html").read_text(encoding="utf-8"))
         html = filter_reader_metadata(html, d["pages"], owner)
-        for asset in ("reader-features.js",):
+        for asset in reader_assets:
             if (site / asset).is_file():
                 shutil.copy2(site / asset, out / asset)
             elif asset in html:

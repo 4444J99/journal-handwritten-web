@@ -71,6 +71,8 @@ class MetadataFiltering(unittest.TestCase):
             self.assertEqual(data["sourceAnchors"]["diary1-2-3"], {"status": "unavailable"})
             self.assertNotIn("acceptedReadings", data)
             self.assertTrue(all(key.startswith("diary1-") for key in data["sourceAnchors"]))
+            for module in ("reader-features.js", "reader-packages.js"):
+                self.assertEqual((out / module).read_bytes(), (root / "site" / module).read_bytes())
             build(out, ["p001"], site=root / "site", select={"p001": [1]}, rename_fonts=False)
             data = json.loads((out / "data/j.json").read_text())
             for lid, value in original["acceptedReadings"].items():
@@ -78,6 +80,18 @@ class MetadataFiltering(unittest.TestCase):
                 if pg == "diary62a":
                     page = next(p for p in data["pages"] if p["id"] == pg)
                     self.assertEqual(page["B"][int(bi)]["L"][int(li)], value)
+
+    def test_missing_transitive_reader_module_preserves_existing_output(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            site, out = Path(temp) / "site", Path(temp) / "output"
+            (site / "data").mkdir(parents=True); out.mkdir()
+            for relative in ("data/j.json", "index.html", "reader-features.js"):
+                (site / relative).write_bytes((root / "site" / relative).read_bytes())
+            (out / "sentinel").write_text("preserve prior output")
+            with self.assertRaisesRegex(FileNotFoundError, "reader-packages.js"):
+                build(out, ["p001"], site=site, select={"p001": [0]}, rename_fonts=False)
+            self.assertEqual((out / "sentinel").read_text(), "preserve prior output")
 
     def test_staged_photo_refusal_preserves_existing_output(self):
         root = Path(__file__).resolve().parents[1]
