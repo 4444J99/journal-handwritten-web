@@ -1,0 +1,17 @@
+test_actual_reserve_withheld_and_stale_hash_block_every_derivative_cli (test_glyph_workflow.GlyphWorkflowTests.test_actual_reserve_withheld_and_stale_hash_block_every_derivative_cli) ... ok
+test_capture_preserves_provenance_scalars_pixels_and_is_deterministic (test_glyph_workflow.GlyphWorkflowTests.test_capture_preserves_provenance_scalars_pixels_and_is_deterministic) ... ok
+test_font_and_sheet_share_source_exclusion_and_refuse_overwrite (test_glyph_workflow.GlyphWorkflowTests.test_font_and_sheet_share_source_exclusion_and_refuse_overwrite) ... ok
+test_font_audit_and_import_preserve_bytes_names_and_identify_fallback (test_glyph_workflow.GlyphWorkflowTests.test_font_audit_and_import_preserve_bytes_names_and_identify_fallback) ... ok
+test_invalid_hash_image_dimensions_geometry_and_sequence_are_atomic (test_glyph_workflow.GlyphWorkflowTests.test_invalid_hash_image_dimensions_geometry_and_sequence_are_atomic) ... ok
+test_path_traversal_symlinks_release_paths_and_oversize_are_rejected (test_glyph_workflow.GlyphWorkflowTests.test_path_traversal_symlinks_release_paths_and_oversize_are_rejected) ... ok
+test_policy_mismatch_exported_correction_and_missing_db_are_not_inferred (test_glyph_workflow.GlyphWorkflowTests.test_policy_mismatch_exported_correction_and_missing_db_are_not_inferred) ... ok
+test_restricted_unknown_or_noncanonical_provenance_never_emits_derivatives (test_glyph_workflow.GlyphWorkflowTests.test_restricted_unknown_or_noncanonical_provenance_never_emits_derivatives) ... ok
+test_sheet_keeps_nfc_nfd_distinct_three_repetitions_and_boundaries (test_glyph_workflow.GlyphWorkflowTests.test_sheet_keeps_nfc_nfd_distinct_three_repetitions_and_boundaries) ... ok
+test_source_verification_and_capture_cli_bind_actual_export (test_glyph_workflow.GlyphWorkflowTests.test_source_verification_and_capture_cli_bind_actual_export) ... ok
+test_strict_json_rejects_duplicate_keys_nonfinite_values_and_boolean_schema (test_glyph_workflow.GlyphWorkflowTests.test_strict_json_rejects_duplicate_keys_nonfinite_values_and_boolean_schema) ... ok
+test_supplied_labels_and_provenance_are_html_escaped (test_glyph_workflow.GlyphWorkflowTests.test_supplied_labels_and_provenance_are_html_escaped) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.147s
+
+OK

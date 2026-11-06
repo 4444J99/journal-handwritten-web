@@ -1,0 +1,16 @@
+{
+  "fixture": true,
+  "fixtureKind": "font-derived technical raster; no fresh author handwriting",
+  "sourceFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+  "fontSha256": "sha256:ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc",
+  "sheetSha256": "eb0f878ed9a2596eb673cbdadf9761671eda56306b62063a7af72ac402736770",
+  "sheetDistinctSequences": 37,
+  "declaredSequenceScalars": "U+0054",
+  "captureSha256": "ecd384446e0fdca6113b8a1c1fe38c9e7da776c1499f95715953f549bc842a30",
+  "cropSha256": "5733f75e4f170d2ba3673d4f87c12486643e2bec770eae4cb82eda889cbd5873",
+  "importedManifestSha256": "d162e24edd621486ff76a7ef86c6bd5d71334f48948b6e9dc46dce90a47d93ca",
+  "private": true,
+  "authorAcceptance": false,
+  "translationProduced": false,
+  "cliSourceBindingChecked": true
+}

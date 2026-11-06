@@ -1,0 +1,1246 @@
+{
+  "author_decisions": {
+    "D01": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "reading style"
+    },
+    "D02": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "carrier phrase"
+    },
+    "D03": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "pronunciation authority"
+    },
+    "D04": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "vowel split"
+    },
+    "D05": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "performed material"
+    },
+    "D06": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "author-written captions"
+    },
+    "D07": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "fallback engine"
+    },
+    "D08": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "voice licensing"
+    },
+    "D09": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "raw master privacy"
+    },
+    "D10": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "microphone"
+    },
+    "D11": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "sound palette"
+    },
+    "D12": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "struck words"
+    },
+    "D13": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "illegible words"
+    },
+    "D14": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "iPhone silent-switch behavior"
+    }
+  },
+  "fixture": false,
+  "notes": [
+    "Technical calibration only; no journal text or invented poetry.",
+    "Respellings are provisional aids until the author chooses a pronunciation authority.",
+    "Breath and whisper are texture categories, not extra ARPAbet phones. Their reviewed intervals may use HH or another explicitly chosen supported label; retain the category in take metadata.",
+    "No carrier phrase, reading style, vowel split, performance, palette or release choice has been selected."
+  ],
+  "packet_id": "t09-combined-pilot-v1",
+  "prompts": [
+    {
+      "alignment_filename": "C01.json",
+      "estimated_seconds": 20,
+      "filename": "C01.wav",
+      "id": "C01",
+      "instruction": "Keep the selected microphone, gain and position fixed. Record ten seconds of the room without speaking. Leave all denoising and automatic gain control off when the device allows it.",
+      "label": "Room reference",
+      "requires_decisions": [
+        "D10"
+      ],
+      "section": "calibration",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "pau"
+        ],
+        "respelling": "No speech; room sound only"
+      }
+    },
+    {
+      "alignment_filename": "C02.json",
+      "estimated_seconds": 40,
+      "filename": "C02.wav",
+      "id": "C02",
+      "instruction": "After choosing reading style and pronunciation reference, say the technical words 'one two three', then sustain the chosen AA vowel comfortably for two seconds. This is a level and session reference, not a performance instruction. Use a tuner only to document the pitch you naturally choose; no target pitch is prescribed.",
+      "label": "Voice level/reference",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "calibration",
+      "take_number": 1,
+      "target": {
+        "phones": null,
+        "respelling": "one, two, three; then a comfortable 'ah' as defined by your chosen pronunciation reference"
+      }
+    },
+    {
+      "alignment_filename": "C03.json",
+      "estimated_seconds": 25,
+      "filename": "C03.wav",
+      "id": "C03",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA M AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "M",
+          "AA"
+        ],
+        "respelling": "ah — lips-closed hum — ah"
+      }
+    },
+    {
+      "alignment_filename": "C04.json",
+      "estimated_seconds": 25,
+      "filename": "C04.wav",
+      "id": "C04",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain M AA M",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "M",
+          "AA",
+          "M"
+        ],
+        "respelling": "hum — ah — hum"
+      }
+    },
+    {
+      "alignment_filename": "C05.json",
+      "estimated_seconds": 25,
+      "filename": "C05.wav",
+      "id": "C05",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA S AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "S",
+          "AA"
+        ],
+        "respelling": "ah — s hiss — ah"
+      }
+    },
+    {
+      "alignment_filename": "C06.json",
+      "estimated_seconds": 25,
+      "filename": "C06.wav",
+      "id": "C06",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain S AA S",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "S",
+          "AA",
+          "S"
+        ],
+        "respelling": "s hiss — ah — s hiss"
+      }
+    },
+    {
+      "alignment_filename": "C07.json",
+      "estimated_seconds": 25,
+      "filename": "C07.wav",
+      "id": "C07",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain IY M IY",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "IY",
+          "M",
+          "IY"
+        ],
+        "respelling": "ee — hum — ee"
+      }
+    },
+    {
+      "alignment_filename": "C08.json",
+      "estimated_seconds": 25,
+      "filename": "C08.wav",
+      "id": "C08",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain M IY M",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "M",
+          "IY",
+          "M"
+        ],
+        "respelling": "hum — ee — hum"
+      }
+    },
+    {
+      "alignment_filename": "C09.json",
+      "estimated_seconds": 25,
+      "filename": "C09.wav",
+      "id": "C09",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain UW M UW",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "UW",
+          "M",
+          "UW"
+        ],
+        "respelling": "oo — hum — oo"
+      }
+    },
+    {
+      "alignment_filename": "C10.json",
+      "estimated_seconds": 25,
+      "filename": "C10.wav",
+      "id": "C10",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain M UW M",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "M",
+          "UW",
+          "M"
+        ],
+        "respelling": "hum — oo — hum"
+      }
+    },
+    {
+      "alignment_filename": "C11.json",
+      "estimated_seconds": 25,
+      "filename": "C11.wav",
+      "id": "C11",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain ER M ER",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "ER",
+          "M",
+          "ER"
+        ],
+        "respelling": "er — hum — er (rhotic quality needs your reference)"
+      }
+    },
+    {
+      "alignment_filename": "C12.json",
+      "estimated_seconds": 25,
+      "filename": "C12.wav",
+      "id": "C12",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain M ER M",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "M",
+          "ER",
+          "M"
+        ],
+        "respelling": "hum — er — hum"
+      }
+    },
+    {
+      "alignment_filename": "C13.json",
+      "estimated_seconds": 25,
+      "filename": "C13.wav",
+      "id": "C13",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AH M AH",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AH",
+          "M",
+          "AH"
+        ],
+        "respelling": "uh — hum — uh"
+      }
+    },
+    {
+      "alignment_filename": "C14.json",
+      "estimated_seconds": 25,
+      "filename": "C14.wav",
+      "id": "C14",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain M AH M",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "M",
+          "AH",
+          "M"
+        ],
+        "respelling": "hum — uh — hum"
+      }
+    },
+    {
+      "alignment_filename": "C15.json",
+      "estimated_seconds": 25,
+      "filename": "C15.wav",
+      "id": "C15",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA N AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "N",
+          "AA"
+        ],
+        "respelling": "ah — n hum with tongue at the upper gum ridge — ah"
+      }
+    },
+    {
+      "alignment_filename": "C16.json",
+      "estimated_seconds": 25,
+      "filename": "C16.wav",
+      "id": "C16",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain N AA N",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "N",
+          "AA",
+          "N"
+        ],
+        "respelling": "n hum — ah — n hum"
+      }
+    },
+    {
+      "alignment_filename": "C17.json",
+      "estimated_seconds": 25,
+      "filename": "C17.wav",
+      "id": "C17",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain IY S IY",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "IY",
+          "S",
+          "IY"
+        ],
+        "respelling": "ee — s hiss — ee"
+      }
+    },
+    {
+      "alignment_filename": "C18.json",
+      "estimated_seconds": 25,
+      "filename": "C18.wav",
+      "id": "C18",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain S IY S",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "S",
+          "IY",
+          "S"
+        ],
+        "respelling": "s hiss — ee — s hiss"
+      }
+    },
+    {
+      "alignment_filename": "C19.json",
+      "estimated_seconds": 25,
+      "filename": "C19.wav",
+      "id": "C19",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain UW SH UW",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "UW",
+          "SH",
+          "UW"
+        ],
+        "respelling": "oo — sh hiss — oo"
+      }
+    },
+    {
+      "alignment_filename": "C20.json",
+      "estimated_seconds": 25,
+      "filename": "C20.wav",
+      "id": "C20",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain SH UW SH",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "SH",
+          "UW",
+          "SH"
+        ],
+        "respelling": "sh hiss — oo — sh hiss"
+      }
+    },
+    {
+      "alignment_filename": "C21.json",
+      "estimated_seconds": 25,
+      "filename": "C21.wav",
+      "id": "C21",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA F AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "F",
+          "AA"
+        ],
+        "respelling": "ah — f air through lower lip/upper teeth — ah"
+      }
+    },
+    {
+      "alignment_filename": "C22.json",
+      "estimated_seconds": 25,
+      "filename": "C22.wav",
+      "id": "C22",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain F AA F",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "F",
+          "AA",
+          "F"
+        ],
+        "respelling": "f air — ah — f air"
+      }
+    },
+    {
+      "alignment_filename": "C23.json",
+      "estimated_seconds": 25,
+      "filename": "C23.wav",
+      "id": "C23",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA M S AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "M",
+          "S",
+          "AA"
+        ],
+        "respelling": "ah — hum — s hiss — ah"
+      }
+    },
+    {
+      "alignment_filename": "C24.json",
+      "estimated_seconds": 25,
+      "filename": "C24.wav",
+      "id": "C24",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AA S M AA",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AA",
+          "S",
+          "M",
+          "AA"
+        ],
+        "respelling": "ah — s hiss — hum — ah"
+      }
+    },
+    {
+      "alignment_filename": "C25.json",
+      "estimated_seconds": 25,
+      "filename": "C25.wav",
+      "id": "C25",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain IY N AH",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "IY",
+          "N",
+          "AH"
+        ],
+        "respelling": "ee — n hum — uh"
+      }
+    },
+    {
+      "alignment_filename": "C26.json",
+      "estimated_seconds": 25,
+      "filename": "C26.wav",
+      "id": "C26",
+      "instruction": "Read this short calibration chain once in the author-selected style and carrier (or explicitly selected no carrier). Keep transitions connected, with a short pause before and after. The respelling is an aid, not a pronunciation authority; confirm it against D03. Repeat only for a slip or overload.",
+      "label": "Technical transition chain AH N IY",
+      "requires_decisions": [
+        "D01",
+        "D02",
+        "D03",
+        "D10"
+      ],
+      "section": "concatenative",
+      "take_number": 1,
+      "target": {
+        "phones": [
+          "AH",
+          "N",
+          "IY"
+        ],
+        "respelling": "uh — n hum — ee"
+      }
+    },
+    {
+      "alignment_filename": "C27.json",
+      "estimated_seconds": 25,
+      "filename": "C27.wav",
+      "id": "C27",
+      "instruction": "Sustain the selected ee vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "ee vowel / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "IY",
+        "phones": [
+          "IY"
+        ],
+        "respelling": "ee vowel"
+      }
+    },
+    {
+      "alignment_filename": "C28.json",
+      "estimated_seconds": 25,
+      "filename": "C28.wav",
+      "id": "C28",
+      "instruction": "Sustain the selected ee vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "ee vowel / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "IY",
+        "phones": [
+          "IY"
+        ],
+        "respelling": "ee vowel"
+      }
+    },
+    {
+      "alignment_filename": "C29.json",
+      "estimated_seconds": 25,
+      "filename": "C29.wav",
+      "id": "C29",
+      "instruction": "Sustain the selected ah vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "ah vowel / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "AA",
+        "phones": [
+          "AA"
+        ],
+        "respelling": "ah vowel"
+      }
+    },
+    {
+      "alignment_filename": "C30.json",
+      "estimated_seconds": 25,
+      "filename": "C30.wav",
+      "id": "C30",
+      "instruction": "Sustain the selected ah vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "ah vowel / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "AA",
+        "phones": [
+          "AA"
+        ],
+        "respelling": "ah vowel"
+      }
+    },
+    {
+      "alignment_filename": "C31.json",
+      "estimated_seconds": 25,
+      "filename": "C31.wav",
+      "id": "C31",
+      "instruction": "Sustain the selected oo vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "oo vowel / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "UW",
+        "phones": [
+          "UW"
+        ],
+        "respelling": "oo vowel"
+      }
+    },
+    {
+      "alignment_filename": "C32.json",
+      "estimated_seconds": 25,
+      "filename": "C32.wav",
+      "id": "C32",
+      "instruction": "Sustain the selected oo vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "oo vowel / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "UW",
+        "phones": [
+          "UW"
+        ],
+        "respelling": "oo vowel"
+      }
+    },
+    {
+      "alignment_filename": "C33.json",
+      "estimated_seconds": 25,
+      "filename": "C33.wav",
+      "id": "C33",
+      "instruction": "Sustain the selected er vowel comfortably for about three seconds; use the chosen pronunciation reference. Leave a short quiet margin on each side.",
+      "label": "er vowel / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "ER",
+        "phones": [
+          "ER"
+        ],
+        "respelling": "er vowel"
+      }
+    },
+    {
+      "alignment_filename": "C34.json",
+      "estimated_seconds": 25,
+      "filename": "C34.wav",
+      "id": "C34",
+      "instruction": "Sustain the selected er vowel comfortably for about three seconds; use the chosen pronunciation reference. Leave a short quiet margin on each side.",
+      "label": "er vowel / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "ER",
+        "phones": [
+          "ER"
+        ],
+        "respelling": "er vowel"
+      }
+    },
+    {
+      "alignment_filename": "C35.json",
+      "estimated_seconds": 25,
+      "filename": "C35.wav",
+      "id": "C35",
+      "instruction": "Sustain the selected uh vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "uh vowel / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "AH",
+        "phones": [
+          "AH"
+        ],
+        "respelling": "uh vowel"
+      }
+    },
+    {
+      "alignment_filename": "C36.json",
+      "estimated_seconds": 25,
+      "filename": "C36.wav",
+      "id": "C36",
+      "instruction": "Sustain the selected uh vowel comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "uh vowel / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "AH",
+        "phones": [
+          "AH"
+        ],
+        "respelling": "uh vowel"
+      }
+    },
+    {
+      "alignment_filename": "C37.json",
+      "estimated_seconds": 25,
+      "filename": "C37.wav",
+      "id": "C37",
+      "instruction": "Hum with lips closed comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "lips-closed hum / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "M",
+        "phones": [
+          "M"
+        ],
+        "respelling": "lips-closed hum"
+      }
+    },
+    {
+      "alignment_filename": "C38.json",
+      "estimated_seconds": 25,
+      "filename": "C38.wav",
+      "id": "C38",
+      "instruction": "Hum with lips closed comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "lips-closed hum / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "M",
+        "phones": [
+          "M"
+        ],
+        "respelling": "lips-closed hum"
+      }
+    },
+    {
+      "alignment_filename": "C39.json",
+      "estimated_seconds": 25,
+      "filename": "C39.wav",
+      "id": "C39",
+      "instruction": "Sustain an n hum with the tongue at the upper gum ridge comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "n hum / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "N",
+        "phones": [
+          "N"
+        ],
+        "respelling": "n hum"
+      }
+    },
+    {
+      "alignment_filename": "C40.json",
+      "estimated_seconds": 25,
+      "filename": "C40.wav",
+      "id": "C40",
+      "instruction": "Sustain an n hum with the tongue at the upper gum ridge comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "n hum / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "N",
+        "phones": [
+          "N"
+        ],
+        "respelling": "n hum"
+      }
+    },
+    {
+      "alignment_filename": "C41.json",
+      "estimated_seconds": 25,
+      "filename": "C41.wav",
+      "id": "C41",
+      "instruction": "Make an unvoiced s hiss comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "s hiss / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "S",
+        "phones": [
+          "S"
+        ],
+        "respelling": "s hiss"
+      }
+    },
+    {
+      "alignment_filename": "C42.json",
+      "estimated_seconds": 25,
+      "filename": "C42.wav",
+      "id": "C42",
+      "instruction": "Make an unvoiced s hiss comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "s hiss / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "S",
+        "phones": [
+          "S"
+        ],
+        "respelling": "s hiss"
+      }
+    },
+    {
+      "alignment_filename": "C43.json",
+      "estimated_seconds": 25,
+      "filename": "C43.wav",
+      "id": "C43",
+      "instruction": "Make an unvoiced sh hiss comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "sh hiss / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "SH",
+        "phones": [
+          "SH"
+        ],
+        "respelling": "sh hiss"
+      }
+    },
+    {
+      "alignment_filename": "C44.json",
+      "estimated_seconds": 25,
+      "filename": "C44.wav",
+      "id": "C44",
+      "instruction": "Make an unvoiced sh hiss comfortably for about three seconds. Leave a short quiet margin on each side.",
+      "label": "sh hiss / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "SH",
+        "phones": [
+          "SH"
+        ],
+        "respelling": "sh hiss"
+      }
+    },
+    {
+      "alignment_filename": "C45.json",
+      "estimated_seconds": 25,
+      "filename": "C45.wav",
+      "id": "C45",
+      "instruction": "Sustain comfortable unvoiced f air for about three seconds. Leave a short quiet margin on each side.",
+      "label": "f air / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "F",
+        "phones": [
+          "F"
+        ],
+        "respelling": "f air"
+      }
+    },
+    {
+      "alignment_filename": "C46.json",
+      "estimated_seconds": 25,
+      "filename": "C46.wav",
+      "id": "C46",
+      "instruction": "Sustain comfortable unvoiced f air for about three seconds. Leave a short quiet margin on each side.",
+      "label": "f air / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "F",
+        "phones": [
+          "F"
+        ],
+        "respelling": "f air"
+      }
+    },
+    {
+      "alignment_filename": "C47.json",
+      "estimated_seconds": 25,
+      "filename": "C47.wav",
+      "id": "C47",
+      "instruction": "Record one ordinary comfortable outward breath; do not force duration or breath pressure. Leave a short quiet margin on each side.",
+      "label": "breath / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "breath",
+        "phones": null,
+        "respelling": "breath"
+      }
+    },
+    {
+      "alignment_filename": "C48.json",
+      "estimated_seconds": 25,
+      "filename": "C48.wav",
+      "id": "C48",
+      "instruction": "Record one ordinary comfortable outward breath; do not force duration or breath pressure. Leave a short quiet margin on each side.",
+      "label": "breath / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "breath",
+        "phones": null,
+        "respelling": "breath"
+      }
+    },
+    {
+      "alignment_filename": "C49.json",
+      "estimated_seconds": 25,
+      "filename": "C49.wav",
+      "id": "C49",
+      "instruction": "Whisper the technical calibration words 'one two three' once, comfortably. No expressive performance is requested. Leave a short quiet margin on each side.",
+      "label": "whisper / take 1",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 1,
+      "target": {
+        "category": "whisper",
+        "phones": null,
+        "respelling": "whisper"
+      }
+    },
+    {
+      "alignment_filename": "C50.json",
+      "estimated_seconds": 25,
+      "filename": "C50.wav",
+      "id": "C50",
+      "instruction": "Whisper the technical calibration words 'one two three' once, comfortably. No expressive performance is requested. Leave a short quiet margin on each side.",
+      "label": "whisper / take 2",
+      "requires_decisions": [
+        "D01",
+        "D03",
+        "D10"
+      ],
+      "section": "texture",
+      "take_number": 2,
+      "target": {
+        "category": "whisper",
+        "phones": null,
+        "respelling": "whisper"
+      }
+    }
+  ],
+  "recording_request": {
+    "calibration": 2,
+    "concatenative": 24,
+    "prompt_time_seconds": 1260,
+    "rule": "One combined pilot, replacing the earlier alternatives; stop at 30 minutes and log omissions. No full bank or performed supplements.",
+    "setup_break_label_budget_seconds": 540,
+    "texture": 24,
+    "total_prompts": 50
+  },
+  "schema_version": 1,
+  "session_minutes": 30,
+  "status": "proposed_acquisition_pending_author_choices"
+}

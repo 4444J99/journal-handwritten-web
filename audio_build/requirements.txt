@@ -1,0 +1,2 @@
+# Installed numerical environment used for the recorded deterministic receipts.
+numpy==2.3.5
