@@ -6,7 +6,7 @@
 | Last activity | 2026-11-05 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` |
 | Basis of this record | this session's own tool output, read 2026-11-05; the author's decisions that came through the session it was forked from were checked against that session's transcript |
-| Status | Open — #96 and #97 merged by the lead session; #101 (posting script, round 2) is pushed at `e5ae157` and waits for an independent re-check by the lead session; nothing posted publicly |
+| Status | Done — #96, #97 and #101 merged by the lead session (#101 at `15cad30` after two more fixes from independent checks, merge `06dccc0`); nothing posted publicly |
 
 ## Produced
 
@@ -29,7 +29,7 @@ Work was done in separate git worktrees beside the clone (`journal-handwritten-w
 - Standing rules in the launch brief (unchanged): no AI-written creative text anywhere a reader can see it; the private repo or any build of it never goes to a public host; Reserve pieces never appear online in any form; no deletions, force-pushes or history rewrites; ask before anything irreversible, any choice of which poems go public, changing `noindex`, spending money or creating accounts.
 
 ## Plan / next steps
-- Independent re-check of #101 at `e5ae157`, then merge — **lead session** (`local_9165db05-b6a9-4522-ba69-750bc4c7156f`), open. A squash merge keeps the subject of the old commit `c62fd92` (it names a font family that is not used) off `main`.
+- **Done:** the independent re-checks of #101 failed `e5ae157` and `7970503` on the same class of hole (a release file named like a piece id was ignored; then a well-formed name for a piece that does not exist); both were fixed (`5ef80f2`, `15cad30`) and #101 was squash-merged by the lead session with a custom message, so the subject of the old commit `c62fd92` (it names a font family that is not used) is not on `main`.
 - **Done after this record was first written** (details in `2026-11-05-local-session-finish-and-launch.md`): the author ran `wrangler login` and created the Access application with a policy for his email only; the Pages project, the three variables and the deployment were then done by the lead session and read back signed in. Only the Pages runtime setting "Fail closed" remains his click (issue #104).
 - The lead session created the `vf_` tables in `object-lessons-submissions` and imported the 38 reviews and 2 derived decisions (the lead session reported this; no confirmation of the Access policy had reached this session, and the README and the importer's printed command say to wait for it; the rows can be removed with `DELETE FROM vf_docs` / `vf_revs`) — **author**: confirm this order was acceptable, open.
 - **Done:** the author ran `gh auth refresh -h github.com -s workflow`; the `pages.yml` confirmation guard was pushed and merged as #93.
@@ -42,4 +42,4 @@ Work was done in separate git worktrees beside the clone (`journal-handwritten-w
 - Suggestion (Claude): keep the approvals given with `--accept-shared-scan` somewhere durable so a later post does not ask again; the verifier raised this as a minor.
 
 ## Status
-Open. This session merged nothing, deployed nothing and posted no poem. #96 and #97 were merged, and the D1 import was run, by the lead session; #101 is pushed and waits for its independent re-check.
+Done. This session merged nothing, deployed nothing and posted no poem. #96, #97 and #101 were merged, and the D1 import was run, by the lead session. The author's rulings on the posting script are issue #108.
