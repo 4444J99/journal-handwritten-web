@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url), {chromium} = require(arg('--play
 const chrome = arg('--chrome') || process.env.CHROME_BIN;
 if (!chrome) throw new Error('Supply --chrome.');
 const filtered = arg('--filtered');
-const inputFiles = ['site/index.html','site/data/j.json','site/reader-features.js','studio/notes-reader.mjs'];
+const inputFiles = ['site/index.html','site/data/j.json','site/reader-features.js','site/reader-packages.js','studio/notes-reader.mjs'];
 const inputHash = file => createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
 const sourceHashes = Object.fromEntries(inputFiles.map(file => [file,inputHash(file)]));
 const mime = {'.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.json':'application/json', '.jpg':'image/jpeg', '.woff2':'font/woff2', '.css':'text/css'};
@@ -133,7 +133,7 @@ try {
     for (const descriptor of [{url:'/fixture.wav'}, {url:'/fixture.wav',source:{...fixtureSource,versionId:'other-version'}}, {url:'/fixture.wav',source:{...fixtureSource,sourceFingerprint:'sha256:'+'b'.repeat(64)}}]) {
       try { features.mountPrivateFeaturePreview(host,{enabled:true,source:fixtureSource,audio:descriptor}); bindingRejections.push(false); } catch { bindingRejections.push(true); }
     }
-    window.preview = features.mountPrivateFeaturePreview(host,{enabled:true, source:fixtureSource, audio:{url:'/fixture.wav',source:fixtureSource}, realization:{url:'/realization.html',source:fixtureSource}, regions:{url:'/never-load.jpg',source:fixtureSource,sourceAnchor:{status:'unavailable',box:null}}, notes:[{id:'fixture-note',revisionId:'fixture-revision',family:'note',kind:'footnote',pieceId:'fixture-piece',versionId:'fixture-version',lineId:null,word:null,text:'TECHNICAL FIXTURE note',citations:[],credit:'Technical fixture',poemDate:{certainty:'unknown',value:null},noteDate:'2026-11-06',fixture:true}],renderNotes:notes.mountNotesReader});
+    window.preview = features.mountPrivateFeaturePreview(host,{enabled:true, source:fixtureSource, audio:{url:'/fixture.wav',source:fixtureSource}, regions:{url:'/never-load.jpg',source:fixtureSource,sourceAnchor:{status:'unavailable',box:null}}, notes:[{id:'fixture-note',revisionId:'fixture-revision',family:'note',kind:'footnote',pieceId:'fixture-piece',versionId:'fixture-version',lineId:null,word:null,text:'TECHNICAL FIXTURE note',citations:[],credit:'Technical fixture',poemDate:{certainty:'unknown',value:null},noteDate:'2026-11-06',fixture:true}],renderNotes:notes.mountNotesReader});
   });
   assert.equal(await page.evaluate(() => disabledEmpty),true);
   assert.deepEqual(await page.evaluate(() => bindingRejections),[true,true,true]);
@@ -156,13 +156,12 @@ try {
   await page.getByText('Source line geometry is unavailable. No region has been substituted.',{exact:true}).waitFor();
   await page.locator('#outside').click();
   pass('unavailable source geometry does not load or invent an anchor');
-  await page.getByRole('button',{name:'Realization',exact:true}).click();
+  assert.equal(await page.evaluate(() => {
+    try { F.mountPrivateFeaturePreview(document.createElement('div'),{enabled:true,source:fixtureSource,realization:{url:'/realization.html',source:fixtureSource}}); return false; }
+    catch { return true; }
+  }),true);
   assert.equal(await page.locator('iframe').count(),0);
-  await page.getByRole('button',{name:'Start realization'}).click();
-  assert.equal(await page.locator('iframe').count(),1);
-  await page.locator('#outside').click();
-  assert.equal(await page.locator('iframe').count(),0);
-  pass('realization starts explicitly and outside dismissal destroys its frame');
+  pass('raw realization URLs are refused; actual generated-package rendering has a separate integration verifier');
   const waveDigest = 'sha256:' + createHash('sha256').update(wave).digest('hex');
   await page.evaluate(() => { preview.destroy(); preview = F.mountPrivateFeaturePreview(document.getElementById('fixture'), {enabled:true,source:fixtureSource,audio:{url:'/fixture.wav',source:fixtureSource,sha256:'sha256:'+'f'.repeat(64)}}); });
   await page.getByRole('button',{name:'Audio',exact:true}).click();

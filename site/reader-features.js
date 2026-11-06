@@ -1,3 +1,5 @@
+import {assertSourceBinding, assertPackageReference, sameOriginAsset, loadRealizationPackage, loadRegionPackage} from './reader-packages.js';
+
 /**
  * Shared lifetime for explicitly invoked reader features. This module does not
  * fetch private data, choose release policy, or persist author decisions.
@@ -90,18 +92,15 @@ export function createReaderLifecycle({host, timeoutMs = 0, onClose = () => {}} 
 
 function node(doc, tag, text) { const el = doc.createElement(tag); if (text !== undefined) el.textContent = text; return el; }
 function localAsset(value, doc) {
-  if (typeof value !== 'string' || !value.trim()) throw new Error('A preview asset URL is required.');
-  const url = new URL(value, doc.baseURI);
-  if (url.origin !== new URL(doc.baseURI).origin || !['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Preview assets must be served from the same origin.');
-  return url.href;
+  return sameOriginAsset(value, doc);
 }
 function sourceKey(source) { return [source?.pieceId, source?.versionId, source?.sourceFingerprint].join('\n'); }
 function assertSource(source) {
-  if (!source || !['pieceId', 'versionId'].every(k => typeof source[k] === 'string' && source[k]) || !/^sha256:[a-f0-9]{64}$/.test(source.sourceFingerprint)) throw new Error('An exact source version and fingerprint are required.');
+  assertSourceBinding(source);
 }
 async function verifiedAsset(descriptor, url, scope, doc) {
   if (!descriptor.sha256) return url;
-  const response = await doc.defaultView.fetch(url, {signal:scope.signal, cache:'no-store'});
+  const response = await doc.defaultView.fetch(url, {signal:scope.signal, cache:'no-store', redirect:'error'});
   if (!response.ok) throw new Error('Preview asset could not be loaded.');
   const bytes = await response.arrayBuffer();
   const digest = [...new Uint8Array(await doc.defaultView.crypto.subtle.digest('SHA-256', bytes))].map(x => x.toString(16).padStart(2,'0')).join('');
@@ -112,27 +111,32 @@ async function verifiedAsset(descriptor, url, scope, doc) {
 }
 
 /** Private integration surface; callers supply already-projected records. */
-export function mountPrivateFeaturePreview(host, {enabled = false, source, notes = [], audio = null, regions = null, realization = null, renderNotes = null, timeoutMs = 0} = {}) {
+export function mountPrivateFeaturePreview(host, {enabled = false, source, notes = [], audio = null, regions = null, realization = null, renderNotes = null, timeoutMs = 0, getCurrentSource = null, getCurrentPolicy = null, getStoredArtifact = null, getCurrentReviewGeometry = null, getCurrentReaderGeometry = null, getCurrentRegionMedia = null} = {}) {
   if (!enabled) return {enabled:false, destroy(){}, switchSource(){}};
   assertSource(source);
   source = {...source};
   audio = audio && {...audio, source:{...audio.source}};
-  regions = regions && {...regions, source:{...regions.source}, sourceAnchor:regions.sourceAnchor && {...regions.sourceAnchor, box:regions.sourceAnchor.box && [...regions.sourceAnchor.box]}};
-  realization = realization && {...realization, source:{...realization.source}};
+  regions = regions && {...regions, source:{...regions.source}, package:regions.package && {...regions.package}, sourceAnchor:regions.sourceAnchor && {...regions.sourceAnchor, box:regions.sourceAnchor.box && [...regions.sourceAnchor.box]}};
+  realization = realization && {...realization, source:{...realization.source}, package:realization.package && {...realization.package}};
   const doc = host.ownerDocument;
   for (const [kind, descriptor] of Object.entries({audio, regions, realization})) {
     if (!descriptor) continue;
     assertSource(descriptor.source);
     if (sourceKey(descriptor.source) !== sourceKey(source)) throw new Error(kind + ' preview belongs to a different source version.');
-    if (descriptor.sha256 !== undefined && !/^sha256:[a-f0-9]{64}$/.test(descriptor.sha256)) throw new Error(kind + ' preview has an invalid asset digest.');
+    if (descriptor.sha256 !== undefined && (typeof descriptor.sha256 !== 'string' || !/^sha256:[a-f0-9]{64}$/.test(descriptor.sha256))) throw new Error(kind + ' preview has an invalid asset digest.');
   }
-  // HTML/SVG realization URLs can have relative dependencies. Until a verified
-  // packaged-realization loader exists, never silently ignore its checksum.
-  if (realization?.sha256) throw new Error('Digest-bound realization packages require a verified package loader.');
-  const audioURL = audio && localAsset(audio.url, doc), realizationURL = realization && localAsset(realization.url, doc);
+  if (realization) {
+    if (!realization.package || realization.url !== undefined || realization.sha256 !== undefined) throw new Error('Realizations require a verified package, not a raw HTML URL.');
+    assertPackageReference(realization.package, doc);
+    if (typeof getStoredArtifact !== 'function' || typeof getCurrentSource !== 'function' || typeof getCurrentPolicy !== 'function') throw new Error('Realization packages require current stored artifact, source and policy providers.');
+  }
+  const audioURL = audio && localAsset(audio.url, doc);
   const box = regions?.sourceAnchor?.box;
   const regionAvailable = regions?.sourceAnchor?.status === 'available' && Array.isArray(box) && box.length === 4 && box.every(Number.isFinite) && box[0] >= 0 && box[1] >= 0 && box[2] <= 1 && box[3] <= 1 && box[2] > box[0] && box[3] > box[1];
-  const regionURL = regionAvailable ? localAsset(regions.url, doc) : null;
+  if (regions?.package) {
+    assertPackageReference(regions.package,doc);
+    if (regions.url !== undefined || regions.sha256 !== undefined || typeof getCurrentSource !== 'function' || typeof getCurrentPolicy !== 'function' || typeof getCurrentRegionMedia !== 'function' || typeof getCurrentReviewGeometry !== 'function' && typeof getCurrentReaderGeometry !== 'function') throw new Error('Region packages require current source, policy, geometry and media providers.');
+  } else if (regionAvailable) throw new Error('Available source regions require a verified T08 package.');
   const controls = node(doc, 'nav'); controls.setAttribute('aria-label', 'Private feature preview');
   const panel = node(doc, 'section'); panel.setAttribute('aria-label', 'Private feature preview'); panel.setAttribute('role', 'region');
   host.replaceChildren(controls, panel);
@@ -164,15 +168,21 @@ export function mountPrivateFeaturePreview(host, {enabled = false, source, notes
     scope.own(() => { media.pause(); media.removeAttribute('src'); media.load(); });
   });
   if (regions) add('Source regions', scope => {
+    if (regions.package) {
+      const progress = node(doc,'p','Verifying the selected source-region package…'); progress.setAttribute('role','status'); panel.append(progress);
+      loadRegionPackage({descriptor:regions,source,scope,doc,getCurrentSource,getCurrentPolicy,getCurrentReviewGeometry,getCurrentReaderGeometry,getCurrentRegionMedia}).then(result => {
+        result.assertCurrent();
+        if (result.manifest.sourceAnchor.status !== 'available') { progress.textContent = 'Source line geometry is unavailable. No region has been substituted.'; return; }
+        const image = node(doc,'img'); image.alt = 'Verified full source image'; image.style.maxWidth = '100%';
+        const url = doc.defaultView.URL.createObjectURL(new Blob([result.bytes],{type:'image/jpeg'}));
+        scope.own(() => { image.removeAttribute('src'); image.remove(); doc.defaultView.URL.revokeObjectURL(url); });
+        result.assertCurrent(); image.src = url; panel.append(image);
+        progress.textContent = 'Verified full source image · original region geometry retained; no crop is applied here.';
+      }).catch(error => { if (scope.current()) progress.textContent = error.message; });
+      return;
+    }
     // Derived atoms and inferred polygons are not author-confirmed anchors.
     if (!regionAvailable) { panel.append(node(doc, 'p', 'Source line geometry is unavailable. No region has been substituted.')); return; }
-    const image = node(doc, 'img'); image.alt = regions.label || 'Full source image'; image.style.maxWidth = '100%';
-    panel.append(node(doc, 'p', 'Full source image · region geometry is available; no crop is applied here.'));
-    const progress = node(doc, 'p', regions.sha256 ? 'Verifying image bytes…' : ''); panel.append(progress);
-    verifiedAsset(regions, regionURL, scope, doc).then(url => {
-      if (!scope.current()) return; image.src = url; panel.append(image); progress.remove();
-    }).catch(error => { if (scope.current()) progress.textContent = error.message; });
-    scope.own(() => image.removeAttribute('src'));
   });
   if (realization) add('Realization', scope => {
     panel.append(node(doc, 'p', realization.label || 'Saved realization'));
@@ -180,10 +190,25 @@ export function mountPrivateFeaturePreview(host, {enabled = false, source, notes
     scope.listen(start, 'click', () => {
       if (start.disabled) return;
       start.disabled = true;
-      const frame = node(doc, 'iframe'); frame.title = realization.label || 'Private realization';
-      frame.setAttribute('sandbox', 'allow-scripts'); frame.setAttribute('allow', 'autoplay \'none\'');
-      frame.src = realizationURL; panel.append(frame);
-      scope.own(() => { frame.src = 'about:blank'; frame.remove(); });
+      const progress = node(doc, 'p', 'Verifying the stored realization package…'); progress.setAttribute('role','status'); panel.append(progress);
+      loadRealizationPackage({descriptor:realization,source,scope,doc,getCurrentSource,getCurrentPolicy,getStoredArtifact}).then(result => {
+        result.assertCurrent();
+        const frame = node(doc, 'iframe'); frame.title = realization.label || 'Private realization';
+        // No child scripts are permitted. Same-origin document access is used
+        // only for parent-owned Escape handling after the fixed static template
+        // has passed byte, dependency and markup validation.
+        frame.setAttribute('sandbox', 'allow-same-origin'); frame.setAttribute('allow', 'autoplay \'none\''); frame.referrerPolicy = 'no-referrer';
+        frame.style.width = '100%'; frame.style.height = '70vh';
+        scope.listen(frame,'load',() => {
+          if (!scope.current() || !frame.contentDocument) return;
+          scope.listen(frame.contentDocument,'keydown',event => {
+            if (event.key === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); scope.close('escape'); }
+          },true);
+        });
+        frame.srcdoc = result.html;
+        scope.own(() => { frame.removeAttribute('srcdoc'); frame.removeAttribute('src'); frame.remove(); });
+        panel.append(frame); progress.textContent = 'Verified private package · ' + result.rendering.lineCount + ' logical lines';
+      }).catch(error => { if (scope.current()) progress.textContent = error.message; });
     });
   });
   const invalidate = () => { lifecycle.switchSource(); for (const button of buttons.values()) button.disabled = true; };
