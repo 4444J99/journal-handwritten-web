@@ -14,7 +14,7 @@ function source() { const v = version(); return v && {pieceId:$('piece').value, 
 function sources() { return S.catalog?.pieces.flatMap(p => p.versions.map(v => ({pieceId:p.pieceId, versionId:v.versionId, sourceFingerprint:v.sourceFingerprint || v.fingerprint}))) || []; }
 function groups() { return artifactHeads(S.artifacts, sources()); }
 function chosen() { return groups().find(g => g.recordId === $('record').value); }
-function enable() { $('editing').disabled = !S.canWrite || !S.ready || !S.sourceReady || S.busy || !version() || !!chosen()?.conflicted; $('export-artifacts').disabled = !S.ready; }
+function enable() { $('editing').disabled = !S.canWrite || !S.ready || !S.sourceReady || S.busy || !version() || !!version()?.issues?.length || !!chosen()?.conflicted; $('export-artifacts').disabled = !S.ready; }
 function clearPreview() { S.preview?.destroy(); S.preview = null; status('preview-status', 'Preview closed after a source or revision change.'); }
 function renderHistory() {
   const group = chosen(); $('artifact-history').replaceChildren();
@@ -46,6 +46,7 @@ $('artifact-form').addEventListener('submit', async event => {
   event.preventDefault(); if (S.busy || !S.canWrite || !S.ready || !S.sourceReady) return;
   S.busy = true; enable();
   try {
+    if (!version() || version().issues?.length) throw new Error('The selected source needs review before saving artifacts.');
     const group = chosen(); if (group?.conflicted) throw new Error('Resolve the artifact fork before editing.');
     const previous = group?.heads[0] || null;
     if (previous && S.selected?.revisionId !== previous.revisionId) throw new Error('The record changed. Reselect it before saving.');
@@ -69,6 +70,7 @@ $('mount-preview').addEventListener('click', () => {
     if (!$('enable-preview').checked) throw new Error('Enable the private preview first.');
     const group = chosen(); if (group && (group.conflicted || group.stale)) throw new Error('Resolve the stored artifact source and history before previewing.');
     const exactSource = source(); if (!S.sourceReady || !exactSource || version().issues?.length) throw new Error('The selected source needs review.');
+    if (group && Notes.stableJSON(group.heads[0].source) !== Notes.stableJSON(exactSource)) throw new Error('Select the stored artifact source version or explicitly save a reviewed source rebind.');
     const config = JSON.parse($('preview-config').value);
     if (group) for (const descriptor of [config.audio, config.regions, config.realization]) {
       if (descriptor && descriptor.revisionId !== group.heads[0].revisionId) throw new Error('Preview asset references must identify the selected stored artifact revision.');

@@ -199,6 +199,14 @@ try {
   assert.equal(await page.locator('#feature-preview').getByRole('button',{name:'Audio',exact:true}).count(),1);
   assert.equal(await page.locator('audio').count(),0);
   pass('stored artifact preview requires its exact source and revision before preparing inactive controls');
+  await page.selectOption('#version','p001-diary62a-0');
+  const otherSource = {pieceId:'p001',versionId:'p001-diary62a-0',sourceFingerprint:await page.locator('#source-status').innerText()};
+  await page.fill('#preview-config',JSON.stringify({audio:{url:'/unrequested-private-fixture.wav',source:otherSource,revisionId:latestArtifact.revisionId}}));
+  await page.click('#mount-preview');
+  assert.match(await page.locator('#preview-status').innerText(), /stored artifact source version/);
+  assert.equal(await page.locator('#feature-preview').evaluate(e=>e.childNodes.length),0);
+  await page.selectOption('#version','p001-diary1-0');
+  pass('a valid stored revision cannot be relabeled as another selected source version');
   await api(first, 'reviews', 'diary1-0-0', {original:'The walls',text:'TECHNICAL FIXTURE changed artifact source',status:'corrected',at:new Date().toISOString()});
   await page.getByText('Source changed: this artifact is stale. Review and explicitly rebind before previewing.', {exact:true}).waitFor();
   await page.check('#enable-preview'); await page.click('#mount-preview');
