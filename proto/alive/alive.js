@@ -4,8 +4,9 @@
    rectangle that is not inside one of the registered line boxes (p001: atoms-p001.json; city=all58:
    city-all58.json). Words, glyphs and marks are sub-rectangles of a line box; sprites in READING only
    ever come from p001's lines on diary1. Each p001 line also carries a `region` polygon (the area between its two
-   seams, see segment.py partition()); the atlas keeps only that line's pixels inside it, so a crop of line N cannot
-   carry pixels of line N-1 or N+1 whatever its rectangle. The polygon only restricts the rectangle further. */
+   seams, see segment.py partition()); the atlas keeps only pixels inside the assigned region. That geometric
+   partition does not prove stroke ownership; wrong seam cuts remain documented in README.md and DATA.md.
+   The polygon only restricts the rectangle further. */
 (() => {
 "use strict";
 

@@ -27,7 +27,7 @@ writes only those two files; no line text is written to them).
 
 | param | values | effect |
 |---|---|---|
-| `city` | `p001` (default), `all58` | `p001`: one building (what the public site would show). `all58`: the 58 complete pieces (group g==1 in `studio/data/review.json`), in journal page order. Private, local only. |
+| `city` | `p001` (default), `all58` | `p001`: one building in the local prototype. `all58`: the 58 complete pieces (group g==1 in `studio/data/review.json`), in journal page order. Private, local only. |
 | `view` | `architecture` (default), `spiral`, `reading` | starting view. `reading` always shows p001. |
 | `unit` | architecture: `poem stanza line word glyph`; spiral: `line page` | pins the unit (architecture) or sets the spiral mode. |
 | `seed` | integer (default 1) | seed of the reading animation's PRNG |
@@ -68,9 +68,8 @@ outside the line's region, which must be 0, and inside it) and `lineRegions()` (
   neighbours. `segment.py` therefore partitions the ink of the page: one seam per adjacent line pair (a min-cost path, one
   boundary row per column), every ink pixel owned by exactly one line. `atoms-p001.json` stores per line the polygon between
   its two seams in page pixels (`region`). `processLine()` keeps an atlas pixel only if its centre lies inside the polygon
-  (even-odd crossings of the vertical through the pixel-column centre, half-open on y), so a crop of line N cannot carry
-  pixels of line N-1 or N+1 whatever its rectangle: line, word, glyph, mark, reading sprites and spiral tiles are all read from
-  that atlas. The polygon only restricts further; the rule-4 rectangle guard below is unchanged. Regions do not overlap by
+  (even-odd crossings of the vertical through the pixel-column centre, half-open on y), so every crop is restricted to its assigned region: line, word, glyph, mark, reading sprites and spiral tiles are all read
+  from that atlas. Assignment is geometric; it does not establish which handwritten line a crossing stroke belongs to. The polygon only restricts further; the rule-4 rectangle guard below is unchanged. Regions do not overlap by
   construction (seams strictly ordered); line rectangles still do. `window.__alive.atlasLeak()` reports 0 pixels outside.
   What the seam does not guarantee: it separates ink, it does not decide whose stroke a crossing stroke is. Three descender
   loops of one line (the line above line 13) are cut at the neck and land on line 13 (see DATA.md).
@@ -91,8 +90,8 @@ reads against the atoms boxes in p001, and every read in all58 against `city-all
 line is the top floor, the last the base floor. A stanza break is a 34 unit setback with a ledge. Unboxed lines are omitted
 (never replaced by stand-in pixels). A skyline is the buildings in a row.
 A crop may overflow its floor, top and bottom, by half of the excess of the tallest line box over the floor (p001: 92 px box,
-so 14 units; capped at 16; the 57 other pieces keep 8), so no ink of the line is cut; the crop holds only the line's own
-region ink, so no neighbour ink appears. Floors are drawn in three passes (fills, crops, outlines) so that an overflow is not
+so 14 units; capped at 16; the 57 other pieces keep 8), which avoids truncation by the floor window for the p001 boxes. The crop holds only its assigned region
+ink; the documented seam-ownership errors can still place neighbouring descender strokes in that region. Floors are drawn in three passes (fills, crops, outlines) so that an overflow is not
 painted over by the next floor's fill. The stanza unit uses the same overflow for p001 (it was 0). Scale-to-fit was not used:
 fitting the six tall lines (box heights 84 to 92 px) into the 80 unit window would shrink them by up to 13 percent (30 percent into the bare 64 unit floor) against the other lines.
 Units, chosen by the on-screen height of one floor (`floorPx`): `poem` < 4 px, `stanza` < 10, `line` < 48, `word` < 110,

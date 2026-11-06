@@ -1,0 +1,832 @@
+{
+  "schema": "versforms.alive-recovery-verification.v1",
+  "recovered_commit": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+  "materialized_base": "ef3d263c455788c769547df9e1e6010a54b7719a",
+  "verified_original_files": [
+    {
+      "path": "proto/alive/DATA.md",
+      "sha": "d1f2db9e1cee0d20be939026f4f33969430f9b08"
+    },
+    {
+      "path": "proto/alive/README.md",
+      "sha": "be3d7f8ed7d307b91140471c077dad22dd75a940"
+    },
+    {
+      "path": "proto/alive/alive.js",
+      "sha": "2986e34af8d4da240cc8ff322a55630c6933fd8b"
+    },
+    {
+      "path": "proto/alive/atoms-p001.json",
+      "sha": "468af384211480e95942f64b7022264a32bcb994"
+    },
+    {
+      "path": "proto/alive/build_atoms.py",
+      "sha": "4d81a497a4469bc62d20fbf396352f4d9a832e9c"
+    },
+    {
+      "path": "proto/alive/build_data.py",
+      "sha": "3d42f78944c7557a6a26d4bb02b310e3af8d510b"
+    },
+    {
+      "path": "proto/alive/city-all58.json",
+      "sha": "eb28454a35fe7545d6c839db0200ebc0957536a3"
+    },
+    {
+      "path": "proto/alive/index.html",
+      "sha": "a980f15054d17ed79a0080694d614d8623c30e33"
+    },
+    {
+      "path": "proto/alive/rules-diary1.json",
+      "sha": "60003514304c02369d495227d706b9a863e20a81"
+    },
+    {
+      "path": "proto/alive/seam-waypoints-diary1.json",
+      "sha": "4789a6ab317a4cebcd85e6d165a105139b222620"
+    },
+    {
+      "path": "proto/alive/segment.py",
+      "sha": "55662507b8e3e2dd2597e4f31f1640db6f21e2f5"
+    },
+    {
+      "path": "proto/alive/serve.mjs",
+      "sha": "f46e7d24c1b6f63106ca57f9f6053dce5f5e1dfb"
+    }
+  ],
+  "atom_rebuild": {
+    "byte_identical": true,
+    "sha256": "ed379ac4ccee98d06d392149e99299d8fd8d961d19e7c169513fcf45572ffca6"
+  },
+  "runtime": {
+    "schema": "versforms.t08-alive-reproduction.v1",
+    "date": "2026-11-06T16:42:00.602Z",
+    "scope": "read-only; owner lane reused, not modified",
+    "owner_repo": "/workspace/scratch/fb803bfdcadb/alive-work",
+    "owner_head": "ef3d263c455788c769547df9e1e6010a54b7719a",
+    "atoms": {
+      "path": "proto/alive/atoms-p001.json",
+      "sha256": "ed379ac4ccee98d06d392149e99299d8fd8d961d19e7c169513fcf45572ffca6",
+      "line_count": 22
+    },
+    "server_url": "http://127.0.0.1:33347/",
+    "checks": {
+      "ready": {
+        "pass": true,
+        "observed": "212ms"
+      },
+      "city": {
+        "pass": true,
+        "observed": "p001; failed=[]"
+      },
+      "atlas_leak": {
+        "pass": true,
+        "observed": "22 lines; outside total 0; regions 22"
+      },
+      "sources_used": {
+        "pass": true,
+        "observed": "22 ids, 0 unknown"
+      },
+      "line_regions": {
+        "pass": true,
+        "observed": "22 regions, 22 with polygons"
+      },
+      "console": {
+        "pass": true,
+        "observed": "no console errors or exceptions"
+      }
+    },
+    "facts": {
+      "state": {
+        "view": "architecture",
+        "city": "p001",
+        "unit": "line",
+        "pieces": 1,
+        "readyPieces": 1,
+        "failed": [],
+        "spriteCount": 0,
+        "spriteSources": {
+          "line": 0,
+          "word": 0,
+          "glyph": 0
+        },
+        "viewport": {
+          "w": 800,
+          "h": 600,
+          "dpr": 1
+        }
+      },
+      "sources_used": [
+        "diary1-0-0",
+        "diary1-0-1",
+        "diary1-0-2",
+        "diary1-1-0",
+        "diary1-1-1",
+        "diary1-1-2",
+        "diary1-1-3",
+        "diary1-2-0",
+        "diary1-2-1",
+        "diary1-2-2",
+        "diary1-2-3",
+        "diary1-3-0",
+        "diary1-3-1",
+        "diary1-3-2",
+        "diary1-3-3",
+        "diary1-4-0",
+        "diary1-4-1",
+        "diary1-4-2",
+        "diary1-5-0",
+        "diary1-5-1",
+        "diary1-5-2",
+        "diary1-5-3"
+      ],
+      "sources_used_count": 22,
+      "sources_used_reading_times": [
+        0,
+        2,
+        6,
+        12,
+        24,
+        48
+      ],
+      "atlas_leak_lines": 22,
+      "atlas_leak_outside_total": 0,
+      "atlas_leak_outside_per_line": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "line_regions": 22,
+      "line_regions_with_polygon": 22,
+      "regions_read": 22,
+      "buildings": [
+        {
+          "id": "p001",
+          "lines": 22,
+          "x0": 0,
+          "x1": 1088
+        }
+      ]
+    },
+    "chrome": {
+      "product": "HeadlessChrome/153.0.8010.0",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+      "protocol": "1.3"
+    },
+    "errors": [],
+    "ok": true
+  },
+  "matrix": {
+    "prototypeCommit": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+    "browser": "153.0.8010.0",
+    "city": "p001",
+    "frozenTime": 14,
+    "physicalDeviceTest": false,
+    "passed": 12,
+    "total": 12,
+    "rows": [
+      {
+        "device": "desktop",
+        "colorScheme": "light",
+        "view": "architecture",
+        "screenshot": "desktop-light-architecture.png",
+        "state": {
+          "view": "architecture",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.4666666666666667,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 13749,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "desktop",
+        "colorScheme": "light",
+        "view": "spiral",
+        "screenshot": "desktop-light-spiral.png",
+        "state": {
+          "view": "spiral",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.6568011311199283,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 7401,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "desktop",
+        "colorScheme": "light",
+        "view": "reading",
+        "screenshot": "desktop-light-reading.png",
+        "state": {
+          "view": "reading",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.4666666666666667,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 71876,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "desktop",
+        "colorScheme": "dark",
+        "view": "architecture",
+        "screenshot": "desktop-dark-architecture.png",
+        "state": {
+          "view": "architecture",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.4666666666666667,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 13749,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "desktop",
+        "colorScheme": "dark",
+        "view": "spiral",
+        "screenshot": "desktop-dark-spiral.png",
+        "state": {
+          "view": "spiral",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.6568011311199283,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 7380,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "desktop",
+        "colorScheme": "dark",
+        "view": "reading",
+        "screenshot": "desktop-dark-reading.png",
+        "state": {
+          "view": "reading",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.4666666666666667,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 399,
+          "spriteSources": {
+            "line": 74,
+            "word": 195,
+            "glyph": 130
+          },
+          "viewport": {
+            "w": 1280,
+            "h": 900,
+            "dpr": 1
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 0,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 900,
+          "pixelsWide": 1280,
+          "pixelsHigh": 900
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 72000,
+        "nonBackground": 71939,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "light",
+        "view": "architecture",
+        "screenshot": "touch-light-architecture.png",
+        "state": {
+          "view": "architecture",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.3154411764705882,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 25238,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "light",
+        "view": "spiral",
+        "screenshot": "touch-light-spiral.png",
+        "state": {
+          "view": "spiral",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.2874832453539825,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 5777,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "light",
+        "view": "reading",
+        "screenshot": "touch-light-reading.png",
+        "state": {
+          "view": "reading",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.3154411764705882,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": false,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 82256,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "dark",
+        "view": "architecture",
+        "screenshot": "touch-dark-architecture.png",
+        "state": {
+          "view": "architecture",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.3154411764705882,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 25238,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "dark",
+        "view": "spiral",
+        "screenshot": "touch-dark-spiral.png",
+        "state": {
+          "view": "spiral",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.2874832453539825,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 5762,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      },
+      {
+        "device": "touch",
+        "colorScheme": "dark",
+        "view": "reading",
+        "screenshot": "touch-dark-reading.png",
+        "state": {
+          "view": "reading",
+          "city": "p001",
+          "pinned": null,
+          "unit": "line",
+          "zoom": 0.3154411764705882,
+          "time": 14,
+          "reduced": false,
+          "animating": false,
+          "dark": true,
+          "spriteCount": 400,
+          "spriteSources": {
+            "line": 73,
+            "word": 223,
+            "glyph": 104
+          },
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "dpr": 2
+          },
+          "pieces": 1,
+          "readyPieces": 1,
+          "failed": []
+        },
+        "maxTouchPoints": 1,
+        "canvas": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "pixelsWide": 780,
+          "pixelsHigh": 1688
+        },
+        "overflow": {
+          "x": false,
+          "y": false
+        },
+        "sampled": 82290,
+        "nonBackground": 82268,
+        "errors": [],
+        "externalRequests": [],
+        "failedRequests": [],
+        "badResponses": [],
+        "pass": true
+      }
+    ]
+  },
+  "scope": "Private local p001 rendering and clipping; no publication. A following README and opening-comment precision correction changes no executable JavaScript.",
+  "limits": [
+    "Assigned polygon containment does not prove correct handwritten stroke ownership.",
+    "Three wrong seam cuts at lines12/13 remain.",
+    "Physical gestures, physical devices and all58 source alignment are unverified.",
+    "Owner issues109 and121 remain undecided."
+  ],
+  "input_parity": {
+    "source_files_compared": 384,
+    "differences": 0,
+    "scope": "All recovered site/img files plus site/data/j.json and studio/data/review.json match main baseline ef3d263c455788c769547df9e1e6010a54b7719a."
+  },
+  "matrix_source_sha256": "e90f72589d789d9da66ab864a399b48860ded77e501ba77ff38f1fc26e1fc780"
+}
