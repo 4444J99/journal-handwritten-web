@@ -55,6 +55,8 @@ Conventions
 
 | 2026-11-06 | [Posting hardening completion](2026-11-06-posting-hardening-completion.md) | Follow-up repair for #123: tests, Git isolation, owned cleanup and accurate runbook; review PR, no publication |
 
+| 2026-11-06 | [Integration closeout](2026-11-06-integration-closeout.md) | T01–T10 source/reader/feature integration and exact-output verification in progress; private changes only |
+
 ## Repository state (checked 2026-11-05)
 - `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
