@@ -1,0 +1,21 @@
+{
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "node": "24.22.1",
+  "ffmpeg": "6.1.1-3ubuntu5",
+  "ffmpeg_build_enable_gpl": true,
+  "chromium_executable_present": true,
+  "baseline_input_hashes": {
+    "CLAUDE.md": "0ae180e20177ae649dbac16f6af183c5986cda429ab917e15410c6eff8597918",
+    "site/index.html": "7c3e286252e2760085cb420b292b199f3235a80a64f1a2fb96fedd4b51bcc3cc",
+    "studio/index.html": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+    "site/data/j.json": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+    "studio/data/review.json": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353",
+    "release/public.json": "f6a0b6c89243082c4c7602e908b66ff4b7823553b04e22dbbc62b0a0b65e4a1a",
+    "MANIFEST.sha256": "7d445c665ed80ee7b64b036ddbfa443be4c4569c50411584f41ee3c91c37e3cf"
+  },
+  "runtime_dependency_installations_performed": false,
+  "chromium_executable": "/workspace/scratch/1fc151f82b99/browser-runtime/chromium",
+  "playwright_default_executable_present": false,
+  "chromium_version": "153.0.8010.0"
+}
