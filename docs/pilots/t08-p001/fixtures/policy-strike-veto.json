@@ -1,0 +1,49 @@
+{
+  "schema": "versforms.visibility-policy.v1",
+  "policy_id": "t08-fixture-strike-veto-2026-11-05",
+  "status": "synthetic-fixture-for-rejection-test-not-a-decision",
+  "publication": {
+    "enabled": false
+  },
+  "author_clearance": {
+    "status": "none",
+    "covers_manifest_sha256": null,
+    "statement_ref": null
+  },
+  "machine_misread": {
+    "status": "unresolved"
+  },
+  "shared_scan_resolution": {
+    "status": "none",
+    "pages": {}
+  },
+  "public_whitelist": [
+    "p001"
+  ],
+  "withheld_pages": [],
+  "withheld_assets": [],
+  "pieces": {
+    "p001": {
+      "pool": "series",
+      "pool_source": "synthetic fixture only; proves a private strike-through veto blocks even a private build",
+      "withheld_versions": [],
+      "excluded_versions": [],
+      "strike_through_vetoes": [
+        {
+          "veto_id": "fixture-strike-through-line-0-0",
+          "line_ids": [
+            "diary1-0-0"
+          ],
+          "scopes": [
+            "private-local",
+            "author-cut-private",
+            "public-release",
+            "cipher-public"
+          ],
+          "source": "synthetic fixture only; no private strike-through is recorded here"
+        }
+      ],
+      "piece_vetoes": []
+    }
+  }
+}

@@ -1,0 +1,384 @@
+{
+  "schema_version": "1.0",
+  "audit_id": "T09-2026-11-06",
+  "audit_date_utc": "2026-11-06",
+  "review_baseline_date": "2026-11-05",
+  "repository": "https://github.com/4444J99/journal-handwritten-web",
+  "live_base_commit": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda",
+  "baseline_verification": "Root task refreshed live head, issue states and repository parity; this audit independently hashed the four supplied source copies and two archived exchange summaries.",
+  "authority_rule": "Author statements, historical engineering proposals, derived pilot defaults and tested implementation are separate evidence classes. Historical approvals are not new authority.",
+  "sources": [
+    {
+      "id": "T09-S00",
+      "type": "inaccessible_context",
+      "packet": "2026-10-16-v1.1",
+      "projection": "2026-10-16-v1.1-r2",
+      "project_id": "g-p-6a10bcb4ada4819194e881431212101a",
+      "requested_records": [
+        "interpretation.md",
+        "cloud-master-context.md",
+        "cloud-source-ledger.json"
+      ],
+      "access": "inaccessible",
+      "claims_derived": false
+    },
+    {
+      "id": "T09-S01",
+      "type": "supplied_build_plan",
+      "title": "Audio implementation plan",
+      "repo_path": "claude/Audio implementation plan.pdf",
+      "attachment_id": "file_0000000058e881f5b3f5077d8eae08aa",
+      "sha256": "c88a08905c49bd988338038f65bab2c539225e09fdadbbf693a385f11b10fc36",
+      "document_date": "2026-11-05",
+      "evidence_class": "engineering_proposal",
+      "scope": [
+        "approximately 30-minute voice-texture pilot",
+        "five vowels and five consonants plus breath/whisper",
+        "private listening before larger acquisition",
+        "offline processing and staged browser integration"
+      ],
+      "authority_limit": "Document byline and planning language do not independently approve reserved artistic or privacy choices."
+    },
+    {
+      "id": "T09-S02",
+      "type": "supplied_build_specification",
+      "title": "Voice Banks Buildout Spec",
+      "repo_path": "claude/Voice Banks Buildout Spec.pdf",
+      "attachment_id": "file_000000008514820d851f3b94366ec7bb",
+      "sha256": "3b329b897bf39c703bc017c80cb34e2cf8d88a7b0e097698724b15e90563ed8e",
+      "document_date": "2026-10-27",
+      "evidence_class": "engineering_proposal",
+      "scope": [
+        "forward and backward concatenative banks",
+        "50-prompt pilot before full acquisition",
+        "48 kHz/24-bit mono recording proposal",
+        "phone/diphone boundaries and provenance",
+        "MFA/Praat/TD-PSOLA proposals",
+        "performed supplement after listening"
+      ],
+      "authority_limit": "The proposed separate repositories, carrier, pronunciation authority, microphone, license and performance inventory are not newly authorized."
+    },
+    {
+      "id": "T09-S03",
+      "type": "supplied_research",
+      "title": "Two Voices From One Throat: Building Forward and Red Room Concatenative Voice Banks of Your Own Voice",
+      "repo_path": "claude/Two Voices From One Throat_ Building Forward and Red Room Concatenative Voice Banks of Your Own Voice.md",
+      "attachment_id": "file_0000000092b081f58bff6d11869218dc",
+      "sha256": "ca4d54021a872a141538242b7d21a0cf096922a4028e1dcc2a4f8442b97cb2a0",
+      "linked_exchange_date": "2026-10-27",
+      "artifact_id": "compass_artifact_wf-772991b2-c95b-5140-bc4d-e8a8d5e7507c_text/markdown",
+      "artifact_version_id": "01a1802c-78b3-7569-83f6-1fc47099cabd",
+      "evidence_class": "research_and_proposal",
+      "authority_limit": "Research statements about licenses, timing, quality and size require upstream verification or implementation receipts."
+    },
+    {
+      "id": "T09-S04",
+      "type": "supplied_research",
+      "title": "Voice-Only Generative Sound for a Web Poetry Archive: Precedents, Techniques, Browser Architecture and Recording Plan",
+      "repo_path": "claude/Voice-Only Generative Sound for a Web Poetry Archive_ Precedents, Techniques, Browser Architecture and Recording Plan.md",
+      "attachment_id": "file_00000000efa481f794f65a6531e8c4bf",
+      "sha256": "67716e44f699f2799f3bea25a2995d086e85784d42a5fc70b468cf761c2f00e0",
+      "linked_exchange_date": "2026-10-29",
+      "evidence_class": "research_and_proposal",
+      "scope": [
+        "voice-derived textures",
+        "phoneme labeling",
+        "parameterized stretch/freeze/octave/reverb comparisons",
+        "browser behavior and recording plan"
+      ],
+      "authority_limit": "Precedents and suggested palettes are not the author's selected sound direction."
+    },
+    {
+      "id": "T09-S05",
+      "type": "archived_exchange_summary",
+      "repo_path": "docs/chats/2026-10-27-custom-synthetic-voice.md",
+      "sha256": "0f60cc40206e4b9a34b5024ebb6d194d83060aee7473e32c2904e44e7c076972",
+      "exchange_id": "2f242443-6911-47d2-a361-dbb83d08ad18",
+      "exchange_date": "2026-10-27",
+      "archive_review_date": "2026-11-05",
+      "related_paths": [
+        "docs/chats/2026-10-27-custom-synthetic-voice/01-voice-synth-concept.md",
+        "docs/chats/2026-10-27-custom-synthetic-voice/02-voice-bank-research.md",
+        "docs/chats/2026-10-27-custom-synthetic-voice/03-buildout-spec.md",
+        "docs/chats/2026-10-27-custom-synthetic-voice/issues.json"
+      ],
+      "author_decisions": [
+        "Own recorded voice",
+        "Forward and backward methods",
+        "Reusable voice resources"
+      ],
+      "authority_limit": "Use attributed author statements; preserve engineering suggestions as proposals."
+    },
+    {
+      "id": "T09-S06",
+      "type": "archived_exchange_summary",
+      "repo_path": "docs/chats/2026-10-29-generative-audio-from-voice.md",
+      "sha256": "00d067b846f0b32ea5133795b25f63604efc91780c58a681bcbffb5121d6bfd2",
+      "exchange_id": "861e410e-3441-482d-96bf-f7b54bbbfa76",
+      "exchange_date": "2026-10-29",
+      "archive_review_date": "2026-11-05",
+      "related_paths": [
+        "docs/chats/2026-10-29-generative-audio-from-voice/01-voice-audio-research.md",
+        "docs/chats/2026-10-29-generative-audio-from-voice/02-audio-implementation-plan.md",
+        "docs/chats/2026-10-29-generative-audio-from-voice/issues.json"
+      ],
+      "author_decisions": [
+        "Ambience derived entirely from own voice"
+      ],
+      "authority_limit": "Palette, raw privacy, silent-switch behavior and treatment of struck/illegible text remain reserved."
+    },
+    {
+      "id": "T09-S07",
+      "type": "live_repository_scope",
+      "urls": [
+        "https://github.com/4444J99/journal-handwritten-web/issues/23",
+        "https://github.com/4444J99/journal-handwritten-web/issues/24",
+        "https://github.com/4444J99/journal-handwritten-web/issues/35",
+        "https://github.com/4444J99/journal-handwritten-web/pull/103"
+      ],
+      "checked_by": "T09 root task",
+      "issues": {
+        "23": {
+          "state": "open",
+          "comments": 0
+        },
+        "24": {
+          "state": "open",
+          "comments": 0
+        },
+        "35": {
+          "state": "open",
+          "comments": 0
+        }
+      },
+      "source_import_merge_commit": "04168b1f68bc4579fae245f8411b0b337d064369",
+      "authority_limit": "Open issue scope and historical source import are evidence, not authority to merge, publish, close issues or acquire a full bank."
+    },
+    {
+      "id": "T09-S20",
+      "type": "pilot_runtime",
+      "checked_by": "T09 root task environment inspection",
+      "versions": {
+        "python": "3.12.14",
+        "numpy": "2.3.5",
+        "node": "24.22.1",
+        "ffmpeg": "6.1.1-3ubuntu5"
+      },
+      "ffmpeg_build_option": "--enable-gpl",
+      "absent_optional_python_packages": [
+        "soundfile",
+        "praat-parselmouth",
+        "librosa"
+      ],
+      "primary_urls": [
+        "https://numpy.org/doc/2.3/license.html",
+        "https://docs.python.org/3/license.html"
+      ],
+      "license_checks": {
+        "numpy": "BSD-3-Clause; root independently checked upstream",
+        "python": "Primary license locator supplied; binary redistribution bundle not audited"
+      },
+      "tested_status": "See verification receipts; upstream and runtime observations alone are not test receipts.",
+      "runtime_roles": {
+        "python": "CLI, private loopback HTTP server, standard-library WAV/JSON/hashing",
+        "numpy": "Bounded numeric/FFT DSP",
+        "node": "Controller and browser test tooling",
+        "ffmpeg": "Optional explicit intake conversion; not fixture runtime"
+      }
+    },
+    {
+      "id": "T09-S21",
+      "type": "primary_tool_documentation",
+      "tool": "Montreal Forced Aligner",
+      "observed_version": "3.4.3",
+      "observed_release_date": "2026-10-08",
+      "license_evidence": "MIT declared in upstream project metadata",
+      "urls": [
+        "https://pypi.org/project/Montreal-Forced-Aligner/",
+        "https://github.com/MontrealCorpusTools/Montreal-Forced-Aligner/releases",
+        "https://montreal-forced-aligner.readthedocs.io/en/latest/"
+      ],
+      "web_refs": [
+        "turn2search1",
+        "turn3view0",
+        "turn5view0"
+      ],
+      "finding": "Documentation states new model formats starting with 3.4; actual tool/model compatibility must be tested.",
+      "pilot_used": false
+    },
+    {
+      "id": "T09-S22",
+      "type": "primary_model_card",
+      "model": "English (US) ARPA acoustic model",
+      "version": "3.0.0",
+      "trained_date": "2024-02-10",
+      "documented_compatibility": "MFA v3.0.0",
+      "license": "CC-BY-4.0",
+      "authors": [
+        "Michael McAuliffe",
+        "Morgan Sonderegger"
+      ],
+      "url": "https://mfa-models.readthedocs.io/en/latest/acoustic/English/English%20%28US%29%20ARPA%20acoustic%20model%20v3_0_0.html",
+      "web_refs": [
+        "turn5view1"
+      ],
+      "download_hash": null,
+      "pilot_used": false
+    },
+    {
+      "id": "T09-S23",
+      "type": "primary_license",
+      "resource": "CMUdict",
+      "url": "https://github.com/cmusphinx/cmudict/blob/master/LICENSE",
+      "web_refs": [
+        "turn5view2"
+      ],
+      "license_evidence": "Two-condition BSD-style text; source and binary redistribution retain required notice, conditions and disclaimer.",
+      "snapshot_commit": null,
+      "snapshot_hash": null,
+      "pilot_vendored": false,
+      "authority_limit": "Dictionary alternatives do not resolve author pronunciation authority or unknown words."
+    },
+    {
+      "id": "T09-S24",
+      "type": "primary_release_and_license_records",
+      "tool": "Praat",
+      "observed_version": "7.0.02",
+      "observed_release_date": "2026-08-27",
+      "url": "https://github.com/praat/praat.github.io/releases",
+      "web_refs": [
+        "turn2search0",
+        "turn11view0",
+        "turn11view1"
+      ],
+      "license_verification": "Official manual and source-download page independently verified GPL version 3 or later. Exact distribution/build and bundled-component notices remain unpinned; no binary bundled.",
+      "pilot_used": false,
+      "license": "GPL-3.0-or-later",
+      "license_urls": [
+        "https://praat.org/manual/License.html",
+        "https://praat.org/download_sources.html"
+      ]
+    },
+    {
+      "id": "T09-S25",
+      "type": "primary_project_record",
+      "tool": "praat-parselmouth",
+      "observed_version": "0.4.7",
+      "observed_release_date": "2025-11-27",
+      "license_evidence": "GPLv3-or-later declared in project metadata",
+      "url": "https://pypi.org/project/praat-parselmouth/",
+      "web_refs": [
+        "turn4search3"
+      ],
+      "embedded_praat_version": null,
+      "pilot_used": false
+    },
+    {
+      "id": "T09-S26",
+      "type": "primary_license",
+      "tool": "FFmpeg",
+      "url": "https://ffmpeg.org/legal.html",
+      "web_refs": [
+        "turn5view3"
+      ],
+      "license_evidence": "Default LGPL-2.1-or-later; enabling GPL components changes the resulting FFmpeg build's license obligations.",
+      "current_upstream_version": null,
+      "upstream_version_note": "No latest-release assertion; the inspected runtime version/configuration is recorded separately.",
+      "pilot_role": "Optional documented intake conversion, not required by fixture"
+    },
+    {
+      "id": "T09-S27",
+      "type": "primary_project_and_release_records",
+      "components": [
+        {
+          "name": "SoundFile",
+          "observed_version": "0.14.0",
+          "observed_release_date": "2026-06-06",
+          "license": "BSD-3-Clause"
+        },
+        {
+          "name": "libsndfile",
+          "observed_version": "1.2.2",
+          "license_evidence": "LGPL identified by SoundFile documentation; exact chosen binary/license version not pinned"
+        }
+      ],
+      "urls": [
+        "https://pypi.org/project/soundfile/",
+        "https://github.com/libsndfile/libsndfile/releases",
+        "https://github.com/libsndfile/libsndfile/blob/master/COPYING"
+      ],
+      "web_refs": [
+        "turn4search9",
+        "turn6view0",
+        "turn6view1",
+        "turn6view2"
+      ],
+      "pilot_used": false
+    },
+    {
+      "id": "T09-S28",
+      "type": "primary_release_and_license_records",
+      "tool": "eSpeak NG",
+      "observed_version": "1.52.0",
+      "url": "https://github.com/espeak-ng/espeak-ng/releases",
+      "web_refs": [
+        "turn4search1",
+        "turn4search2",
+        "turn11view2",
+        "turn12view1"
+      ],
+      "license_verification": "Official README independently verified GPL version 3 or later and separately identifies BSD-licensed compatibility code. Exact package, voice/data set and browser-wrapper component notices remain unpinned; none bundled.",
+      "fallback_author_decision": "unresolved",
+      "pilot_used": false,
+      "license": "GPL-3.0-or-later",
+      "license_url": "https://github.com/espeak-ng/espeak-ng#license-information"
+    },
+    {
+      "id": "T09-S29",
+      "type": "primary_browser_specifications_and_issue",
+      "checked_by": "T09 root task",
+      "urls": [
+        "https://www.w3.org/TR/webaudio/",
+        "https://www.w3.org/TR/audio-session/",
+        "https://bugs.webkit.org/show_bug.cgi?id=237322"
+      ],
+      "document_dates": {
+        "web_audio_working_draft": "2026-09-22",
+        "audio_session_working_draft": "2024-11-13",
+        "webkit_comment_6": "2024-09-25"
+      },
+      "finding": "Specification and implementation discussion inform proposed behavior, not a receipt for current physical iPhone behavior.",
+      "silent_switch_policy": "author decision pending",
+      "physical_device_test": "not performed by source audit"
+    },
+    {
+      "id": "T09-S30",
+      "type": "primary_license_and_project_records",
+      "tool": "Signalsmith Stretch",
+      "license": "MIT",
+      "urls": [
+        "https://github.com/Signalsmith-Audio/signalsmith-stretch",
+        "https://github.com/Signalsmith-Audio/signalsmith-stretch/blob/main/LICENSE.txt"
+      ],
+      "web_refs": [
+        "turn11view3",
+        "turn12view0",
+        "turn13view0"
+      ],
+      "license_evidence": "Official README and LICENSE.txt independently verified MIT with copyright and permission notice retention.",
+      "selected_version": null,
+      "selected_build_hash": null,
+      "pilot_used": false
+    }
+  ],
+  "remaining_unknowns": [
+    "No author recording or listening acceptance was available in the inspected inputs.",
+    "No complete bank, real pronunciation inventory, forced-alignment run, pitch-mark extraction or performed supplement is established by fixture results.",
+    "Optional tool/model/dictionary immutable package hashes are not acquired by this audit.",
+    "Praat/eSpeak upstream GPL-3.0-or-later and Signalsmith MIT are verified; exact distributions, bundled-component notices and optional DSP engine selection remain unpinned before adoption.",
+    "Private master handling and release permission for exact rendered outputs remain separate author decisions."
+  ],
+  "audit_date_local": "2026-11-05",
+  "audit_timezone": "America/New_York",
+  "utc_date_note": "Tool receipts fall on 2026-11-06 UTC; repository-facing audit date is 2026-11-05 America/New_York."
+}

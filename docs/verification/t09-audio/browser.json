@@ -1,0 +1,691 @@
+{
+  "schema": "versforms.t09-browser-receipt.v1",
+  "observed_at": "2026-11-06T01:49:18.861Z",
+  "base_url": "http://127.0.0.1:8769/",
+  "fixture_only": true,
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "HeadlessChrome/153.0.8010.0",
+    "revision": "@86cee6df69e0463a839c0cc8435c9d4c259434d3",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+    "jsVersion": "15.3.76"
+  },
+  "cells": [
+    {
+      "viewport": "1280x900 desktop",
+      "checks": [
+        {
+          "name": "off before user action",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 0,
+              "stops": 0
+            },
+            "sample_requests": []
+          }
+        },
+        {
+          "name": "fixture visible",
+          "status": "PASS",
+          "evidence": "FIXTURE AUDIO · Synthetic calibration signals. No author voice or listening acceptance is demonstrated."
+        },
+        {
+          "name": "selection does not play",
+          "status": "PASS",
+          "evidence": {
+            "starts": 0,
+            "stops": 0
+          }
+        },
+        {
+          "name": "loaded sample stays silent",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 0,
+              "stops": 0
+            },
+            "state": "READY · Loaded. Sound is off until you press Start."
+          }
+        },
+        {
+          "name": "explicit Start reaches real AudioBufferSourceNode",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 1,
+              "stops": 0
+            },
+            "state": {
+              "state": "playing",
+              "reason": "Playing one sample. Stop is always available.",
+              "error": null,
+              "sampleId": "forward",
+              "loaded": true,
+              "generation": 5
+            }
+          }
+        },
+        {
+          "name": "explicit Stop stops source",
+          "status": "PASS",
+          "evidence": {
+            "starts": 1,
+            "stops": 1
+          }
+        },
+        {
+          "name": "Stop does not resume",
+          "status": "PASS",
+          "evidence": {
+            "starts": 1,
+            "stops": 1
+          }
+        },
+        {
+          "name": "sample/context change stops previous source",
+          "status": "PASS",
+          "evidence": {
+            "starts": 2,
+            "stops": 2
+          }
+        },
+        {
+          "name": "provenance is inspectable",
+          "status": "PASS",
+          "evidence": "{\n  \"errors\": [],\n  \"fixture\": true,\n  \"manifest_sha256\": \"975b2cb31092c9470b311aeb4e4d8a71f7b2b1adbf88a932c4b1872101964bd4\",\n  \"privacy\": {\n    \"harness\": \"local-only\",\n    \"master\": \"private\",\n    \"rendered_release\": \"undecided\"\n  },\n  \"reproducibility\": {\n    \"cross_platform_bit_identity\": \"not established\",\n    \"environment\": {\n      \"code_sha256\": {\n        \"dsp.py\": \"cef68ceda8b1be85418717c8"
+        },
+        {
+          "name": "feedback retains sample and manifest without approval",
+          "status": "PASS",
+          "evidence": {
+            "schema_version": 1,
+            "kind": "pilot-listening-feedback",
+            "is_release_approval": false,
+            "is_acquisition_approval": false,
+            "is_sound_direction_acceptance": false,
+            "user_entered_notes_unverified": true,
+            "entries": [
+              {
+                "recorded_at": "2026-11-06T01:49:20.101Z",
+                "session_id": "t09-fixture-v1",
+                "manifest_sha256": "975b2cb31092c9470b311aeb4e4d8a71f7b2b1adbf88a932c4b1872101964bd4",
+                "fixture": true,
+                "sample_id": "mirror",
+                "sample_sha256": "bcc0087701d2729174aca3a3942b3332f2bb99a4c09650c4bf41ad30f0c32066",
+                "response": "undecided",
+                "notes": "",
+                "listening_gain": 0.25
+              }
+            ]
+          }
+        },
+        {
+          "name": "prompter advances",
+          "status": "PASS",
+          "evidence": {
+            "before": "1 / 50 · C01 · calibration · take 1Room referenceKeep the selected microphone, gain and position fixed. Record ten seconds of the room without speaking. Leave all denoising and aut",
+            "after": "2 / 50 · C02 · calibration · take 1Voice level/referenceAfter choosing reading style and pronunciation reference, say the technical words 'one two three', then sustain the chosen A"
+          }
+        },
+        {
+          "name": "prompter returns to same prompt",
+          "status": "PASS",
+          "evidence": "Previous prompt restored"
+        },
+        {
+          "name": "unanswered required decisions block take logging",
+          "status": "PASS",
+          "evidence": "AUTHOR CHOICES UNSET: D10. Rehearse or prepare; resolve these choices in the author decision sheet before recording this prompt."
+        },
+        {
+          "name": "progress retains original prompt and decision snapshot",
+          "status": "PASS",
+          "evidence": {
+            "schema_version": 1,
+            "kind": "recording-prompt-progress",
+            "entry_identity": "Each entry retains its original packet, prompt and decision snapshot; entries may span loaded packets.",
+            "current_packet_id": "t09-combined-pilot-v1",
+            "current_prompts_json_sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575",
+            "current_prompt_id": "C01",
+            "no_browser_recording": true,
+            "user_entered_notes_unverified": true,
+            "entries": [
+              {
+                "kind": "repeat-needed",
+                "packet_id": "t09-combined-pilot-v1",
+                "prompts_json_sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575",
+                "author_decisions_snapshot": {
+                  "D01": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "reading style"
+                  },
+                  "D02": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "carrier phrase"
+                  },
+                  "D03": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "pronunciation authority"
+                  },
+                  "D04": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "vowel split"
+                  },
+                  "D05": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "performed material"
+                  },
+                  "D06": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "author-written captions"
+                  },
+                  "D07": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "fallback engine"
+                  },
+                  "D08": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "voice licensing"
+                  },
+                  "D09": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "raw master privacy"
+                  },
+                  "D10": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "microphone"
+                  },
+                  "D11": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "sound palette"
+                  },
+                  "D12": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "struck words"
+                  },
+                  "D13": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "illegible words"
+                  },
+                  "D14": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "iPhone silent-switch behavior"
+                  }
+                },
+                "prompt_snapshot": {
+                  "alignment_filename": "C01.json",
+                  "estimated_seconds": 20,
+                  "filename": "C01.wav",
+                  "id": "C01",
+                  "instruction": "Keep the selected microphone, gain and position fixed. Record ten seconds of the room without speaking. Leave all denoising and automatic gain control off when the device allows it.",
+                  "label": "Room reference",
+                  "requires_decisions": [
+                    "D10"
+                  ],
+                  "section": "calibration",
+                  "take_number": 1,
+                  "target": {
+                    "phones": [
+                      "pau"
+                    ],
+                    "respelling": "No speech; room sound only"
+                  }
+                },
+                "prompt_id": "C01",
+                "planned_take_number": 1,
+                "external_take_id": "",
+                "notes": "",
+                "recorded_at": "2026-11-06T01:49:20.319Z",
+                "required_decisions": [
+                  "D10"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "packet replacement preserves each progress identity",
+          "status": "PASS",
+          "evidence": [
+            {
+              "packet_id": "t09-combined-pilot-v1",
+              "sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575"
+            },
+            {
+              "packet_id": "t09-combined-pilot-v1-qa-replacement",
+              "sha256": "38bbb5eab6d66ba22cffc775443027c5e73d26f99e47e10304ebce66fecabd01"
+            }
+          ]
+        },
+        {
+          "name": "no horizontal document overflow",
+          "status": "PASS",
+          "evidence": {
+            "width": 1280,
+            "scroll": 1265
+          }
+        },
+        {
+          "name": "no non-loopback app requests",
+          "status": "PASS",
+          "evidence": [
+            "http://127.0.0.1:8769/",
+            "http://127.0.0.1:8769/style.css",
+            "http://127.0.0.1:8769/playback.js",
+            "http://127.0.0.1:8769/app.js",
+            "http://127.0.0.1:8769/receipt.json",
+            "http://127.0.0.1:8769/prompts.json",
+            "http://127.0.0.1:8769/samples/forward.wav",
+            "http://127.0.0.1:8769/prompts.json"
+          ]
+        },
+        {
+          "name": "no console/network exceptions",
+          "status": "PASS",
+          "evidence": []
+        }
+      ],
+      "errors": [],
+      "requests": [
+        "http://127.0.0.1:8769/",
+        "http://127.0.0.1:8769/style.css",
+        "http://127.0.0.1:8769/playback.js",
+        "http://127.0.0.1:8769/app.js",
+        "http://127.0.0.1:8769/receipt.json",
+        "http://127.0.0.1:8769/prompts.json",
+        "http://127.0.0.1:8769/samples/forward.wav",
+        "http://127.0.0.1:8769/prompts.json"
+      ],
+      "screenshots": [
+        {
+          "file": "desktop-playback.png",
+          "sha256": "553c6cfb9cee4cb3aee5e4a3b1b21d0e08e67d5470a56765703db7e5c1cc6fd1"
+        },
+        {
+          "file": "desktop-prompter.png",
+          "sha256": "5e45231dd25a9681ae6ae5f2921ac8dc2bb5fa0db66b30414efa27b9f4d6258b"
+        },
+        {
+          "file": "desktop-workbench.png",
+          "sha256": "10469414dc05ab9d0228fabded0e744edbf204682596db440bc9ebb1891e217b"
+        }
+      ]
+    },
+    {
+      "viewport": "390x844 touch",
+      "checks": [
+        {
+          "name": "off before user action",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 0,
+              "stops": 0
+            },
+            "sample_requests": []
+          }
+        },
+        {
+          "name": "fixture visible",
+          "status": "PASS",
+          "evidence": "FIXTURE AUDIO · Synthetic calibration signals. No author voice or listening acceptance is demonstrated."
+        },
+        {
+          "name": "selection does not play",
+          "status": "PASS",
+          "evidence": {
+            "starts": 0,
+            "stops": 0
+          }
+        },
+        {
+          "name": "loaded sample stays silent",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 0,
+              "stops": 0
+            },
+            "state": "READY · Loaded. Sound is off until you press Start."
+          }
+        },
+        {
+          "name": "explicit Start reaches real AudioBufferSourceNode",
+          "status": "PASS",
+          "evidence": {
+            "trace": {
+              "starts": 1,
+              "stops": 0
+            },
+            "state": {
+              "state": "playing",
+              "reason": "Playing one sample. Stop is always available.",
+              "error": null,
+              "sampleId": "forward",
+              "loaded": true,
+              "generation": 5
+            }
+          }
+        },
+        {
+          "name": "explicit Stop stops source",
+          "status": "PASS",
+          "evidence": {
+            "starts": 1,
+            "stops": 1
+          }
+        },
+        {
+          "name": "Stop does not resume",
+          "status": "PASS",
+          "evidence": {
+            "starts": 1,
+            "stops": 1
+          }
+        },
+        {
+          "name": "sample/context change stops previous source",
+          "status": "PASS",
+          "evidence": {
+            "starts": 2,
+            "stops": 2
+          }
+        },
+        {
+          "name": "provenance is inspectable",
+          "status": "PASS",
+          "evidence": "{\n  \"errors\": [],\n  \"fixture\": true,\n  \"manifest_sha256\": \"975b2cb31092c9470b311aeb4e4d8a71f7b2b1adbf88a932c4b1872101964bd4\",\n  \"privacy\": {\n    \"harness\": \"local-only\",\n    \"master\": \"private\",\n    \"rendered_release\": \"undecided\"\n  },\n  \"reproducibility\": {\n    \"cross_platform_bit_identity\": \"not established\",\n    \"environment\": {\n      \"code_sha256\": {\n        \"dsp.py\": \"cef68ceda8b1be85418717c8"
+        },
+        {
+          "name": "feedback retains sample and manifest without approval",
+          "status": "PASS",
+          "evidence": {
+            "schema_version": 1,
+            "kind": "pilot-listening-feedback",
+            "is_release_approval": false,
+            "is_acquisition_approval": false,
+            "is_sound_direction_acceptance": false,
+            "user_entered_notes_unverified": true,
+            "entries": [
+              {
+                "recorded_at": "2026-11-06T01:49:21.804Z",
+                "session_id": "t09-fixture-v1",
+                "manifest_sha256": "975b2cb31092c9470b311aeb4e4d8a71f7b2b1adbf88a932c4b1872101964bd4",
+                "fixture": true,
+                "sample_id": "mirror",
+                "sample_sha256": "bcc0087701d2729174aca3a3942b3332f2bb99a4c09650c4bf41ad30f0c32066",
+                "response": "undecided",
+                "notes": "",
+                "listening_gain": 0.25
+              }
+            ]
+          }
+        },
+        {
+          "name": "prompter advances",
+          "status": "PASS",
+          "evidence": {
+            "before": "1 / 50 · C01 · calibration · take 1Room referenceKeep the selected microphone, gain and position fixed. Record ten seconds of the room without speaking. Leave all denoising and aut",
+            "after": "2 / 50 · C02 · calibration · take 1Voice level/referenceAfter choosing reading style and pronunciation reference, say the technical words 'one two three', then sustain the chosen A"
+          }
+        },
+        {
+          "name": "prompter returns to same prompt",
+          "status": "PASS",
+          "evidence": "Previous prompt restored"
+        },
+        {
+          "name": "unanswered required decisions block take logging",
+          "status": "PASS",
+          "evidence": "AUTHOR CHOICES UNSET: D10. Rehearse or prepare; resolve these choices in the author decision sheet before recording this prompt."
+        },
+        {
+          "name": "progress retains original prompt and decision snapshot",
+          "status": "PASS",
+          "evidence": {
+            "schema_version": 1,
+            "kind": "recording-prompt-progress",
+            "entry_identity": "Each entry retains its original packet, prompt and decision snapshot; entries may span loaded packets.",
+            "current_packet_id": "t09-combined-pilot-v1",
+            "current_prompts_json_sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575",
+            "current_prompt_id": "C01",
+            "no_browser_recording": true,
+            "user_entered_notes_unverified": true,
+            "entries": [
+              {
+                "kind": "repeat-needed",
+                "packet_id": "t09-combined-pilot-v1",
+                "prompts_json_sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575",
+                "author_decisions_snapshot": {
+                  "D01": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "reading style"
+                  },
+                  "D02": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "carrier phrase"
+                  },
+                  "D03": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "pronunciation authority"
+                  },
+                  "D04": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "vowel split"
+                  },
+                  "D05": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "performed material"
+                  },
+                  "D06": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "author-written captions"
+                  },
+                  "D07": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "fallback engine"
+                  },
+                  "D08": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "voice licensing"
+                  },
+                  "D09": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "raw master privacy"
+                  },
+                  "D10": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "microphone"
+                  },
+                  "D11": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "sound palette"
+                  },
+                  "D12": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "struck words"
+                  },
+                  "D13": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "illegible words"
+                  },
+                  "D14": {
+                    "author": null,
+                    "choice": null,
+                    "source": null,
+                    "topic": "iPhone silent-switch behavior"
+                  }
+                },
+                "prompt_snapshot": {
+                  "alignment_filename": "C01.json",
+                  "estimated_seconds": 20,
+                  "filename": "C01.wav",
+                  "id": "C01",
+                  "instruction": "Keep the selected microphone, gain and position fixed. Record ten seconds of the room without speaking. Leave all denoising and automatic gain control off when the device allows it.",
+                  "label": "Room reference",
+                  "requires_decisions": [
+                    "D10"
+                  ],
+                  "section": "calibration",
+                  "take_number": 1,
+                  "target": {
+                    "phones": [
+                      "pau"
+                    ],
+                    "respelling": "No speech; room sound only"
+                  }
+                },
+                "prompt_id": "C01",
+                "planned_take_number": 1,
+                "external_take_id": "",
+                "notes": "",
+                "recorded_at": "2026-11-06T01:49:22.033Z",
+                "required_decisions": [
+                  "D10"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "packet replacement preserves each progress identity",
+          "status": "PASS",
+          "evidence": [
+            {
+              "packet_id": "t09-combined-pilot-v1",
+              "sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575"
+            },
+            {
+              "packet_id": "t09-combined-pilot-v1-qa-replacement",
+              "sha256": "38bbb5eab6d66ba22cffc775443027c5e73d26f99e47e10304ebce66fecabd01"
+            }
+          ]
+        },
+        {
+          "name": "no horizontal document overflow",
+          "status": "PASS",
+          "evidence": {
+            "width": 390,
+            "scroll": 390
+          }
+        },
+        {
+          "name": "no non-loopback app requests",
+          "status": "PASS",
+          "evidence": [
+            "http://127.0.0.1:8769/",
+            "http://127.0.0.1:8769/style.css",
+            "http://127.0.0.1:8769/playback.js",
+            "http://127.0.0.1:8769/app.js",
+            "http://127.0.0.1:8769/receipt.json",
+            "http://127.0.0.1:8769/prompts.json",
+            "http://127.0.0.1:8769/samples/forward.wav",
+            "http://127.0.0.1:8769/prompts.json"
+          ]
+        },
+        {
+          "name": "no console/network exceptions",
+          "status": "PASS",
+          "evidence": []
+        }
+      ],
+      "errors": [],
+      "requests": [
+        "http://127.0.0.1:8769/",
+        "http://127.0.0.1:8769/style.css",
+        "http://127.0.0.1:8769/playback.js",
+        "http://127.0.0.1:8769/app.js",
+        "http://127.0.0.1:8769/receipt.json",
+        "http://127.0.0.1:8769/prompts.json",
+        "http://127.0.0.1:8769/samples/forward.wav",
+        "http://127.0.0.1:8769/prompts.json"
+      ],
+      "screenshots": [
+        {
+          "file": "mobile-playback.png",
+          "sha256": "78e3af93da4ff4ae0044f0fdffa9983f5961e2d8ed5b6cc5de7c501e8f3514f7"
+        },
+        {
+          "file": "mobile-prompter.png",
+          "sha256": "0f1768684606dbb32c255d80fe69da352ccff6f3072288c0af9898e5c1f23f7d"
+        },
+        {
+          "file": "mobile-workbench.png",
+          "sha256": "4d177020ae05631faaac0a3a273bd3eb33b195db8295bfd6b7e73e0d97faeb41"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Headless Chromium; no acoustic/perceptual listening claim.",
+    "Mobile viewport/touch emulation is not physical iPhone or Safari acceptance.",
+    "Silent switch, screen lock, phone calls, audio routing and live reader integration untested."
+  ],
+  "manifest_sha256": "975b2cb31092c9470b311aeb4e4d8a71f7b2b1adbf88a932c4b1872101964bd4",
+  "ok": true,
+  "code_hashes": {
+    "tools/verify_audio_pilot.mjs": "4634c7c23ceb66c08a777025189bb0b48956e3edef12418d190a8698cd5faaaa",
+    "tools/cdp_client.mjs": "985e130ffb2f4a09c324eaf9e90c31ef1de61ccaad88ee2c61c3175b73268afb",
+    "audio_pilot/app.js": "5e015a476544566af1574cb9d26b16c3f027ac6d8f2fcd918a6a7086bc03682a",
+    "audio_pilot/playback.js": "69af82c40e742846101a76333e5a4c0a8cadd3ae28ab5ae45c1ba00e6ca5a07f",
+    "audio_pilot/serve.py": "4dbe0de6e1683755f34be4027b48e5219189a38c46762d7efd118206da675852",
+    "audio_pilot/index.html": "413d37bad59732a7c44ddb2d2bdfd8d353e1d68cb92ad4634aa91da9d4bd0f1d",
+    "audio_pilot/style.css": "16451d1b66f85367f9e68a1a20d34443ea8b451827257b04990128e26a3338c9"
+  }
+}

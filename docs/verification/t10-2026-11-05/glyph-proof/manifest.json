@@ -1,0 +1,52 @@
+{
+  "authorship": {
+    "actor": "T10-tooling; source handwriting/font by 4444J99",
+    "evidence": "Existing supplied OTF file_0000000062ec81f5bd6460094274fc8e, SHA-256 ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc. Font-derived raster fixture; no fresh handwriting, no new glyph design or author acceptance.",
+    "role": "technical-fixture"
+  },
+  "capture": {
+    "byte_size": 2778,
+    "height": 240,
+    "locator": "font-derived technical raster, not a notebook scan or fresh author capture; exact existing OTF SHA-256 ca96121b6e1425012825ef97f9d876d0d6bfe9ba7fb5b5b20bcab99fc9e99fbc",
+    "original_path": "font-derived-capture.png",
+    "sha256": "ecd384446e0fdca6113b8a1c1fe38c9e7da776c1499f95715953f549bc842a30",
+    "source_id": "file_0000000062ec81f5bd6460094274fc8e",
+    "width": 600
+  },
+  "direction": "ltr",
+  "glyphs": [
+    {
+      "id": "g001",
+      "path": "g001.png",
+      "rect": [
+        236,
+        57,
+        127,
+        126
+      ],
+      "review_status": "unreviewed-supplied-labels",
+      "scalars": [
+        "U+0054"
+      ],
+      "sequence": "T",
+      "sha256": "5733f75e4f170d2ba3673d4f87c12486643e2bec770eae4cb82eda889cbd5873",
+      "source_sha256": "ecd384446e0fdca6113b8a1c1fe38c9e7da776c1499f95715953f549bc842a30",
+      "visibility": "private"
+    }
+  ],
+  "id": "t10-font-derived-glyph-fixture",
+  "kind": "glyph-capture",
+  "language": "en",
+  "review_status": "unreviewed-supplied-labels",
+  "schema_version": 1,
+  "script": "Latn",
+  "source": {
+    "collection": "unsorted",
+    "locator": "4444J99/journal-handwritten-web@038d01fb1862f2e569d231b5b3c4c3a4eb1aecda: existing reading with exported corrections",
+    "piece_id": "p001",
+    "sha256": "5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+    "version_id": "p001-diary1-0",
+    "visibility": "private"
+  },
+  "visibility": "private"
+}
