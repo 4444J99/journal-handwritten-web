@@ -23,6 +23,10 @@ be new, outside the source checkout and outside publishing inputs. Optional
 `--source-db` supplies the current exported reviews/release collection. Optional
 `--expected-descriptor` refuses an earlier descriptor if source, review,
 geometry, media, policy or package bytes changed; it never silently rebinds it.
+The selected `--source-repo` governs manifest preload, asset validation and
+eligibility together; no stage falls back to the tool checkout. `verify` and
+`lineage` accept the same optional source root. Omitting it retains the tool
+checkout default. Unreadable or invalid selected assets fail during preload.
 
 Before any output is written, the exporter validates the actual region
 manifest, private eligibility, fresh T02 v2 source membership, canonical source

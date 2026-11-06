@@ -435,6 +435,104 @@ class PrivateRegionPreviewTests(unittest.TestCase):
             shutil.copyfile(ROOT / name, target)
         return repo
 
+    def selected_source(self, folder):
+        """A valid second checkout with distinct JPEG bytes and fresh lineage."""
+        import source_foundation as foundation
+        repo = self.copied_source(folder)
+        image = repo / "site/img/p/diary1.jpg"
+        # A trailing technical marker changes the preserved file identity while
+        # leaving the source pixels, page size and author geometry unchanged.
+        image.write_bytes(image.read_bytes() + b"\nT08 SELECTED CHECKOUT TEST\n")
+        canonical = load(repo / "source/canonical.json")
+        asset = next(a for a in canonical["assets"] if a["path"] == "site/img/p/diary1.jpg")
+        asset.update(sha256="sha256:" + sr.sha256_file(image), bytes=image.stat().st_size)
+        (repo / "source/canonical.json").write_text(json.dumps(canonical))
+        foundation.rebuild(canonical, repo, write=True)
+        manifest = copy.deepcopy(self.manifest)
+        manifest["source_assets"][0].update(sha256=sr.sha256_file(image), size=image.stat().st_size)
+        manifest = reseal(manifest)
+        manifest_path = folder / "selected-manifest.json"
+        sr.write_json(manifest_path, manifest)
+        return repo, manifest, manifest_path
+
+    def test_selected_checkout_is_used_by_manifest_validation_and_preview_api(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo, manifest, _ = self.selected_source(folder)
+            tool_image = ROOT / "site/img/p/diary1.jpg"
+            tool_hash = sr.sha256_file(tool_image)
+            self.assertNotEqual(manifest["source_assets"][0]["sha256"], tool_hash)
+            out = folder / "preview"
+            descriptor = sr.export_private_preview(manifest, self.policy, self.atom_id, out, repo=repo)
+            self.assertEqual((out / "assets/source.jpg").read_bytes(), (repo / "site/img/p/diary1.jpg").read_bytes())
+            self.assertEqual(descriptor["mediaDigest"], "sha256:" + manifest["source_assets"][0]["sha256"])
+            self.assertTrue(sr.verify_manifest(manifest, repo=repo)["ok"])
+            self.assertFalse(sr.verify_manifest(manifest)["ok"])
+            self.assertTrue(sr.verify_manifest(self.manifest)["ok"])
+            self.assertEqual(sr.sha256_file(tool_image), tool_hash)
+
+    def test_selected_checkout_is_used_by_cli_preloads(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo, _, manifest_path = self.selected_source(folder)
+            base = [sys.executable, "-B", str(ROOT / "tools/source_regions.py")]
+            for command, extra in (
+                ("check", ["--policy", str(POLICY), "--scope", "private-local"]),
+                ("preview", ["--policy", str(POLICY), "--atom-id", self.atom_id, "--out", str(folder / "cli-preview")]),
+                ("verify", []),
+                ("lineage", ["--atom-id", self.atom_id]),
+            ):
+                with self.subTest(command=command):
+                    result = subprocess.run(base + [command, "--manifest", str(manifest_path), "--source-repo", str(repo)] + extra,
+                                            capture_output=True, text=True)
+                    self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            self.assertEqual((folder / "cli-preview/assets/source.jpg").read_bytes(),
+                             (repo / "site/img/p/diary1.jpg").read_bytes())
+
+    def test_selected_checkout_stale_assets_refuse_both_scopes_and_cli(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo, manifest, manifest_path = self.selected_source(folder)
+            bindings = sr.current_source_bindings(manifest, repo=repo)
+            digest = "sha256:" + sr.manifest_digest(manifest)
+            components = [{"kind": "regions", "id": sr.region_component_id(s["pieceId"], s["versionId"]),
+                           **s, "revisionDigest": digest, "fixture": False, "path": "regions.json", "sha256": digest}
+                          for s in bindings]
+            context = {**release_fixtures.context(bindings, components), "source_repo": repo}
+            policy = cleared_policy(manifest)
+            for scope in ("private-local", "public-release"):
+                self.assertTrue(sr.evaluate(manifest, policy, scope, release_context=context)["allowed"])
+            # The tool checkout still has a valid image; it must not mask a stale
+            # or corrupted file in the explicitly selected checkout.
+            (repo / "site/img/p/diary1.jpg").write_bytes(b"CORRUPTED SELECTED CHECKOUT IMAGE")
+            for scope in ("private-local", "public-release"):
+                report = sr.evaluate(manifest, policy, scope, release_context=context)
+                self.assertFalse(report["allowed"])
+                self.assertIn("source-asset bytes changed: scan:p/diary1", report["manifest_reasons"])
+            self.assertFalse(sr.verify_manifest(manifest, repo=repo)["ok"])
+            with self.assertRaises(ValueError):
+                sr.export_private_preview(manifest, self.policy, self.atom_id, folder / "bad-api", repo=repo)
+            for command, extra in (
+                ("check", ["--policy", str(POLICY), "--scope", "private-local"]),
+                ("preview", ["--policy", str(POLICY), "--atom-id", self.atom_id, "--out", str(folder / "bad-cli")]),
+            ):
+                result = subprocess.run([sys.executable, "-B", str(ROOT / "tools/source_regions.py"), command,
+                    "--manifest", str(manifest_path), "--source-repo", str(repo)] + extra, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 2, result.stderr or result.stdout)
+                self.assertIn("source-asset bytes changed", result.stderr)
+            self.assertFalse((folder / "bad-api").exists())
+            self.assertFalse((folder / "bad-cli").exists())
+
+    def test_selected_checkout_linked_asset_is_refused_before_preview(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp); repo, manifest, _ = self.selected_source(folder)
+            image = repo / "site/img/p/diary1.jpg"
+            outside = folder / "outside.jpg"
+            image.rename(outside); image.symlink_to(outside)
+            report = sr.verify_manifest(manifest, repo=repo)
+            self.assertFalse(report["ok"])
+            self.assertTrue(any("unsafe" in message for message in report["errors"]))
+            with self.assertRaisesRegex(ValueError, "unsafe"):
+                sr.export_private_preview(manifest, self.policy, self.atom_id, folder / "linked", repo=repo)
+            self.assertFalse((folder / "linked").exists())
+
     def test_private_current_source_context_is_not_ignored(self):
         for context in ({"source_snapshots": []}, {"source_repo": "/missing-current-source"},
                         {"current_sources": [{"pieceId": "p001", "versionId": "p001-diary1-0",
@@ -545,8 +643,10 @@ class PrivateRegionPreviewTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(ROOT / "tools/source_regions.py"), "check",
             "--manifest", str(PILOT), "--policy", str(POLICY), "--scope", "private-local",
             "--source-repo", "/missing-current-source"], capture_output=True, text=True)
-        self.assertEqual(result.returncode, 3, result.stderr or result.stdout)
-        self.assertIn("source-binding:current-v2-source-unavailable", result.stdout)
+        # The selected checkout is now checked during manifest preload, so an
+        # unreadable source is an input error rather than a later scope refusal.
+        self.assertEqual(result.returncode, 2, result.stderr or result.stdout)
+        self.assertIn("source-asset unavailable or unsafe", result.stderr)
 
     def test_current_source_pixels_are_required_even_with_public_positive_control(self):
         with tempfile.TemporaryDirectory() as tmp:

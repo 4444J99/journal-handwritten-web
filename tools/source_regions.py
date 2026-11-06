@@ -698,7 +698,8 @@ def _walk_keys(value: Any, path: str = "$") -> Iterable[tuple[str, Any]]:
             yield from _walk_keys(child, f"{path}[{i}]")
 
 
-def verify_manifest(manifest: dict) -> dict:
+def verify_manifest(manifest: dict, *, repo=ROOT) -> dict:
+    """Validate structure and source bytes in the explicitly selected checkout."""
     errors: list[str] = []
     warnings: list[str] = []
     if manifest.get("schema") != MANIFEST_SCHEMA:
@@ -777,15 +778,13 @@ def verify_manifest(manifest: dict) -> dict:
             lineage_closure(manifest, atom_id)
         except (KeyError, ValueError) as exc:
             errors.append(f"{atom_id}: lineage does not close: {exc}")
-    # Region frames: every region is in page pixels; verify against the scan size.
-    for asset in assets.values():
-        if asset.get("kind") != "page-scan":
-            continue
-        path = ROOT / asset["path"]
-        if not path.is_file():
-            errors.append(f"source asset missing on disk: {asset['path']}")
-        elif sha256_file(path) != asset.get("sha256"):
-            errors.append(f"source asset hash changed: {asset['path']}")
+    # Validation and eligibility must resolve the same selected source bytes.
+    # Reuse the strict path/size/hash checks; never fall back to this tool's
+    # checkout when a caller selects another source repository.
+    try:
+        _checked_source_assets(manifest, repo)
+    except (ValueError, TypeError, OSError) as error:
+        errors.append(str(error))
     integrity = manifest.get("integrity") or {}
     unhashed = {k: v for k, v in manifest.items() if k != "integrity"}
     expected = canonical_sha256(unhashed)
@@ -1195,7 +1194,8 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     import source_foundation as foundation
     from script_realizations import source_snapshot, release_policy, private_destination
 
-    result = verify_manifest(manifest)
+    repo = foundation.no_links(repo)
+    result = verify_manifest(manifest, repo=repo)
     if not result["ok"]:
         raise ValueError("invalid region manifest: " + "; ".join(result["errors"][:4]))
     if not isinstance(atom_id, str):
@@ -1207,7 +1207,6 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     line_id = atom.get("source_ids", {}).get("line_id")
     if not isinstance(line_id, str):
         raise ValueError("private preview requires a line-anchored region")
-    repo = foundation.no_links(repo)
     canonical = foundation.read_json(repo / "source/canonical.json")
     foundation.validate(canonical)
     if foundation.rebuild(canonical, repo)["changed"]:
@@ -1293,9 +1292,9 @@ def export_private_preview(manifest, policy, atom_id, output, *, repo=ROOT, db=N
     return descriptor
 
 
-def _load_manifest(path: Path) -> dict:
+def _load_manifest(path: Path, *, repo=ROOT) -> dict:
     manifest = read_json(path)
-    result = verify_manifest(manifest)
+    result = verify_manifest(manifest, repo=repo)
     if not result["ok"]:
         raise ValueError("manifest is invalid: " + "; ".join(result["errors"][:8]))
     return manifest
@@ -1316,11 +1315,13 @@ def main(argv: list[str] | None = None) -> int:
 
     p_verify = sub.add_parser("verify", help="verify a manifest's structure and hashes")
     p_verify.add_argument("--manifest", required=True, type=Path)
+    p_verify.add_argument("--source-repo", type=Path, default=ROOT, help="Checkout containing the declared source assets")
     p_verify.add_argument("--out", type=Path, default=None)
 
     p_lineage = sub.add_parser("lineage", help="print the closure for one atom")
     p_lineage.add_argument("--manifest", required=True, type=Path)
     p_lineage.add_argument("--atom-id", required=True)
+    p_lineage.add_argument("--source-repo", type=Path, default=ROOT, help="Checkout containing the declared source assets")
 
     p_check = sub.add_parser("check", help="evaluate a scope against a visibility policy")
     p_check.add_argument("--manifest", required=True, type=Path)
@@ -1358,17 +1359,17 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "verify":
             manifest = read_json(args.manifest)
-            result = verify_manifest(manifest)
+            result = verify_manifest(manifest, repo=args.source_repo)
             if args.out:
                 write_json(args.out, result)
             print(json.dumps(result, indent=2))
             return 0 if result["ok"] else 1
         if args.command == "lineage":
-            manifest = _load_manifest(args.manifest)
+            manifest = _load_manifest(args.manifest, repo=args.source_repo)
             print(json.dumps(lineage_closure(manifest, args.atom_id), indent=2))
             return 0
         if args.command == "check":
-            manifest = _load_manifest(args.manifest)
+            manifest = _load_manifest(args.manifest, repo=args.source_repo)
             policy = read_json(args.policy)
             context = read_json(args.release_context) if args.release_context else {}
             # Context files retain evidence; their snapshots are historical.
@@ -1384,7 +1385,7 @@ def main(argv: list[str] | None = None) -> int:
                                                      "manifest_reasons", "required_actions")}, indent=2))
             return 0 if report["allowed"] else 3
         if args.command == "preview":
-            descriptor = export_private_preview(_load_manifest(args.manifest), read_json(args.policy),
+            descriptor = export_private_preview(_load_manifest(args.manifest, repo=args.source_repo), read_json(args.policy),
                 args.atom_id, args.out, repo=args.source_repo, db=args.source_db,
                 expected=read_json(args.expected_descriptor) if args.expected_descriptor else None)
             print(json.dumps(descriptor, indent=2))
