@@ -246,7 +246,7 @@ def exposure_map(src, selection):
 
 def expected_files(src, result):
     names = {"index.html", "_headers", "data/j.json", "img/a/t0.jpg", "img/a/k0.jpg"}
-    names.update(asset for asset in ("reader-features.js",) if (src.site / asset).is_file())
+    names.update(asset for asset in ("reader-features.js", "reader-packages.js") if (src.site / asset).is_file())
     for pid in result["pages"]:
         names.update(f"img/{s}/{pid}.jpg" for s in ("p", "i", "m"))
         page = src.jpages[pid]
@@ -439,7 +439,7 @@ def prepare(source, database, candidate, output):
     revision = subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip()
     code_paths = ["tools/prepare_release_packet.py", "tools/post_poem.py", "tools/build_public.py", "tools/font_rename.py", "tools/release_contract.py", "tools/release_canonical.py", "tools/script_realizations.py",
                   "studio-cf/import_export.py", "studio-cf/sqlguard.py"]
-    code_paths += [p for p in ("tools/source_foundation.py", "tools/source_fingerprint.py", "studio/source-fingerprint.mjs", "site/reader-features.js") if (source / p).is_file()]
+    code_paths += [p for p in ("tools/source_foundation.py", "tools/source_fingerprint.py", "studio/source-fingerprint.mjs", "site/reader-features.js", "site/reader-packages.js") if (source / p).is_file()]
     code_hashes = {p: digest(source / p) for p in code_paths}
     after = source_inputs(src, posting.find_db_root(database))
     if before != after:

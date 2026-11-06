@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run this repository's checks locally and, optionally, post the result as a commit status.
 
-GitHub Actions cannot start runners for this account (billing), so the `check` workflow never
-runs. This script runs the same check plus every test suite it can find, prints a receipt, and
+When a hosted job cannot run, its cause must be established separately from local results.
+This script runs the same check plus every test suite it can find, prints a receipt, and
 with --status posts one commit status (context "local-ci") on the exact commit that was tested,
 so a pull request shows a real result instead of a failed, step-less job.
 
