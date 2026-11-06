@@ -1,0 +1,142 @@
+[
+  {
+    "path": "author-review-queue.json",
+    "bytes": 380750,
+    "sha256": "a3362e1b7b6d3273ffc5e930b50214cafbb2d81ec8b09a178b040d65a1cda5d1"
+  },
+  {
+    "path": "comparison-all-versions/_headers",
+    "bytes": 27,
+    "sha256": "1798f78f5e48ce125506274988d5555f052d762afcb096ab9e4b8b15c766269a"
+  },
+  {
+    "path": "comparison-all-versions/data/j.json",
+    "bytes": 3756,
+    "sha256": "e2e650e1e80f743faf9d0dc26910906d54657a21faa29b3672e842792026d8bf"
+  },
+  {
+    "path": "comparison-all-versions/img/a/k0.jpg",
+    "bytes": 52130,
+    "sha256": "33c65770f5d8f7f6d918f22e228dadac2e1d5008d0356a81446fa03d29242536"
+  },
+  {
+    "path": "comparison-all-versions/img/a/t0.jpg",
+    "bytes": 60965,
+    "sha256": "8045bd426de8e0e16034359ba3de0b94356f4a42e1aed77294a0387b0a7a815c"
+  },
+  {
+    "path": "comparison-all-versions/img/i/diary1.jpg",
+    "bytes": 69878,
+    "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371"
+  },
+  {
+    "path": "comparison-all-versions/img/i/diary62a.jpg",
+    "bytes": 88127,
+    "sha256": "5b1fd823ca2c422555b455f77231a1f652d000d77d69ef4d09ca886b4d98356d"
+  },
+  {
+    "path": "comparison-all-versions/img/m/diary1.jpg",
+    "bytes": 31312,
+    "sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c"
+  },
+  {
+    "path": "comparison-all-versions/img/m/diary62a.jpg",
+    "bytes": 37379,
+    "sha256": "fbcc0cc828f91bedd91ea8805a63873cf9d9699dbcd0c20afa4d9af68740f6af"
+  },
+  {
+    "path": "comparison-all-versions/img/p/diary1.jpg",
+    "bytes": 200203,
+    "sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5"
+  },
+  {
+    "path": "comparison-all-versions/img/p/diary62a.jpg",
+    "bytes": 234202,
+    "sha256": "082bcffa12b4be68510d055b6e0a2e9ffaba87983578aadfe1a1ff0a7dfb5dff"
+  },
+  {
+    "path": "comparison-all-versions/index.html",
+    "bytes": 230037,
+    "sha256": "50bd7de0fd6e68aafca6d05bc5f359a56b26bbf29d5af1dea142295c53e7f0ec"
+  },
+  {
+    "path": "comparison-exposure.json",
+    "bytes": 35332,
+    "sha256": "9dc32c6eceeaeb4038147338ca3eb37f5f33cfa203c1ba41d028a4b0d1386fb0"
+  },
+  {
+    "path": "first-release-queue.csv",
+    "bytes": 767,
+    "sha256": "d1c60705a557e53250dc840e2f0d4ee8e3a47f29f6b3b2ff4f919a6788f510f1"
+  },
+  {
+    "path": "gated-dry-run.txt",
+    "bytes": 797,
+    "sha256": "5b114910722b7981f12521af720ed5e44ffc538d09356f4f9aab51f380c78981"
+  },
+  {
+    "path": "index.html",
+    "bytes": 6724,
+    "sha256": "65f6972024f18653ea0ffaea8fec3a7c5f148581add4136dea2388c641efb663"
+  },
+  {
+    "path": "packet.json",
+    "bytes": 90908,
+    "sha256": "bee3c36d8fcd33d8e9537f323c7f5f0094cbe97a3eac2a39aba1328a69d30d13"
+  },
+  {
+    "path": "preview/_headers",
+    "bytes": 27,
+    "sha256": "1798f78f5e48ce125506274988d5555f052d762afcb096ab9e4b8b15c766269a"
+  },
+  {
+    "path": "preview/data/j.json",
+    "bytes": 2085,
+    "sha256": "4c2374b5dd435598e02bc277dc11f71830eb3d283e74fb3104b76a3f75526096"
+  },
+  {
+    "path": "preview/img/a/k0.jpg",
+    "bytes": 28729,
+    "sha256": "3dd3d0a6f9bd11cfaf34e2251c3c5585c2ff9eea36577359c812d6a9529a32d9"
+  },
+  {
+    "path": "preview/img/a/t0.jpg",
+    "bytes": 32859,
+    "sha256": "b63af7605d4a83769d675d7c435ff9678faacbd7ad440eb7dfbe2eab3563159b"
+  },
+  {
+    "path": "preview/img/i/diary1.jpg",
+    "bytes": 69878,
+    "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371"
+  },
+  {
+    "path": "preview/img/m/diary1.jpg",
+    "bytes": 31312,
+    "sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c"
+  },
+  {
+    "path": "preview/img/p/diary1.jpg",
+    "bytes": 200203,
+    "sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5"
+  },
+  {
+    "path": "preview/index.html",
+    "bytes": 230037,
+    "sha256": "50bd7de0fd6e68aafca6d05bc5f359a56b26bbf29d5af1dea142295c53e7f0ec"
+  },
+  {
+    "path": "proposed-whitelist.patch",
+    "bytes": 122,
+    "sha256": "65309fee8c577da26a3c0b3fa5ac96833e5c7131f9b221dcd2458316a719d92a"
+  },
+  {
+    "path": "release-tracker-100-slots.csv",
+    "bytes": 1965,
+    "sha256": "8cae5416b1724c77f0603506ea2ba4f2069d22e05a6d1ef099aa0c76b791c0f9"
+  },
+  {
+    "path": "source-catalog.json",
+    "bytes": 123449,
+    "sha256": "09a1ea8b2b6dc43818a6f77199d1f4af0c1389828dab34f291a334c55fd76650"
+  }
+]

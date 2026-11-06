@@ -1,0 +1,1 @@
+FAIL  stop cannot load inputs: the export /workspace/scratch/d5c1b1e5f42b/journal-t03-current/exports/studio-db-2026-11-05 has no release documents, so no piece has a pool and every piece would read as unsorted; this is the wrong folder or a damaged export

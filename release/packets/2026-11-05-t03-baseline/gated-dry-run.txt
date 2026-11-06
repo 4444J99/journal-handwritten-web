@@ -1,0 +1,11 @@
+Posting p001 (dry run)
+FAIL  gate (a) in Series [p001]: no release document (unsorted)
+PASS  gate (b) every line confirmed or corrected [p001]: all 38 lines confirmed or corrected
+FAIL  gate (c) in a filed or registered batch [p001]: not listed in any batch
+versions p001: publishing 1 of 2 (top of the stack; no decided final)
+  published: V[0] p001-diary1-0; newest in the stack (last entry of V): V[1] p001-diary62a-0; top of the stack: V[0]; corrected reviews on versions NOT published: 5
+PASS  stop (ii) no stale transcript [p001]
+PASS  stop (i) shared scan [p001]: 0 co-resident piece(s), item(s) or facing page(s) on 1 page(s)
+SKIP  stop public repository preconditions (no --public-repo given)
+
+REFUSED: 2 gate(s) failed. Fix them in the studio, or use --force to override the gates only.

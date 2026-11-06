@@ -1,0 +1,1770 @@
+{
+  "tested_source_revision": "6d1ff59fb6763f80828478e7819d9d879dd700e3",
+  "source_data_sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+  "output_data_sha256": "4c2374b5dd435598e02bc277dc11f71830eb3d283e74fb3104b76a3f75526096",
+  "selected_piece_ids": [
+    "p001"
+  ],
+  "excluded_piece_ids": [
+    "p002",
+    "p003",
+    "p004",
+    "p005",
+    "p006",
+    "p007",
+    "p008",
+    "p009",
+    "p010",
+    "p011",
+    "p012",
+    "p013",
+    "p014",
+    "p015",
+    "p016",
+    "p017",
+    "p018",
+    "p019",
+    "p020",
+    "p021",
+    "p022",
+    "p023",
+    "p024",
+    "p025",
+    "p026",
+    "p027",
+    "p028",
+    "p029",
+    "p030",
+    "p031",
+    "p032",
+    "p033",
+    "p034",
+    "p035",
+    "p036",
+    "p037",
+    "p038",
+    "p039",
+    "p040",
+    "p041",
+    "p042",
+    "p043",
+    "p044",
+    "p045",
+    "p046",
+    "p047",
+    "p048",
+    "p049",
+    "p050",
+    "p051",
+    "p052",
+    "p053",
+    "p054",
+    "p055",
+    "p056",
+    "p057",
+    "p058",
+    "p059",
+    "p060",
+    "p061",
+    "p062",
+    "p063",
+    "p064",
+    "p065",
+    "p066",
+    "p067",
+    "p068",
+    "p069",
+    "p070",
+    "p071",
+    "p072",
+    "p073",
+    "p074",
+    "p075",
+    "p076",
+    "p077",
+    "p078",
+    "p079",
+    "p080",
+    "p081",
+    "p082",
+    "p083",
+    "p084",
+    "p085",
+    "p086",
+    "p087",
+    "p088",
+    "p089",
+    "p090",
+    "p091",
+    "p092",
+    "p093",
+    "p094",
+    "p095",
+    "p096",
+    "p097",
+    "p098",
+    "p099",
+    "p100",
+    "p101",
+    "p102",
+    "p103",
+    "p104",
+    "p105",
+    "p106",
+    "p107",
+    "p108",
+    "p109",
+    "p110",
+    "p111",
+    "p112",
+    "p113",
+    "p114",
+    "p115",
+    "p116",
+    "p117",
+    "p118",
+    "p119",
+    "p120",
+    "p121",
+    "p122",
+    "p123",
+    "p124",
+    "p125",
+    "p126"
+  ],
+  "selected_version_ids": [
+    "p001-diary1-0"
+  ],
+  "excluded_versions": [
+    {
+      "piece_id": "p001",
+      "version_id": "p001-diary62a-0",
+      "pages": [
+        "diary62a"
+      ]
+    },
+    {
+      "piece_id": "p002",
+      "version_id": "p002-diary2-0",
+      "pages": [
+        "diary2"
+      ]
+    },
+    {
+      "piece_id": "p002",
+      "version_id": "p002-diary2-2",
+      "pages": [
+        "diary2"
+      ]
+    },
+    {
+      "piece_id": "p002",
+      "version_id": "p002-diary2-4",
+      "pages": [
+        "diary2"
+      ]
+    },
+    {
+      "piece_id": "p003",
+      "version_id": "p003-diary2a-0",
+      "pages": [
+        "diary2a"
+      ]
+    },
+    {
+      "piece_id": "p004",
+      "version_id": "p004-diary3-0",
+      "pages": [
+        "diary3"
+      ]
+    },
+    {
+      "piece_id": "p004",
+      "version_id": "p004-diary3-1",
+      "pages": [
+        "diary3"
+      ]
+    },
+    {
+      "piece_id": "p004",
+      "version_id": "p004-diary3-2",
+      "pages": [
+        "diary3"
+      ]
+    },
+    {
+      "piece_id": "p005",
+      "version_id": "p005-diary3a-0",
+      "pages": [
+        "diary3a"
+      ]
+    },
+    {
+      "piece_id": "p006",
+      "version_id": "p006-diary4-0",
+      "pages": [
+        "diary4"
+      ]
+    },
+    {
+      "piece_id": "p007",
+      "version_id": "p007-diary4a-0",
+      "pages": [
+        "diary4a"
+      ]
+    },
+    {
+      "piece_id": "p007",
+      "version_id": "p007-diary46a-1",
+      "pages": [
+        "diary46a"
+      ]
+    },
+    {
+      "piece_id": "p008",
+      "version_id": "p008-diary5-0",
+      "pages": [
+        "diary5"
+      ]
+    },
+    {
+      "piece_id": "p009",
+      "version_id": "p009-diary5a-0",
+      "pages": [
+        "diary5a"
+      ]
+    },
+    {
+      "piece_id": "p009",
+      "version_id": "p009-diary5a-1",
+      "pages": [
+        "diary5a"
+      ]
+    },
+    {
+      "piece_id": "p010",
+      "version_id": "p010-diary7-0",
+      "pages": [
+        "diary7"
+      ]
+    },
+    {
+      "piece_id": "p011",
+      "version_id": "p011-diary7a-0",
+      "pages": [
+        "diary7a"
+      ]
+    },
+    {
+      "piece_id": "p012",
+      "version_id": "p012-diary8-0",
+      "pages": [
+        "diary8"
+      ]
+    },
+    {
+      "piece_id": "p012",
+      "version_id": "p012-diary8a-0",
+      "pages": [
+        "diary8a"
+      ]
+    },
+    {
+      "piece_id": "p013",
+      "version_id": "p013-diary9-0",
+      "pages": [
+        "diary9"
+      ]
+    },
+    {
+      "piece_id": "p014",
+      "version_id": "p014-diary9a-0",
+      "pages": [
+        "diary9a"
+      ]
+    },
+    {
+      "piece_id": "p015",
+      "version_id": "p015-diary10-0",
+      "pages": [
+        "diary10"
+      ]
+    },
+    {
+      "piece_id": "p015",
+      "version_id": "p015-diary10a-0",
+      "pages": [
+        "diary10a"
+      ]
+    },
+    {
+      "piece_id": "p016",
+      "version_id": "p016-diary11-2",
+      "pages": [
+        "diary11"
+      ]
+    },
+    {
+      "piece_id": "p017",
+      "version_id": "p017-diary11a-0",
+      "pages": [
+        "diary11a"
+      ]
+    },
+    {
+      "piece_id": "p018",
+      "version_id": "p018-diary12-0",
+      "pages": [
+        "diary12"
+      ]
+    },
+    {
+      "piece_id": "p019",
+      "version_id": "p019-diary12a-0",
+      "pages": [
+        "diary12a"
+      ]
+    },
+    {
+      "piece_id": "p019",
+      "version_id": "p019-diary12a-2",
+      "pages": [
+        "diary12a"
+      ]
+    },
+    {
+      "piece_id": "p020",
+      "version_id": "p020-diary13-0",
+      "pages": [
+        "diary13"
+      ]
+    },
+    {
+      "piece_id": "p020",
+      "version_id": "p020-diary13a-0",
+      "pages": [
+        "diary13a",
+        "diary14",
+        "diary14a"
+      ]
+    },
+    {
+      "piece_id": "p021",
+      "version_id": "p021-diary15-0",
+      "pages": [
+        "diary15"
+      ]
+    },
+    {
+      "piece_id": "p022",
+      "version_id": "p022-diary15a-0",
+      "pages": [
+        "diary15a"
+      ]
+    },
+    {
+      "piece_id": "p023",
+      "version_id": "p023-diary16-0",
+      "pages": [
+        "diary16"
+      ]
+    },
+    {
+      "piece_id": "p024",
+      "version_id": "p024-diary16a-0",
+      "pages": [
+        "diary16a"
+      ]
+    },
+    {
+      "piece_id": "p025",
+      "version_id": "p025-diary17-0",
+      "pages": [
+        "diary17"
+      ]
+    },
+    {
+      "piece_id": "p025",
+      "version_id": "p025-diary18-0",
+      "pages": [
+        "diary18"
+      ]
+    },
+    {
+      "piece_id": "p025",
+      "version_id": "p025-diary18a-0",
+      "pages": [
+        "diary18a"
+      ]
+    },
+    {
+      "piece_id": "p026",
+      "version_id": "p026-diary17-2",
+      "pages": [
+        "diary17"
+      ]
+    },
+    {
+      "piece_id": "p027",
+      "version_id": "p027-diary17a-0",
+      "pages": [
+        "diary17a"
+      ]
+    },
+    {
+      "piece_id": "p028",
+      "version_id": "p028-diary19-0",
+      "pages": [
+        "diary19",
+        "diary19a"
+      ]
+    },
+    {
+      "piece_id": "p029",
+      "version_id": "p029-diary20-0",
+      "pages": [
+        "diary20"
+      ]
+    },
+    {
+      "piece_id": "p030",
+      "version_id": "p030-diary20a-0",
+      "pages": [
+        "diary20a"
+      ]
+    },
+    {
+      "piece_id": "p031",
+      "version_id": "p031-diary21-1",
+      "pages": [
+        "diary21"
+      ]
+    },
+    {
+      "piece_id": "p032",
+      "version_id": "p032-diary21a-0",
+      "pages": [
+        "diary21a"
+      ]
+    },
+    {
+      "piece_id": "p033",
+      "version_id": "p033-diary22-0",
+      "pages": [
+        "diary22"
+      ]
+    },
+    {
+      "piece_id": "p034",
+      "version_id": "p034-diary22a-0",
+      "pages": [
+        "diary22a"
+      ]
+    },
+    {
+      "piece_id": "p035",
+      "version_id": "p035-diary23-0",
+      "pages": [
+        "diary23"
+      ]
+    },
+    {
+      "piece_id": "p036",
+      "version_id": "p036-diary23a-0",
+      "pages": [
+        "diary23a"
+      ]
+    },
+    {
+      "piece_id": "p037",
+      "version_id": "p037-diary24-0",
+      "pages": [
+        "diary24"
+      ]
+    },
+    {
+      "piece_id": "p038",
+      "version_id": "p038-diary24a-0",
+      "pages": [
+        "diary24a"
+      ]
+    },
+    {
+      "piece_id": "p039",
+      "version_id": "p039-diary25-0",
+      "pages": [
+        "diary25"
+      ]
+    },
+    {
+      "piece_id": "p039",
+      "version_id": "p039-diary25a-0",
+      "pages": [
+        "diary25a"
+      ]
+    },
+    {
+      "piece_id": "p039",
+      "version_id": "p039-diary26a-0",
+      "pages": [
+        "diary26a"
+      ]
+    },
+    {
+      "piece_id": "p040",
+      "version_id": "p040-diary26-0",
+      "pages": [
+        "diary26"
+      ]
+    },
+    {
+      "piece_id": "p041",
+      "version_id": "p041-diary27-0",
+      "pages": [
+        "diary27"
+      ]
+    },
+    {
+      "piece_id": "p042",
+      "version_id": "p042-diary27a-0",
+      "pages": [
+        "diary27a"
+      ]
+    },
+    {
+      "piece_id": "p043",
+      "version_id": "p043-diary28-0",
+      "pages": [
+        "diary28"
+      ]
+    },
+    {
+      "piece_id": "p044",
+      "version_id": "p044-diary28a-0",
+      "pages": [
+        "diary28a"
+      ]
+    },
+    {
+      "piece_id": "p045",
+      "version_id": "p045-diary29-0",
+      "pages": [
+        "diary29"
+      ]
+    },
+    {
+      "piece_id": "p046",
+      "version_id": "p046-diary29-2",
+      "pages": [
+        "diary29"
+      ]
+    },
+    {
+      "piece_id": "p047",
+      "version_id": "p047-diary29a-0",
+      "pages": [
+        "diary29a"
+      ]
+    },
+    {
+      "piece_id": "p048",
+      "version_id": "p048-diary30-0",
+      "pages": [
+        "diary30"
+      ]
+    },
+    {
+      "piece_id": "p048",
+      "version_id": "p048-diary52a-1",
+      "pages": [
+        "diary52a"
+      ]
+    },
+    {
+      "piece_id": "p049",
+      "version_id": "p049-diary30a-0",
+      "pages": [
+        "diary30a"
+      ]
+    },
+    {
+      "piece_id": "p050",
+      "version_id": "p050-diary31-0",
+      "pages": [
+        "diary31"
+      ]
+    },
+    {
+      "piece_id": "p051",
+      "version_id": "p051-diary31-1",
+      "pages": [
+        "diary31"
+      ]
+    },
+    {
+      "piece_id": "p052",
+      "version_id": "p052-diary31a-0",
+      "pages": [
+        "diary31a"
+      ]
+    },
+    {
+      "piece_id": "p052",
+      "version_id": "p052-diary31a-1",
+      "pages": [
+        "diary31a",
+        "diary32"
+      ]
+    },
+    {
+      "piece_id": "p053",
+      "version_id": "p053-diary32-1",
+      "pages": [
+        "diary32"
+      ]
+    },
+    {
+      "piece_id": "p054",
+      "version_id": "p054-diary32a-0",
+      "pages": [
+        "diary32a"
+      ]
+    },
+    {
+      "piece_id": "p055",
+      "version_id": "p055-diary33-0",
+      "pages": [
+        "diary33"
+      ]
+    },
+    {
+      "piece_id": "p056",
+      "version_id": "p056-diary33a-1",
+      "pages": [
+        "diary33a"
+      ]
+    },
+    {
+      "piece_id": "p057",
+      "version_id": "p057-diary33a-2",
+      "pages": [
+        "diary33a"
+      ]
+    },
+    {
+      "piece_id": "p058",
+      "version_id": "p058-diary33a-3",
+      "pages": [
+        "diary33a"
+      ]
+    },
+    {
+      "piece_id": "p059",
+      "version_id": "p059-diary33a-4",
+      "pages": [
+        "diary33a"
+      ]
+    },
+    {
+      "piece_id": "p060",
+      "version_id": "p060-diary33a-5",
+      "pages": [
+        "diary33a"
+      ]
+    },
+    {
+      "piece_id": "p061",
+      "version_id": "p061-diary34-0",
+      "pages": [
+        "diary34"
+      ]
+    },
+    {
+      "piece_id": "p062",
+      "version_id": "p062-diary34a-0",
+      "pages": [
+        "diary34a"
+      ]
+    },
+    {
+      "piece_id": "p063",
+      "version_id": "p063-diary34a-1",
+      "pages": [
+        "diary34a"
+      ]
+    },
+    {
+      "piece_id": "p064",
+      "version_id": "p064-diary35-0",
+      "pages": [
+        "diary35"
+      ]
+    },
+    {
+      "piece_id": "p064",
+      "version_id": "p064-diary35a-0",
+      "pages": [
+        "diary35a"
+      ]
+    },
+    {
+      "piece_id": "p064",
+      "version_id": "p064-diary63a-0",
+      "pages": [
+        "diary63a"
+      ]
+    },
+    {
+      "piece_id": "p065",
+      "version_id": "p065-diary36-1",
+      "pages": [
+        "diary36"
+      ]
+    },
+    {
+      "piece_id": "p066",
+      "version_id": "p066-diary36-4",
+      "pages": [
+        "diary36"
+      ]
+    },
+    {
+      "piece_id": "p066",
+      "version_id": "p066-diary36a-0",
+      "pages": [
+        "diary36a"
+      ]
+    },
+    {
+      "piece_id": "p066",
+      "version_id": "p066-diary38a-0",
+      "pages": [
+        "diary38a"
+      ]
+    },
+    {
+      "piece_id": "p066",
+      "version_id": "p066-diary54a-0",
+      "pages": [
+        "diary54a"
+      ]
+    },
+    {
+      "piece_id": "p067",
+      "version_id": "p067-diary37-2",
+      "pages": [
+        "diary37"
+      ]
+    },
+    {
+      "piece_id": "p068",
+      "version_id": "p068-diary37a-1",
+      "pages": [
+        "diary37a"
+      ]
+    },
+    {
+      "piece_id": "p068",
+      "version_id": "p068-diary38-1",
+      "pages": [
+        "diary38"
+      ]
+    },
+    {
+      "piece_id": "p068",
+      "version_id": "p068-diary43a-0",
+      "pages": [
+        "diary43a"
+      ]
+    },
+    {
+      "piece_id": "p068",
+      "version_id": "p068-diary44-0",
+      "pages": [
+        "diary44"
+      ]
+    },
+    {
+      "piece_id": "p068",
+      "version_id": "p068-diary63-0",
+      "pages": [
+        "diary63"
+      ]
+    },
+    {
+      "piece_id": "p069",
+      "version_id": "p069-diary37a-5",
+      "pages": [
+        "diary37a"
+      ]
+    },
+    {
+      "piece_id": "p070",
+      "version_id": "p070-diary39-0",
+      "pages": [
+        "diary39"
+      ]
+    },
+    {
+      "piece_id": "p071",
+      "version_id": "p071-diary40-6",
+      "pages": [
+        "diary40"
+      ]
+    },
+    {
+      "piece_id": "p072",
+      "version_id": "p072-diary42-0",
+      "pages": [
+        "diary42"
+      ]
+    },
+    {
+      "piece_id": "p073",
+      "version_id": "p073-diary42a-0",
+      "pages": [
+        "diary42a"
+      ]
+    },
+    {
+      "piece_id": "p074",
+      "version_id": "p074-diary42a-1",
+      "pages": [
+        "diary42a"
+      ]
+    },
+    {
+      "piece_id": "p075",
+      "version_id": "p075-diary42a-2",
+      "pages": [
+        "diary42a"
+      ]
+    },
+    {
+      "piece_id": "p076",
+      "version_id": "p076-diary42a-3",
+      "pages": [
+        "diary42a"
+      ]
+    },
+    {
+      "piece_id": "p077",
+      "version_id": "p077-diary43-0",
+      "pages": [
+        "diary43"
+      ]
+    },
+    {
+      "piece_id": "p078",
+      "version_id": "p078-diary43-4",
+      "pages": [
+        "diary43"
+      ]
+    },
+    {
+      "piece_id": "p079",
+      "version_id": "p079-diary44a-2",
+      "pages": [
+        "diary44a"
+      ]
+    },
+    {
+      "piece_id": "p080",
+      "version_id": "p080-diary45-0",
+      "pages": [
+        "diary45",
+        "diary45a"
+      ]
+    },
+    {
+      "piece_id": "p081",
+      "version_id": "p081-diary46-0",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p082",
+      "version_id": "p082-diary46-1",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p083",
+      "version_id": "p083-diary46-2",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p084",
+      "version_id": "p084-diary46-3",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p085",
+      "version_id": "p085-diary46-4",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p086",
+      "version_id": "p086-diary46-5",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p087",
+      "version_id": "p087-diary46-9",
+      "pages": [
+        "diary46"
+      ]
+    },
+    {
+      "piece_id": "p088",
+      "version_id": "p088-diary46a-0",
+      "pages": [
+        "diary46a"
+      ]
+    },
+    {
+      "piece_id": "p089",
+      "version_id": "p089-diary48-0",
+      "pages": [
+        "diary48"
+      ]
+    },
+    {
+      "piece_id": "p090",
+      "version_id": "p090-diary48a-0",
+      "pages": [
+        "diary48a"
+      ]
+    },
+    {
+      "piece_id": "p091",
+      "version_id": "p091-diary49-1",
+      "pages": [
+        "diary49",
+        "diary49a"
+      ]
+    },
+    {
+      "piece_id": "p092",
+      "version_id": "p092-diary49a-0",
+      "pages": [
+        "diary49a"
+      ]
+    },
+    {
+      "piece_id": "p093",
+      "version_id": "p093-diary50-2",
+      "pages": [
+        "diary50",
+        "diary51a"
+      ]
+    },
+    {
+      "piece_id": "p094",
+      "version_id": "p094-diary52-5",
+      "pages": [
+        "diary52"
+      ]
+    },
+    {
+      "piece_id": "p095",
+      "version_id": "p095-diary52a-0",
+      "pages": [
+        "diary52a"
+      ]
+    },
+    {
+      "piece_id": "p096",
+      "version_id": "p096-diary53-0",
+      "pages": [
+        "diary53"
+      ]
+    },
+    {
+      "piece_id": "p096",
+      "version_id": "p096-diary53a-0",
+      "pages": [
+        "diary53a"
+      ]
+    },
+    {
+      "piece_id": "p096",
+      "version_id": "p096-diary54-0",
+      "pages": [
+        "diary54"
+      ]
+    },
+    {
+      "piece_id": "p096",
+      "version_id": "p096-diary54-1",
+      "pages": [
+        "diary54"
+      ]
+    },
+    {
+      "piece_id": "p096",
+      "version_id": "p096-diary54a-1",
+      "pages": [
+        "diary54a"
+      ]
+    },
+    {
+      "piece_id": "p097",
+      "version_id": "p097-diary53a-4",
+      "pages": [
+        "diary53a"
+      ]
+    },
+    {
+      "piece_id": "p098",
+      "version_id": "p098-diary55-0",
+      "pages": [
+        "diary55"
+      ]
+    },
+    {
+      "piece_id": "p099",
+      "version_id": "p099-diary55a-0",
+      "pages": [
+        "diary55a",
+        "diary56",
+        "diary56a"
+      ]
+    },
+    {
+      "piece_id": "p100",
+      "version_id": "p100-diary56a-1",
+      "pages": [
+        "diary56a"
+      ]
+    },
+    {
+      "piece_id": "p101",
+      "version_id": "p101-diary56a-2",
+      "pages": [
+        "diary56a"
+      ]
+    },
+    {
+      "piece_id": "p102",
+      "version_id": "p102-diary57-0",
+      "pages": [
+        "diary57"
+      ]
+    },
+    {
+      "piece_id": "p103",
+      "version_id": "p103-diary57a-0",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p104",
+      "version_id": "p104-diary57a-2",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p105",
+      "version_id": "p105-diary57a-3",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p106",
+      "version_id": "p106-diary57a-5",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p107",
+      "version_id": "p107-diary57a-6",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p108",
+      "version_id": "p108-diary57a-7",
+      "pages": [
+        "diary57a"
+      ]
+    },
+    {
+      "piece_id": "p109",
+      "version_id": "p109-diary58-0",
+      "pages": [
+        "diary58"
+      ]
+    },
+    {
+      "piece_id": "p110",
+      "version_id": "p110-diary58a-0",
+      "pages": [
+        "diary58a"
+      ]
+    },
+    {
+      "piece_id": "p111",
+      "version_id": "p111-diary58a-2",
+      "pages": [
+        "diary58a"
+      ]
+    },
+    {
+      "piece_id": "p112",
+      "version_id": "p112-diary58a-8",
+      "pages": [
+        "diary58a"
+      ]
+    },
+    {
+      "piece_id": "p113",
+      "version_id": "p113-diary59-0",
+      "pages": [
+        "diary59"
+      ]
+    },
+    {
+      "piece_id": "p114",
+      "version_id": "p114-diary59-4",
+      "pages": [
+        "diary59"
+      ]
+    },
+    {
+      "piece_id": "p115",
+      "version_id": "p115-diary59-5",
+      "pages": [
+        "diary59"
+      ]
+    },
+    {
+      "piece_id": "p116",
+      "version_id": "p116-diary59a-0",
+      "pages": [
+        "diary59a"
+      ]
+    },
+    {
+      "piece_id": "p117",
+      "version_id": "p117-diary59a-1",
+      "pages": [
+        "diary59a"
+      ]
+    },
+    {
+      "piece_id": "p118",
+      "version_id": "p118-diary59a-2",
+      "pages": [
+        "diary59a"
+      ]
+    },
+    {
+      "piece_id": "p119",
+      "version_id": "p119-diary60-0",
+      "pages": [
+        "diary60"
+      ]
+    },
+    {
+      "piece_id": "p120",
+      "version_id": "p120-diary60a-0",
+      "pages": [
+        "diary60a"
+      ]
+    },
+    {
+      "piece_id": "p121",
+      "version_id": "p121-diary60a-1",
+      "pages": [
+        "diary60a"
+      ]
+    },
+    {
+      "piece_id": "p122",
+      "version_id": "p122-diary60a-3",
+      "pages": [
+        "diary60a"
+      ]
+    },
+    {
+      "piece_id": "p123",
+      "version_id": "p123-diary61-0",
+      "pages": [
+        "diary61"
+      ]
+    },
+    {
+      "piece_id": "p124",
+      "version_id": "p124-diary61a-0",
+      "pages": [
+        "diary61a"
+      ]
+    },
+    {
+      "piece_id": "p125",
+      "version_id": "p125-diary62-1",
+      "pages": [
+        "diary62"
+      ]
+    },
+    {
+      "piece_id": "p126",
+      "version_id": "p126-diary62a-3",
+      "pages": [
+        "diary62a"
+      ]
+    }
+  ],
+  "selected_page_ids": [
+    "diary1"
+  ],
+  "excluded_page_ids": [
+    "diary2",
+    "diary2a",
+    "diary3",
+    "diary3a",
+    "diary4",
+    "diary4a",
+    "diary5",
+    "diary5a",
+    "diary7",
+    "diary7a",
+    "diary8",
+    "diary8a",
+    "diary9",
+    "diary9a",
+    "diary10",
+    "diary10a",
+    "diary11",
+    "diary11a",
+    "diary12",
+    "diary12a",
+    "diary13",
+    "diary13a",
+    "diary14",
+    "diary14a",
+    "diary15",
+    "diary15a",
+    "diary16",
+    "diary16a",
+    "diary17",
+    "diary17a",
+    "diary18",
+    "diary18a",
+    "diary19",
+    "diary19a",
+    "diary20",
+    "diary20a",
+    "diary21",
+    "diary21a",
+    "diary22",
+    "diary22a",
+    "diary23",
+    "diary23a",
+    "diary24",
+    "diary24a",
+    "diary25",
+    "diary25a",
+    "diary26",
+    "diary26a",
+    "diary27",
+    "diary27a",
+    "diary28",
+    "diary28a",
+    "diary29",
+    "diary29a",
+    "diary30",
+    "diary30a",
+    "diary31",
+    "diary31a",
+    "diary32",
+    "diary32a",
+    "diary33",
+    "diary33a",
+    "diary34",
+    "diary34a",
+    "diary35",
+    "diary35a",
+    "diary36",
+    "diary36a",
+    "diary37",
+    "diary37a",
+    "diary38",
+    "diary38a",
+    "diary39",
+    "diary39a",
+    "diary40",
+    "diary40a",
+    "diary41",
+    "diary41a",
+    "diary42",
+    "diary42a",
+    "diary43",
+    "diary43a",
+    "diary44",
+    "diary44a",
+    "diary45",
+    "diary45a",
+    "diary46",
+    "diary46a",
+    "diary47",
+    "diary47a",
+    "diary48",
+    "diary48a",
+    "diary49",
+    "diary49a",
+    "diary50",
+    "diary50a",
+    "diary51",
+    "diary51a",
+    "diary52",
+    "diary52a",
+    "diary53",
+    "diary53a",
+    "diary54",
+    "diary54a",
+    "diary55",
+    "diary55a",
+    "diary56",
+    "diary56a",
+    "diary57",
+    "diary57a",
+    "diary58",
+    "diary58a",
+    "diary59",
+    "diary59a",
+    "diary60",
+    "diary60a",
+    "diary61",
+    "diary61a",
+    "diary62",
+    "diary62a",
+    "diary63",
+    "diary63a"
+  ],
+  "excluded_page_tiers": [
+    "img/p/diary2.jpg",
+    "img/i/diary2.jpg",
+    "img/m/diary2.jpg",
+    "img/p/diary2a.jpg",
+    "img/i/diary2a.jpg",
+    "img/m/diary2a.jpg",
+    "img/p/diary3.jpg",
+    "img/i/diary3.jpg",
+    "img/m/diary3.jpg",
+    "img/p/diary3a.jpg",
+    "img/i/diary3a.jpg",
+    "img/m/diary3a.jpg",
+    "img/p/diary4.jpg",
+    "img/i/diary4.jpg",
+    "img/m/diary4.jpg",
+    "img/p/diary4a.jpg",
+    "img/i/diary4a.jpg",
+    "img/m/diary4a.jpg",
+    "img/p/diary5.jpg",
+    "img/i/diary5.jpg",
+    "img/m/diary5.jpg",
+    "img/p/diary5a.jpg",
+    "img/i/diary5a.jpg",
+    "img/m/diary5a.jpg",
+    "img/p/diary7.jpg",
+    "img/i/diary7.jpg",
+    "img/m/diary7.jpg",
+    "img/p/diary7a.jpg",
+    "img/i/diary7a.jpg",
+    "img/m/diary7a.jpg",
+    "img/p/diary8.jpg",
+    "img/i/diary8.jpg",
+    "img/m/diary8.jpg",
+    "img/p/diary8a.jpg",
+    "img/i/diary8a.jpg",
+    "img/m/diary8a.jpg",
+    "img/p/diary9.jpg",
+    "img/i/diary9.jpg",
+    "img/m/diary9.jpg",
+    "img/p/diary9a.jpg",
+    "img/i/diary9a.jpg",
+    "img/m/diary9a.jpg",
+    "img/p/diary10.jpg",
+    "img/i/diary10.jpg",
+    "img/m/diary10.jpg",
+    "img/p/diary10a.jpg",
+    "img/i/diary10a.jpg",
+    "img/m/diary10a.jpg",
+    "img/p/diary11.jpg",
+    "img/i/diary11.jpg",
+    "img/m/diary11.jpg",
+    "img/p/diary11a.jpg",
+    "img/i/diary11a.jpg",
+    "img/m/diary11a.jpg",
+    "img/p/diary12.jpg",
+    "img/i/diary12.jpg",
+    "img/m/diary12.jpg",
+    "img/p/diary12a.jpg",
+    "img/i/diary12a.jpg",
+    "img/m/diary12a.jpg",
+    "img/p/diary13.jpg",
+    "img/i/diary13.jpg",
+    "img/m/diary13.jpg",
+    "img/p/diary13a.jpg",
+    "img/i/diary13a.jpg",
+    "img/m/diary13a.jpg",
+    "img/p/diary14.jpg",
+    "img/i/diary14.jpg",
+    "img/m/diary14.jpg",
+    "img/p/diary14a.jpg",
+    "img/i/diary14a.jpg",
+    "img/m/diary14a.jpg",
+    "img/p/diary15.jpg",
+    "img/i/diary15.jpg",
+    "img/m/diary15.jpg",
+    "img/p/diary15a.jpg",
+    "img/i/diary15a.jpg",
+    "img/m/diary15a.jpg",
+    "img/p/diary16.jpg",
+    "img/i/diary16.jpg",
+    "img/m/diary16.jpg",
+    "img/p/diary16a.jpg",
+    "img/i/diary16a.jpg",
+    "img/m/diary16a.jpg",
+    "img/p/diary17.jpg",
+    "img/i/diary17.jpg",
+    "img/m/diary17.jpg",
+    "img/p/diary17a.jpg",
+    "img/i/diary17a.jpg",
+    "img/m/diary17a.jpg",
+    "img/p/diary18.jpg",
+    "img/i/diary18.jpg",
+    "img/m/diary18.jpg",
+    "img/p/diary18a.jpg",
+    "img/i/diary18a.jpg",
+    "img/m/diary18a.jpg",
+    "img/p/diary19.jpg",
+    "img/i/diary19.jpg",
+    "img/m/diary19.jpg",
+    "img/p/diary19a.jpg",
+    "img/i/diary19a.jpg",
+    "img/m/diary19a.jpg",
+    "img/p/diary20.jpg",
+    "img/i/diary20.jpg",
+    "img/m/diary20.jpg",
+    "img/p/diary20a.jpg",
+    "img/i/diary20a.jpg",
+    "img/m/diary20a.jpg",
+    "img/p/diary21.jpg",
+    "img/i/diary21.jpg",
+    "img/m/diary21.jpg",
+    "img/p/diary21a.jpg",
+    "img/i/diary21a.jpg",
+    "img/m/diary21a.jpg",
+    "img/p/diary22.jpg",
+    "img/i/diary22.jpg",
+    "img/m/diary22.jpg",
+    "img/p/diary22a.jpg",
+    "img/i/diary22a.jpg",
+    "img/m/diary22a.jpg",
+    "img/p/diary23.jpg",
+    "img/i/diary23.jpg",
+    "img/m/diary23.jpg",
+    "img/p/diary23a.jpg",
+    "img/i/diary23a.jpg",
+    "img/m/diary23a.jpg",
+    "img/p/diary24.jpg",
+    "img/i/diary24.jpg",
+    "img/m/diary24.jpg",
+    "img/p/diary24a.jpg",
+    "img/i/diary24a.jpg",
+    "img/m/diary24a.jpg",
+    "img/p/diary25.jpg",
+    "img/i/diary25.jpg",
+    "img/m/diary25.jpg",
+    "img/p/diary25a.jpg",
+    "img/i/diary25a.jpg",
+    "img/m/diary25a.jpg",
+    "img/p/diary26.jpg",
+    "img/i/diary26.jpg",
+    "img/m/diary26.jpg",
+    "img/p/diary26a.jpg",
+    "img/i/diary26a.jpg",
+    "img/m/diary26a.jpg",
+    "img/p/diary27.jpg",
+    "img/i/diary27.jpg",
+    "img/m/diary27.jpg",
+    "img/p/diary27a.jpg",
+    "img/i/diary27a.jpg",
+    "img/m/diary27a.jpg",
+    "img/p/diary28.jpg",
+    "img/i/diary28.jpg",
+    "img/m/diary28.jpg",
+    "img/p/diary28a.jpg",
+    "img/i/diary28a.jpg",
+    "img/m/diary28a.jpg",
+    "img/p/diary29.jpg",
+    "img/i/diary29.jpg",
+    "img/m/diary29.jpg",
+    "img/p/diary29a.jpg",
+    "img/i/diary29a.jpg",
+    "img/m/diary29a.jpg",
+    "img/p/diary30.jpg",
+    "img/i/diary30.jpg",
+    "img/m/diary30.jpg",
+    "img/p/diary30a.jpg",
+    "img/i/diary30a.jpg",
+    "img/m/diary30a.jpg",
+    "img/p/diary31.jpg",
+    "img/i/diary31.jpg",
+    "img/m/diary31.jpg",
+    "img/p/diary31a.jpg",
+    "img/i/diary31a.jpg",
+    "img/m/diary31a.jpg",
+    "img/p/diary32.jpg",
+    "img/i/diary32.jpg",
+    "img/m/diary32.jpg",
+    "img/p/diary32a.jpg",
+    "img/i/diary32a.jpg",
+    "img/m/diary32a.jpg",
+    "img/p/diary33.jpg",
+    "img/i/diary33.jpg",
+    "img/m/diary33.jpg",
+    "img/p/diary33a.jpg",
+    "img/i/diary33a.jpg",
+    "img/m/diary33a.jpg",
+    "img/p/diary34.jpg",
+    "img/i/diary34.jpg",
+    "img/m/diary34.jpg",
+    "img/p/diary34a.jpg",
+    "img/i/diary34a.jpg",
+    "img/m/diary34a.jpg",
+    "img/p/diary35.jpg",
+    "img/i/diary35.jpg",
+    "img/m/diary35.jpg",
+    "img/p/diary35a.jpg",
+    "img/i/diary35a.jpg",
+    "img/m/diary35a.jpg",
+    "img/p/diary36.jpg",
+    "img/i/diary36.jpg",
+    "img/m/diary36.jpg",
+    "img/p/diary36a.jpg",
+    "img/i/diary36a.jpg",
+    "img/m/diary36a.jpg",
+    "img/p/diary37.jpg",
+    "img/i/diary37.jpg",
+    "img/m/diary37.jpg",
+    "img/p/diary37a.jpg",
+    "img/i/diary37a.jpg",
+    "img/m/diary37a.jpg",
+    "img/p/diary38.jpg",
+    "img/i/diary38.jpg",
+    "img/m/diary38.jpg",
+    "img/p/diary38a.jpg",
+    "img/i/diary38a.jpg",
+    "img/m/diary38a.jpg",
+    "img/p/diary39.jpg",
+    "img/i/diary39.jpg",
+    "img/m/diary39.jpg",
+    "img/p/diary39a.jpg",
+    "img/i/diary39a.jpg",
+    "img/m/diary39a.jpg",
+    "img/p/diary40.jpg",
+    "img/i/diary40.jpg",
+    "img/m/diary40.jpg",
+    "img/p/diary40a.jpg",
+    "img/i/diary40a.jpg",
+    "img/m/diary40a.jpg",
+    "img/p/diary41.jpg",
+    "img/i/diary41.jpg",
+    "img/m/diary41.jpg",
+    "img/p/diary41a.jpg",
+    "img/i/diary41a.jpg",
+    "img/m/diary41a.jpg",
+    "img/p/diary42.jpg",
+    "img/i/diary42.jpg",
+    "img/m/diary42.jpg",
+    "img/p/diary42a.jpg",
+    "img/i/diary42a.jpg",
+    "img/m/diary42a.jpg",
+    "img/p/diary43.jpg",
+    "img/i/diary43.jpg",
+    "img/m/diary43.jpg",
+    "img/p/diary43a.jpg",
+    "img/i/diary43a.jpg",
+    "img/m/diary43a.jpg",
+    "img/p/diary44.jpg",
+    "img/i/diary44.jpg",
+    "img/m/diary44.jpg",
+    "img/p/diary44a.jpg",
+    "img/i/diary44a.jpg",
+    "img/m/diary44a.jpg",
+    "img/p/diary45.jpg",
+    "img/i/diary45.jpg",
+    "img/m/diary45.jpg",
+    "img/p/diary45a.jpg",
+    "img/i/diary45a.jpg",
+    "img/m/diary45a.jpg",
+    "img/p/diary46.jpg",
+    "img/i/diary46.jpg",
+    "img/m/diary46.jpg",
+    "img/p/diary46a.jpg",
+    "img/i/diary46a.jpg",
+    "img/m/diary46a.jpg",
+    "img/p/diary47.jpg",
+    "img/i/diary47.jpg",
+    "img/m/diary47.jpg",
+    "img/p/diary47a.jpg",
+    "img/i/diary47a.jpg",
+    "img/m/diary47a.jpg",
+    "img/p/diary48.jpg",
+    "img/i/diary48.jpg",
+    "img/m/diary48.jpg",
+    "img/p/diary48a.jpg",
+    "img/i/diary48a.jpg",
+    "img/m/diary48a.jpg",
+    "img/p/diary49.jpg",
+    "img/i/diary49.jpg",
+    "img/m/diary49.jpg",
+    "img/p/diary49a.jpg",
+    "img/i/diary49a.jpg",
+    "img/m/diary49a.jpg",
+    "img/p/diary50.jpg",
+    "img/i/diary50.jpg",
+    "img/m/diary50.jpg",
+    "img/p/diary50a.jpg",
+    "img/i/diary50a.jpg",
+    "img/m/diary50a.jpg",
+    "img/p/diary51.jpg",
+    "img/i/diary51.jpg",
+    "img/m/diary51.jpg",
+    "img/p/diary51a.jpg",
+    "img/i/diary51a.jpg",
+    "img/m/diary51a.jpg",
+    "img/p/diary52.jpg",
+    "img/i/diary52.jpg",
+    "img/m/diary52.jpg",
+    "img/p/diary52a.jpg",
+    "img/i/diary52a.jpg",
+    "img/m/diary52a.jpg",
+    "img/p/diary53.jpg",
+    "img/i/diary53.jpg",
+    "img/m/diary53.jpg",
+    "img/p/diary53a.jpg",
+    "img/i/diary53a.jpg",
+    "img/m/diary53a.jpg",
+    "img/p/diary54.jpg",
+    "img/i/diary54.jpg",
+    "img/m/diary54.jpg",
+    "img/p/diary54a.jpg",
+    "img/i/diary54a.jpg",
+    "img/m/diary54a.jpg",
+    "img/p/diary55.jpg",
+    "img/i/diary55.jpg",
+    "img/m/diary55.jpg",
+    "img/p/diary55a.jpg",
+    "img/i/diary55a.jpg",
+    "img/m/diary55a.jpg",
+    "img/p/diary56.jpg",
+    "img/i/diary56.jpg",
+    "img/m/diary56.jpg",
+    "img/p/diary56a.jpg",
+    "img/i/diary56a.jpg",
+    "img/m/diary56a.jpg",
+    "img/p/diary57.jpg",
+    "img/i/diary57.jpg",
+    "img/m/diary57.jpg",
+    "img/p/diary57a.jpg",
+    "img/i/diary57a.jpg",
+    "img/m/diary57a.jpg",
+    "img/p/diary58.jpg",
+    "img/i/diary58.jpg",
+    "img/m/diary58.jpg",
+    "img/p/diary58a.jpg",
+    "img/i/diary58a.jpg",
+    "img/m/diary58a.jpg",
+    "img/p/diary59.jpg",
+    "img/i/diary59.jpg",
+    "img/m/diary59.jpg",
+    "img/p/diary59a.jpg",
+    "img/i/diary59a.jpg",
+    "img/m/diary59a.jpg",
+    "img/p/diary60.jpg",
+    "img/i/diary60.jpg",
+    "img/m/diary60.jpg",
+    "img/p/diary60a.jpg",
+    "img/i/diary60a.jpg",
+    "img/m/diary60a.jpg",
+    "img/p/diary61.jpg",
+    "img/i/diary61.jpg",
+    "img/m/diary61.jpg",
+    "img/p/diary61a.jpg",
+    "img/i/diary61a.jpg",
+    "img/m/diary61a.jpg",
+    "img/p/diary62.jpg",
+    "img/i/diary62.jpg",
+    "img/m/diary62.jpg",
+    "img/p/diary62a.jpg",
+    "img/i/diary62a.jpg",
+    "img/m/diary62a.jpg",
+    "img/p/diary63.jpg",
+    "img/i/diary63.jpg",
+    "img/m/diary63.jpg",
+    "img/p/diary63a.jpg",
+    "img/i/diary63a.jpg",
+    "img/m/diary63a.jpg"
+  ],
+  "bundled_spreads": [],
+  "bundled_plates": [],
+  "content_exclusion_pass": true,
+  "metadata_exclusion_pass": false,
+  "complete_technical_exclusion_pass": false,
+  "retained_reader_metadata": {
+    "path": "index.html",
+    "literals": {
+      "PAL": "[\n  {id:\"rev-13\", witnesses:[[[\"diary13\",\"all\"]], [[\"diary13a\",\"all\"],[\"diary14\",\"all\"],[\"diary14a\",\"all\"]]]},\n  {id:\"rev-53\", witnesses:[[[\"diary53\",\"all\"]], [[\"diary53a\",[1]]], [[\"diary53a\",[2]]], [[\"diary54\",[0]]]]},\n  {id:\"rev-3\", witnesses:[[[\"diary3\",[0]]], [[\"diary3\",[1]]], [[\"diary3\",[2]]]]},\n  {id:\"rev-8\", witnesses:[[[\"diary8\",\"all\"]], [[\"diary8a\",\"all\"]]]}\n]",
+      "HF": "[\"diary21a\", \"diary63\", \"diary26\"]"
+    },
+    "withheld_page_ids": [
+      "diary13",
+      "diary13a",
+      "diary14",
+      "diary14a",
+      "diary21a",
+      "diary26",
+      "diary3",
+      "diary53",
+      "diary53a",
+      "diary54",
+      "diary63",
+      "diary8",
+      "diary8a"
+    ],
+    "piece_ids_on_named_pages": [
+      "p004",
+      "p012",
+      "p020",
+      "p032",
+      "p040",
+      "p068",
+      "p096",
+      "p097"
+    ],
+    "clearance": "awaiting author rule or T04/builder removal and re-verification",
+    "limit": "Identifier/block structure remains; this does not imply that those pages' text or images is bundled."
+  },
+  "release_clearance": false,
+  "scope": "Only current preview/ assessed. No withheld text/version-data/images bundled;13 withheld page identifiers and PAL/HF block structure remain in HTML. Private comparison/queue intentionally contain withheld material. No author approval or never-online claim."
+}

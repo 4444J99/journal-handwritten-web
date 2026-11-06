@@ -1,0 +1,5 @@
+piece_id,first_page,page_sequence,recorded_kind,recorded_status,pool,preview_version_ids,preview_selection_basis,reviewed_lines,total_lines,batch_gate
+p001,diary1,1,poem,complete,,"[""p001-diary1-0""]",top of the stack; no decided final,38,38,"{""pass"": false, ""detail"": ""not listed in any batch""}"
+p002,diary2,2,poem,complete,,"[""p002-diary2-2""]",top of the stack; no decided final,0,14,"{""pass"": false, ""detail"": ""not listed in any batch""}"
+p003,diary2a,3,poem,complete,,"[""p003-diary2a-0""]",top of the stack; no decided final,0,16,"{""pass"": false, ""detail"": ""not listed in any batch""}"
+p004,diary3,4,poem,complete,,"[""p004-diary3-1""]",top of the stack; no decided final,0,20,"{""pass"": false, ""detail"": ""not listed in any batch""}"

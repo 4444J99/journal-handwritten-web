@@ -1,0 +1,129 @@
+{
+  "release_preparation_revision": "6d1ff59fb6763f80828478e7819d9d879dd700e3",
+  "tree": "ce5a37af26a1eedd64ffa2a089440c9d886c467b",
+  "dependency_revision": "e5ae157ef556690e73047e30225cad61c5484cf9",
+  "release_tools_sha256": {
+    "tools/prepare_release_packet.py": "38ed41f13f636a2207c39fc29f432ead0c43978567403b394a4d8c7aab37d201",
+    "tools/post_poem.py": "5e6d072c94fb6c8eae8444a7f986058a53fef90524f84c4272954a5475f7bf6f",
+    "tools/build_public.py": "42302b2f8bcad1728097dc533dd860305534da7b5be6a73d4eedcde488eb3abb",
+    "tools/font_rename.py": "2583dc02b1c69eaf3f0c764ff4b348a46238b9272252a055b10902bbad59706f",
+    "studio-cf/import_export.py": "bf9ed68d4cbdab6cd8edeb53184b12d23c0080bebaf3c170e2d89baed55714fe",
+    "studio-cf/sqlguard.py": "30fb574a93e97a6c0d9b3ad98b576c495b68d90912ae04394c99f569c1375703"
+  },
+  "browser_verifier_sha256": "2fc87a019611537018b4b85f06ea089d3228e4a4a856bbdb8f13531a22692e4a",
+  "python_version": "3.12.14",
+  "node_version": "v24.22.1",
+  "python_suite": {
+    "tests": 151,
+    "skipped": 1,
+    "failed": 0,
+    "duration_seconds": 78.407,
+    "log": "python-tests-6d1ff59.txt",
+    "skip": "test_python_without_fonttools_is_reported: system Python has fontTools; absence simulation not exercised"
+  },
+  "mandatory_integrity": {
+    "exit": 0,
+    "references_checked": 509,
+    "missing": 0,
+    "checksums_recorded": 511
+  },
+  "actual_posting_dry_run_exit": 3,
+  "actual_stop": "Export has no release documents; CLI stops before normal gates. Private audit uses existing import_export.scan with no invented rows.",
+  "private_gate_evaluations": {
+    "series": {
+      "pass": false,
+      "detail": "no release document (unsorted)"
+    },
+    "all_versions_reviewed": {
+      "pass": true,
+      "detail": "all 38 lines confirmed or corrected"
+    },
+    "filed_or_registered_status": {
+      "pass": false,
+      "detail": "not listed in any batch"
+    },
+    "filing_evidence": {
+      "pass": false,
+      "detail": "No independent filing evidence supplied or verified by this command."
+    },
+    "author_release_clearance": {
+      "pass": false,
+      "detail": "Preparation never grants release authority."
+    }
+  },
+  "public_preview_files": [
+    {
+      "path": "_headers",
+      "bytes": 27,
+      "sha256": "1798f78f5e48ce125506274988d5555f052d762afcb096ab9e4b8b15c766269a"
+    },
+    {
+      "path": "data/j.json",
+      "bytes": 2085,
+      "sha256": "4c2374b5dd435598e02bc277dc11f71830eb3d283e74fb3104b76a3f75526096"
+    },
+    {
+      "path": "img/a/k0.jpg",
+      "bytes": 28729,
+      "sha256": "3dd3d0a6f9bd11cfaf34e2251c3c5585c2ff9eea36577359c812d6a9529a32d9"
+    },
+    {
+      "path": "img/a/t0.jpg",
+      "bytes": 32859,
+      "sha256": "b63af7605d4a83769d675d7c435ff9678faacbd7ad440eb7dfbe2eab3563159b"
+    },
+    {
+      "path": "img/i/diary1.jpg",
+      "bytes": 69878,
+      "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371"
+    },
+    {
+      "path": "img/m/diary1.jpg",
+      "bytes": 31312,
+      "sha256": "d5689872b7057019ba538313ddafca003c16bc1aec78142d1b59b9827f6e002c"
+    },
+    {
+      "path": "img/p/diary1.jpg",
+      "bytes": 200203,
+      "sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5"
+    },
+    {
+      "path": "index.html",
+      "bytes": 230037,
+      "sha256": "50bd7de0fd6e68aafca6d05bc5f359a56b26bbf29d5af1dea142295c53e7f0ec"
+    }
+  ],
+  "public_bytes_identical_to_baseline": true,
+  "content_exclusion_pass": true,
+  "metadata_exclusion_pass": false,
+  "complete_technical_exclusion_pass": false,
+  "inputs_unchanged": true,
+  "release_clearance": false,
+  "studio_acceptance": {
+    "receipt": "studio/acceptance.json",
+    "checks": 12,
+    "tested_revision": "5d111c13764655312c32ddf1b55390198bc7f70c",
+    "equivalence": "All studio and studio-cf blobs identical at e5ae157e; root checked receipt source hashes",
+    "viewport": "390x844 desktop; no touch or physical phone"
+  },
+  "historical_baseline": {
+    "release_preparation_revision": "e0177fa8a53ee41eda31a90253fbab3cc798556e",
+    "dependency_revision": "5d111c13764655312c32ddf1b55390198bc7f70c",
+    "tests": 104,
+    "skipped": 1,
+    "dry_run_exit": 2,
+    "limitation": "Original checks omitted PAL/HF metadata exposure. The same HTML bytes contained it then; current inventory supersedes any blanket exclusion inference."
+  },
+  "review_state_counts": {
+    "diary1": {
+      "confirmed": 22,
+      "corrected": 0
+    },
+    "diary62a": {
+      "confirmed": 11,
+      "corrected": 5
+    },
+    "total_reviewed": 38,
+    "correction": "Earlier narrative confused 16 reviewed diary62a lines with 16 corrected lines. Five corrected lines agrees with issue #113. Current report derives counts from the audit."
+  }
+}

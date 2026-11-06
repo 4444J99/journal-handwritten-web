@@ -42,6 +42,12 @@ Conventions
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
+<<<<<<< HEAD
+| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | In progress — #89, #92, #93, #94, #96, #98, #99, #100 and versforms#1 merged; #97 and the post-poem PR still open; studio data in D1, nothing deployed, no poem posted |
+| 2026-11-05 | [T03: first-release technical preparation](2026-11-05-t03-release-preparation.md) | Private packet and repeatable checks; author clearance, classification, filing evidence and integration gates remain open |
+||||||| b2199a0
+| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | In progress — #89, #92, #93, #94, #96, #98, #99, #100 and versforms#1 merged; #97 and the post-poem PR still open; studio data in D1, nothing deployed, no poem posted |
+=======
 | 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
 | 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
 | 2026-11-05 | [T05: private notes and contribution review](2026-11-05-t05-private-notes-contributions.md) | Private workflow verified for draft review; T01/T02/T03/T04 integration and author choices remain open; no publication |
@@ -56,6 +62,7 @@ Conventions
 ||||||| fab6a82
 | 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
 | 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
+>>>>>>> origin/main
 
 ## Repository state (checked 2026-11-05)
 - `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
