@@ -2272,14 +2272,14 @@ class HardenedPostingTests(Base):
         git(clone, "config", "--add", "remote.origin.pushurl", str(bare))
         git(clone, "config", "--add", "remote.origin.pushurl", "")
         self.assertEqual(self.go("p001", "--accept-embedded-font", public=clone), 3, self.out)
-        self.assertIn("FAIL  stop at most one remote.origin.pushurl", self.out)
+        self.assertIn("FAIL  stop at most one nonempty remote.origin.pushurl", self.out)
 
     def test_remote_origin_mirror_is_a_hard_stop(self):
         self.prepare()
         clone, bare = make_public(self.tmp)
         git(clone, "config", "remote.origin.mirror", "true")
         self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
-        self.assertIn("remote.origin.mirror is not set", self.out)
+        self.assertIn("remote.origin.mirror is disabled or unset", self.out)
 
     # m3. the committed BYTES are compared with the build, not only paths and sizes
     def test_a_clean_filter_that_changes_bytes_without_changing_sizes_is_refused(self):

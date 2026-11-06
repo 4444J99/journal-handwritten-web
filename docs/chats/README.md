@@ -53,6 +53,8 @@ Conventions
 | 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
 | 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
 
+| 2026-11-06 | [Posting hardening completion](2026-11-06-posting-hardening-completion.md) | Follow-up repair for #123: tests, Git isolation, owned cleanup and accurate runbook; review PR, no publication |
+
 ## Repository state (checked 2026-11-05)
 - `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
