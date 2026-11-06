@@ -287,7 +287,9 @@ function stringArray(value, label) {
   return value;
 }
 function validateRegionPolicy(manifest, rules) {
-  if (manifest.schema !== 'versforms.source-region-manifest.v1' || manifest.scope?.distribution !== 'private-local' || manifest.scope?.may_publish !== false || rules.schema !== 'versforms.visibility-policy.v1' || rules.publication?.enabled !== false || rules.release_gate?.may_publish === true || rules.release_gate?.may_schedule_external_actions === true) fail('Region scope is not a private, nonpublishing preview.');
+  // A separate release gate may retain author permissions. This private route
+  // grants none: its own manifest scope and publication flag must stay disabled.
+  if (manifest.schema !== 'versforms.source-region-manifest.v1' || manifest.scope?.distribution !== 'private-local' || manifest.scope?.may_publish !== false || rules.schema !== 'versforms.visibility-policy.v1' || rules.publication?.enabled !== false) fail('Region scope is not a private, nonpublishing preview.');
   if (!Array.isArray(manifest.atoms) || !manifest.atoms.length || !Array.isArray(manifest.source_assets) || !object(rules.pieces)) fail('Invalid region manifest or policy.');
   const withheldAssets = stringArray(rules.withheld_assets || [],'withheld assets'), withheldPages = stringArray(rules.withheld_pages || [],'withheld pages');
   for (const asset of manifest.source_assets) if (asset.withheld === true || withheldAssets.includes(asset.asset_id) || withheldAssets.includes(asset.path)) fail('Region policy withholds a source asset.');
