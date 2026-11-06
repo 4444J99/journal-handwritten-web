@@ -45,7 +45,7 @@ class Stop(Exception):
 
 
 def say(msg=""):
-    print(msg, flush=True)
+    print(_redact(str(msg)), flush=True)
 
 
 # ------------------------------------------------------------------ inputs
@@ -142,12 +142,12 @@ class Source:
                     raise Stop(f"page {pg}: its spread image ({f}.jpg) is copied into the public site, but no facing page can be identified "
                                f"(no other page shares sp.k {k!r} or sp.f {f!r}, and no page record is named {f!r}), so what is written on the other half cannot be checked")
                 mates |= found
-            elif sp.get("s") == "whole spread" or sp.get("cb") is None:
-                if k:
-                    found = {q["id"] for q in self.j["pages"] if q["id"] != pg and (q.get("sp") or {}).get("k") == k}
-                    if not found:
-                        raise Stop(f"page {pg}: its scan is a whole spread ({k!r}), but no facing page can be identified, so what is written on the other half cannot be checked")
-                    mates |= found
+            elif sp and (sp.get("s") == "whole spread" or sp.get("cb") is None):
+                found = {q["id"] for q in self.j["pages"]
+                         if k and q["id"] != pg and (q.get("sp") or {}).get("k") == k}
+                if not found:
+                    raise Stop(f"page {pg}: its scan is a whole spread ({k!r}), but no facing page can be identified, so what is written on the other half cannot be checked")
+                mates |= found
             mates |= self.scan_twins().get(pg, set())
         return sorted(mates - pages)
 
@@ -706,24 +706,30 @@ def tree_hashes(root):
 
 # ------------------------------------------------------------------ public repository
 
-_GIT_ENV_BLOCKED = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
-                      "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_QUARANTINE_PATH",
-                      "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
+_GIT_ENV_BLOCKED = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE",
+                    "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_QUARANTINE_PATH",
+                    "GIT_IMPLICIT_WORK_TREE", "GIT_PREFIX", "GIT_SHALLOW_FILE", "GIT_GRAFT_FILE",
+                    "GIT_REPLACE_REF_BASE", "GIT_NAMESPACE",
+                    "GIT_CONFIG", "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
 
 
 def _clean_env():
+    """Keep authentication/identity settings, but isolate repository and config discovery per subprocess.
+
+    GIT_CONFIG changes `git config` alone: keeping it would let validation see a different config from a push.
+    Do not mutate os.environ: callers and exception paths must retain their original environment.
+    """
     env = dict(os.environ)
     for key in list(env):
         if key in _GIT_ENV_BLOCKED or key.startswith("GIT_CONFIG_KEY_") or key.startswith("GIT_CONFIG_VALUE_"):
             env.pop(key, None)
-    # Remove any GIT_CONFIG_KEY/VALUE indexed entries already covered above.
     return env
 
 
-def git(repo, *args, check=True):
-    r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, env=_clean_env())
+def git(repo, *args, check=True, text=True):
+    r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=text, env=_clean_env())
     if check and r.returncode != 0:
-        raise RuntimeError(f"git {' '.join(args)} failed: {r.stderr.strip() or r.stdout.strip()}")
+        raise RuntimeError(_redact(f"git {' '.join(args)} failed: {r.stderr.strip() or r.stdout.strip()}"))
     return r.stdout.strip() if check else r
 
 
@@ -762,7 +768,8 @@ def effective_url_ok(url):
 
 def _redact(url):
     """A URL for a message: any user name or password is replaced (it may be a token)."""
-    return re.sub(r"(?<=://).+@(?=[^/\s]*\.)", "***@", url)
+    # Malformed userinfo can contain @ or /; the host need not contain a dot (localhost, IPv6).
+    return re.sub(r"(?<=://)[^\r\n]*@", "***@", url)
 
 
 def remote_main_sha(path):
@@ -776,24 +783,39 @@ def check_public_repo(path, branch):
     p = Path(path)
     if not (p / ".git").exists():
         return [("public repo is a git checkout", False, str(path))]
-    urls = [x for x in git(p, "config", "--get-all", "remote.origin.url", check=False).stdout.splitlines() if x.strip()]
-    pushurls = [x for x in git(p, "config", "--get-all", "remote.origin.pushurl", check=False).stdout.splitlines() if x.strip()]
-    url = urls[0].strip() if urls else ""
+    url_config = git(p, "config", "--null", "--get-all", "remote.origin.url", check=False)
+    push_config = git(p, "config", "--null", "--get-all", "remote.origin.pushurl", check=False)
+    # NUL-delimited values retain empty entries: dropping one could hide an extra push destination.
+    urls = url_config.stdout[:-1].split("\0") if url_config.returncode == 0 else []
+    pushurls = push_config.stdout[:-1].split("\0") if push_config.returncode == 0 else []
+    url = urls[0] if urls else ""
     res.append((f"remote origin is {PUBLIC_REPO_NAME} (https://github.com, no credentials in the URL)", remote_is_public_repo(url), _redact(url) or "no origin"))
-    # exactly one effective fetch URL and one effective push URL
-    one_url_ok = (len(urls) <= 1)
-    one_pushurl_ok = (len(pushurls) <= 1)
-    res.append(("exactly one remote.origin.url", one_url_ok, "" if one_url_ok else "more than one remote.origin.url"))
-    res.append(("exactly one remote.origin.pushurl", one_pushurl_ok, "" if one_pushurl_ok else "more than one remote.origin.pushurl"))
-    mirror_cfg = git(p, "config", "--get", "remote.origin.mirror", check=False).stdout.strip().lower()
-    res.append(("remote.origin.mirror is not set", mirror_cfg not in ("true", "1", "yes"), f"remote.origin.mirror = {mirror_cfg}" if mirror_cfg else ""))
-    fetch_eff = git(p, "remote", "get-url", "origin", check=False).stdout.strip()
-    push_eff = git(p, "remote", "get-url", "--push", "origin", check=False).stdout.strip()
+    one_url_ok = url_config.returncode == 0 and len(urls) == 1
+    one_pushurl_ok = push_config.returncode in (0, 1) and len(pushurls) <= 1 and all(pushurls)
+    res.append(("exactly one remote.origin.url", one_url_ok, "" if one_url_ok else "missing, unreadable or multiple origin URLs"))
+    res.append(("at most one nonempty remote.origin.pushurl", one_pushurl_ok, "" if one_pushurl_ok else "empty, unreadable or multiple push URLs"))
+    mirror = git(p, "config", "--type=bool", "--get", "remote.origin.mirror", check=False)
+    mirror_ok = mirror.returncode == 1 or (mirror.returncode == 0 and mirror.stdout.strip() == "false")
+    res.append(("remote.origin.mirror is disabled or unset", mirror_ok, "" if mirror_ok else "enabled or not a valid Git boolean"))
+    fetch_urls = git(p, "remote", "get-url", "--all", "origin", check=False)
+    push_urls = git(p, "remote", "get-url", "--push", "--all", "origin", check=False)
+    fetch_list, push_list = fetch_urls.stdout.splitlines(), push_urls.stdout.splitlines()
+    one_fetch = fetch_urls.returncode == 0 and len(fetch_list) == 1
+    one_push = push_urls.returncode == 0 and len(push_list) == 1
+    res.append(("exactly one effective fetch URL", one_fetch, "" if one_fetch else "missing, unreadable or multiple fetch URLs"))
+    res.append(("exactly one effective push URL", one_push, "" if one_push else "missing, unreadable or multiple push URLs"))
+    fetch_eff = fetch_list[0] if one_fetch else ""
+    push_eff = push_list[0] if one_push else ""
     res.append(("effective fetch and push URL are the same (after insteadOf, pushInsteadOf and pushurl)", bool(fetch_eff) and fetch_eff == push_eff,
                 "" if fetch_eff == push_eff and fetch_eff else f"fetch {_redact(fetch_eff) or '(none)'}, push {_redact(push_eff) or '(none)'}"))
     res.append((f"effective URL is {PUBLIC_REPO_NAME} on github.com", bool(fetch_eff) and effective_url_ok(fetch_eff) and effective_url_ok(push_eff), _redact(push_eff) or "no push URL"))
-    push_cfg = git(p, "config", "--get-all", "remote.origin.push", check=False).stdout.strip()
-    res.append(("remote.origin.push is not set (it would change what a push sends)", not push_cfg, f"remote.origin.push = {push_cfg}" if push_cfg else ""))
+    push_setting = git(p, "config", "--get-all", "remote.origin.push", check=False)
+    push_cfg = push_setting.stdout.strip()
+    no_push_setting = push_setting.returncode == 1  # an explicitly empty setting is still present
+    res.append(("remote.origin.push is not set (it would change what a push sends)", no_push_setting,
+                "" if no_push_setting else f"remote.origin.push is configured or unreadable: {push_cfg or '(empty)'}"))
+    if any(not ok for _, ok, _ in res):
+        return res  # Do not contact a remote whose identity/configuration was refused.
     cur = git(p, "rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip()
     res.append(("on branch main", cur == "main", f"on {cur!r}"))
     dirty = git(p, "--no-optional-locks", "status", "--porcelain", check=False).stdout.strip()  # does not refresh .git/index
@@ -811,18 +833,18 @@ def check_public_repo(path, branch):
 def commit_in_worktree(repo, build_dir, branch, message, scratch):
     """Create `branch` from main and commit exactly the build output as site/, in a TEMPORARY WORKTREE: the clone's own
     checkout (on main) is never touched, so a failure leaves nothing half-written in it. The commit is then compared with
-    the build listing (paths and sizes). On success the worktree is removed and the branch stays; on failure both are
-    removed and the RuntimeError says what is left. -> commit sha."""
-    # Sanitize the process environment: GIT_DIR/GIT_WORK_TREE/etc. must not redirect git operations.
-    _saved = {k: os.environ.pop(k, None) for k in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE",
-                                                     "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
-                                                     "GIT_QUARANTINE_PATH")}
+    build paths and bytes. On success the worktree is removed and the branch stays; on failure cleanup removes only
+    a branch created by this invocation, and the RuntimeError says what is left. -> commit sha."""
     repo = Path(repo)
     wt_root = Path(tempfile.mkdtemp(prefix="post-poem-wt-", dir=str(scratch)))
     target = wt_root / "tree"
-    created = True
+    created = False
     try:
-        git(repo, "worktree", "add", "-b", branch, str(target), "main")
+        # Own the branch before adding the worktree: add can create it and then fail in a post-checkout hook.
+        # A failed branch creation must never authorize deleting somebody else's existing branch.
+        git(repo, "branch", branch, "main")
+        created = True
+        git(repo, "worktree", "add", str(target), branch)
         site = target / "site"
         if site.exists():
             shutil.rmtree(site)
@@ -839,9 +861,8 @@ def commit_in_worktree(repo, build_dir, branch, message, scratch):
             diff = sorted(set(committed_paths) ^ set(built_paths))
             raise RuntimeError(f"the committed site/ differs from the build output ({len(diff)} path(s), first: {', '.join(diff[:5])})")
         # Compare committed bytes to build bytes (git clean/smudge filters can change content without changing size).
-        import subprocess as _sp
         for rel in built_paths:
-            r = _sp.run(["git", "-C", str(target), "show", f"HEAD:site/{rel}"], capture_output=True)
+            r = git(target, "show", f"HEAD:site/{rel}", check=False, text=False)
             build_bytes = (Path(build_dir) / rel).read_bytes()
             if r.returncode != 0 or r.stdout != build_bytes:
                 raise RuntimeError(f"the committed site/ differs from the build output (1 path(s), first: {rel})")
@@ -855,15 +876,13 @@ def commit_in_worktree(repo, build_dir, branch, message, scratch):
         if created:
             r = git(repo, "branch", "-D", branch, check=False)
             left.append(f"branch {branch} " + ("removed again" if r.returncode == 0 else f"COULD NOT be removed ({r.stderr.strip()}); delete it by hand"))
-        left.append(f"the checkout of {repo} was not touched (still on main, clean)")
+        else:
+            left.append(f"branch {branch} was not created by this run; existing branches were retained")
+        left.append(f"the posting script did not write the checkout of {repo}; inspect it before retrying if a hook failed")
         raise RuntimeError(f"{e}. State left: " + "; ".join(left)) from e
     finally:
         git(repo, "worktree", "remove", "--force", str(target), check=False)
-        git(repo, "worktree", "prune", check=False)
         shutil.rmtree(wt_root, ignore_errors=True)
-        for k, v in _saved.items():
-            if v is not None:
-                os.environ[k] = v
 
 
 def public_changes(public_site, out):
@@ -944,7 +963,7 @@ def render_pr_body(ctx):
         L.append("  - font file name records: printed on the console of the run, not in this text")
     L.append("")
     L.append("Merging is the author's decision. To undo a post: `git revert` the merge commit in this repository.")
-    return "\n".join(L) + "\n"
+    return _redact("\n".join(L) + "\n")
 
 
 # ------------------------------------------------------------------ main flow
@@ -1014,6 +1033,7 @@ def run(a):
 
     # --- versions, corrections, stale transcript, shared scan
     versions, corrections, counts, warnings, shared_all = {}, {}, {}, [], []
+    public_warnings = {}  # detailed console warning -> public wording without withheld page identifiers
     console_notes = []  # shown on the console only: they can name pieces that are not posted
     select = {}
     try:
@@ -1088,13 +1108,17 @@ def run(a):
         sib = {pg for pg in seen_pages for q in [src.pieces[pid]]
                for vi, v in enumerate(q["V"]) if vi not in select[pid] for p2, _ in v["P"] if p2 == pg}
         if sib:
-            warnings.append(f"{pid}: the scan of {', '.join(sorted(sib))} also shows writing of its unpublished version(s)")
+            warning = f"{pid}: the scan of {', '.join(sorted(sib))} also shows writing of its unpublished version(s)"
+            warnings.append(warning)
+            public_warnings[warning] = f"{pid}: the published scan also shows writing of its unpublished version(s); page details are in the private console log"
         # an already-public piece that shares the scan: its own unpublished versions on that page show too
         for f in finds:
             if f["status"] == "ok" and f["id"] in select and f["id"] != pid:
                 hidden = sorted({f["page"]} & {pg for vi, v in enumerate(src.pieces[f["id"]]["V"]) if vi not in select[f["id"]] for pg, _ in v["P"]})
                 if hidden:
-                    warnings.append(f"{f['id']} (already public) has unpublished version(s) written on {', '.join(hidden)}, whose scan is in this site")
+                    warning = f"{f['id']} (already public) has unpublished version(s) written on {', '.join(hidden)}, whose scan is in this site"
+                    warnings.append(warning)
+                    public_warnings[warning] = f"{f['id']} has unpublished version(s) visible in a published scan; page details are in the private console log"
     extra = sorted(accepted - used_ids)
     if extra:
         # ids of pieces that are not posted yet stay out of the pull request text: console only
@@ -1240,7 +1264,8 @@ def run(a):
     new_pieces, changed_pieces = public_changes(Path(a.public_repo) / "site", out)
     # the pull request text is public: it is rendered and checked BEFORE anything is committed
     ctx = dict(pids=pids, versions=versions, pages=res["pages"], diff=diff, results=results, checks=checks,
-               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, font_notes=font_notes, warnings=warnings, audit=audit,
+               counts={p: counts[p] for p in pids}, sha=sha, shared=shared_all, font_notes=font_notes,
+               warnings=[public_warnings.get(w, w) for w in warnings], audit=audit,
                new_pieces=new_pieces, changed_pieces=changed_pieces)
     body = render_pr_body(ctx)
     if OLD_NAME_RE.search(body):
@@ -1262,8 +1287,7 @@ def run(a):
     pushed = False
     try:
         # the fully qualified refspec: what is sent does not depend on remote.origin.push or push.default
-        git(a.public_repo, "config", "push.followTags", "false")
-        git(a.public_repo, "push", "origin", f"refs/heads/{branch}:refs/heads/{branch}")
+        git(a.public_repo, "push", "--no-follow-tags", "origin", f"refs/heads/{branch}:refs/heads/{branch}")
         pushed = True
         on_origin = git(a.public_repo, "ls-remote", "origin", f"refs/heads/{branch}", check=False).stdout.split()
         if not on_origin or on_origin[0] != sha_commit:
