@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "observedAt": "2026-11-06T00:37:03.915Z",
+  "browser": "153.0.8010.0",
+  "node": "v24.22.1",
+  "checks": [
+    {
+      "name": "private static files and notes API deny unauthenticated access",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "existing source without notes opens with empty hidden notes",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "authoring persists exact source, distinct editor and label-only citation",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "editing preserves both dates and revisions; unsaved text blocks review and record switching",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "placement and date-only timing previews leave invitations and submissions inactive",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "accepted and cleared fixture reveals only on request; Escape empties DOM and restores focus",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "malformed UTF-8 backup is rejected before any restore write",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "browser export restores every revision into an empty independent D1 database and survives reload",
+      "pass": true,
+      "detail": {
+        "revisions": 4
+      }
+    },
+    {
+      "name": "contribution reviewed and credited without changing author poem/version/release/numbering collections",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "cleared private technical fixtures are absent from public projection",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "390px dark-mode preview fits viewport",
+      "pass": true,
+      "detail": "Chromium emulation; no physical phone claim"
+    },
+    {
+      "name": "source correction invalidates anchor and empties preview without moving stored notes",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "author data, shared studio/reader pages and release whitelist remain byte-identical",
+      "pass": true,
+      "detail": true
+    },
+    {
+      "name": "no browser exceptions or off-origin requests",
+      "pass": true,
+      "detail": true
+    }
+  ],
+  "sourceHashes": {
+    "site/data/j.json": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac",
+    "studio/data/review.json": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353",
+    "release/public.json": "f6a0b6c89243082c4c7602e908b66ff4b7823553b04e22dbbc62b0a0b65e4a1a",
+    "studio/index.html": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+    "site/index.html": "7c3e286252e2760085cb420b292b199f3235a80a64f1a2fb96fedd4b51bcc3cc"
+  },
+  "physicalDevice": "not tested",
+  "scratch": "/tmp/versforms-notes-runtime-hHDEZH"
+}

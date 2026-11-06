@@ -59,7 +59,7 @@ class ScanTests(unittest.TestCase):
             make_export(d)
             docs, rejects = ie.scan(d)
             self.assertEqual({c: len(v) for c, v in docs.items()},
-                             {"reviews": 38, "decisions": 0, "versions": 0, "release": 0, "batches": 0, "rconfig": 0})
+                             {"reviews": 38, "decisions": 0, "versions": 0, "release": 0, "batches": 0, "rconfig": 0, "notes": 0, "contributions": 0})
             self.assertEqual(rejects, [])
 
     def test_dry_run_prints_every_collection_and_writes_nothing(self):

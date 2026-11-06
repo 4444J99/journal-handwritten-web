@@ -109,6 +109,24 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 - Deposit generator: `release/copyright/make_deposit.py <up to 10 piece ids>` builds one PDF per poem (text + page scan) and a manifest; refuses unverified pieces unless overridden. The Release tab prints this command per batch.
 
 ## Rebuild order (technical)
+
+### T05 addendum — 2026-11-05
+
+Private versioned notes and contribution review are implemented on an isolated
+draft branch; see `docs/notes-workflow.md` and `docs/integration/t05-handoff.md`
+in the repository. This does not replace the historical author decisions
+above. The stored `around` participation default from November 5 is
+Claude-derived; type, invited/open format and permission terms remain the
+author's choices. It never increments the author's n/100.
+
+T01 owns the staged studio entry/persistence integration, T02 the proposed
+fingerprint/word-anchor agreement, T03 release-event/manifest integration, and
+T04 final requested reader placement/lifecycle. New note and contribution
+collections must travel with complete private exports; old six-collection
+exporters are insufficient. Reflection text and final timing/placement remain
+with the author. Invites, submissions and publication stay inactive.
+
+### Existing rebuild sequence
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
 ## T10 technical preparation — 2026-11-05 review baseline

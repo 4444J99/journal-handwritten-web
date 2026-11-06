@@ -1,0 +1,337 @@
+{
+  "format": "versforms-notes-backup",
+  "version": 1,
+  "exportedAt": "2026-11-06T00:36:54.978Z",
+  "notes": [
+    {
+      "schemaVersion": 1,
+      "family": "note",
+      "recordId": "note-a3f74d5b-f98c-4409-a45b-c11bfc9e0bb7",
+      "revisionId": "rev-479af7e4-4a25-44e9-9393-3f7c7fd65187",
+      "parents": [],
+      "author": {
+        "id": "fixture-author",
+        "credit": "Technical fixture author",
+        "provenance": "technical-fixture",
+        "sourceIds": []
+      },
+      "poemDate": {
+        "certainty": "unknown",
+        "value": null
+      },
+      "noteDate": "2026-11-04",
+      "editedAt": "2026-11-06T00:36:53.695Z",
+      "editedBy": "fixture-editor",
+      "anchor": {
+        "schemaVersion": 1,
+        "pieceId": "p001",
+        "versionId": "p001-diary1-0",
+        "versionFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+        "members": [
+          [
+            "diary1",
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ]
+        ],
+        "lineId": "diary1-0-0",
+        "lineText": "The walls",
+        "word": null,
+        "sourceProvenance": {
+          "kind": "derived-id-map",
+          "ids": "preserved; none allocated",
+          "sources": [
+            {
+              "path": "site/data/j.json",
+              "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+            },
+            {
+              "path": "studio/data/review.json",
+              "sha256": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+            }
+          ]
+        }
+      },
+      "text": "TECHNICAL FIXTURE — note revision one",
+      "citations": [
+        {
+          "label": "TECHNICAL FIXTURE reference",
+          "locator": "fixture section"
+        }
+      ],
+      "visibility": "public-candidate",
+      "editorial": {
+        "status": "draft",
+        "approval": null
+      },
+      "release": {
+        "status": "held",
+        "clearance": null,
+        "publication": null,
+        "revocation": null
+      },
+      "fixture": true,
+      "changeReason": "Initial note",
+      "kind": "footnote"
+    },
+    {
+      "schemaVersion": 1,
+      "family": "note",
+      "recordId": "note-a3f74d5b-f98c-4409-a45b-c11bfc9e0bb7",
+      "revisionId": "rev-4f44be1b-e311-43c3-8c95-45bb3f7b7499",
+      "parents": [
+        "rev-479af7e4-4a25-44e9-9393-3f7c7fd65187"
+      ],
+      "author": {
+        "id": "fixture-author",
+        "credit": "Technical fixture author",
+        "provenance": "technical-fixture",
+        "sourceIds": []
+      },
+      "poemDate": {
+        "certainty": "unknown",
+        "value": null
+      },
+      "noteDate": "2026-11-05",
+      "editedAt": "2026-11-06T00:36:53.879Z",
+      "editedBy": "fixture-editor",
+      "anchor": {
+        "schemaVersion": 1,
+        "pieceId": "p001",
+        "versionId": "p001-diary1-0",
+        "versionFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+        "members": [
+          [
+            "diary1",
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ]
+        ],
+        "lineId": "diary1-0-0",
+        "lineText": "The walls",
+        "word": null,
+        "sourceProvenance": {
+          "kind": "derived-id-map",
+          "ids": "preserved; none allocated",
+          "sources": [
+            {
+              "path": "site/data/j.json",
+              "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+            },
+            {
+              "path": "studio/data/review.json",
+              "sha256": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+            }
+          ]
+        }
+      },
+      "text": "TECHNICAL FIXTURE — note revision two",
+      "citations": [
+        {
+          "label": "TECHNICAL FIXTURE reference",
+          "locator": "fixture section"
+        }
+      ],
+      "visibility": "public-candidate",
+      "editorial": {
+        "status": "draft",
+        "approval": null
+      },
+      "release": {
+        "status": "held",
+        "clearance": null,
+        "publication": null,
+        "revocation": null
+      },
+      "fixture": true,
+      "changeReason": "Revision",
+      "kind": "footnote"
+    },
+    {
+      "schemaVersion": 1,
+      "family": "note",
+      "recordId": "note-a3f74d5b-f98c-4409-a45b-c11bfc9e0bb7",
+      "revisionId": "rev-29773d05-7400-46d3-bfc8-8a933eeffc42",
+      "parents": [
+        "rev-4f44be1b-e311-43c3-8c95-45bb3f7b7499"
+      ],
+      "author": {
+        "id": "fixture-author",
+        "credit": "Technical fixture author",
+        "provenance": "technical-fixture",
+        "sourceIds": []
+      },
+      "poemDate": {
+        "certainty": "unknown",
+        "value": null
+      },
+      "noteDate": "2026-11-05",
+      "editedAt": "2026-11-06T00:36:54.077Z",
+      "editedBy": "fixture-editor",
+      "anchor": {
+        "schemaVersion": 1,
+        "pieceId": "p001",
+        "versionId": "p001-diary1-0",
+        "versionFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+        "members": [
+          [
+            "diary1",
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ]
+        ],
+        "lineId": "diary1-0-0",
+        "lineText": "The walls",
+        "word": null,
+        "sourceProvenance": {
+          "kind": "derived-id-map",
+          "ids": "preserved; none allocated",
+          "sources": [
+            {
+              "path": "site/data/j.json",
+              "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+            },
+            {
+              "path": "studio/data/review.json",
+              "sha256": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+            }
+          ]
+        }
+      },
+      "text": "TECHNICAL FIXTURE — note revision two",
+      "citations": [
+        {
+          "label": "TECHNICAL FIXTURE reference",
+          "locator": "fixture section"
+        }
+      ],
+      "visibility": "public-candidate",
+      "editorial": {
+        "status": "accepted",
+        "approval": {
+          "revisionId": "rev-29773d05-7400-46d3-bfc8-8a933eeffc42",
+          "by": "fixture-editor",
+          "at": "2026-11-06T00:36:54.077Z",
+          "contentDigest": "sha256:016417ce9f6a21edac43fc52d4007991e97585fa541e0889a64691bf1d65c108"
+        }
+      },
+      "release": {
+        "status": "held",
+        "clearance": null,
+        "publication": null,
+        "revocation": null
+      },
+      "fixture": true,
+      "changeReason": "accept",
+      "kind": "footnote"
+    },
+    {
+      "schemaVersion": 1,
+      "family": "note",
+      "recordId": "note-a3f74d5b-f98c-4409-a45b-c11bfc9e0bb7",
+      "revisionId": "rev-d6afcc55-c6f1-43c7-8d6c-5238dff0f89d",
+      "parents": [
+        "rev-29773d05-7400-46d3-bfc8-8a933eeffc42"
+      ],
+      "author": {
+        "id": "fixture-author",
+        "credit": "Technical fixture author",
+        "provenance": "technical-fixture",
+        "sourceIds": []
+      },
+      "poemDate": {
+        "certainty": "unknown",
+        "value": null
+      },
+      "noteDate": "2026-11-05",
+      "editedAt": "2026-11-06T00:36:54.213Z",
+      "editedBy": "fixture-editor",
+      "anchor": {
+        "schemaVersion": 1,
+        "pieceId": "p001",
+        "versionId": "p001-diary1-0",
+        "versionFingerprint": "sha256:5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+        "members": [
+          [
+            "diary1",
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ]
+        ],
+        "lineId": "diary1-0-0",
+        "lineText": "The walls",
+        "word": null,
+        "sourceProvenance": {
+          "kind": "derived-id-map",
+          "ids": "preserved; none allocated",
+          "sources": [
+            {
+              "path": "site/data/j.json",
+              "sha256": "2f93bd0abf6302ffd2423200592f8891a1d16ab31926ee70a94b67b59bff57ac"
+            },
+            {
+              "path": "studio/data/review.json",
+              "sha256": "d8ca980b58217e48cd20a1737cf1ed5b06abf0bdbce0e54e765549354392b353"
+            }
+          ]
+        }
+      },
+      "text": "TECHNICAL FIXTURE — note revision two",
+      "citations": [
+        {
+          "label": "TECHNICAL FIXTURE reference",
+          "locator": "fixture section"
+        }
+      ],
+      "visibility": "public-candidate",
+      "editorial": {
+        "status": "accepted",
+        "approval": {
+          "revisionId": "rev-29773d05-7400-46d3-bfc8-8a933eeffc42",
+          "by": "fixture-editor",
+          "at": "2026-11-06T00:36:54.077Z",
+          "contentDigest": "sha256:016417ce9f6a21edac43fc52d4007991e97585fa541e0889a64691bf1d65c108"
+        }
+      },
+      "release": {
+        "status": "cleared",
+        "clearance": {
+          "revisionId": "rev-d6afcc55-c6f1-43c7-8d6c-5238dff0f89d",
+          "by": "fixture-editor",
+          "at": "2026-11-06T00:36:54.213Z",
+          "contentDigest": "sha256:016417ce9f6a21edac43fc52d4007991e97585fa541e0889a64691bf1d65c108"
+        },
+        "publication": null,
+        "revocation": null
+      },
+      "fixture": true,
+      "changeReason": "clear",
+      "kind": "footnote"
+    }
+  ],
+  "contributions": []
+}

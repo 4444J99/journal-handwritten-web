@@ -1,0 +1,945 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/4444J99/journal-handwritten-web/blob/main/docs/schemas/notes-v1.schema.json",
+  "title": "Versforms private notes and contributions, proposed T05 v1",
+  "description": "A private append-only note/contribution revision or its export envelope. Existing source data is never rewritten. No content generation, participation activation, or publication authority is implied.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/revision"
+    },
+    {
+      "$ref": "#/$defs/backup"
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "poemDate": {
+      "type": "object",
+      "properties": {
+        "certainty": {
+          "enum": [
+            "unknown",
+            "recorded",
+            "approximate"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}(?:-\\d{2}(?:-\\d{2})?)?$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "certainty",
+        "value"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "certainty": {
+                "const": "unknown"
+              }
+            },
+            "required": [
+              "certainty"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "certainty": {
+                "enum": [
+                  "recorded",
+                  "approximate"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "pattern": "^\\d{4}(?:-\\d{2}(?:-\\d{2})?)?$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "word": {
+      "type": "object",
+      "properties": {
+        "quote": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "quote",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false,
+      "$comment": "Offsets are Unicode codepoints, end-exclusive. Runtime verifies quote equals the captured full-line slice and end exceeds start. No automatic retargeting."
+    },
+    "author": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "credit": {
+          "type": "string"
+        },
+        "provenance": {
+          "enum": [
+            "author-supplied",
+            "contributor-supplied",
+            "technical-fixture"
+          ]
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "credit",
+        "provenance",
+        "sourceIds"
+      ],
+      "additionalProperties": false
+    },
+    "citation": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://"
+        },
+        "locator": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "additionalProperties": false,
+      "$comment": "Runtime also rejects URL credentials. Citation fields are the public allowlist; private dossiers are separate records."
+    },
+    "approval": {
+      "type": "object",
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/id"
+        },
+        "by": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "at": {
+          "$ref": "#/$defs/instant"
+        },
+        "contentDigest": {
+          "$ref": "#/$defs/fingerprint"
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "revisionId",
+        "by",
+        "at",
+        "contentDigest"
+      ],
+      "additionalProperties": false,
+      "$comment": "Runtime verifies content digest, the actual approving revision, and its same-record ancestry. Later unchanged review snapshots retain the original approval event, actor and date."
+    },
+    "permission": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "granted",
+            "revoked"
+          ]
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "web",
+              "print"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "recordedBy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recordedAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/instant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "scopes",
+        "evidence",
+        "recordedBy",
+        "recordedAt"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "granted",
+                  "revoked"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "recordedBy": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "recordedAt": {
+                "$ref": "#/$defs/instant"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "participation": {
+      "const": {
+        "placement": "around",
+        "countsTowardsAuthor100": false,
+        "format": "pending-author",
+        "provenance": {
+          "kind": "claude-derived",
+          "authorAdopted": false,
+          "source": "exports/derived-decisions-2026-11-05/decisions/participation.json",
+          "at": "2026-11-05T20:03:35.000Z"
+        }
+      },
+      "$comment": "Preserved Claude-derived around-the-author default, not author adoption or a choice of invited/open participation. Contributions never add an author poem or n/100 number."
+    },
+    "anchor": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "pieceId": {
+          "$ref": "#/$defs/id"
+        },
+        "versionId": {
+          "$ref": "#/$defs/id"
+        },
+        "versionFingerprint": {
+          "$ref": "#/$defs/fingerprint"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "minItems": 1
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 1
+        },
+        "lineId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lineText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "word": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/word"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceProvenance": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "pieceId",
+        "versionId",
+        "versionFingerprint",
+        "members",
+        "lineId",
+        "lineText",
+        "word",
+        "sourceProvenance"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "lineId": {
+                "const": null
+              }
+            },
+            "required": [
+              "lineId"
+            ]
+          },
+          "then": {
+            "properties": {
+              "lineText": {
+                "type": "null"
+              },
+              "word": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lineId": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "lineText": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "T05 proposed anchor contract awaiting T02 confirmation. IDs and V[].P membership are preserved exactly. Runtime validates live membership/text independently of all display geometry. sourceProvenance is private captured metadata and is never projected."
+    },
+    "editorial": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "in-review",
+            "accepted",
+            "rejected"
+          ]
+        },
+        "approval": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/approval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "approval"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "accepted",
+                  "rejected"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "approval": {
+                "$ref": "#/$defs/approval"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "approval": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "release": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "held",
+            "cleared",
+            "released",
+            "revoked"
+          ]
+        },
+        "clearance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/approval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "publication": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/approval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revocation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/approval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "clearance",
+        "publication",
+        "revocation"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "held"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "clearance": {
+                "type": "null"
+              },
+              "publication": {
+                "type": "null"
+              },
+              "revocation": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "cleared"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "clearance": {
+                "$ref": "#/$defs/approval"
+              },
+              "publication": {
+                "type": "null"
+              },
+              "revocation": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "released"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "clearance": {
+                "$ref": "#/$defs/approval"
+              },
+              "publication": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/approval"
+                  },
+                  {
+                    "required": [
+                      "evidence"
+                    ]
+                  }
+                ]
+              },
+              "revocation": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "revoked"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "revocation": {
+                "$ref": "#/$defs/approval"
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "Editorial acceptance, local preview clearance and actual release are distinct. No local transition publishes. Public eligibility still requires the separate full T03 clearance/output contract."
+    },
+    "revision": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "family": {
+          "enum": [
+            "note",
+            "contribution"
+          ]
+        },
+        "recordId": {
+          "$ref": "#/$defs/id"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/id"
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "uniqueItems": true
+        },
+        "author": {
+          "$ref": "#/$defs/author"
+        },
+        "poemDate": {
+          "$ref": "#/$defs/poemDate"
+        },
+        "noteDate": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "editedAt": {
+          "$ref": "#/$defs/instant"
+        },
+        "editedBy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "anchor": {
+          "$ref": "#/$defs/anchor"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "public-candidate"
+          ]
+        },
+        "editorial": {
+          "$ref": "#/$defs/editorial"
+        },
+        "release": {
+          "$ref": "#/$defs/release"
+        },
+        "fixture": {
+          "type": "boolean"
+        },
+        "changeReason": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "footnote",
+            "endnote",
+            "reflection",
+            "research-dossier",
+            "critical-note",
+            "factual-citation"
+          ]
+        },
+        "type": {
+          "enum": [
+            "response-poem",
+            "prompt",
+            "reading",
+            "music",
+            "hand-copy",
+            "critical-note",
+            "co-writing-proposal"
+          ]
+        },
+        "permission": {
+          "$ref": "#/$defs/permission"
+        },
+        "participation": {
+          "$ref": "#/$defs/participation"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "family",
+        "recordId",
+        "revisionId",
+        "parents",
+        "author",
+        "poemDate",
+        "noteDate",
+        "editedAt",
+        "editedBy",
+        "anchor",
+        "text",
+        "citations",
+        "visibility",
+        "editorial",
+        "release",
+        "fixture",
+        "changeReason"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "note"
+              }
+            },
+            "required": [
+              "family"
+            ]
+          },
+          "then": {
+            "required": [
+              "kind"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "required": [
+                    "permission"
+                  ]
+                },
+                {
+                  "required": [
+                    "participation"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "family": {
+                "const": "contribution"
+              }
+            },
+            "required": [
+              "family"
+            ]
+          },
+          "then": {
+            "required": [
+              "type",
+              "permission",
+              "participation"
+            ],
+            "not": {
+              "required": [
+                "kind"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fixture": {
+                "const": true
+              }
+            },
+            "required": [
+              "fixture"
+            ]
+          },
+          "then": {
+            "properties": {
+              "author": {
+                "properties": {
+                  "provenance": {
+                    "const": "technical-fixture"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "fixture": {
+                "const": false
+              }
+            },
+            "required": [
+              "fixture"
+            ]
+          },
+          "then": {
+            "properties": {
+              "author": {
+                "properties": {
+                  "provenance": {
+                    "enum": [
+                      "author-supplied",
+                      "contributor-supplied"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "$comment": "One append-only document, persisted under its revisionId. Runtime additionally rejects unsafe keys, invalid calendar values, self/foreign/missing parents, cycles, collisions, fixture provenance removal, stale content digests and documents over 64 KiB. Forks survive restore and block projection until explicitly reconciled."
+    },
+    "backup": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "versforms-notes-backup"
+        },
+        "version": {
+          "const": 1
+        },
+        "exportedAt": {
+          "$ref": "#/$defs/instant"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/revision"
+              },
+              {
+                "properties": {
+                  "family": {
+                    "const": "note"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "contributions": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/revision"
+              },
+              {
+                "properties": {
+                  "family": {
+                    "const": "contribution"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "format",
+        "version",
+        "notes",
+        "contributions"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

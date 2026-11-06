@@ -159,17 +159,39 @@ All responses are `application/json`, `Cache-Control: no-store`.
 | `GET /api/me` | `{email, canWrite}` |
 | `GET /api/db/COLLECTION` | `{rev, docs:[{id,data}]}`; with `?since=REV`, `{rev, changed:false}` when the collection is still at `REV` |
 | `GET /api/db/COLLECTION/DOCID` | `{id, data}` or 404 |
-| `PUT /api/db/COLLECTION/DOCID` | body = a JSON object up to 64 KiB (counted in bytes); replaces the document; `{ok, rev}` |
-| `DELETE /api/db/COLLECTION/DOCID` | `{ok, rev}` |
+| `PUT /api/db/COLLECTION/DOCID` | body = a JSON object up to 64 KiB (counted in bytes); replaces a legacy document, appends an immutable notes/contributions revision; `{ok, rev}` |
+| `DELETE /api/db/COLLECTION/DOCID` | `{ok, rev}` for legacy collections; notes/contributions return 409 |
 | `POST /api/assets` | raw image body, `Content-Type` `image/jpeg`, `image/png`, `image/webp`, `image/gif` or `image/heic`, up to 15 MiB; the first bytes must match the type; `201 {id}` |
 | `GET /_blob/ID` | the stored photo, stored content type, `Cache-Control: private, max-age=31536000, immutable` |
 
-Collections: `reviews decisions versions release batches rconfig`. Document ids
+Collections: `reviews decisions versions release batches rconfig notes contributions`. Document ids
 match `^[A-Za-z0-9_.-]{1,128}$` (`.` and `..` alone are also refused). Each
 collection has a `rev` that rises by one in the same D1 batch (one transaction)
-as every write; a deleted document also bumps it, so polling needs no tombstones.
+as every new write; a deleted legacy document also bumps it, so polling needs no tombstones.
 Writes need `canWrite`, and a browser write must be same-origin
 (`Sec-Fetch-Site` / `Origin` are checked when present).
+
+### Immutable notes and contribution revisions (T05)
+
+`notes/{revisionId}` and `contributions/{revisionId}` use the existing tables.
+Their minimal envelope must identify schema version 1, the correct family, a
+record ID, a matching revision ID, and parent revision IDs. The content model
+performs the full document/graph/source validation before browser or backup-CLI
+writes. The generic API/importer is not a publication validator.
+
+The API inserts a new revision in one D1 batch. A semantically identical retry
+(including JSON object key reordering) succeeds without changing its timestamp
+or collection revision. Different content under the same ID and any DELETE
+return 409. The six original collections retain replacement/deletion behavior.
+The importer similarly refuses a changed revision ID; its SQL uses read-only
+`json_tree(...)` to compare JSON values, the sole non-table source admitted by
+the SQL guard. A restore can add a prefix before a later collision or failure;
+it is resumable and does not erase history, but is not a file-wide transaction.
+
+See [notes workflow and migration](../docs/notes-workflow.md) and the
+[integration handoff](../docs/integration/t05-handoff.md). The Cloudflare path
+is verified locally; packaging and conditional-write behavior of the original
+Claude artifact backend remain separate integration checks.
 
 Upload types follow the page's own code: the file inputs use `accept="image/*"`, and
 `toUploadable()` in `studio/index.html` sends `image/jpeg`, `image/png`, `image/webp`

@@ -1,0 +1,18 @@
+...................s....................................................................................................................................export: /tmp/pp-test-rcnu3fk5/db (reviews 9, decisions 0, versions 0, release 1, batches 1, rconfig 0)
+Posting p001 (dry run)
+PASS  gate (a) in Series [p001]: pool is 'series'
+PASS  gate (b) every line confirmed or corrected [p001]: all 9 lines confirmed or corrected
+PASS  gate (c) in a filed or registered batch [p001]: batch b-1 is 'filed'
+versions p002: publishing 1 of 1 (top of the stack; no decided final)
+versions p001: publishing 1 of 2 (top of the stack; no decided final)
+  published: V[1] p001-1; newest in the stack (last entry of V): V[1] p001-1; top of the stack: V[1]; corrected reviews on versions NOT published: 0
+PASS  stop (ii) no stale transcript [p001]
+PASS  stop (i) shared scan (already public, rebuilt) [p002]: 1 co-resident piece(s), item(s) or facing page(s) on 1 page(s)
+PASS  stop (i) shared scan [p001]: 1 co-resident piece(s), item(s) or facing page(s) on 1 page(s)
+SKIP  stop public repository preconditions (no --public-repo given)
+FAIL  usage /tmp/pp-test-rcnu3fk5/mine/build already exists and was not made by this script; it would be deleted. Name an empty directory with --workdir (or leave --workdir out), or remove that folder yourself
+.....
+----------------------------------------------------------------------
+Ran 157 tests in 73.197s
+
+OK (skipped=1)
