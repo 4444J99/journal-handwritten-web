@@ -39,6 +39,6 @@ This session contains no new author choice of slot, thresholds, captions/hashtag
 
 ## Status
 
-Packet prepared for review; operational activation not performed. See [verification and handoff](../audience/verification.md) for exact checks and remote delivery evidence. All scoped issues retain their existing state/ownership.
+Packet prepared as [draft PR #125](https://github.com/4444J99/journal-handwritten-web/pull/125); operational activation not performed. Main advanced after commit creation to `038d01fb1862f2e569d231b5b3c4c3a4eb1aecda` through #124, affecting only the other session's launch record; the draft was read back as mergeable. Issue #123 retains ownership of the newly recorded posting hardening findings. See [verification and handoff](../audience/verification.md) for exact checks and remote delivery evidence. All scoped issues retain their existing state/ownership.
 
 The October packet `2026-10-16-v1.1` / projection `2026-10-16-v1.1-r2` in private project `g-p-6a10bcb4ada4819194e881431212101a` remained inaccessible. No claim is attributed to unseen contents. Repository exchange summaries are cited as summaries, not as independently retrieved original conversations.

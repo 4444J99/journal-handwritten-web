@@ -29,7 +29,7 @@ The working checkout is an independent local clone with its own index and object
 | Relative packet links | Checked against the integrated files, including the weekly template and handoff references. External URLs are evidence locators, not a claim that every destination is currently accessible. |
 | Avatar inventory | Independently rechecked SHA-256, byte counts, dimensions and RGB modes for supplied v3 and preview3; visual inspection recorded. No pixel edits or production exports. Exact documented v2 remains unrecovered. |
 | Original #61 SOP | Supplied attachment and committed research have SHA-256 `70635f752c78f99fff3ae3975a2bc6a9f031c28b69d31bce494fa006d512ade3`. Historical research remains intact. |
-| Primary policy evidence | Parent independently retrieved the material Meta sources and inspected access failures; applicable region and date limits are recorded. No account controls or product behavior tested. Later retrieval resolved the Muse permission-page timeout and confirmed documented approval choices. |
+| Primary policy evidence | T06 independently retrieved the material Meta sources and inspected access failures; applicable region and date limits are recorded. No account controls or product behavior tested. Later retrieval resolved the Muse permission-page timeout and confirmed documented approval choices. |
 | T03 evidence | Exact pinned contract and verification/packet records independently read; their reported test results were not rerun or transferred to current main. |
 | Independent documentary review | Corrected the nonexistent “Exposure collection” reference to the release document's `exposures[]`; aligned template field paths, decision IDs and reply duration; removed statistical meaning from the proposed reach floor; required automatic-account-scope checks even for a manual-input Muse trial. |
 
@@ -40,6 +40,12 @@ Only `docs/audience/`, this session's chat record/index row, and dated addenda t
 The authorized delivery is a draft PR from the isolated branch to private main. The PR identifies the concrete commit/tree and carries the packet entry link. Before opening it, stage only the reviewed documentation, compare the GitHub-created tree with the local staged tree, and verify the resulting branch/commit. A live read-back must confirm the draft state and exact head. The final handoff reports those observed values; this document does not invent a future PR number or its own self-referential commit hash.
 
 The commit uses `[skip ci]` for this documentation-only handoff under the no-spend constraint. Local verification above is the evidence; no paid service or CI entitlement is assumed. No issue-closing keyword, reviewer assignment or external message is required. Existing issue states and ownership stay intact.
+
+## Post-creation read-back
+
+[Draft PR #125](https://github.com/4444J99/journal-handwritten-web/pull/125) was created with exact head `a1bbe56cd10b615e2bff2413f18e4fca09eb03d7` and tree `cfbb7bad7af25837afb2d473128340beafad29a8`; local and remote objects matched and the local worktree was clean. During creation, main advanced to `038d01fb1862f2e569d231b5b3c4c3a4eb1aecda` through #124. The changed launch-session record does not overlap T06's edited files. Independent read-back returned open, draft, unmerged and mergeable. This follow-up records that observation without rewriting either branch's history. The final PR head is supplied in the handoff.
+
+The later record points to [issue #123](https://github.com/4444J99/journal-handwritten-web/issues/123) and the existing `post-poem-hardening-wip` implementation branch for the reported post-merge findings. T06 retains that ownership; T03 consumes the eventual accepted result. The adversarial tests are reported evidence, not tests run by T06.
 
 ## Remaining limits and dependencies
 

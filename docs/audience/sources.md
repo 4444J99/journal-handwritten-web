@@ -93,3 +93,9 @@ The October shared packet remains inaccessible. Original Claude chat URLs are re
 Observed `2026-11-06T00:29:30.581Z`: private main `fab6a82b72f23efb16278b90cdc4f7790ca55713`; public main `1fe6b507b24bbe20ba0d45a917031f42cc171b58`. All eleven scoped issues remained open, unassigned and without comments. PR #101 and #122 were merged; #119 remained a draft at `8d16284ba8b80f18398d08b8de931d8812f30429`.
 
 This register records a review, not release readiness, account ownership, consent, or adoption of optional tools.
+
+## Read-back after the draft PR opened
+
+Main advanced to [`038d01fb1862f2e569d231b5b3c4c3a4eb1aecda`](https://github.com/4444J99/journal-handwritten-web/commit/038d01fb1862f2e569d231b5b3c4c3a4eb1aecda) through [PR #124](https://github.com/4444J99/journal-handwritten-web/pull/124). Its only change was to the other session's launch record, outside T06's edited paths. [Draft PR #125](https://github.com/4444J99/journal-handwritten-web/pull/125) was observed open, unmerged and mergeable. The original delivery parent remains `fab6a82…`; no main merge or branch force-update was performed.
+
+New source IDs `MAIN-AFTER-PR`, `P124` and `I123` retain exact observations in JSON. [Issue #123](https://github.com/4444J99/journal-handwritten-web/issues/123) now owns the reported posting hardening findings; it is open and unassigned in GitHub, with the existing implementation owner/branch described in its body. T06 does not claim to have rerun that adversarial check or taken over its work.

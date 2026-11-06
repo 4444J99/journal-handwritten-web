@@ -38,6 +38,8 @@ The recorded real-data dry run exited **3** with no released documents. This is 
 
 One execution finding also needs T03 reconciliation: review `5793330932` / discussion `4487062599` identified multiple push-URL handling. The inspected #101 head calls `git remote get-url --push origin` without `--all`; the T06 integration audit observed the same call at current main `fab6a82…`. The merge alone must not be reported as resolving that finding. T06 adds no publishing code and does not independently certify actual push behavior. [S9]
 
+**Later ownership refresh:** [issue #123](https://github.com/4444J99/journal-handwritten-web/issues/123) and merged [PR #124](https://github.com/4444J99/journal-handwritten-web/pull/124) now record the post-merge findings and existing `post-poem-hardening-wip` implementation work. That ownership remains intact; T03 should consume its accepted result. T06 has not rerun those adversarial tests. Main `038d01fb1862f2e569d231b5b3c4c3a4eb1aecda` changes only the other session's launch record, with no overlap in this packet. Earlier observations above remain dated evidence.
+
 ### Adapter for one future cleared release
 
 1. **Prepare privately.** Reference an identified candidate, canonical T03 record, exact source revision, and existing T07 asset work. A private draft may carry pending fields; it must be clearly marked ineligible for external scheduling or publication.
