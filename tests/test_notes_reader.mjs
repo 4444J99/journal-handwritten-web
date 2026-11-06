@@ -26,9 +26,13 @@ class Node {
   removeEventListener(type, fn) { this.listeners.get(type)?.delete(fn); }
   dispatch(type, event = {}) { for (const fn of this.listeners.get(type) || []) fn(event); }
   focus() { this.ownerDocument.activeElement = this; }
+  contains(other) { return other === this || this.children.some(child => child.contains(other)); }
+  querySelector() { return this.children[0] || null; }
 }
 function dom() {
-  const document = { createElement(tag) { return new Node(this, tag); } };
+  const document = { createElement(tag) { return new Node(this, tag); }, listeners: new Map(),
+    addEventListener:Node.prototype.addEventListener, removeEventListener:Node.prototype.removeEventListener,
+    dispatch:Node.prototype.dispatch };
   document.body = new Node(document, 'body'); document.activeElement = document.body;
   const host = document.createElement('div'), trigger = document.createElement('button');
   document.body.append(trigger, host);

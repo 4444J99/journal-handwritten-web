@@ -44,7 +44,7 @@ try {
   const vars = { ACCESS_TEAM_DOMAIN: team, ACCESS_AUD: aud, OWNER_EMAILS: tokenOwner, ACCESS_JWKS_URL_TEST: `http://${team}/cdn-cgi/access/certs` };
   const token = () => signRS256(key, claims({ iss, aud, email: tokenOwner }));
   first = await startPagesDev(vars, 'notes-first', { dir: dist });
-  for (const route of ['/notes.html', '/notes-model.mjs', '/data/notes-versions.json', '/api/db/notes']) {
+  for (const route of ['/notes.html', '/notes-model.mjs', '/data/notes-versions.json', '/api/db/notes', '/artifact-preview.html', '/artifact-model.mjs', '/site/reader-features.js', '/api/db/artifacts']) {
     const result = await fetch(first.base + route); assert.equal(result.status, 403); assert.equal((await result.text()).length, 0);
   }
   pass('private static files and notes API deny unauthenticated access');
@@ -61,7 +61,8 @@ try {
     });
     const page = await context.newPage(); pages.push(context); activePage = page;
     page.on('pageerror', e => errors.push(e.message));
-    await page.goto(srv.base + '/notes.html');
+    await page.goto(srv.base + '/index.html');
+    await page.locator('a[href="notes.html"]').click();
     await page.waitForFunction(() => document.getElementById('connection')?.textContent.includes('Connected'), { timeout: 20000 });
     return page;
   }
@@ -97,15 +98,18 @@ try {
   await page.locator('#preview').screenshot({ path: path.join(OUT, 'reader-cleared-desktop.png') });
   const beforePlacement = (await api(first, 'notes')).docs.map(d => d.data);
   await page.selectOption('#preview-placement', 'margin');
+  await page.click('#reveal-notes');
   assert.ok(await page.locator('#reader-notes').evaluate(e => e.getBoundingClientRect().left > document.getElementById('reader-poem').getBoundingClientRect().left + 100));
   await page.locator('#preview').screenshot({ path: path.join(OUT, 'reader-margin-proposal.png') });
   assert.deepEqual((await api(first, 'notes')).docs.map(d => d.data), beforePlacement);
   await page.selectOption('#preview-placement', 'below');
+  await page.click('#reveal-notes');
   await page.locator('#reader-notes section').focus();
   await page.locator('#participation details summary').click();
   await page.locator('#participation').screenshot({ path: path.join(OUT, 'participation-and-timing-options.png') });
   assert.equal(await page.locator('#participation button:not(:disabled)').count(), 0);
   pass('placement and date-only timing previews leave invitations and submissions inactive');
+  await page.click('#reveal-notes');
   await page.locator('#reader-notes section').focus();
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#reader-notes').evaluate(e => e.hidden && !e.childNodes.length), true);
@@ -165,10 +169,46 @@ try {
   assert.deepEqual(afterChange.find(r => r.recordId === noteId).anchor, preservedAnchor);
   await other.locator('#editor').screenshot({ path: path.join(OUT, 'invalid-anchor.png') });
   pass('source correction invalidates anchor and empties preview without moving stored notes');
+  await page.goto(first.base + '/index.html');
+  await page.locator('a[href="artifact-preview.html"]').click();
+  await page.waitForFunction(() => document.getElementById('connection')?.textContent.includes('Connected') && !document.getElementById('editing').disabled);
+  await page.selectOption('#piece', 'p001'); await page.selectOption('#version', 'p001-diary1-0');
+  await page.selectOption('#kind', 'pronunciation'); await page.fill('#by', 'Technical fixture reviewer');
+  await page.fill('#payload', JSON.stringify({entries:[{lineId:'diary1-0-0',token:'The',pronunciation:'TECHNICAL FIXTURE supplied pronunciation'}]}));
+  await page.click('#save-artifact'); await page.waitForFunction(() => document.getElementById('save-status').textContent.startsWith('Saved and read back'));
+  let artifacts = (await api(first, 'artifacts')).docs.map(d => d.data);
+  assert.equal(artifacts.length, 1); const artifactId = artifacts[0].recordId, previousRevision = artifacts[0].revisionId;
+  await page.fill('#payload', JSON.stringify({entries:[{lineId:'diary1-0-0',token:'The',pronunciation:'TECHNICAL FIXTURE revised supplied pronunciation'}]}));
+  await page.fill('#reason', 'Technical fixture revision'); await page.click('#save-artifact');
+  await page.waitForFunction(previous => document.getElementById('save-status').textContent.startsWith('Saved and read back') && !document.getElementById('save-status').textContent.endsWith(previous), previousRevision);
+  artifacts = (await api(first, 'artifacts')).docs.map(d => d.data);
+  assert.equal(artifacts.length, 2); assert.ok(artifacts.some(r => r.parents.includes(previousRevision)));
+  await page.reload(); await page.waitForFunction(() => document.getElementById('connection')?.textContent.includes('Connected'));
+  await page.selectOption('#record', artifactId); assert.equal(await page.locator('#artifact-history details').count(), 2);
+  assert.match(await page.locator('#payload').inputValue(), /revised supplied pronunciation/);
+  const artifactDownloadPromise = page.waitForEvent('download'); await page.click('#export-artifacts'); const artifactDownload = await artifactDownloadPromise;
+  await artifactDownload.saveAs(path.join(OUT, 'artifacts-fixture-backup.json'));
+  assert.equal(JSON.parse(fs.readFileSync(path.join(OUT, 'artifacts-fixture-backup.json'), 'utf8')).artifacts.length, 2);
+  pass('built Studio artifact entry persists pronunciation revisions, reloads history and exports exact source bindings');
+  const latestArtifact = artifacts.find(r => r.parents.includes(previousRevision));
+  await page.check('#enable-preview'); await page.fill('#preview-config',JSON.stringify({audio:{url:'/unrequested-private-fixture.wav',source:latestArtifact.source}}));
+  await page.click('#mount-preview');
+  assert.match(await page.locator('#preview-status').innerText(), /selected stored artifact revision/);
+  await page.fill('#preview-config',JSON.stringify({audio:{url:'/unrequested-private-fixture.wav',source:latestArtifact.source,revisionId:latestArtifact.revisionId}}));
+  await page.click('#mount-preview');
+  assert.equal(await page.locator('#feature-preview').getByRole('button',{name:'Audio',exact:true}).count(),1);
+  assert.equal(await page.locator('audio').count(),0);
+  pass('stored artifact preview requires its exact source and revision before preparing inactive controls');
+  await api(first, 'reviews', 'diary1-0-0', {original:'The walls',text:'TECHNICAL FIXTURE changed artifact source',status:'corrected',at:new Date().toISOString()});
+  await page.getByText('Source changed: this artifact is stale. Review and explicitly rebind before previewing.', {exact:true}).waitFor();
+  await page.check('#enable-preview'); await page.click('#mount-preview');
+  assert.match(await page.locator('#preview-status').innerText(), /Resolve the stored artifact source/);
+  assert.equal(await page.locator('#feature-preview').evaluate(e => e.childNodes.length), 0);
+  pass('source correction marks stored artifacts stale and blocks private preview until explicit rebind');
   for (const p of protectedPaths) assert.equal(hash(p), beforeHashes[p]);
-  assert.deepEqual(errors, []); assert.deepEqual(blockedRequests, []);
+  assert.deepEqual(errors, []); assert.deepEqual(blockedRequests.filter(url => !url.startsWith('https://fonts.googleapis.com/css2?')), []);
   pass('author data, shared studio/reader pages and release whitelist remain byte-identical');
-  pass('no browser exceptions or off-origin requests');
+  pass('no browser exceptions; only the existing Studio font stylesheet is requested off-origin and blocked', {blockedFontRequests:blockedRequests.length});
   fs.writeFileSync(path.join(OUT, 'acceptance.json'), JSON.stringify({ status: 'PASS', observedAt: new Date().toISOString(), browser: await browser.version(), node: process.version, checks, sourceHashes: beforeHashes, physicalDevice: 'not tested', scratch: SCRATCH }, null, 2) + '\n');
 } catch (error) {
   if (activePage) { try { await activePage.screenshot({ path: path.join(OUT, 'failure.png'), fullPage: true }); fs.writeFileSync(path.join(OUT, 'failure-state.txt'), await activePage.locator('body').innerText()); } catch {} }

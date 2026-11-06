@@ -1,3 +1,5 @@
+import { createReaderLifecycle } from '../site/reader-features.js';
+
 /**
  * Optional T04 reader boundary. Supply only records from notes-model.mjs
  * projectPreview/projectRecords, never stored revisions or private dossiers.
@@ -57,6 +59,7 @@ export function mountNotesReader(host, initial = {}) {
   }
   const doc = host.ownerDocument;
   let records = [], pieceId = '', versionId = '', trigger = null, opened = false, destroyed = false;
+  const lifecycle = createReaderLifecycle({host, onClose() { opened = false; trigger = null; }});
 
   function element(tag, content, className) {
     const node = doc.createElement(tag);
@@ -65,22 +68,16 @@ export function mountNotesReader(host, initial = {}) {
     return node;
   }
   function close(restoreFocus) {
-    opened = false;
-    host.replaceChildren();
-    host.hidden = true;
-    host.setAttribute('aria-hidden', 'true');
-    if (trigger) trigger.setAttribute('aria-expanded', 'false');
-    const previous = trigger;
-    trigger = null;
-    if (restoreFocus && previous?.isConnected && typeof previous.focus === 'function') previous.focus();
+    lifecycle.close('hide', restoreFocus);
   }
   function hide() { close(true); }
   function setContext(next = {}) {
     if (destroyed) return;
+    const nextPiece = text(next.pieceId) ? next.pieceId : '', nextVersion = text(next.versionId) ? next.versionId : '';
+    const nextRecords = Array.isArray(next.records) ? next.records.map(projection).filter(Boolean) : [];
+    if (pieceId === nextPiece && versionId === nextVersion && JSON.stringify(records) === JSON.stringify(nextRecords)) return;
     close(false);
-    pieceId = text(next.pieceId) ? next.pieceId : '';
-    versionId = text(next.versionId) ? next.versionId : '';
-    records = Array.isArray(next.records) ? next.records.map(projection).filter(Boolean) : [];
+    pieceId = nextPiece; versionId = nextVersion; records = nextRecords;
   }
   function detail(list, label, value) {
     list.append(element('dt', label), element('dd', value));
@@ -130,9 +127,7 @@ export function mountNotesReader(host, initial = {}) {
     const scoped = pieceId && versionId ? records.filter(r => r.pieceId === pieceId && r.versionId === versionId) : [];
     if (scoped.length) scoped.forEach(record => panel.append(renderRecord(record)));
     else panel.append(element('p', 'No cleared notes for this source version.'));
-    host.replaceChildren(panel);
-    host.hidden = false;
-    host.removeAttribute('aria-hidden');
+    lifecycle.open({trigger, render() { host.append(panel); }});
     opened = true;
     panel.focus();
   }
@@ -153,6 +148,7 @@ export function mountNotesReader(host, initial = {}) {
     destroy() {
       if (destroyed) return;
       close(true);
+      lifecycle.destroy();
       records = [];
       host.removeEventListener('keydown', onKey);
       destroyed = true;
