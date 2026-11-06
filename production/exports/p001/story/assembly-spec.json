@@ -1,0 +1,40 @@
+{
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "duration_seconds": 9.0,
+  "layers": [
+    {
+      "order": 3,
+      "name": "background",
+      "kind": "clip slot",
+      "intended_loop_seconds": 4.5,
+      "supplied": false,
+      "provisional": "still scan with slow drift; ordinary scan movement"
+    },
+    {
+      "order": 2,
+      "name": "page",
+      "kind": "recorded handwriting",
+      "intended_loop_seconds": 9.0,
+      "supplied": true,
+      "provisional": false,
+      "method": "mask sweep over j.json line boxes; actual scan ink, not reconstructed strokes"
+    },
+    {
+      "order": 1,
+      "name": "photo",
+      "kind": "clip slot",
+      "intended_loop_seconds": 3.0,
+      "supplied": false,
+      "provisional": "empty rounded slot in the assembly preview"
+    }
+  ],
+  "missing_clips": [
+    "original Live Photo / video for the photo layer (3 s loop)",
+    "original video/wallpaper loop for the background layer (4.5 s loop)"
+  ],
+  "artistic_decision": "Reconstructed stroke animation is not produced. The write-on is a mask reveal of recorded scan ink; stroke tracing would be a new artistic treatment and needs the author's decision."
+}

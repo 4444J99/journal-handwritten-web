@@ -1,0 +1,64 @@
+{
+  "piece_id": "p004",
+  "version_id": "p004-diary3-1",
+  "page_id": "diary3",
+  "source": "production/assets/diary3.jpg",
+  "source_kind": "preserved original",
+  "cover_block": 1,
+  "detail_block": 1,
+  "later_version": null,
+  "identity": {
+    "asset": "production/assets/vers_forms_profile_v3.jpg",
+    "source": "T06 avatar handoff, PR #125",
+    "status": "supplied/unapproved",
+    "decision": "D13 unresolved; do not regenerate, relabel or treat as approved"
+  },
+  "selection_provenance": "Second-piece substitution through the same kit: j.json p004 top version p004-diary3-1 on page diary3, block 1. The page holds three drafts of the same poem; only block 1 is used. This is a production candidate, not an author selection or a clearance.",
+  "shared_scan_resolution": "Unresolved. Page diary3 contains drafts in blocks 0-2 of the same poem; only block 1 is cropped into the kit, but the page-level exposure has no author ruling.",
+  "source_inputs": [
+    {
+      "path": "production/assets/diary3.jpg",
+      "role": "primary scan",
+      "sha256": "61e608085b32cb07e9de6bc0907d3042fd2ede35e9127916aff5d1c1a813278e",
+      "bytes": 334774,
+      "width": 1470,
+      "height": 1735
+    },
+    {
+      "path": "production/assets/vers_forms_profile_v3.jpg",
+      "role": "identity chip (supplied, unapproved)",
+      "sha256": "370d979bedd5779e105d7f5a85443adf22aa4fc8496fe122d3f83f8d6018185e",
+      "bytes": 269257
+    },
+    {
+      "path": "production/assets/preview3.png",
+      "role": "recovered design-canvas reference, not composited",
+      "sha256": "88663f21fd47fa13c189c88844541deb52335eba8760295066b26d8913550b02",
+      "bytes": 214060
+    },
+    {
+      "path": "site/data/j.json",
+      "role": "page/version/block/line geometry source of truth",
+      "sha256": "GENERATED_AT_BUILD"
+    }
+  ],
+  "clearance": {
+    "default": "private-preview; awaiting author clearance; may_publish=false",
+    "motion": "private-preview; scan-derived; no audio; awaiting author clearance; may_publish=false",
+    "widget": "private test tile; not a public download; awaiting author clearance",
+    "download": "private zip; no public distribution; awaiting author clearance",
+    "pool": "unsorted; no Series/Reserve/Archive decision",
+    "identity": "T06 supplied avatar v3; supplied/unapproved; D13 unresolved"
+  },
+  "missing": [
+    "Author clearance naming this exact output manifest and its limits.",
+    "Series/Reserve/Archive decision for p004 and for the other diary3 drafts in blocks 0 and 2.",
+    "Author ruling on shared-scan exposure for the diary3 page.",
+    "Original Live Photo / video clips for the 9:16 photo layer (3 s loop) and background layer (4.5 s loop); current layers are still stand-ins.",
+    "T06 D13 identity approval, or the original avatar assets if v3 is not the release identity.",
+    "Physical iPhone Photos-widget test: album picker, render, shuffle, and shared-album behaviour. No iPhone or iOS Simulator is available in this environment.",
+    "Target-journal treatment of Stories (permanent grid/Highlight/expiry) and whether expiry preserves any Reserve status; not yet confirmed for the selected journal.",
+    "GRUW / filing evidence only if a filing claim is made; none is used here."
+  ],
+  "clearance_note": "Private test material only. Nothing in this kit is cleared for publication, scheduling or distribution. This substitution is a production demonstration, not a cleared second release."
+}
