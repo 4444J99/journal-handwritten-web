@@ -41,11 +41,11 @@ Conventions
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
-| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 |
-| 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Open — #96 and #97 merged by the lead session; #101 (posting script, round 2) pushed and awaiting independent re-check; nothing posted publicly |
+| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
+| 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
 
 ## Repository state (checked 2026-11-05)
-- `main` at `b2199a0` (headless check of the v4 page, #97, on top of the integrity-check fix #114), with a `local-ci` status; every suite passes locally.
+- `main` at `06dccc0` (the posting script, #101), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
 - GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
 - Issue #1 closed by #114; draft PR #2 closed as superseded.

@@ -6,7 +6,7 @@
 | Last activity | 2026-11-05 (America/New_York) |
 | Repository | `4444J99/journal-handwritten-web` (private) and `4444J99/versforms` (public) |
 | Basis of this record | this session's own commands and their output, checked against GitHub and Cloudflare where stated |
-| Status | Closed out except PR #101 (second check running), draft PR #102 (awaits the author) and the author's items (issues #104 to #113) — see Status |
+| Status | Closed out except draft PR #102 (awaits the author) and the author's items (issues #104 to #113 and #121) — see Status |
 
 ## Produced
 Pull requests (private repo unless noted):
@@ -90,13 +90,15 @@ Derived by Claude at the author's instruction (labelled; he can overrule any of 
   - Not built and not to be built until decided: sensors, weather, location, microphone, concordance blooms, modulation patches, Markov, any generated text.
 
 ## Status
-Closed out as far as this session can take it. Merged to `main` today: #73, #89, #91, #92, #93, #94, #95, #96, #97, #98, #99, #100, #103 and #114 (merge commits above), and versforms#1 (verified live). Every suite passed locally on `main` before #97 landed (`check` OK, unittest 5 and 54, node tests 14 and 76) with a `local-ci` status on each merged head; GitHub's own `check` stays red because Actions cannot start runners (issue #111).
+Closed out as far as this session can take it. Merged to `main` today: #73, #89, #91, #92, #93, #94, #95, #96, #97, #98, #99, #100, #101, #103, #114, #116, #117 and #118 (merge commits above), and versforms#1 (verified live). Every suite passed locally on each merged head with a `local-ci` status; GitHub's own `check` stays red because Actions cannot start runners (issue #111).
+
+**#101 (posting script), three independent checks.** The first version failed; `d7218f3` failed two independent reviews and a Codex review; `e5ae157` failed a third check (a release file named like a piece id but not exactly `p<digits>.json`, for example `P001.json`, was ignored, so a Reserve piece read as unsorted and `--force` built and pushed it); `7970503` fixed that and failed a fourth for the same class (a well-formed name for a piece that does not exist, such as `p0001.json`). The final head `15cad30` makes every release entry that is not a known piece id a hard stop that `--force` cannot override, and tolerates only a regular file named `.DS_Store`. That last head was not re-checked by a fresh verifier agent: I re-ran the fourth verifier's own scripts against it (every look-alike, zero-padded and long-digit name exits 3 with and without `--force`; the unsorted-plus-`--force` and the already-public controls behave as designed), the full Python suite passed (157 tests), and `local-ci` was green on that exact commit. **Merged** (`06dccc0`, 2026-11-06T00:05:01Z). Left to the author, all on issue #108: whether page ids that ship in every public build count as metadata, the font's free-text name records, and the "not yet checked by the author" line.
 
 **Live:** the public site is still the blank page (title `versforms`, `noindex`); nothing is posted. The studio is deployed behind Cloudflare Access and was read back signed in (see Produced). The claude.ai download is on the archive volume with hashes, and its text documents are in `claude/`.
 
 **Open, with owners:**
-- PR #101 (posting script): the first independent check failed it; fixes are pushed (`e5ae157`) and a second check is running. Not merged.
-- PR #102 (alive prototype, draft): awaits the author's review; the six design questions are issue #109. It touches neither `site/` nor `studio/`.
-- The author's items are issues #104 to #113; #115 (an unbounded DevTools handshake) described a finding that was already fixed and is closed. None of them was decided on the author's behalf.
+- PR #102 (alive prototype, draft): awaits the author's review; its verified head is `2664d104`. A later, unverified snapshot of a neighbour-ink fix is on branch `alive-prototype-wip` (`04668785`). The six design questions are issue #109. It touches neither `site/` nor `studio/`.
+- The author's items are issues #104 to #113, plus #121 (diary1 block 2 has 4 lines but 3 line boxes, found by the prototype session; counts confirmed). #115 (an unbounded DevTools handshake) described a finding that was already fixed and is closed; the two real review findings on #97 were fixed in #118. None of the items was decided on the author's behalf.
+- Local only, by design: scratch integration branches (`integration-scratch`, `integration-lead`; everything on them is on `main`). Worktrees beside the clone were left in place: retiring checkouts needs the author's say.
 
 **Not verified:** saving a change in the deployed studio, a second email being refused, the studio on a phone, the Mark posted flow in a browser. The design prototype is another session's work and is not claimed as verified here.
