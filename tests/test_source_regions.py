@@ -190,17 +190,22 @@ class PilotManifestTests(unittest.TestCase):
         recorded = self.manifest["derivations"][0]
         atoms = Path(os.environ.get(
             "T08_ATOMS",
-            "/Volumes/Archive4T/Projects/journal-handwritten-web--alive-proto/proto/alive/atoms-p001.json",
+            str(ROOT / "proto/alive/atoms-p001.json"),
         ))
-        if not atoms.is_file():
-            self.skipTest(f"owner atoms artifact not present at {atoms}")
+        self.assertTrue(atoms.is_file(), f"recovered owner atoms artifact is missing: {atoms}")
         digest = hashlib.sha256(atoms.read_bytes()).hexdigest()
-        if digest != recorded["artifact_sha256"]:
-            self.skipTest("owner atoms artifact hash does not match the recorded pilot input")
+        self.assertEqual(digest, recorded["artifact_sha256"], "owner input differs from preserved pilot evidence")
         rebuilt = sr.build_manifest(atoms, atoms_ref=recorded["artifact_ref"],
                                     atoms_commit=recorded["artifact_commit"])
-        self.assertEqual(rebuilt["integrity"]["content_sha256"],
-                         self.manifest["integrity"]["content_sha256"])
+        expected = copy.deepcopy(self.manifest)
+        # The recovered input reproduces every geometry/identity/asset byte.
+        # Only newly generated ownership metadata now names the completed T02
+        # contract. The preserved historical manifest is never rewritten.
+        for asset in expected["source_assets"]:
+            self.assertEqual(asset["owner"], "T02 source/build/deposit (identifier owner; no completed T02 agreement located)")
+            asset["owner"] = "T02 canonical source contract: docs/contracts/canonical-source.md (2026-11-06)"
+        expected = reseal(expected)
+        self.assertEqual(rebuilt, expected)
 
 
 class EligibilityTests(unittest.TestCase):
