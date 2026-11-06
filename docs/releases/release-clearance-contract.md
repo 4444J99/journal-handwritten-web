@@ -2,6 +2,27 @@
 
 Contract version: `versforms.release-clearance.v1`. Status: **proposed interface for review; no cleared release record exists**. This is a technical handoff and a record of required evidence, not an author decision or a legal determination.
 
+## Implementation update — November 6, 2026
+
+The implemented contract is described in
+[`exact-output-and-private-artifacts.md`](../integration/exact-output-and-private-artifacts.md).
+Python and JavaScript validate the same typed canonical digest, exact file inventory,
+current source bindings, component revisions, attributable author evidence and
+observed publication events. Adapters cover notes/contributions, source regions,
+script realizations and weekly records. Fixture provenance remains ineligible;
+validation returns `execution_authority:false` even for a synthetic positive test.
+This implementation supplies no real clearance record.
+
+The public builder now filters PAL/HF metadata to complete selected witnesses.
+The earlier 13-identifier leak below describes the historical November 5 packet;
+it is not a current passing result. Use the newly generated integration packet's
+checks and exact manifest for current bytes. The all-versions comparison still
+exposes neighbouring p126 writing through diary62a and remains excluded from the
+bounded candidate output. Shared-scan, source geometry, font/info wording, filing
+and physical-phone acceptance remain exact-output author checkpoints.
+
+The rest of this document preserves the original proposal and its dated findings.
+
 ## Consumer rule
 
 T06/T07 may prepare private drafts from an identified candidate. They must not treat a successful build, `pool=series`, a `filed`/`registered` string, a derived decision, a scheduled date, `Mark posted`, `--force`, or `--accept-shared-scan` as permission to publish or redistribute. They receive a specific output manifest and the author's explicit, source-linked clearance for that manifest. The actual posting and any later outward communication require their own current execution authority.

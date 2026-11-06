@@ -1,6 +1,6 @@
 // Private immutable evidence for audio, pronunciation and script realizations.
 // This storage model creates no text, recording, clearance or publication event.
-import {stableJSON,sha256} from './notes-model.mjs';
+import {stableJSON,sha256} from './source-fingerprint.mjs';
 import {validUTCInstant} from './release-contract.mjs';
 export const ARTIFACT_KINDS=Object.freeze(['audio-feedback','pronunciation','audio-render','realization','release-evidence']);
 const ID=/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/, HASH=/^sha256:[a-f0-9]{64}$/;

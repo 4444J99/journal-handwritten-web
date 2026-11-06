@@ -189,10 +189,13 @@ and source evidence, and `import-font` records the supplied font and its coverag
 The tests exercise those routes alongside T10. This source reconstruction does
 not supply missing author-drawn characters or choose an author script.
 
-The existing `tools/prepare_release_packet.py` is the exact-version deposit
-packet generator. It is supplied an explicit selected piece/version and source
-binding. Generating a local packet is not a filing or publication. T03 owns the
-exact-output approval and observed publication-event gates.
+The existing `tools/prepare_release_packet.py` prepares an exact-version release
+evidence packet with source bindings, review inputs, image lineage and output
+hashes. These are technical inputs for a later author-selected deposit workflow;
+the command does not claim to reproduce the missing historical deposit generator
+or a filing service's required format. Generating a local packet is not a filing
+or publication. T03 owns the exact-output approval and observed publication-event
+gates; #106 retains the actual filing/workflow decision and evidence.
 
 ## Independent backup and restore
 

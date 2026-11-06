@@ -1,7 +1,7 @@
 // Pure exact-output checks shared by private feature adapters. A hash is not a
 // signature; independently supplied author evidence remains the authority.
 // No fetch, storage write, publication or account change happens here.
-import { stableJSON, sha256 } from './notes-model.mjs';
+import { stableJSON, sha256 } from './source-fingerprint.mjs';
 import { canonicalJSON } from './release-canonical.mjs';
 
 export const OUTPUT_SCHEMA = 'versforms.release-output.v1';
