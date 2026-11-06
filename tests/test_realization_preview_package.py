@@ -1,6 +1,7 @@
 """The actual T10 model/font package, immutable storage identity and refusals."""
 import base64
 import copy
+import itertools
 import json
 from pathlib import Path
 import re
@@ -73,6 +74,45 @@ def mixed_fixture_history():
     return original, value, [prior, current]
 
 
+def private_visibility_history(artifact_fixture=True, revision_fixture=False,
+                               visibility="public-proposed", asset_visibility="public-proposed"):
+    """Independent synthetic scope cases; never relabel an existing saved record."""
+    assert (artifact_fixture, revision_fixture) in ((True, True), (True, False), (False, False))
+    original, value, _ = mixed_fixture_history()
+    document = value["realizations"][0]
+    revision = copy.deepcopy(document["revisions"][-1])
+    if not artifact_fixture:
+        # A new document has no earlier fixture history to erase. Original files
+        # and the separate historical fixture remain unchanged.
+        initial = copy.deepcopy(revision)
+        initial.update(id="synthetic-scope-initial", parent=None, change="initial")
+        document = {"id": "synthetic-nonfixture-scope", "pieceId": document["pieceId"],
+                    "versionId": document["versionId"], "revisions": [sr.seal(initial)]}
+        value["realizations"] = [document]
+        revision["parent"] = document["revisions"][-1]["digest"]
+    else:
+        document["revisions"].pop()  # Replace only the unsaved synthetic case.
+        if revision_fixture:
+            revision["method"] = copy.deepcopy(document["revisions"][-1]["method"])
+            revision["authors"] = copy.deepcopy(document["revisions"][-1]["authors"])
+    prior = stored(value)
+    prior.update(recordId="technical-private-scope", revisionId="technical-private-scope-r1",
+                 fixture=artifact_fixture, at="2026-11-06T18:31:00.123Z")
+    prior["revisionDigest"] = sr.digest({k: v for k, v in prior.items() if k != "revisionDigest"})
+    revision.update(id="synthetic-scope-current", fixture=revision_fixture, visibility=visibility,
+                    at="2026-11-06T18:32:00Z", change="realization-edit")
+    for asset in revision["glyphAssets"]:
+        asset["visibility"] = asset_visibility
+    document["revisions"].append(sr.seal(revision))
+    sr.validate(value)
+    current = stored(value)
+    current.update(recordId=prior["recordId"], revisionId="technical-private-scope-r2",
+                   parents=[prior["revisionId"]], fixture=artifact_fixture,
+                   at="2026-11-06T18:32:00.123Z", reason="revision")
+    current["revisionDigest"] = sr.digest({k: v for k, v in current.items() if k != "revisionDigest"})
+    return original, value, [prior, current]
+
+
 def reader_boundary(output, mutation="none"):
     """Run the production loader over actual exported bytes, stopping at DOM parse."""
     script = r"""
@@ -88,6 +128,16 @@ const stored=JSON.parse(fs.readFileSync(path.join(folder,'artifact.json')));
 const files=new Map(manifest.files.map(entry=>[entry.path,fs.readFileSync(path.join(folder,entry.path))]));
 if(mutation==='manifest-cleared')manifest.fixture=false;
 if(mutation==='manifest-array')manifest.fixture=[true];
+if(mutation==='publish-flag')manifest.may_publish=true;
+if(mutation.startsWith('revision-visibility-')||mutation.startsWith('asset-visibility-')){
+  const revision=stored.payload.realization.revisions.at(-1),kind=mutation.split('-').at(-1);
+  const value=kind==='array'?['private']:kind;
+  if(mutation.startsWith('revision-'))revision.visibility=value;else revision.glyphAssets[0].visibility=value;
+  const {digest,...body}=revision;revision.digest=hash(M.packageJSON(body));manifest.realization.revisionDigest=revision.digest;
+  files.set('realization.json',encode({format:'versforms-script-realizations',schemaVersion:1,realizations:[stored.payload.realization]}));
+  const {revisionDigest,...artifactBody}=stored;stored.revisionDigest=hash(M.packageJSON(artifactBody));
+  manifest.artifactDigest=stored.revisionDigest;files.set('artifact.json',encode(stored));
+}
 if(mutation==='artifact-array'||mutation==='history-cleared'||mutation==='revision-array'){
   if(mutation==='artifact-array')stored.fixture=[true];
   if(mutation==='history-cleared'){stored.fixture=false;manifest.fixture=false;}
@@ -116,6 +166,47 @@ process.stdout.write(JSON.stringify({parseCalls,requests,error}));
 
 
 class RealizationPreviewPackage(unittest.TestCase):
+    def test_private_projection_visibility_fixture_matrix_roundtrips_exported_packages(self):
+        combinations = list(itertools.product(((True, True), (True, False), (False, False)),
+                            ("private", "public-proposed"), ("private", "public-proposed"),
+                            ("unsorted", "series"), ("private", "public")))
+        self.assertEqual(len(combinations), 48)
+        with tempfile.TemporaryDirectory() as temp:
+            for index, (flags, visibility, asset_visibility, pool, source_visibility) in enumerate(combinations):
+                with self.subTest(flags=flags, visibility=visibility, asset=asset_visibility,
+                                  pool=pool, source_visibility=source_visibility):
+                    original, value, history = private_visibility_history(*flags, visibility, asset_visibility)
+                    artifact, output = history[-1], Path(temp) / str(index)
+                    policy = {"pool": pool, "visibility": source_visibility}
+                    self.assertEqual(latest(value)["lines"], latest(original)["lines"])
+                    self.assertEqual(latest(value)["layout"], latest(original)["layout"])
+                    self.export(artifact, value, ROOT / "docs/verification/t10-2026-11-05/pilot",
+                                ROOT / "exports/studio-db-2026-11-05", output, policy=policy)
+                    manifest = sr.read_json(output / "manifest.json")
+                    self.assertEqual(manifest["fixture"], flags[0] or flags[1])
+                    self.assertFalse(manifest["may_publish"])
+                    self.assertEqual(sr.read_json(output / "realization.json"), value)
+                    self.assertEqual(reader_boundary(output), {"parseCalls": 1, "requests": 5,
+                        "error": "VALID_TEMPLATE_REACHED_DOM_BOUNDARY"})
+                    public = sr.projection(value, {(artifact["source"]["pieceId"], artifact["source"]["versionId"]): latest(value)["source"]},
+                                           {artifact["source"]["pieceId"]: policy}, audience="public")
+                    self.assertEqual(public["realizations"], [])
+
+    def test_private_preview_refuses_withheld_unknown_coerced_or_publishable_states(self):
+        _, value, history = private_visibility_history(visibility="private", asset_visibility="private")
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "package"
+            package.export_package(history[-1], ROOT, ROOT / "exports/studio-db-2026-11-05",
+                                   ROOT / "docs/verification/t10-2026-11-05/pilot", output)
+            for field, state in itertools.product(("revision", "asset"), ("withheld", "unknown", "array")):
+                with self.subTest(field=field, state=state):
+                    result = reader_boundary(output, f"{field}-visibility-{state}")
+                    self.assertEqual(result["parseCalls"], 0, result)
+                    self.assertRegex(result["error"], "stored realization|glyph asset")
+            result = reader_boundary(output, "publish-flag")
+            self.assertEqual(result["parseCalls"], 0, result)
+            self.assertRegex(result["error"], "publishable")
+
     def test_exported_mixed_fixture_history_reaches_reader_without_relabeling_revision(self):
         original, value, history = mixed_fixture_history()
         artifact = history[-1]

@@ -239,7 +239,7 @@ export async function loadRealizationPackage(options) {
   keys(manifest.realization,['id','revisionId','revisionDigest'],'realization identity');
   if (!id(manifest.artifactRevisionId) || !hash(manifest.artifactDigest) || !id(manifest.realization.id) || !id(manifest.realization.revisionId) || !hash(manifest.realization.revisionDigest) || !sameSource(manifest.source,source) || manifest.artifactRevisionId !== stored.revisionId || manifest.artifactDigest !== stored.revisionDigest) fail('Package does not bind the selected stored artifact and source.');
   const realization = stored.payload?.realization, revision = realization?.revisions?.at(-1);
-  if (!realization || !revision || realization.id !== manifest.realization.id || realization.pieceId !== source.pieceId || realization.versionId !== source.versionId || revision.id !== manifest.realization.revisionId || revision.digest !== manifest.realization.revisionDigest || revision.source?.versionFingerprint !== source.sourceFingerprint || typeof revision.fixture !== 'boolean' || typeof stored.fixture !== 'boolean' || manifest.fixture !== (stored.fixture || revision.fixture) || revision.visibility !== 'private') fail('Package does not bind the current stored realization revision.');
+  if (!realization || !revision || realization.id !== manifest.realization.id || realization.pieceId !== source.pieceId || realization.versionId !== source.versionId || revision.id !== manifest.realization.revisionId || revision.digest !== manifest.realization.revisionDigest || revision.source?.versionFingerprint !== source.sourceFingerprint || typeof revision.fixture !== 'boolean' || typeof stored.fixture !== 'boolean' || manifest.fixture !== (stored.fixture || revision.fixture) || !['private','public-proposed'].includes(revision.visibility)) fail('Package does not bind the current stored realization revision.');
   const guardPackage = () => current(manifest.policy);
   guardPackage();
   await logicalSource(revision.source,source,doc); guardPackage();
@@ -254,7 +254,7 @@ export async function loadRealizationPackage(options) {
   }
   const required = new Set([manifest.entry,manifest.model,manifest.artifact]);
   for (const asset of revision.glyphAssets) {
-    if (!object(asset) || !id(asset.id) || !hash(asset.sha256) || typeof asset.path !== 'string' || !/^assets\/[A-Za-z0-9_.-]+$/.test(asset.path) || !['font','capture-manifest'].includes(asset.kind) || asset.visibility === 'withheld') fail('Invalid stored glyph asset.');
+    if (!object(asset) || !id(asset.id) || !hash(asset.sha256) || typeof asset.path !== 'string' || !/^assets\/[A-Za-z0-9_.-]+$/.test(asset.path) || !['font','capture-manifest'].includes(asset.kind) || !['private','public-proposed'].includes(asset.visibility)) fail('Invalid stored glyph asset.');
     filePath(asset.path); required.add(asset.path);
     if (!Array.isArray(manifest.files) || manifest.files.find(f => f?.path === asset.path)?.sha256 !== asset.sha256) fail('Package glyph asset differs from the stored realization.');
   }

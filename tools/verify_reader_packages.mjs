@@ -46,6 +46,9 @@ assert.deepEqual(read(path.join(T10,'artifact.json')), stored);
 const expectedRevision = stored.payload.realization.revisions.at(-1);
 assert.equal(typeof stored.fixture,'boolean');assert.equal(typeof expectedRevision.fixture,'boolean');
 assert.equal(t10Manifest.fixture,stored.fixture||expectedRevision.fixture,'Package fixture scope combines the stored artifact and latest realization flags.');
+assert.ok(['private','public-proposed'].includes(expectedRevision.visibility));
+assert.ok(expectedRevision.glyphAssets.every(asset=>['private','public-proposed'].includes(asset.visibility)));
+assert.equal(t10Manifest.may_publish,false,'Private preview never grants publication authority.');
 const t10Config = {source:stored.source,revisionId:stored.revisionId,package:{manifestUrl:'/private-fixtures/t10/manifest.json',sha256:digest(fs.readFileSync(path.join(T10,'manifest.json')))}};
 const t08Config = {...read(REGION_DESCRIPTOR),package:{manifestUrl:'/private-fixtures/t08/region-preview.json',sha256:digest(fs.readFileSync(path.join(T08,'region-preview.json')))}};
 const checks = [], errors = [], blockedRequests = [], networkTraps = [], expectedRequestFailures = [];
@@ -169,7 +172,7 @@ try {
     assert.equal(await frame.locator('#metadata').evaluate(node=>JSON.parse(node.textContent).fixture),expectedRevision.fixture);
     assert.equal(await page.locator('iframe').getAttribute('sandbox'),'allow-same-origin');assert.equal(await frame.locator('script').count(),0);
     assert.equal(await page.evaluate(()=>document.querySelector('iframe').sandbox.contains('allow-scripts')),false);
-    await page.screenshot({path:path.join(OUT,'actual-realization.png')});return{logicalLines:facts.lines.length,fontLoaded:true,sandbox:'allow-same-origin only; scripts forbidden',language:facts.lang,script:facts.script,fixtureFlags:{artifact:stored.fixture,latestRevision:expectedRevision.fixture,package:t10Manifest.fixture},revisionHeading:facts.fixture};
+    await page.screenshot({path:path.join(OUT,'actual-realization.png')});return{logicalLines:facts.lines.length,fontLoaded:true,sandbox:'allow-same-origin only; scripts forbidden',language:facts.lang,script:facts.script,fixtureFlags:{artifact:stored.fixture,latestRevision:expectedRevision.fixture,package:t10Manifest.fixture},visibility:{realization:expectedRevision.visibility,assets:expectedRevision.glyphAssets.map(asset=>asset.visibility),source:t10Manifest.policy,may_publish:t10Manifest.may_publish},revisionHeading:facts.fixture};
   });
   await check('Escape while focused inside the actual no-scripts realization closes the shared preview and restores trigger focus',async()=>{
     const frame=await realized(page);await frame.locator('#details summary').click();await frame.locator('#details summary').press('Escape');await noFrame(page);
