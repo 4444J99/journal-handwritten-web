@@ -567,7 +567,10 @@ def audit_strings(out_dir):
         blk = sum(1 for p in j["pages"] for b in p["B"] if "u" in b)
         rows.append(("block notes", f"page reading notes: {notes}; blocks carrying a note flag: {blk}"))
         prov = j.get("prov", {})
-        rows.append(("info panel (from prov)", "Machine transcription (%s), %s by the author. Spelling and line breaks kept." % (prov.get("tdate", ""), "checked" if prov.get("verified") else "not yet checked")))
+        if "Machine transcription (" in plain:
+            rows.append(("info panel (from prov)", "Machine transcription (%s), %s by the author. Spelling and line breaks kept." % (prov.get("tdate", ""), "checked" if prov.get("verified") else "not yet checked")))
+        else:
+            rows.append(("info panel review status", "global transcription status omitted from public output"))
         if not ({"repo", "commit", "path"} & set(prov)):
             rows.append(("info panel (from prov)", "Scans: line renders with an empty link, empty commit and empty path (source repository keys removed)"))
     return rows

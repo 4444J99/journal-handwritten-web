@@ -745,10 +745,11 @@ class BuildTests(Base):
         self.assertEqual([v["id"] for v in self.pc("p007")["V"]], ["p007-0"])
         self.assertIn("WARNING  p007: the top of the stack (V[0]) is not the last entry of V (V[1])", self.out)
 
-    def test_info_panel_sentences_from_prov_are_listed_as_warnings(self):
+    def test_omitted_status_is_audited_without_inventing_a_prov_warning(self):
         self.prepare()
         self.assertEqual(self.go("p001"), 0, self.out)
-        self.assertIn("WARNING  info panel text produced from prov: Machine transcription (2026-01-01), not yet checked by the author", self.out)
+        self.assertNotIn("WARNING  info panel text produced from prov: Machine transcription", self.out)
+        self.assertIn("global transcription status omitted from public output", self.out)
         self.assertIn("empty link, empty commit and empty path", self.out)
 
     def test_already_public_piece_in_reserve_or_archive_is_a_hard_stop_even_with_force(self):

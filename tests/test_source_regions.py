@@ -206,6 +206,19 @@ class PilotManifestTests(unittest.TestCase):
         for asset in expected["source_assets"]:
             self.assertEqual(asset["owner"], "T02 source/build/deposit (identifier owner; no completed T02 agreement located)")
             asset["owner"] = "T02 canonical source contract: docs/contracts/canonical-source.md (2026-11-06)"
+        # The live canonical repair changes only the reference boxes. Preserve
+        # the historical pilot and independently derive its current box overlay.
+        from source_foundation import read_json, render_data
+        reader, _ = render_data(read_json(ROOT / "source/canonical.json"))
+        page = next(p for p in reader["pages"] if p["id"] == "diary1")
+        boxes = sr._author_boxes(page)
+        for item in expected["atoms"]:
+            ids = item.get("source_ids", {})
+            if item.get("unit") == "line" and "author_box" in item:
+                key = (ids.get("block_index"), ids.get("line_index"))
+                box = boxes.get(key)
+                item["author_box"]["bbox"] = box
+                item["author_box"]["state"] = "present-in-site-data" if box else "missing-in-site-data"
         expected = reseal(expected)
         self.assertEqual(rebuilt, expected)
 
@@ -893,17 +906,37 @@ class PrivateRegionPreviewTests(unittest.TestCase):
             geometry = load(out / "geometry.json")
             self.assertEqual(geometry["reviewPageGeometry"]["blocks"][0]["lines"][0]["lineId"], "diary1-0-0")
 
-    def test_unknown_canonical_geometry_never_becomes_the_old_atom_box(self):
+    def test_repaired_canonical_geometry_supersedes_old_atom_boxes(self):
         with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "repaired"
+            sr.export_private_preview(self.manifest, self.policy,
+                "vf:atom:p001/p001-diary1-0/diary1/line-2-3", out)
+            anchor = load(out / "region-preview.json")["sourceAnchor"]
+            self.assertEqual(anchor["status"], "available")
+            self.assertEqual(anchor["box"], [0.0396, 0.4537, 0.2775, 0.4875])
+
+    def test_unknown_canonical_geometry_never_becomes_the_old_atom_box(self):
+        import source_foundation as foundation
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            repo = self.copied_source(folder)
+            canonical = load(repo / "source/canonical.json")
+            line = next(l for l in canonical["lines"] if l["id"] == "diary1-2-3")
+            line["geometry"] = {"readerRow": None, "studioBox": None,
+                                "status": "unavailable", "reason": "synthetic-missing-geometry"}
+            page = next(p for p in canonical["pages"] if p["id"] == "diary1")
+            page["geometryOrder"].remove(line["id"])
+            (repo / "source/canonical.json").write_bytes(foundation.encoded(canonical))
+            foundation.rebuild(canonical, repo, write=True)
             for suffix in ("line-2-0", "line-2-3"):
-                out = Path(tmp) / suffix
+                out = folder / suffix
                 sr.export_private_preview(self.manifest, self.policy,
-                    "vf:atom:p001/p001-diary1-0/diary1/" + suffix, out)
+                    "vf:atom:p001/p001-diary1-0/diary1/" + suffix, out, repo=repo)
                 package = load(out / "region-preview.json")
                 self.assertEqual(package["sourceAnchor"]["status"], "unavailable")
                 self.assertIsNone(package["sourceAnchor"]["box"])
                 self.assertEqual(load(out / "geometry.json")["sourceAnchor"], package["sourceAnchor"])
-            self.assertEqual(load(Path(tmp) / "line-2-0/region-preview.json")["sourceAnchor"]["reason"], "block-source-geometry-incomplete")
+            self.assertEqual(load(folder / "line-2-0/region-preview.json")["sourceAnchor"]["reason"], "block-source-geometry-incomplete")
 
     def test_changed_atom_or_coordinate_only_geometry_refuses_old_descriptor(self):
         import source_foundation as foundation
