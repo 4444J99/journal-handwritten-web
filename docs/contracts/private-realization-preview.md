@@ -42,6 +42,17 @@ The descriptor hashes the manifest bytes; the manifest hashes every payload
 file and records its byte length and media type. `may_publish` is always false.
 Technical fixture history retains its fixture marking.
 
+Private inspection accepts current realization and glyph-asset visibility values
+`private` and `public-proposed`. Withheld, unknown and coerced visibility values
+are refused. A proposal remains a private preview with `may_publish: false`;
+it supplies neither author clearance nor execution authority. Current withheld
+source policy and excluded source pools still prevent inspection.
+
+The package fixture flag is the Boolean OR of the stored artifact flag and the
+latest realization flag. Both must be actual booleans, and an outer artifact
+cannot erase fixture state from its retained realization history. This permits
+valid mixed history without relabeling it as an author-approved release.
+
 | File | Purpose |
 |---|---|
 | `artifact.json` | Exact selected immutable outer artifact revision |
