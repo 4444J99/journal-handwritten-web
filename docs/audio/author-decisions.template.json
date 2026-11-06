@@ -1,0 +1,227 @@
+{
+  "schema": "versforms.t09-author-decisions.v1",
+  "status": "unanswered",
+  "scope": "Private pilot review; not a release authorization",
+  "author": null,
+  "recorded_at": null,
+  "source": null,
+  "decisions": [
+    {
+      "id": "D01",
+      "key": "reading_style",
+      "needed_at": "before-recording",
+      "options": [
+        "even",
+        "slightly_natural",
+        "bounded_ab"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D02",
+      "key": "carrier_phrase",
+      "needed_at": "before-recording",
+      "options": [
+        "fixed_technical_carrier",
+        "author_supplied",
+        "isolated_pilot_chains"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D03",
+      "key": "pronunciation_authority",
+      "needed_at": "before-recording",
+      "options": [
+        "present_day",
+        "historical_with_uncertainty",
+        "present_day_with_overrides"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D04",
+      "key": "vowel_inventory",
+      "needed_at": "before-full-bank",
+      "options": [
+        "stress_tags",
+        "split_stress_units",
+        "pilot_then_decide"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D05",
+      "key": "performed_material",
+      "needed_at": "after-listening",
+      "options": [
+        "defer",
+        "selected_words_transitions",
+        "author_selected_lines"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D06",
+      "key": "captions",
+      "needed_at": "before-integration",
+      "options": [
+        "author_text_on_request",
+        "author_text_while_playing",
+        "none_for_ambient_mode"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D07",
+      "key": "fallback_engine",
+      "needed_at": "before-full-bank",
+      "options": [
+        "refuse_unknown_and_review",
+        "explicit_token_silence",
+        "evaluate_phonemizer_later"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D08",
+      "key": "voice_reuse_license",
+      "needed_at": "before-distribution",
+      "options": [
+        "own_projects",
+        "specific_written_permission",
+        "separately_reviewed_public_terms"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D09",
+      "key": "master_privacy",
+      "needed_at": "before-distribution",
+      "options": [
+        "keep_raw_and_units_private",
+        "selected_units_later",
+        "selected_masters_later"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D10",
+      "key": "microphone",
+      "needed_at": "before-recording",
+      "options": [
+        "existing_phone",
+        "existing_usb_xlr",
+        "compare_existing_devices_calibration_only"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D11",
+      "key": "sound_palette",
+      "needed_at": "after-listening",
+      "options": [
+        "selected_render_ids",
+        "reject_all",
+        "defer"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D12",
+      "key": "struck_words",
+      "needed_at": "before-integration",
+      "options": [
+        "silent",
+        "recorded_reading",
+        "author_selected_treatment"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D13",
+      "key": "illegible_words",
+      "needed_at": "before-integration",
+      "options": [
+        "silent_and_flagged",
+        "author_reading",
+        "author_selected_nonverbal_event"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    },
+    {
+      "id": "D14",
+      "key": "iphone_silent_switch",
+      "needed_at": "before-integration",
+      "options": [
+        "respect_silent",
+        "playback_after_explicit_start",
+        "decide_after_device_test"
+      ],
+      "choice": null,
+      "author_text": null,
+      "source": null,
+      "decided_at": null,
+      "author": null
+    }
+  ],
+  "listening_evidence": {
+    "session_id": null,
+    "manifest_sha256": null,
+    "selected_render_sha256": [],
+    "devices": []
+  },
+  "release_clearance": null
+}

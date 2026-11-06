@@ -1,0 +1,16 @@
+{
+  "visibility": "private",
+  "source": {
+    "piece_id": "p001",
+    "version_id": "p001-diary1-0",
+    "sha256": "5de0901485952e6ad279fce6ea102af4f830f2a4813e82842a90ebcc3d8d217a",
+    "visibility": "private",
+    "collection": "unsorted",
+    "locator": "4444J99/journal-handwritten-web@038d01fb1862f2e569d231b5b3c4c3a4eb1aecda: existing reading with exported corrections"
+  },
+  "authorship": {
+    "actor": "T10-tooling; source text and handwriting by 4444J99",
+    "role": "worksheet-generator",
+    "evidence": "Blank sequence labels derived from the exact existing source reading and exported corrections. No author drawing, new glyph design, translation or artistic acceptance. The original supplied font is audited separately."
+  }
+}

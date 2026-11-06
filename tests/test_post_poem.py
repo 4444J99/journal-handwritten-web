@@ -252,6 +252,15 @@ class Base(unittest.TestCase):
         eff = subprocess.run(["git", "-C", str(public), "remote", "get-url", "origin"], capture_output=True, text=True).stdout.strip()
         return mock.patch.object(post_poem, "effective_url_ok", lambda u, _eff=eff: u == _eff or post_poem.remote_is_public_repo(u))
 
+    def built_output(self):
+        """Run the dry run and return (src, build dir, published blocks, authorised texts) exactly as the run computed them."""
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)
+        src, out = post_poem.Source(self.root), self.work / "build"
+        pub = json.loads((out / "data" / "j.json").read_text())
+        published = {(pg["id"], bi) for pg in pub["pages"] for bi, b in enumerate(pg["B"]) if any(b["L"])}
+        texts_ok = {t for (pg, bi) in published for t in src.jpages[pg]["B"][bi]["L"]}
+        return src, out, published, texts_ok
+
     def pubjson(self):
         return json.loads((self.work / "build" / "data" / "j.json").read_text())
 
@@ -2051,6 +2060,199 @@ class HardenedPostingTests(Base):
         out = self.tmp / "o"
         build_public.build(out, ["p001"], site=self.root / "site", select={"p001": [1]}, corrections={("pg2", 0, 0): "THE QUOTED PASSAGE"})
         self.assertNotIn("THE QUOTED PASSAGE", self.all_text(out))
+
+    # ---- round 3: findings of the adversarial verifier on e5ae157
+    def bare_repo(self, name):
+        path = self.tmp / name
+        subprocess.run(["git", "init", "-q", "--bare", str(path)], check=True)
+        return path
+
+    def pushed_ok(self, clone, bare):
+        return git(bare, "rev-parse", "post/p001") == git(clone, "rev-parse", "post/p001")
+
+    # M1. git push sends to EVERY push url: more than one is a hard stop, whatever the first one is
+    def test_two_push_urls_are_a_hard_stop_and_nothing_reaches_the_second(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        evil = self.bare_repo("evil.git")
+        git(clone, "config", "--add", "remote.origin.pushurl", str(bare))
+        git(clone, "config", "--add", "remote.origin.pushurl", str(evil))
+        self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("exactly one", self.out)
+        self.assertEqual(git(evil, "for-each-ref"), "")
+        self.assertEqual(git(bare, "for-each-ref", "refs/heads/post"), "")
+
+    def test_two_values_of_remote_origin_url_are_a_hard_stop(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "--add", "remote.origin.url", "https://github.com/4444J99/versforms.git")
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("exactly one", self.out)
+
+    def test_config_injected_through_the_environment_cannot_add_a_push_destination(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        evil = self.bare_repo("evil.git")
+        inject = {"GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_0": "remote.origin.pushurl", "GIT_CONFIG_VALUE_0": str(bare),
+                  "GIT_CONFIG_KEY_1": "remote.origin.pushurl", "GIT_CONFIG_VALUE_1": str(evil)}
+        with mock.patch.dict(os.environ, inject):
+            code = self.go("p001", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(git(evil, "for-each-ref"), "", self.out)  # whatever the exit code, nothing went to the second destination
+        self.assertIn(code, (0, 3), self.out)
+
+    # M2. a worktree that fails to be created may still have created the branch
+    def test_a_failing_post_checkout_hook_does_not_leave_the_branch_behind(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        hook = clone / ".git" / "hooks" / "post-checkout"
+        hook.write_text("#!/bin/sh\necho refused >&2\nexit 1\n")
+        hook.chmod(0o755)
+        before = git(clone, "for-each-ref")
+        self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertEqual(git(clone, "branch", "--list", "post/p001"), "")
+        self.assertEqual(git(clone, "for-each-ref"), before)
+        self.assertIn("removed again", self.out)
+        self.assertEqual(git(clone, "worktree", "list").count("\n"), 0)
+        hook.unlink()
+        self.assertEqual(self.run_real("--no-pr", public=clone), 0, self.out)  # a rerun is not refused
+
+    # M3. variables that move git to another repository or index must not reach the git calls
+    def test_git_dir_in_the_environment_cannot_redirect_the_commit_onto_the_clones_main(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        main_before = git(clone, "rev-parse", "main")
+        with mock.patch.dict(os.environ, {"GIT_DIR": str(clone / ".git")}):
+            code = self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(code, 0, self.out)
+        self.assertEqual(git(clone, "rev-parse", "main"), main_before)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+        self.assertEqual(git(clone, "log", "-1", "--format=%s", "post/p001"), "Post p001")
+
+    def test_git_index_file_in_the_environment_cannot_make_the_clone_look_dirty(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        with mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(self.tmp / "other-index")}):
+            code = self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone)
+        self.assertEqual(code, 0, self.out)
+        self.assertEqual(git(clone, "status", "--porcelain"), "")
+        self.assertEqual(git(clone, "rev-parse", "--abbrev-ref", "HEAD"), "main")
+
+    # m2. tags and mirrors
+    def test_push_follow_tags_does_not_send_a_local_tag_to_origin(self):
+        self.prepare()
+        self.fake_gh()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "push.followTags", "true")
+        git(clone, "tag", "-a", "local-only-tag", "-m", "x", "main")
+        self.assertEqual(self.go("p001", "--accept-embedded-font", dry=False, public=clone), 0, self.out)
+        self.assertEqual(git(bare, "tag", "--list"), "")
+        self.assertTrue(self.pushed_ok(clone, bare))
+
+    def test_remote_origin_mirror_is_a_hard_stop(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        git(clone, "config", "remote.origin.mirror", "true")
+        self.assertEqual(self.go("p001", "--no-pr", "--accept-embedded-font", dry=False, public=clone), 3, self.out)
+        self.assertIn("remote.origin.mirror is not set", self.out)
+
+    # m3. the committed BYTES are compared with the build, not only paths and sizes
+    def test_a_clean_filter_that_changes_bytes_without_changing_sizes_is_refused(self):
+        self.prepare()
+        clone, bare = make_public(self.tmp)
+        (clone / ".gitattributes").write_text("*.json filter=evil\n")
+        git(clone, "add", ".gitattributes")
+        git(clone, "commit", "-q", "-m", "attributes")
+        git(clone, "push", "-q", "origin", "main")
+        git(clone, "config", "filter.evil.clean", "tr a-y b-z")
+        before_refs = git(clone, "for-each-ref")
+        self.assertEqual(self.run_real("--no-pr", public=clone), 1, self.out)
+        self.assertIn("differs from the build output", self.out)
+        self.assertEqual(git(clone, "for-each-ref"), before_refs)
+
+    # m1. a scan that says it is the whole spread but whose other half cannot be found
+    def test_a_whole_spread_page_with_no_other_half_is_a_hard_stop(self):
+        self.prepare(pids=("p003",), public=(), release={"p007": {"pool": "reserve"}})
+        def alone(j):
+            for pg in j["pages"]:
+                if pg["id"] == "pg3":
+                    pg["sp"] = {"s": "whole spread", "cb": None, "f": None, "k": "nobody-else.jpg"}
+        self.edit_j(alone)
+        self.assertEqual(self.go("p003"), 3, self.out)
+        self.assertEqual(self.go("p003", "--force"), 3, self.out)
+        self.assertIn("whole spread", self.out)
+
+    # m4. a secret that straddles the end of an authorised line is not excused by that line
+    def test_a_secret_that_straddles_an_authorised_line_is_still_found(self):
+        secret = "word word word word"
+        self.prepare()
+        def put(j):
+            for pg in j["pages"]:
+                if pg["id"] == "pg1":
+                    pg["B"][0]["L"][0] = secret
+                if pg["id"] == "pg2":
+                    pg["B"][0]["L"][0] = "x " + secret
+        self.edit_j(put)
+        ready_db(self.db, pids=("p001",), _root=self.root)
+        src, out, published, texts_ok = self.built_output()
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [])
+        (out / "data" / "extra.txt").write_text("x " + secret + " word word")  # the second occurrence runs past the authorised line
+        self.assertEqual(post_poem.leak_check(src, out, published, texts_ok), [secret])
+
+    # m5. clean stops instead of tracebacks
+    def test_an_unreadable_release_document_is_a_clean_stop(self):
+        self.prepare()
+        doc = self.db / "release" / "p001.json"
+        doc.chmod(0)
+        self.addCleanup(doc.chmod, 0o644)
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("cannot read", self.out)
+
+    def test_a_workdir_that_is_a_file_is_a_usage_error_not_a_traceback(self):
+        self.prepare()
+        f = self.tmp / "afile"
+        f.write_text("x")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = post_poem.main(["p001", "--db", str(self.db), "--source", str(self.root), "--workdir", str(f), "--dry-run"])
+        self.assertEqual(code, 64, buf.getvalue())
+
+    def test_site_data_without_pieces_is_a_clean_stop(self):
+        self.prepare()
+        self.edit_j(lambda j: j.pop("pieces"))
+        self.assertEqual(self.go("p001"), 3, self.out)
+        self.assertIn("unexpected shape", self.out)
+
+    def test_a_release_list_that_cannot_be_written_after_the_pull_request_is_reported_not_raised(self):
+        self.prepare()
+        self.fake_gh()
+        with mock.patch.object(post_poem, "update_release_list", side_effect=OSError("disk full")):
+            code = self.run_real()
+        self.assertEqual(code, 1, self.out)
+        self.assertIn("pull request exists", self.out)
+        self.assertIn("release/public.json could NOT be updated", self.out)
+
+    # m6. no page or line ids of unpublished material in the public text
+    def test_the_pull_request_text_has_no_line_ids_of_unpublished_pages_and_no_facing_page_ids(self):
+        ctx = dict(pids=["p001"], versions={"p001": dict(how="top", indices=[1], total=2, newest=1, top=1, unpublished_corrected=0)},
+                   pages=["pg2"], diff=dict(added=[], changed=[], removed=[], bytes=0), results=[
+                       ("gate", "p001", "(b) every line confirmed or corrected", False, "1 of 9 lines not confirmed or corrected (first: pg1-0-1, pg1-0-2)", True)],
+                   checks=[], counts={"p001": dict(confirmed=1, corrected=0, unreviewed=0, withheld=0)}, sha="0" * 64,
+                   shared=[dict(page="pg2", id="p002", status="ok", reason=""), dict(page="pgx-facing", id="pgx-facing", status="accepted", reason="")],
+                   font_notes=[], warnings=[], audit=[("title", "versforms")], new_pieces=["p001"], changed_pieces=[])
+        body = post_poem.render_pr_body(ctx)
+        for secret in ("pg1-0-1", "pg1-0-2", "pgx-facing"):
+            self.assertNotIn(secret, body)
+        self.assertIn("1 of 9 lines not confirmed or corrected", body)
+        self.assertIn("pg2", body)  # a published page is public anyway
+
+    # m7. a partial credential
+    def test_redact_hides_a_password_that_contains_at_or_slash(self):
+        out = post_poem._redact("https://user:pa@ss/word@github.com/4444J99/versforms.git")
+        self.assertNotIn("pa@ss", out)
+        self.assertNotIn("ss/word", out)
+        self.assertIn("github.com/4444J99/versforms.git", out)
 
     # ---- release list change is described
     def test_the_pull_request_lists_new_pieces_and_rebuilt_pieces_whose_data_changed(self):

@@ -1,0 +1,29 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "tools/script_realizations.py",
+      "sha256": "8b090addfbb5d986aa3147d42c9338c1ef86a884e4b8f224cfb6514faac9ffe7"
+    },
+    {
+      "path": "tools/glyph_workflow.py",
+      "sha256": "801997b30cacf822a2d2d0c297826b28dea68f467f4e1e3cfe232d536faaeb4e"
+    },
+    {
+      "path": "tools/verify_script_realizations.mjs",
+      "sha256": "4ff2dc17d7394f38ea84c634021f997cfba01664a0b09e96a16ca21ea11c3557"
+    },
+    {
+      "path": "schemas/script-realization.schema.json",
+      "sha256": "1f5206fe89e6eb770f98722f3a2423cf6db15e4490aacd4e39009d3b59b85d05"
+    },
+    {
+      "path": "tests/test_script_realizations.py",
+      "sha256": "298ccc0fcc7bb6d226e79d4e6fa16e19a6edfbcabf899dc3499dcf56734423b6"
+    },
+    {
+      "path": "tests/test_glyph_workflow.py",
+      "sha256": "6000bba8b89af6031af1076fa22684e81e7889135ba5c677e24cfd334876921d"
+    }
+  ]
+}

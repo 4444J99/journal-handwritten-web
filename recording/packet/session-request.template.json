@@ -1,0 +1,126 @@
+{
+  "author_decisions": {
+    "D01": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "reading style"
+    },
+    "D02": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "carrier phrase"
+    },
+    "D03": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "pronunciation authority"
+    },
+    "D04": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "vowel split"
+    },
+    "D05": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "performed material"
+    },
+    "D06": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "author-written captions"
+    },
+    "D07": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "fallback engine"
+    },
+    "D08": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "voice licensing"
+    },
+    "D09": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "raw master privacy"
+    },
+    "D10": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "microphone"
+    },
+    "D11": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "sound palette"
+    },
+    "D12": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "struck words"
+    },
+    "D13": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "illegible words"
+    },
+    "D14": {
+      "author": null,
+      "choice": null,
+      "source": null,
+      "topic": "iPhone silent-switch behavior"
+    }
+  },
+  "labels_directory": "/absolute/private/reviewed-labels",
+  "lexicon": {
+    "calibration": [
+      "AA",
+      "M",
+      "AA"
+    ]
+  },
+  "notes": "Choose take_ids and request label IDs from your actual reviewed labels. Example request does not assert a take exists.",
+  "packet_path": "prompts.json",
+  "recordings_directory": "/absolute/private/original-wavs",
+  "requests": [
+    {
+      "id": "dry-reference",
+      "label": "Private technical reference — awaiting author listening",
+      "label_id": "p01",
+      "mode": "source",
+      "parameters": {
+        "preview_seconds": 6.0
+      },
+      "source": {
+        "id": "calibration:C27",
+        "version": "take-1"
+      },
+      "take_id": "C27"
+    }
+  ],
+  "schema_version": 1,
+  "session_id": "t09-author-pilot-01",
+  "source_refs": [
+    {
+      "id": "calibration:t09-combined-pilot",
+      "packet_sha256": "fcb6ec6ced6e28b441e5e9647a39acbc0ca2185c115c57c9294ab0e0f17b7575",
+      "version": "v1"
+    }
+  ],
+  "speaker_id": "author-4444j99",
+  "take_ids": []
+}
