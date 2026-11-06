@@ -1,7 +1,8 @@
 // JSON API for the review studio: collections of documents in D1, photos in R2.
 // Every function here runs after the middleware has authenticated the caller.
 
-export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig']);
+export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions']);
+export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions']);
 export const DOC_ID_RE = /^[A-Za-z0-9_.-]{1,128}$/;
 export const ASSET_ID_RE = /^[a-f0-9]{32}$/;
 export const MAX_DOC_BYTES = 64 * 1024;
@@ -61,6 +62,37 @@ function storageError(e) {
 // and no statement may reference anything else (tests/test_sqlguard.py scans this file).
 const SQL_BUMP = 'INSERT INTO vf_revs (collection, rev) VALUES (?1, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1';
 const SQL_REV = 'SELECT rev FROM vf_revs WHERE collection = ?1';
+const SQL_BUMP_FOR_NEW_DOC = 'INSERT INTO vf_revs (collection, rev) SELECT ?1, 1 WHERE NOT EXISTS (SELECT id FROM vf_docs WHERE collection = ?1 AND id = ?2) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1';
+const SQL_INSERT_REVISION = 'INSERT INTO vf_docs (collection, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, (SELECT rev FROM vf_revs WHERE collection = ?1)) ON CONFLICT(collection, id) DO NOTHING';
+const SQL_DOC = 'SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2';
+
+// JSON object key order is not revision content. Arrays retain their order.
+// Comparing after parsing also handles export files' escaped Unicode safely.
+function sameDocument(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const ak = Object.keys(a), bk = Object.keys(b);
+  return ak.length === bk.length && ak.every(k => Object.hasOwn(b, k) && sameDocument(a[k], b[k]));
+}
+
+async function putRevision(env, coll, id, doc, text, now) {
+  const family = coll === 'notes' ? 'note' : 'contribution';
+  if (doc.schemaVersion !== 1 || doc.family !== family || doc.revisionId !== id ||
+      typeof doc.recordId !== 'string' || !DOC_ID_RE.test(doc.recordId) || ['.', '..'].includes(doc.recordId) ||
+      !Array.isArray(doc.parents) || doc.parents.some(p => typeof p !== 'string' || !DOC_ID_RE.test(p) || ['.', '..', id].includes(p)) ||
+      new Set(doc.parents).size !== doc.parents.length) return fail(400, 'invalid_revision');
+  // D1 batch is transactional. The absent-ID check and insertion therefore cannot
+  // race another batch into overwriting a revision; retries do not bump the feed.
+  const res = await env.DB.batch([
+    env.DB.prepare(SQL_BUMP_FOR_NEW_DOC).bind(coll, id),
+    env.DB.prepare(SQL_INSERT_REVISION).bind(coll, id, text, now),
+    env.DB.prepare(SQL_DOC).bind(coll, id),
+    env.DB.prepare(SQL_REV).bind(coll),
+  ]);
+  if (!sameDocument(JSON.parse(res[2].results[0].data), doc)) return fail(409, 'revision_conflict');
+  return json({ ok: true, rev: res[3].results[0].rev });
+}
 
 async function listCollection(env, coll, since) {
   if (since !== null) {
@@ -92,6 +124,12 @@ async function putDoc(env, request, coll, id) {
   if (doc === null || typeof doc !== 'object' || Array.isArray(doc)) return fail(400, 'not_an_object');
   const text = JSON.stringify(doc);
   const now = new Date().toISOString();
+  if (IMMUTABLE_COLLECTIONS.includes(coll)) {
+    // JSON.parse permits overflow such as 1e999; JSON.stringify would turn that
+    // value into null. Refuse that loss before any immutable revision is stored.
+    if (!sameDocument(JSON.parse(text), doc)) return fail(400, 'invalid_json');
+    return await putRevision(env, coll, id, doc, text, now);
+  }
   const res = await env.DB.batch([
     env.DB.prepare(SQL_BUMP).bind(coll),
     env.DB.prepare('INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, (SELECT rev FROM vf_revs WHERE collection = ?1))').bind(coll, id, text, now),
@@ -101,6 +139,7 @@ async function putDoc(env, request, coll, id) {
 }
 
 async function deleteDoc(env, coll, id) {
+  if (IMMUTABLE_COLLECTIONS.includes(coll)) return fail(409, 'immutable_revision');
   const res = await env.DB.batch([
     env.DB.prepare('DELETE FROM vf_docs WHERE collection = ?1 AND id = ?2').bind(coll, id),
     env.DB.prepare(SQL_BUMP).bind(coll),

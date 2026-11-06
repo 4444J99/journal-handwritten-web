@@ -1,0 +1,14 @@
+{
+  "name": "cf-node",
+  "command": [
+    "node",
+    "--test",
+    "studio-cf/tests/auth.unit.test.mjs",
+    "studio-cf/tests/adapter.unit.test.mjs",
+    "studio-cf/tests/revisions.unit.test.mjs",
+    "studio-cf/tests/demo-proxy.test.mjs"
+  ],
+  "startedAt": "2026-11-06T00:28:18.232029+00:00",
+  "finishedAt": "2026-11-06T00:28:19.328392+00:00",
+  "exitCode": 0
+}

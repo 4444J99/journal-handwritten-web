@@ -1,0 +1,78 @@
+▶ status mapping
+  ✔ database codes (0.708641ms)
+  ✔ asset codes (0.217419ms)
+✔ status mapping (2.11074ms)
+▶ use()
+  ✔ returns promises; db, user, assets resolve; unknown capability rejects (1.998345ms)
+  ✔ user.can reflects canWrite (0.51046ms)
+  ✔ a failing /api/me rejects use() so the page shows its offline state; a later call retries (4.101514ms)
+  ✔ a redirect to the Access login is reported as revoked (0.596296ms)
+✔ use() (8.929625ms)
+▶ snapshots and polling
+  ✔ snapshot shape: docs[] with id, exists, data(); first snapshot delivered even when empty (31.029822ms)
+  ✔ unchanged polls use ?since and do not call back (1.863667ms)
+  ✔ polls about every 4 s (8.838846ms)
+  ✔ pause while hidden, immediate poll when visible again (2.380055ms)
+  ✔ exponential backoff on failure, reset after success; last snapshot is kept; no error callback after the first success (6.968565ms)
+  ✔ initial failures: errCb(unavailable) after 3 tries, and the listener is dropped (1.494755ms)
+  ✔ terminal errors are reported once, immediately, with the right code (1.21866ms)
+  ✔ a redirect during polling is revoked (1.340959ms)
+  ✔ resubscribing after an error starts a fresh poller (no duplicates) (2.033216ms)
+  ✔ unsubscribe stops polling; two listeners share one poller (1.596846ms)
+  ✔ the page's own write triggers an immediate poll (2.369019ms)
+✔ snapshots and polling (62.68015ms)
+▶ writes and errors
+  ✔ set, delete and get map to PUT, DELETE, GET (0.709001ms)
+  ✔ document ids are URL-encoded (0.222476ms)
+  ✔ write errors carry the codes the page retries on (3.164257ms)
+  ✔ a network failure on a write is unavailable (0.468939ms)
+  ✔ unknown collections are invalid_argument (0.280381ms)
+✔ writes and errors (5.258082ms)
+▶ assets.upload
+  ✔ posts the blob with its type and returns {id} (0.42915ms)
+  ✔ error codes the page switches on (0.775489ms)
+✔ assets.upload (1.453314ms)
+▶ browser install
+  ✔ defines window.claude.use when absent (2.418321ms)
+  ✔ does nothing when window.claude already has use() (0.931348ms)
+✔ browser install (3.528913ms)
+▶ readConfig
+  ✔ missing pieces give null (the middleware answers 503) (1.213593ms)
+  ✔ team domain is normalised and the issuer derived from it (0.359248ms)
+  ✔ email lists are lowercased and split on commas, spaces and semicolons (1.897367ms)
+  ✔ the JWKS override is ignored unless the configured host is localhost or 127.0.0.1 (0.557619ms)
+  ✔ even on a local team domain the override URL itself must be local (0.577899ms)
+✔ readConfig (6.756443ms)
+▶ JWKS cache and rotation
+  ✔ a key set is fetched once and cached (126.019806ms)
+  ✔ rotation: a token with a new kid triggers one refetch, rate limited to once per 30 s (136.249794ms)
+  ✔ removed keys stop working after the cache expires (73.582768ms)
+  ✔ an unreachable key set fails closed with 503 (61.454896ms)
+  ✔ claims: iss, aud (array or string), exp, nbf, email (141.091384ms)
+  ✔ header checks: alg must be RS256, kid required, no extra segments (36.958399ms)
+✔ JWKS cache and rotation (576.377104ms)
+▶ authenticate()
+  ✔ allowlist outcomes and status codes (26.018412ms)
+✔ authenticate() (26.502143ms)
+✔ the proxy's own origin is translated to the upstream origin, and the token is added (54.167494ms)
+✔ localhost is accepted as the proxy's own name too (4.97787ms)
+✔ a foreign Origin is forwarded unchanged, so the API's cross-origin protection still applies (21.997286ms)
+✔ the origin of a different port on this machine is not mistaken for the proxy's own (4.217585ms)
+✔ a request for any other Host is refused with 421 and never reaches the upstream (9.105964ms)
+✔ an Access header supplied by the client is overwritten (5.27706ms)
+✔ an unreachable upstream gives 502, not a crash (11.498948ms)
+✔ notes: append, semantic retry, immutable collision and forbidden delete (28.530221ms)
+✔ notes: concurrent same-ID writes preserve exactly one winner (17.292707ms)
+✔ contributions: append, semantic retry, immutable collision and forbidden delete (13.118296ms)
+✔ contributions: concurrent same-ID writes preserve exactly one winner (3.501462ms)
+✔ persistence envelope and writer permission are enforced before writing (2.332796ms)
+✔ six legacy collections retain full replacement and deletion (14.913493ms)
+✔ browser adapter exposes both collections and reports collisions without retrying (7.489841ms)
+ℹ tests 52
+ℹ suites 9
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 957.155853

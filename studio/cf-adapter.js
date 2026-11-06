@@ -26,7 +26,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
   'use strict';
 
-  var COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig'];
+  var COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions'];
   var POLL_MS = 4000;
   var MAX_BACKOFF_MS = 60000;
   var INITIAL_FAILURES_BEFORE_ERROR = 3;
@@ -42,6 +42,7 @@
   function dbCode(status) {
     if (status === 401) return 'revoked';
     if (status === 403) return 'not_granted';
+    if (status === 409) return 'conflict';
     if (status === 429) return 'resource_exhausted';
     if (status === 507) return 'quota_exceeded';
     if (status === 400 || status === 413) return 'invalid_argument';
