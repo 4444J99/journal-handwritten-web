@@ -7,7 +7,7 @@
 | Repository | `4444J99/journal-handwritten-web` |
 | Branch / worktree | `t08/source-regions-pilot-2026-11-05` in `journal-handwritten-web--t08`, from `origin/main` at `038d01f` |
 | Basis of this record | this session's own tool output and the files it wrote, read 2026-11-05; no unseen context packet is cited |
-| Status | Pilot, contract, tests and evidence done; draft PR/hand-off only. Nothing merged, deployed, published or closed. |
+| Status | Pilot, contract, tests and evidence done; draft PR #130 only. Nothing merged, deployed, published or closed. |
 
 ## Produced
 
