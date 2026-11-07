@@ -18,13 +18,13 @@ Source validation, notes source map, checksum integrity and Cloudflare productio
 
 Full CI receipt is full-ci.json. Its Cloudflare Node importer failure was an environment PATH issue (Wrangler executable discovery); the corrected follow-up run passes all 157 tests (cloudflare-node.txt). Repository Node suite passes 128 tests; Cloudflare Python suite runs 68 with one skip and no failures.
 
-Stable complete Python suite: 400 run, one skipped, one pre-existing failure in test_timeout_kills_the_whole_process_group. Reproduced from untouched c5e1194 tools and tests; see baseline-timeout.txt. Do not describe the whole repository CI as green. Earlier in-progress source-hash failures disappeared on a stable run; missing platform dependencies were addressed with a pinned local environment.
+The initial complete Python run reproduced a baseline timeout-test failure (baseline-timeout.txt). Housekeeping PR #143 fixed the test. Integrated feature CI subsequently passed all five suites at a4690b64d93cde2d70a5feb015481cbe0833c249, including 400 Python tests with one skip; see integrated-ci.json. Earlier logs retain the original run results. Reader review follow-up also passes 36 real Chromium view switches across desktop/phone widths, mapped scan and accepted-reading checks, modal keyboard behavior, photo canvas pixels/thumbnails and Study without synthetic source geometry or missing-image requests.
 
 Environment: Node24, Chromium /usr/bin/chromium, pinned studio-cf requirements and audio requirements in a local venv. Existing reader-permalink test now supports CHROME_BIN to run on Linux.
 
 ## Package and operations
 
-Reader commit: 037478ef425dd6a117948ec71cc137d10a1dedd8. Shell SHA-256: c4137a223ed2efe1b1e1a739be6e2c0305140cf8f6d9b04d96e31cf19155a1df. All generated file hashes are in reader-package.json. Source commits are recorded by git history on feat/variorum-builder.
+Reader commit: 830c8db. Shell SHA-256: 62f3098945ab43dcc467f74c1ad8b05de9ce9288743006446f7ccf493aea6b89. All generated file hashes are in reader-package.json. Source commits are recorded by git history on feat/variorum-builder.
 
 Use the existing exact-output confirmation workflow for activation. Backend must be deployed before new Studio controls; the matching shell pin is required. Keep staging's private-source automatic deployment disabled. Staging remains public: private drafts stay behind Studio Access. Existing deployment IDs and bindings are recorded in ../../integration/2026-11-07-variorum-review.md.
 

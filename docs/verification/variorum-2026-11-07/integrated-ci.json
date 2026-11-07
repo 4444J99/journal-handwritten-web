@@ -1,0 +1,53 @@
+{
+  "sha": "a4690b64d93cde2d70a5feb015481cbe0833c249",
+  "branch": "feat/variorum-builder",
+  "tree": "clean",
+  "passed": true,
+  "suites": [
+    {
+      "suite": "check",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.1,
+      "detail": "OK",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "py-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 119.1,
+      "detail": "400 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "node-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 4.3,
+      "detail": "128 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-py",
+      "ok": true,
+      "exit": 0,
+      "seconds": 1.7,
+      "detail": "68 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-node",
+      "ok": true,
+      "exit": 0,
+      "seconds": 60.5,
+      "detail": "157 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    }
+  ]
+}
