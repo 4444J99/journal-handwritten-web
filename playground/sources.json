@@ -1,0 +1,27 @@
+{
+  "_note": "Hand-kept catalogue of things the playground links to that live outside this repository. Technical metadata only. Checked 2026-11-07.",
+  "deployments": [
+    {"id": "studio", "name": "Studio", "url": "https://versforms-studio.pages.dev/", "access": "private · Cloudflare Access, owner email only", "holds": "Every page, piece and draft; review, decisions, release and publish. Saves to D1 (vf_ tables) and R2.", "source": "journal-handwritten-web · studio/ + studio-cf/ (direct upload)"},
+    {"id": "staging", "name": "Staging", "url": "https://versforms-staging.pages.dev/", "access": "public URL · noindex", "holds": "A rehearsal of Live: the reader shell plus whatever the studio last published to the versforms-staging bucket.", "source": "versforms · staging/ (R2 binding versforms-staging)"},
+    {"id": "live", "name": "Live", "url": "https://versforms.pages.dev/", "access": "public · noindex", "holds": "Posted poems only. release/public.json is empty, so the page is blank paper.", "source": "versforms · site/ (R2 binding versforms-public)"}
+  ],
+  "artifacts": [
+    {"title": "Journal, 2014–2015", "kind": "reader", "date": "2026-10-28", "url": "https://claude.ai/code/artifact/03284d0f-bfc0-45aa-91ac-d4d99c48ec72", "note": "Merged piece v4 (canvas + book). Same code as site/index.html in this repo."},
+    {"title": "Journal Review", "kind": "studio", "date": "2026-10-28", "url": "https://claude.ai/code/artifact/a5fc5ebb-3c06-4c0d-ae83-608e65cc8de6", "note": "Review studio v2 as a claude.ai artifact, before the move to Cloudflare."},
+    {"title": "Journal, 2014–2015 (first reader)", "kind": "reader", "date": "2026-10-25", "url": "https://claude.ai/code/artifact/467da310-26e3-4d88-8d84-7adeefd2075b", "note": "Earlier reader prototype: 123 pages, Etceter4 Diary font, 2015 spreads."},
+    {"title": "ajp-journal--2013-15 (canvas test)", "kind": "reader", "date": "2026-10-25", "url": "https://claude.ai/code/artifact/06ad27b0-f8f3-4525-bc67-4d054149da6d", "note": "Infinite-canvas test with ink-only page images."},
+    {"title": "Minotaur Depths", "kind": "prototype", "date": "2026-11-07", "url": "https://claude.ai/code/artifact/3b959352-5f54-492d-a21e-1b352ba807ac", "note": "Prototype built on diary1 and diary62a. A copy runs inside the playground.", "snapshot": "snap/minotaur-depths/index.html"},
+    {"title": "Journal piece — menu, five takes", "kind": "design", "date": "2026-11-07", "url": "https://claude.ai/code/artifact/c34bd5dd-a2c7-4ef3-9ba7-a742cf1120a6", "boards": "menu-five-takes"},
+    {"title": "Journal piece — edge objects storyboard", "kind": "design", "date": "2026-11-07", "url": "https://claude.ai/code/artifact/ddd3bd28-6812-4e97-8da8-04ae2b4a87a5", "boards": "edge-objects-storyboard"},
+    {"title": "Journal piece — icon matrix", "kind": "design", "date": "2026-11-07", "url": "https://claude.ai/code/artifact/2f85a99f-aca0-41a8-aaf3-e55f78aae622", "boards": "icon-matrix"},
+    {"title": "forms_verse mockups", "kind": "design", "date": "2026-11-04", "url": "https://claude.ai/code/artifact/45372f0b-9624-4130-be76-962ef51ccd5c", "boards": "forms-verse-mockups"},
+    {"title": "Journal piece — control inventory", "kind": "doc", "date": "2026-11-07", "url": "https://claude.ai/code/artifact/e7138ec2-0485-4053-a91d-a7f0bb97dd48", "note": "Every control by kind, 25 planned features, the zoom-is-the-hierarchy direction."},
+    {"title": "versforms: Publish from the Studio — Implementation Plan", "kind": "plan", "date": "2026-11-06", "url": "https://claude.ai/code/artifact/03edc7a1-64e6-4edd-a8c8-df4f6bda284e"},
+    {"title": "Versforms progress", "kind": "plan", "date": "2026-11-05", "url": "https://claude.ai/code/artifact/af9bdfeb-c3bd-48cc-ab50-8dfb1ba04aa2"},
+    {"title": "vers.forms — Mentor Advisory", "kind": "plan", "date": "2026-11-05", "url": "https://claude.ai/code/artifact/2232c253-0cf5-4f0c-9b83-4a68c87d209c", "pdf": "vers.forms — Mentor Advisory.pdf"},
+    {"title": "Audio implementation plan", "kind": "plan", "date": "2026-11-05", "url": "https://claude.ai/code/artifact/294db3d5-beea-426f-aab3-a020addba32b", "pdf": "Audio implementation plan.pdf"},
+    {"title": "Journal project: state, gaps and the weekly poem", "kind": "plan", "date": "2026-11-05", "url": "https://claude.ai/code/artifact/0e39a7a9-7c83-4754-a1a6-29af7434e073", "pdf": "Journal project state, gaps and the weekly poem.pdf"},
+    {"title": "Voice Banks: Buildout Spec", "kind": "plan", "date": "2026-10-28", "url": "https://claude.ai/code/artifact/2dc1e4f2-d1b8-4398-b450-d482c7aea5a5", "pdf": "Voice Banks Buildout Spec.pdf"},
+    {"title": "Keep the Page, Animate the Revision", "kind": "research", "date": "2026-10-24", "url": "https://claude.ai/code/artifact/71436778-eea4-4daf-917d-5d7f52925d0a", "note": "Published form of the report 'Dynamic presentation of handwritten poetry'."}
+  ]
+}
