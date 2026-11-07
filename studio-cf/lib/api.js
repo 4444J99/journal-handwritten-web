@@ -6,7 +6,7 @@ import {NO_SOURCE_FENCE,SOURCE_COLLECTIONS} from './publish-fence.js';
 export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts', 'parts', 'composites']);
 export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions', 'artifacts']);
 export const DOC_ID_RE = /^[A-Za-z0-9_.-]{1,128}$/;
-export const ASSET_ID_RE = /^[a-f0-9]{32}$/;
+export const ASSET_ID_RE = /^(?:[a-f0-9]{32}|[a-f0-9]{64})$/;
 export const MAX_DOC_BYTES = 64 * 1024;
 export const MAX_ASSET_BYTES = 15 * 1024 * 1024;
 // The page (studio/index.html toUploadable) sends jpeg, png, webp and gif untouched

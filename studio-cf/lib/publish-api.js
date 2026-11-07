@@ -133,7 +133,7 @@ async function materialize(env,user,body) {
     let bytes;
     if(f.text!==undefined)bytes=encode(f.text);
     else {
-      if(/^photos\/[a-f0-9]{32}$/.test(f.sourcePath)) {
+      if(/^photos\/(?:[a-f0-9]{32}|[a-f0-9]{64})$/.test(f.sourcePath)) {
         bytes=await bytesOf(await env.PHOTOS.get(f.sourcePath.slice('photos/'.length)));
       } else {
         if(!/^(?:img\/[a-z]\/|tiles\/|reader-(?:features|packages)\.js$)/.test(f.sourcePath) || f.sourcePath.includes('..'))fail(409,'invalid_asset_path');

@@ -255,7 +255,7 @@ export async function verifyAndMaterialize(env,user,body,c,p) {
   let bytes;
   if(!file.sourcePath)bytes=await bytesOf(await env.PHOTOS.get(fileKey(body.id,file.path)));
   else {
-    if(/^photos\/[a-f0-9]{32}$/.test(file.sourcePath))bytes=await bytesOf(await env.PHOTOS.get(file.sourcePath.slice(7)));
+    if(/^photos\/(?:[a-f0-9]{32}|[a-f0-9]{64})$/.test(file.sourcePath))bytes=await bytesOf(await env.PHOTOS.get(file.sourcePath.slice(7)));
     else {const r=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/assets/'+file.sourcePath));if(!r.ok)fail(409,'source_asset_missing');bytes=new Uint8Array(await r.arrayBuffer());}
   }
   await checked(bytes,file);
