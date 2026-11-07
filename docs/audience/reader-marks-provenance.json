@@ -1,0 +1,69 @@
+{
+  "source_sha256": "e83fbf423fa1568f0f7a33303392e5b3308e4d577d1bb5bc6bec442cb17c4e89",
+  "source_orientation": 6,
+  "normalized_size": [
+    1080,
+    1920
+  ],
+  "pillow_version": "13.0.0",
+  "method": "Exact thresholded pixel boundaries; no generative redraw or curve smoothing.",
+  "marks": {
+    "menu": {
+      "crop": [
+        625,
+        1170,
+        775,
+        1350
+      ],
+      "luma_below": 96,
+      "rotation_degrees": -78,
+      "large_components": 3,
+      "chroma_below": 45,
+      "minimum_component_pixels": 8,
+      "retained_component_pixels": [
+        3889,
+        3758,
+        3223
+      ],
+      "svg_sha256": "946b53d2be8e919b3dff8ff3dd79771748c292d51e0ac47e633b01c85c02c97e"
+    },
+    "crown": {
+      "crop": [
+        340,
+        425,
+        620,
+        660
+      ],
+      "luma_below": 132,
+      "rotation_degrees": -29,
+      "large_components": 1,
+      "exclude_rectangles": [
+        [
+          340,
+          610,
+          375,
+          660
+        ]
+      ],
+      "chroma_below": 45,
+      "minimum_component_pixels": 8,
+      "retained_component_pixels": [
+        24442,
+        22,
+        14,
+        9
+      ],
+      "svg_sha256": "a0cb4527958c28c561bdc57a2bd032373406a9fdeb94adc473ad8b7588f170e5"
+    }
+  },
+  "source_library_file_id": "libfile_ce18517409448191a7ccb21668cee0d0",
+  "source_filename": "IMG_47FCFB9E-2B2D-472B-B800-40167FB26956.jpeg",
+  "author_decision": "Use the supplied bold hamburger drawing as the hidden-menu entrance and the crown in Menu/About; reverse the active canvas/text colors on their compact backings.",
+  "processing_notes": [
+    "EXIF orientation applied before selecting regions.",
+    "Only the supplied dark ink was traced; notebook paper, grid, purple under-marks and neighboring lettering were excluded.",
+    "Menu rotated -78 degrees and crown -29 degrees for upright UI placement; no perspective warp or generative reconstruction.",
+    "Components smaller than eight source pixels were discarded; exact retained pixel boundaries were converted to SVG with holes preserved.",
+    "The original photograph is not included in site or public builds."
+  ]
+}

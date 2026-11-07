@@ -219,7 +219,7 @@ try {
   await touch.waitForFunction(() => innerWidth === 844 && __jc.stackBounds()?.width > 0);
   await touch.waitForTimeout(150);
   await touch.evaluate(() => __jc.ui(true));
-  const bounds = await touch.locator('#pill').boundingBox();
+  const bounds = await touch.locator('#ov').boundingBox();
   assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= 845 && bounds.y + bounds.height <= 391);
   assert.equal(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true);
   await touch.evaluate(() => { __jc.ui(false); __jc.zoom(1.1); });
