@@ -1,0 +1,254 @@
+{
+ "menu-five-takes": {
+  "title": "Journal piece — menu, five takes",
+  "boards": [
+   {
+    "file": "Main.jpg",
+    "title": "Overview and function map",
+    "w": 1640,
+    "h": 1620
+   },
+   {
+    "file": "T1.jpg",
+    "title": "Take 1 · Strip",
+    "w": 1640,
+    "h": 2060
+   },
+   {
+    "file": "T2.jpg",
+    "title": "Take 2 · Fan",
+    "w": 1640,
+    "h": 2060
+   },
+   {
+    "file": "T3.jpg",
+    "title": "Take 3 · Band",
+    "w": 1640,
+    "h": 2060
+   },
+   {
+    "file": "T4.jpg",
+    "title": "Take 4 · Deck",
+    "w": 1640,
+    "h": 2060
+   },
+   {
+    "file": "T5.jpg",
+    "title": "Take 5 · Swap",
+    "w": 1640,
+    "h": 2060
+   },
+   {
+    "file": "R2.jpg",
+    "title": "Round 2 · five different ways in",
+    "w": 1640,
+    "h": 1240
+   },
+   {
+    "file": "R2A.jpg",
+    "title": "Take A · Margins",
+    "w": 1640,
+    "h": 1900
+   },
+   {
+    "file": "R2B.jpg",
+    "title": "Take B · Press ring",
+    "w": 1640,
+    "h": 2000
+   },
+   {
+    "file": "R2C.jpg",
+    "title": "Take C · Contact sheet",
+    "w": 1640,
+    "h": 1900
+   },
+   {
+    "file": "R2D.jpg",
+    "title": "Take D · Corners",
+    "w": 1640,
+    "h": 1900
+   },
+   {
+    "file": "R2E.jpg",
+    "title": "Take E · Lens",
+    "w": 1640,
+    "h": 1900
+   }
+  ],
+  "notes": [
+   "Round 1 · one layout, five textures",
+   "Round 2 · five different ways in"
+  ]
+ },
+ "edge-objects-storyboard": {
+  "title": "Journal piece — edge objects storyboard",
+  "boards": [
+   {
+    "file": "Main.jpg",
+    "title": "Edge objects",
+    "w": 1360,
+    "h": 1060
+   },
+   {
+    "file": "F01.jpg",
+    "title": "01 Archive at rest",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F02.jpg",
+    "title": "02 Move around",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F03.jpg",
+    "title": "03 Pull the ribbon",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F04.jpg",
+    "title": "04 Spiral",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F05.jpg",
+    "title": "05 Tap a page: poem depth",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F06.jpg",
+    "title": "06 Pull the tape",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F07.jpg",
+    "title": "07 Swipe: the earlier draft",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F08.jpg",
+    "title": "08 Tap a line: line depth",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F09.jpg",
+    "title": "09 Peel the sticker",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F10.jpg",
+    "title": "10 Drag: hand and type",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F11.jpg",
+    "title": "11 The tape at line depth",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F12.jpg",
+    "title": "12 Press and hold",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F13.jpg",
+    "title": "13 The pin",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F14.jpg",
+    "title": "14 The paperclip (coming)",
+    "w": 430,
+    "h": 1030
+   },
+   {
+    "file": "F15.jpg",
+    "title": "15 Letters (planned)",
+    "w": 430,
+    "h": 1030
+   }
+  ],
+  "notes": []
+ },
+ "icon-matrix": {
+  "title": "Journal piece — icon matrix",
+  "boards": [
+   {
+    "file": "Main.jpg",
+    "title": "Built controls",
+    "w": 1160,
+    "h": 3662
+   },
+   {
+    "file": "Planned.jpg",
+    "title": "Planned controls",
+    "w": 1160,
+    "h": 2603
+   },
+   {
+    "file": "Hand.jpg",
+    "title": "In your hand (sample)",
+    "w": 1280,
+    "h": 1108
+   }
+  ],
+  "notes": []
+ },
+ "forms-verse-mockups": {
+  "title": "forms_verse mockups",
+  "boards": [
+   {
+    "file": "Main.jpg",
+    "title": "A1 · Stack",
+    "w": 540,
+    "h": 675
+   },
+   {
+    "file": "A2-Page.jpg",
+    "title": "A2 · Page alone",
+    "w": 540,
+    "h": 675
+   },
+   {
+    "file": "A3-Line.jpg",
+    "title": "A3 · One line",
+    "w": 540,
+    "h": 675
+   },
+   {
+    "file": "A4-Grid.jpg",
+    "title": "A4 · Profile grid",
+    "w": 390,
+    "h": 590
+   },
+   {
+    "file": "B1-Kit.jpg",
+    "title": "B1 · Two albums",
+    "w": 1240,
+    "h": 800
+   },
+   {
+    "file": "B2-Phones.jpg",
+    "title": "B2 · Participant home screens",
+    "w": 1300,
+    "h": 900
+   }
+  ],
+  "notes": [
+   "A · First post",
+   "B · Participation kit"
+  ]
+ }
+}

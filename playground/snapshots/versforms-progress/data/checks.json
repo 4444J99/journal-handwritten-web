@@ -1,0 +1,9 @@
+[
+  {"suite": "Integrity check (check.py)", "result": "pass", "detail": "on main fab6a82: 509 references, 511 checksums"},
+  {"suite": "Python tests", "result": "pass", "detail": "157 tests, including the posting script's"},
+  {"suite": "Node tests", "result": "pass", "detail": "42 tests"},
+  {"suite": "Studio Python tests", "result": "pass", "detail": "54 tests"},
+  {"suite": "Studio Node tests", "result": "pass", "detail": "76 tests"},
+  {"suite": "Independent checks of the posting script", "result": "pass", "detail": "4 rounds: 3 failed with real holes in the Reserve guard, all fixed; the last head re-run against the verifier's own scripts"},
+  {"suite": "GitHub Actions check", "result": "red", "detail": "no runner can start (billing); local-ci stands in"}
+]
