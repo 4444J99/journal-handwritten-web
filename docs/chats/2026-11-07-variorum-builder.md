@@ -25,3 +25,7 @@ Housekeeping PR #143 subsequently resolved the baseline timeout test; integrated
 Late reader review fixed derived transition bitmap snapshots when the live item is hidden. Snapshot drawing now receives a visible copy without changing the live item. Chromium checks both text and photo page/line bitmaps at desktop and phone widths, with nontransparent pixels and the hidden state preserved. Regenerated matching public shells and Studio pin; no content release.
 
 Final review moved hidden-bitmap observation entirely into the local browser harness through source instrumentation; the published reader has no additional mutable debug method. The same Chromium regression passes and the matching package/pin was regenerated.
+
+Additional verified reader fixes preserve page-level Variorum entry without a selected line and frozen stanza breaks in Words, Scan and Study. Variorum alone falls back to the current page piece/version; note anchors retain their line-scoped behavior. Chromium exercises button, keyboard and native touch pinch before/after page navigation at both widths and measures the stanza gaps. Matching shells/pin regenerated; no content release.
+
+Scoped review restricts the new no-line Variorum fallback to Journal mode; Hand ↔ Font and Revisions cannot resolve a stale journal page. Real-browser keyboard and touch pinch checks for both alternate modes pass without a wrong comparison modal.
