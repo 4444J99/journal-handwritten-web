@@ -1,0 +1,79 @@
+{
+  "sha": "1b9708bed9bde517381f2952c4a0b08d478e99aa",
+  "branch": "feat/variorum-builder",
+  "tree": "dirty",
+  "passed": false,
+  "suites": [
+    {
+      "suite": "check",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.1,
+      "detail": "OK",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "py-tests",
+      "ok": false,
+      "exit": 1,
+      "seconds": 128.2,
+      "detail": "400 tests, 1 skipped",
+      "skipped": 1,
+      "tail": [
+        "Traceback (most recent call last):",
+        "  File \"/workspace/journal-handwritten-web/tests/test_ci_local.py\", line 73, in test_timeout_kills_the_whole_process_group",
+        "    self.assertFalse(alive, \"a process started by the suite survived the timeout\")",
+        "AssertionError: True is not false : a process started by the suite survived the timeout",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 400 tests in 127.688s",
+        "",
+        "FAILED (failures=1, skipped=1)",
+        "MISSING site/reader-packages.js",
+        "publisher shell sha256 a73d051e001f625e264287a616e8534a9c82fe6f526a6b637ae26e39b496d602",
+        "3 files written to /tmp/tmptde723w8/studio-cf/dist (0 missing)"
+      ]
+    },
+    {
+      "suite": "node-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 4.2,
+      "detail": "128 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-py",
+      "ok": true,
+      "exit": 0,
+      "seconds": 1.6,
+      "detail": "68 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-node",
+      "ok": false,
+      "exit": 1,
+      "seconds": 56.5,
+      "detail": "156 pass, 1 fail",
+      "skipped": 0,
+      "tail": [
+        "  contributions 0",
+        "  artifacts  0",
+        "  publish    0",
+        "  parts      0",
+        "  composites 0",
+        "  total      38",
+        "  rejects    0",
+        "  wrangler not found; pass --wrangler PATH",
+        "  ",
+        "      at ChildProcess.<anonymous> (file:///workspace/journal-handwritten-web/studio-cf/tests/import-local.test.mjs:19:61)",
+        "      at ChildProcess.emit (node:events:514:28)",
+        "      at ChildProcess._handle.onexit (node:internal/child_process:324:12)"
+      ]
+    }
+  ]
+}

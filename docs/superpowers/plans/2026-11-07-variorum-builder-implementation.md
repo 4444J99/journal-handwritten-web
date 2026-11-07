@@ -8,11 +8,11 @@ Numbered provisional stanza groups, explicit acceptance, no invented source text
 ## Tasks
 - [x] Baseline: branch feat/variorum-builder; source validation, notes map and integrity pass.
 - [x] Shared source/parts/recipe model and tests.
-- [ ] Conflict-safe persistence, exports and recoverability.
+- [x] Conflict-safe persistence, exports and recoverability.
 - [x] Integrated Studio workbench.
-- [ ] Frozen typeset rendering and publication adapter.
+- [x] Frozen typeset rendering and publication adapter.
 - [x] Reader spread and lifecycle.
-- [ ] Integration checks and handoff receipts.
+- [x] Integration checks and handoff receipts.
 
 ## Rulings
 - Preserve canonical source bytes; supplemental versions are stand-off records.
@@ -25,4 +25,4 @@ The author handoff replaces the former “awaiting decisions 1–4” checkpoint
 
 Source import retains content-addressed originals under private source/external/.versions. Generated layout pages stay internal to the reader, carry derivedLayout metadata, and do not add source membership or handwritten ink evidence. Rendering waits for the embedded font before measurement.
 
-Publication, restore reconciliation and final full CI remain under integration verification. No remote application or source database has been changed.
+Publication and restore are integrated and independently reviewed. Feature and browser checks pass; the full Python suite retains one pre-existing timeout test failure reproduced against untouched baseline. See docs/verification/variorum-2026-11-07/README.md. No remote application or source database has been changed.

@@ -1,0 +1,29 @@
+{
+  "source_commit": "c5e119425be30a4a734a511b33c561a294136437",
+  "attachments": [
+    {
+      "name": "1-Variorum-and-Builder-implementation-plan.md",
+      "sha256": "3664ead1a62fc4ea9e6f7bf726d12b0c5a222c19ceb8c22dc8c7542451ed6a3a"
+    },
+    {
+      "name": "2-functions_api_variorum.js",
+      "sha256": "5404d73822a88c83ad39778ca4d8b5b35f40cc6e62d7a282305f1f31c0cf8a07"
+    },
+    {
+      "name": "3-export_variorum_d1.py",
+      "sha256": "a9217c85bf7a290f279c1f601d16fee15ae5a15af1b935a35759542efea3a7c9"
+    },
+    {
+      "name": "4-check_parts.py",
+      "sha256": "c71d3e4d9efbdf1e527a71c6ccbc424891b6dca30367ed9b058c297906b2fbe8"
+    },
+    {
+      "name": "5-studio_variorum_builder.js",
+      "sha256": "7bc8d52cd1fec1a7b691b1732b6fc3e87c4966f2e559e1677432b9365a6d26a5"
+    },
+    {
+      "name": "6-typeset_boxes.py",
+      "sha256": "6e2f9502dc0aaa2a69f89436875fac49a389e0643fe5d78d572f5d42a1004eb7"
+    }
+  ]
+}

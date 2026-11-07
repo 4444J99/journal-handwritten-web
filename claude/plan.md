@@ -1,5 +1,9 @@
 # Handwritten journal: plan and state
 
+## Variorum implementation (7 November 2026)
+
+The author's explicit implementation handoff supersedes earlier pending-decisions language. Variorum, author Builder, immutable history, promotion, publication parity and fenced recovery are implemented on feat/variorum-builder. [Delivery and verification](../docs/verification/variorum-2026-11-07/README.md) records package hashes, browser evidence and the pre-existing timeout-test failure. No live deployment or poem clearance was performed. Historical reconciliation below remains evidence, not a request to repeat resolved decisions.
+
 ## Reader navigation and About — November 6, 2026
 
 The author reported poor menu discovery, triggering and control hierarchy, and asked to write an About explanation. The initial engineering proposal used a permanently visible text-labeled Menu launcher; it was not an approved visual design. He subsequently asked for three options before implementation, specified a mainly hidden menu with a small icon/drawing, and supplied a crown and heavy hamburger photograph for assessment. He accepted the assistant's recommendation of the bold hamburger launcher with a small handwritten `menu` label and the crown inside Menu/About, and approved a small backing with canvas/text color roles reversed. His later instruction to proceed resumes the original menu/About work. This dated update supersedes the earlier launcher proposal while preserving it as history.

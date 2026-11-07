@@ -1,0 +1,55 @@
+127.0.0.1 - - [07/Nov/2026 22:21:56] "GET /samples/fixture.wav HTTP/1.1" 409 -
+.127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /receipt.json HTTP/1.1" 403 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] code 501, message Unsupported method ('POST')
+127.0.0.1 - - [07/Nov/2026 22:21:57] "POST /receipt.json HTTP/1.1" 501 -
+.127.0.0.1 - - [07/Nov/2026 22:21:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /playback.js HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /style.css HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /receipt.json HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /prompts.json HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "GET /samples/fixture.wav HTTP/1.1" 200 -
+127.0.0.1 - - [07/Nov/2026 22:21:57] "HEAD /samples/fixture.wav HTTP/1.1" 200 -
+..127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples/ HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples/unlisted.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /../raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples/../raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples/%2e%2e/raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples/%66ixture.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /%FF HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /samples\\fixture.wav HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /receipt.json?raw=1 HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /serve.py HTTP/1.1" 404 -
+127.0.0.1 - - [07/Nov/2026 22:21:58] "GET /timing/forward.json HTTP/1.1" 404 -
+.127.0.0.1 - - [07/Nov/2026 22:21:59] "GET /samples/fixture.wav HTTP/1.1" 409 -
+................................F............................s..............................................................................................................................................................export: /tmp/pp-test-toodn4a3/db (reviews 9, decisions 0, versions 0, release 1, batches 1, rconfig 0)
+Posting p001 (dry run)
+PASS  gate (a) in Series [p001]: pool is 'series'
+PASS  gate (b) every line confirmed or corrected [p001]: all 9 lines confirmed or corrected
+PASS  gate (c) in a filed or registered batch [p001]: batch b-1 is 'filed'
+versions p002: publishing 1 of 1 (top of the stack; no decided final)
+versions p001: publishing 1 of 2 (top of the stack; no decided final)
+  published: V[1] p001-1; newest in the stack (last entry of V): V[1] p001-1; top of the stack: V[1]; corrected reviews on versions NOT published: 0
+PASS  stop (ii) no stale transcript [p001]
+PASS  stop (i) shared scan (already public, rebuilt) [p002]: 1 co-resident piece(s), item(s) or facing page(s) on 1 page(s)
+PASS  stop (i) shared scan [p001]: 1 co-resident piece(s), item(s) or facing page(s) on 1 page(s)
+SKIP  stop public repository preconditions (no --public-repo given)
+FAIL  usage /tmp/pp-test-toodn4a3/mine/build already exists and was not made by this script; it would be deleted. Name an empty directory with --workdir (or leave --workdir out), or remove that folder yourself
+..................Studio preparation failed (KeyError); previous output retained
+.............................................................................................................................................................
+======================================================================
+FAIL: test_timeout_kills_the_whole_process_group (test_ci_local.TimeoutKillsDescendants.test_timeout_kills_the_whole_process_group)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/journal-handwritten-web/tests/test_ci_local.py", line 73, in test_timeout_kills_the_whole_process_group
+    self.assertFalse(alive, "a process started by the suite survived the timeout")
+AssertionError: True is not false : a process started by the suite survived the timeout
+
+----------------------------------------------------------------------
+Ran 400 tests in 125.862s
+
+FAILED (failures=1, skipped=1)
+MISSING site/reader-packages.js
+publisher shell sha256 a73d051e001f625e264287a616e8534a9c82fe6f526a6b637ae26e39b496d602
+3 files written to /tmp/tmphabe0o3a/studio-cf/dist (0 missing)

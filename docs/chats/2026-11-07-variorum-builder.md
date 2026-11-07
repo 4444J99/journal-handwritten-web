@@ -2,16 +2,16 @@
 
 ## Produced
 
-Verified deployment inventory, reviewed five drafts, reproduced three defects, and prepared an integration design and attachment hashes. Updated both plan records. Repository integrity and all 38 existing auth/adapter tests passed.
+Implemented the approved handoff: source adapters, immutable persistence, Studio Parts/Builder, promotion, reader spread/typeset rendering, publication gates and independent Python parity, recoverable exports/imports, tests and generated reader package. See ../verification/variorum-2026-11-07/README.md for evidence and operations.
 
 ## Author decisions
 
-The author supplied four URLs, a plan and five draft files, and requested all three offered tasks: verify/reconcile, review and implement. The author supplied an explicit implementation handoff resolving decisions 1–4; its defaults govern implementation.
+The author requested verification, review and implementation, then explicitly supplied the complete implementation handoff. Its numbered provisional parts, preserved identities, author-only Builder, release gates and reader entry defaults govern implementation. No additional artistic decisions or release approvals were inferred.
 
 ## Plan / next steps
 
-Recommendation: integrate through canonical source, authenticated vf_docs storage and publication fencing. Implement the approved handoff and validate through local disposable stores.
+Implementation and local review complete. Deployment uses the existing exact-output workflow and matching shell pin. Physical iPhone acceptance and author glyph evidence remain real-world inputs, not coding prerequisites.
 
 ## Status
 
-Reconciliation and draft review documented. Implementation in progress on feat/variorum-builder. No live resources changed.
+Local source and reader branches contain committed implementation; no live resources changed. Feature checks, browser evidence, local Pages/D1/R2 publication and independent parity pass. Full Python suite retains one timeout-test failure reproduced on untouched baseline. Full CI must not be reported green.

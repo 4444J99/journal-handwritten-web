@@ -1,0 +1,29 @@
+{
+  "sourceBranch": "feat/variorum-builder",
+  "sourceImplementationHead": "e90262e",
+  "readerCommit": "037478ef425dd6a117948ec71cc137d10a1dedd8",
+  "shellSha256": "c4137a223ed2efe1b1e1a739be6e2c0305140cf8f6d9b04d96e31cf19155a1df",
+  "review": "spec and quality approved; attachment followup approved",
+  "cloudflareNode": {
+    "passed": 157,
+    "failed": 0
+  },
+  "repositoryNode": {
+    "passed": 128,
+    "failed": 0
+  },
+  "cloudflarePython": {
+    "run": 68,
+    "failed": 0,
+    "skipped": 1
+  },
+  "repositoryPython": {
+    "run": 400,
+    "failed": 1,
+    "skipped": 1,
+    "baselineFailure": "test_timeout_kills_the_whole_process_group reproduced from c5e1194"
+  },
+  "browserScenarios": 4,
+  "physicalIPhoneTested": false,
+  "deployed": false
+}
