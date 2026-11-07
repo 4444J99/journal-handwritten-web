@@ -1,0 +1,1406 @@
+{
+  "refs": [
+    "refs/heads/feat/variorum-builder cca6a134a52c9addc6bb7390aef2ad5f67243bdc",
+    "refs/heads/main c5e119425be30a4a734a511b33c561a294136437",
+    "refs/remotes/origin/HEAD c5e119425be30a4a734a511b33c561a294136437",
+    "refs/remotes/origin/alive-prototype 0561f712e0061db5317115097af72e874c9652d9",
+    "refs/remotes/origin/alive-prototype-wip 04668785faae56eb71534849d385c1cd3f029507",
+    "refs/remotes/origin/alive-prototype-wip-final eece4f56ffaae81500aaf94fd18852b2038e06d6",
+    "refs/remotes/origin/chat-log-2026-11-05 809a244a23a8416f05810ff7e6c2eca481bd3549",
+    "refs/remotes/origin/check-fail-on-unmanifested 6875395412227188d8d071f2a22d0335fb27ab08",
+    "refs/remotes/origin/ci-local 6a363d28ae5d120c48eded079d085f809134fe63",
+    "refs/remotes/origin/ci-on-cloudflare 50b47aa291e1b6faec3bfdfbaabd165db8b0702a",
+    "refs/remotes/origin/claude-project-docs f68a56ee589e71b96ad2434294ce24aea45025e4",
+    "refs/remotes/origin/codex/reader-menu-author-marks-20261106 2884c4c5337c23fb9b159767c37bbfee8b8b62d4",
+    "refs/remotes/origin/derived-decisions 082e3f782612885fb2c6e47a402dd75d906404e1",
+    "refs/remotes/origin/docs-chat-lanes-2026-11-05 6806d2c62b4b2f2410b071aed582cb80c200723b",
+    "refs/remotes/origin/docs-noindex f6b5088a2850a72de34ca9640f0e940f77d24b20",
+    "refs/remotes/origin/docs-session-2026-11-05 ebd130cb079ee58df67d084b5445fdad841fe88d",
+    "refs/remotes/origin/docs/studio-access-repair-20261106 8ab45fe29aac6abd362c457a382870077a1fc717",
+    "refs/remotes/origin/export/studio-db-2026-11-05 7a686b51c386a87861fcaf4333d3c60394121f89",
+    "refs/remotes/origin/fail-check-on-unmanifested-content-8589277376079234858 b7333517455bc69be5ef0a0398726304aafbb0be",
+    "refs/remotes/origin/feat/studio-publish-20261106 bd0b57ac88dc8144bcf47d518bdf9a77fd55c77c",
+    "refs/remotes/origin/fix/launch-completion-2026-11-06 bfa14d687a7ce8245105a6e45dc49478d907f112",
+    "refs/remotes/origin/fix/post-poem-hardening-complete-20261106 104be9cb000800bfc5c01b8a9ebbbbdf5e218922",
+    "refs/remotes/origin/fix/public-metadata-diary1-20261106 a0646be8518d4c1833c7dbf599940340c2d4c089",
+    "refs/remotes/origin/guard-pages-workflow bf9b0612322295fb2a910368eadf8688fa4f1cfb",
+    "refs/remotes/origin/integration/closeout-2026-11-06 1cf3bb345c81e0118f84b48564765bebeb42a992",
+    "refs/remotes/origin/integration/private-engineering-closeout-2026-11-06 9939f2098fcf65e9fd009f9cf970c10064ea44b8",
+    "refs/remotes/origin/integration/private-preview-consumers-2026-11-06 e62b0c462bef1d1a2920cd5f0387418ec1773009",
+    "refs/remotes/origin/main c5e119425be30a4a734a511b33c561a294136437",
+    "refs/remotes/origin/playground a4db9181e58581b2f46422e31a38f206490c2030",
+    "refs/remotes/origin/playground-out-guard 6a3a04d719dff9df0075e93dddc3fa4d3ab14861",
+    "refs/remotes/origin/post-poem-gates 15cad30cb923161716be51b2d075a6b98062cad4",
+    "refs/remotes/origin/post-poem-hardening-2026-11-06 7d03ac7715a7ee4d2ca3f3f4d569498633c00e25",
+    "refs/remotes/origin/post-poem-hardening-wip c78e903ac3c3589437c302d7b7cfee73dad85561",
+    "refs/remotes/origin/rebuild-path-docs 1699449d3a18ef2c22863780900f790725df77e7",
+    "refs/remotes/origin/record-addendum-2026-11-06 5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+    "refs/remotes/origin/record-final-2026-11-05 53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+    "refs/remotes/origin/record-update-2026-11-05 69fa18cbf8251226d11732f33937aca777327240",
+    "refs/remotes/origin/release-mark-posted 9914af909db9dc2ea257303eb64c7f2e99eb9b3a",
+    "refs/remotes/origin/site-v4-verification 9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+    "refs/remotes/origin/studio-cloudflare b231cb63827fcae82f65562596349cdd9822d7c0",
+    "refs/remotes/origin/t03/release-packet-2026-11-05 e0177fa8a53ee41eda31a90253fbab3cc798556e",
+    "refs/remotes/origin/t03/release-packet-2026-11-05-current aff12fbb91ba56aeb6b0f2aac08aed8a96593f82",
+    "refs/remotes/origin/t05/private-notes-contributions-2026-11-05 3eeee91a9c92b5a439a4f73e699e606e2d65a1c2",
+    "refs/remotes/origin/t06/identity-audience-2026-11-05 3c8eeada490417d624c3ea71be9b2702d553fe05",
+    "refs/remotes/origin/t07/media-production-kit-2026-11-05 334ef91dd8b3622161e9892c6ff434c7972246ca",
+    "refs/remotes/origin/t08/source-regions-pilot-2026-11-05 ed040031265aa2d6a48e6411b938cd765a5fc60f",
+    "refs/remotes/origin/t09/audio-pilot-2026-11-05 982058eef6ea6a9470498e6a1764f327c877628a",
+    "refs/remotes/origin/t10/script-realization-glyphs-2026-11-05 f0a54a702a71afd5006268a98757f0b8e85d3b1d",
+    "refs/remotes/origin/verify-cleanup-await-exit 33a29625922db138287dd49d30fa19500eec480a",
+    "refs/remotes/origin/workbench-launcher 6fc025b5311b372a13324ba124e1886093f20e76",
+    "refs/tags/v2026.10.27 957584ea945f12338641e110f5de6cb1a73fbdb6",
+    "refs/tags/v2026.11.05 2744d7a62928f590410e4b006b2a7e4491652377"
+  ],
+  "prs": [
+    {
+      "baseRefName": "main",
+      "headRefName": "ci-on-cloudflare",
+      "headRefOid": "50b47aa291e1b6faec3bfdfbaabd165db8b0702a",
+      "mergeCommit": {
+        "oid": "c5e119425be30a4a734a511b33c561a294136437"
+      },
+      "mergedAt": "2026-11-07T17:14:52Z",
+      "number": 142,
+      "state": "MERGED",
+      "title": "ci: run tools/check.py inside the Cloudflare Pages build"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "playground-out-guard",
+      "headRefOid": "6a3a04d719dff9df0075e93dddc3fa4d3ab14861",
+      "mergeCommit": {
+        "oid": "3c548488b886ffea86c9c5dbc28eaf9d3b402869"
+      },
+      "mergedAt": "2026-11-07T17:08:29Z",
+      "number": 141,
+      "state": "MERGED",
+      "title": "playground: guard --out against deleting non-empty directories"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "playground",
+      "headRefOid": "a4db9181e58581b2f46422e31a38f206490c2030",
+      "mergeCommit": {
+        "oid": "b30c517c496771d561637ab869634f74d22cd9c6"
+      },
+      "mergedAt": "2026-11-07T15:50:46Z",
+      "number": 140,
+      "state": "MERGED",
+      "title": "Playground: private companion app for the whole archive"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/reader-menu-author-marks-20261106",
+      "headRefOid": "2884c4c5337c23fb9b159767c37bbfee8b8b62d4",
+      "mergeCommit": {
+        "oid": "bc7732dbdbbcb13aa5eb363360a43b06a48b4fcd"
+      },
+      "mergedAt": "2026-11-07T04:23:21Z",
+      "number": 139,
+      "state": "MERGED",
+      "title": "Make reader navigation discoverable with the author's marks"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "docs/studio-access-repair-20261106",
+      "headRefOid": "8ab45fe29aac6abd362c457a382870077a1fc717",
+      "mergeCommit": {
+        "oid": "9c0e9c565fb9d7bef3a68b21faa744010a401f60"
+      },
+      "mergedAt": "2026-11-07T02:16:33Z",
+      "number": 138,
+      "state": "MERGED",
+      "title": "Block accidental Pages publication of raw private source"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "feat/studio-publish-20261106",
+      "headRefOid": "bd0b57ac88dc8144bcf47d518bdf9a77fd55c77c",
+      "mergeCommit": {
+        "oid": "952b4f6e1b365432b8709876aaea4d4577e33fd7"
+      },
+      "mergedAt": "2026-11-07T01:43:22Z",
+      "number": 137,
+      "state": "MERGED",
+      "title": "Publish confirmed snapshots directly from the Studio"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "fix/public-metadata-diary1-20261106",
+      "headRefOid": "a0646be8518d4c1833c7dbf599940340c2d4c089",
+      "mergeCommit": {
+        "oid": "1c48ff5f5ae233e4ae4d5a27934afce219d73c95"
+      },
+      "mergedAt": "2026-11-06T23:17:04Z",
+      "number": 136,
+      "state": "MERGED",
+      "title": "Fix public metadata and diary1 line mapping"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "integration/private-preview-consumers-2026-11-06",
+      "headRefOid": "e62b0c462bef1d1a2920cd5f0387418ec1773009",
+      "mergeCommit": {
+        "oid": "9939f2098fcf65e9fd009f9cf970c10064ea44b8"
+      },
+      "mergedAt": "2026-11-06T20:44:43Z",
+      "number": 135,
+      "state": "MERGED",
+      "title": "Complete verified private realization and source-region consumers"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "integration/closeout-2026-11-06",
+      "headRefOid": "1cf3bb345c81e0118f84b48564765bebeb42a992",
+      "mergeCommit": {
+        "oid": "4e6360c34ca9390e1f941341eaeae04d21037eba"
+      },
+      "mergedAt": "2026-11-06T18:08:06Z",
+      "number": 134,
+      "state": "MERGED",
+      "title": "Complete private source, reader, persistence and release-contract integration"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "fix/launch-completion-2026-11-06",
+      "headRefOid": "bfa14d687a7ce8245105a6e45dc49478d907f112",
+      "mergeCommit": {
+        "oid": "86148e1dbb7d899862218ad06a4439b6594eae37"
+      },
+      "mergedAt": "2026-11-06T17:05:51Z",
+      "number": 133,
+      "state": "MERGED",
+      "title": "Finish launch posting races, Release validation and verification records"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "fix/post-poem-hardening-complete-20261106",
+      "headRefOid": "104be9cb000800bfc5c01b8a9ebbbbdf5e218922",
+      "mergeCommit": {
+        "oid": "6d5b34f77432a0aaeaaefef5ca0ee5762bb24169"
+      },
+      "mergedAt": "2026-11-06T16:56:45Z",
+      "number": 132,
+      "state": "MERGED",
+      "title": "Complete #123 posting isolation, cleanup and privacy hardening"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "post-poem-hardening-2026-11-06",
+      "headRefOid": "7d03ac7715a7ee4d2ca3f3f4d569498633c00e25",
+      "mergeCommit": {
+        "oid": "7371dc394403fbcf09fd32bab563f1eb62ff3684"
+      },
+      "mergedAt": "2026-11-06T16:00:59Z",
+      "number": 131,
+      "state": "MERGED",
+      "title": "Finish #123 posting hardening"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t08/source-regions-pilot-2026-11-05",
+      "headRefOid": "ed040031265aa2d6a48e6411b938cd765a5fc60f",
+      "mergeCommit": {
+        "oid": "7198bc38f363212716b49536db12851d4007cad3"
+      },
+      "mergedAt": "2026-11-06T16:10:54Z",
+      "number": 130,
+      "state": "MERGED",
+      "title": "T08: shared source-region contract and one private pilot (#32, #52-#56)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t07/media-production-kit-2026-11-05",
+      "headRefOid": "334ef91dd8b3622161e9892c6ff434c7972246ca",
+      "mergeCommit": {
+        "oid": "ef97c735d0a13591e54bfa5c3cf40767cd49ed3a"
+      },
+      "mergedAt": "2026-11-06T16:11:36Z",
+      "number": 129,
+      "state": "MERGED",
+      "title": "T07: media production kit (private)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t10/script-realization-glyphs-2026-11-05",
+      "headRefOid": "f0a54a702a71afd5006268a98757f0b8e85d3b1d",
+      "mergeCommit": {
+        "oid": "8cd9872acbccd28db9736c2340cdac9d1ba65f91"
+      },
+      "mergedAt": "2026-11-06T15:19:08Z",
+      "number": 128,
+      "state": "MERGED",
+      "title": "T10: private script realization fixture and author-glyph workflow"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t09/audio-pilot-2026-11-05",
+      "headRefOid": "982058eef6ea6a9470498e6a1764f327c877628a",
+      "mergeCommit": {
+        "oid": "92202e3655c09b063fe9195035bda2a5bdffe035"
+      },
+      "mergedAt": "2026-11-06T15:09:39Z",
+      "number": 127,
+      "state": "MERGED",
+      "title": "T09: reproducible private voice/audio pilot (fixture only)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t05/private-notes-contributions-2026-11-05",
+      "headRefOid": "3eeee91a9c92b5a439a4f73e699e606e2d65a1c2",
+      "mergeCommit": {
+        "oid": "4063ec2d1b91e18b0ce7bad6e8fec56a531f398a"
+      },
+      "mergedAt": "2026-11-06T16:12:10Z",
+      "number": 126,
+      "state": "MERGED",
+      "title": "T05: private versioned notes and contribution review"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t06/identity-audience-2026-11-05",
+      "headRefOid": "3c8eeada490417d624c3ea71be9b2702d553fe05",
+      "mergeCommit": {
+        "oid": "79123aa342e196e19c5cf849cd3ed5488e9a26bb"
+      },
+      "mergedAt": "2026-11-06T16:02:08Z",
+      "number": 125,
+      "state": "MERGED",
+      "title": "T06: sourced identity record and weekly audience workflow"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "record-addendum-2026-11-06",
+      "headRefOid": "5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+      "mergeCommit": {
+        "oid": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda"
+      },
+      "mergedAt": "2026-11-06T00:36:38Z",
+      "number": 124,
+      "state": "MERGED",
+      "title": "docs(chats): record the posting script's post-merge findings (issue #123)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "record-final-2026-11-05",
+      "headRefOid": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+      "mergeCommit": {
+        "oid": "fab6a82b72f23efb16278b90cdc4f7790ca55713"
+      },
+      "mergedAt": "2026-11-06T00:14:05Z",
+      "number": 122,
+      "state": "MERGED",
+      "title": "docs(chats): final close-out of the 2026-11-05 records"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "t03/release-packet-2026-11-05-current",
+      "headRefOid": "aff12fbb91ba56aeb6b0f2aac08aed8a96593f82",
+      "mergeCommit": {
+        "oid": "ef3d263c455788c769547df9e1e6010a54b7719a"
+      },
+      "mergedAt": "2026-11-06T16:13:38Z",
+      "number": 119,
+      "state": "MERGED",
+      "title": "T03: private first-release packet and repeatable clearance procedure"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "verify-cleanup-await-exit",
+      "headRefOid": "33a29625922db138287dd49d30fa19500eec480a",
+      "mergeCommit": {
+        "oid": "d74df372ace00c8a7544ab3b5302cb05418d672c"
+      },
+      "mergedAt": "2026-11-05T23:29:06Z",
+      "number": 118,
+      "state": "MERGED",
+      "title": "verify_site: cleanup waits for the browser to exit; handshake test is count-agnostic; record corrected (#115 was already fixed)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "docs-chat-lanes-2026-11-05",
+      "headRefOid": "6806d2c62b4b2f2410b071aed582cb80c200723b",
+      "mergeCommit": {
+        "oid": "3eadec631816d40766dbe28c1f2a32e893c8e422"
+      },
+      "mergedAt": "2026-11-05T23:11:48Z",
+      "number": 117,
+      "state": "MERGED",
+      "title": "docs(chats): record of the versforms launch lanes session (2026-11-05)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "record-update-2026-11-05",
+      "headRefOid": "69fa18cbf8251226d11732f33937aca777327240",
+      "mergeCommit": {
+        "oid": "efccd97f8c91fcabf8d45b5e60729e914300e434"
+      },
+      "mergedAt": "2026-11-05T22:57:34Z",
+      "number": 116,
+      "state": "MERGED",
+      "title": "docs(chats): close out the 2026-11-05 local session record"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "check-fail-on-unmanifested",
+      "headRefOid": "6875395412227188d8d071f2a22d0335fb27ab08",
+      "mergeCommit": {
+        "oid": "cd6a00a830e142b4affa74dfc020438214b6bec7"
+      },
+      "mergedAt": "2026-11-05T22:45:52Z",
+      "number": 114,
+      "state": "MERGED",
+      "title": "check: fail when a content file is missing from MANIFEST.sha256 (fixes #1)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "claude-project-docs",
+      "headRefOid": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+      "mergeCommit": {
+        "oid": "04168b1f68bc4579fae245f8411b0b337d064369"
+      },
+      "mergedAt": "2026-11-05T22:36:38Z",
+      "number": 103,
+      "state": "MERGED",
+      "title": "docs: claude/ - the claude.ai Project's text documents (plan, 12 research reports, 5 PDFs)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "alive-prototype",
+      "headRefOid": "0561f712e0061db5317115097af72e874c9652d9",
+      "mergeCommit": null,
+      "mergedAt": null,
+      "number": 102,
+      "state": "CLOSED",
+      "title": "alive prototype: architecture, spiral and reading views on poem 1 (local, proto/alive/)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "post-poem-gates",
+      "headRefOid": "15cad30cb923161716be51b2d075a6b98062cad4",
+      "mergeCommit": {
+        "oid": "06dccc0af91e563dc15e70d436569b7fe0cf9cba"
+      },
+      "mergedAt": "2026-11-06T00:05:01Z",
+      "number": 101,
+      "state": "MERGED",
+      "title": "Posting script: gates, hard stops and a public build for posting one poem (title versforms, font ajp-scribbles)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "workbench-launcher",
+      "headRefOid": "6fc025b5311b372a13324ba124e1886093f20e76",
+      "mergeCommit": {
+        "oid": "0be85542c2f8e520d0a2aeaca93ccb76841798ba"
+      },
+      "mergedAt": "2026-11-05T21:46:23Z",
+      "number": 100,
+      "state": "MERGED",
+      "title": "studio-cf: run the workbench locally with one command; fix a smoke-test race; README state"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "docs-noindex",
+      "headRefOid": "f6b5088a2850a72de34ca9640f0e940f77d24b20",
+      "mergeCommit": {
+        "oid": "89eacb30c09b39612db131717a4da7a5042f9f76"
+      },
+      "mergedAt": "2026-11-05T20:53:07Z",
+      "number": 99,
+      "state": "MERGED",
+      "title": "docs: noindex - where it lives and what removing it involves"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "derived-decisions",
+      "headRefOid": "082e3f782612885fb2c6e47a402dd75d906404e1",
+      "mergeCommit": {
+        "oid": "7c3d5f4807d90fa16f12acd9c403bec90d4e9369"
+      },
+      "mergedAt": "2026-11-05T20:26:43Z",
+      "number": 98,
+      "state": "MERGED",
+      "title": "exports: derived decisions (numbering as-posted, participation around), labelled as derived"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "site-v4-verification",
+      "headRefOid": "9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+      "mergeCommit": {
+        "oid": "b2199a0798294a72df429a01a5e97209ca06504b"
+      },
+      "mergedAt": "2026-11-05T22:52:28Z",
+      "number": 97,
+      "state": "MERGED",
+      "title": "Headless-Chrome verification of the merged piece v4 (site/ unchanged): verifier and run record"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "studio-cloudflare",
+      "headRefOid": "b231cb63827fcae82f65562596349cdd9822d7c0",
+      "mergeCommit": {
+        "oid": "fa698367d3df3479b9ee92719aa568bcf6204091"
+      },
+      "mergedAt": "2026-11-05T21:03:09Z",
+      "number": 96,
+      "state": "MERGED",
+      "title": "Review studio on Cloudflare: Pages Functions, D1 (vf_ tables), R2, Access-verified API, browser adapter"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "docs-session-2026-11-05",
+      "headRefOid": "ebd130cb079ee58df67d084b5445fdad841fe88d",
+      "mergeCommit": {
+        "oid": "a476fa86514d59039b833d702c5a9c6a48e82965"
+      },
+      "mergedAt": "2026-11-05T21:53:41Z",
+      "number": 95,
+      "state": "MERGED",
+      "title": "docs(chats): local session record - finish and launch (2026-11-05)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "ci-local",
+      "headRefOid": "6a363d28ae5d120c48eded079d085f809134fe63",
+      "mergeCommit": {
+        "oid": "b1d0f1774d9ee3a61df5ff30ec4d6f01fb5ea1e9"
+      },
+      "mergedAt": "2026-11-05T20:26:33Z",
+      "number": 94,
+      "state": "MERGED",
+      "title": "tools: ci_local.py - run the checks locally and post a local-ci status (GitHub Actions is billing-blocked)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "guard-pages-workflow",
+      "headRefOid": "bf9b0612322295fb2a910368eadf8688fa4f1cfb",
+      "mergeCommit": {
+        "oid": "edcd05f00fe1d0a3a123aa8d2bd4318c3834962d"
+      },
+      "mergedAt": "2026-11-05T20:25:58Z",
+      "number": 93,
+      "state": "MERGED",
+      "title": "ci: require explicit confirmation to run the GitHub Pages workflow"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "rebuild-path-docs",
+      "headRefOid": "1699449d3a18ef2c22863780900f790725df77e7",
+      "mergeCommit": {
+        "oid": "2a0ecc29b417361bd585fde6f9aa48a6e51fffb8"
+      },
+      "mergedAt": "2026-11-05T20:26:21Z",
+      "number": 92,
+      "state": "MERGED",
+      "title": "docs: README rebuild path (Step 6) - the scripts are missing and stated as missing"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "chat-log-2026-11-05",
+      "headRefOid": "809a244a23a8416f05810ff7e6c2eca481bd3549",
+      "mergeCommit": {
+        "oid": "d830d2a8f0556c50917d34528ab0b19cf7e0579a"
+      },
+      "mergedAt": "2026-11-05T22:21:33Z",
+      "number": 91,
+      "state": "MERGED",
+      "title": "docs(chats): mark PR #73 merged"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "release-mark-posted",
+      "headRefOid": "9914af909db9dc2ea257303eb64c7f2e99eb9b3a",
+      "mergeCommit": {
+        "oid": "8bd770c60275c834660bf2fb13232a97098e22ce"
+      },
+      "mergedAt": "2026-11-05T20:34:03Z",
+      "number": 89,
+      "state": "MERGED",
+      "title": "Release tab: Mark posted defaults, post URL, and Exposure log site/Instagram choices (Step 5)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "export/studio-db-2026-11-05",
+      "headRefOid": "7a686b51c386a87861fcaf4333d3c60394121f89",
+      "mergeCommit": {
+        "oid": "12fb3146f2d0d4a972622bc5192ffb01ac05c914"
+      },
+      "mergedAt": "2026-11-05T17:37:09Z",
+      "number": 73,
+      "state": "MERGED",
+      "title": "Export review studio database (2026-11-05)"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "fail-check-on-unmanifested-content-8589277376079234858",
+      "headRefOid": "a49c0493fff2f33d91c0013cd32bd543d581c19d",
+      "mergeCommit": null,
+      "mergedAt": null,
+      "number": 2,
+      "state": "CLOSED",
+      "title": "Fail integrity check when content files are missing from MANIFEST.sha256"
+    }
+  ],
+  "branches": [
+    {
+      "name": "alive-prototype",
+      "oid": "0561f712e0061db5317115097af72e874c9652d9",
+      "ancestor": false,
+      "ahead": 10,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "alive-prototype",
+          "headRefOid": "0561f712e0061db5317115097af72e874c9652d9",
+          "mergeCommit": null,
+          "mergedAt": null,
+          "number": 102,
+          "state": "CLOSED",
+          "title": "alive prototype: architecture, spiral and reading views on poem 1 (local, proto/alive/)"
+        }
+      ]
+    },
+    {
+      "name": "alive-prototype-wip",
+      "oid": "04668785faae56eb71534849d385c1cd3f029507",
+      "ancestor": false,
+      "ahead": 8,
+      "prs": []
+    },
+    {
+      "name": "alive-prototype-wip-final",
+      "oid": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+      "ancestor": false,
+      "ahead": 9,
+      "prs": []
+    },
+    {
+      "name": "chat-log-2026-11-05",
+      "oid": "809a244a23a8416f05810ff7e6c2eca481bd3549",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "chat-log-2026-11-05",
+          "headRefOid": "809a244a23a8416f05810ff7e6c2eca481bd3549",
+          "mergeCommit": {
+            "oid": "d830d2a8f0556c50917d34528ab0b19cf7e0579a"
+          },
+          "mergedAt": "2026-11-05T22:21:33Z",
+          "number": 91,
+          "state": "MERGED",
+          "title": "docs(chats): mark PR #73 merged"
+        }
+      ]
+    },
+    {
+      "name": "check-fail-on-unmanifested",
+      "oid": "6875395412227188d8d071f2a22d0335fb27ab08",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "check-fail-on-unmanifested",
+          "headRefOid": "6875395412227188d8d071f2a22d0335fb27ab08",
+          "mergeCommit": {
+            "oid": "cd6a00a830e142b4affa74dfc020438214b6bec7"
+          },
+          "mergedAt": "2026-11-05T22:45:52Z",
+          "number": 114,
+          "state": "MERGED",
+          "title": "check: fail when a content file is missing from MANIFEST.sha256 (fixes #1)"
+        }
+      ]
+    },
+    {
+      "name": "ci-local",
+      "oid": "6a363d28ae5d120c48eded079d085f809134fe63",
+      "ancestor": false,
+      "ahead": 2,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "ci-local",
+          "headRefOid": "6a363d28ae5d120c48eded079d085f809134fe63",
+          "mergeCommit": {
+            "oid": "b1d0f1774d9ee3a61df5ff30ec4d6f01fb5ea1e9"
+          },
+          "mergedAt": "2026-11-05T20:26:33Z",
+          "number": 94,
+          "state": "MERGED",
+          "title": "tools: ci_local.py - run the checks locally and post a local-ci status (GitHub Actions is billing-blocked)"
+        }
+      ]
+    },
+    {
+      "name": "ci-on-cloudflare",
+      "oid": "50b47aa291e1b6faec3bfdfbaabd165db8b0702a",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "ci-on-cloudflare",
+          "headRefOid": "50b47aa291e1b6faec3bfdfbaabd165db8b0702a",
+          "mergeCommit": {
+            "oid": "c5e119425be30a4a734a511b33c561a294136437"
+          },
+          "mergedAt": "2026-11-07T17:14:52Z",
+          "number": 142,
+          "state": "MERGED",
+          "title": "ci: run tools/check.py inside the Cloudflare Pages build"
+        }
+      ]
+    },
+    {
+      "name": "claude-project-docs",
+      "oid": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "claude-project-docs",
+          "headRefOid": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+          "mergeCommit": {
+            "oid": "04168b1f68bc4579fae245f8411b0b337d064369"
+          },
+          "mergedAt": "2026-11-05T22:36:38Z",
+          "number": 103,
+          "state": "MERGED",
+          "title": "docs: claude/ - the claude.ai Project's text documents (plan, 12 research reports, 5 PDFs)"
+        }
+      ]
+    },
+    {
+      "name": "codex/reader-menu-author-marks-20261106",
+      "oid": "2884c4c5337c23fb9b159767c37bbfee8b8b62d4",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "codex/reader-menu-author-marks-20261106",
+          "headRefOid": "2884c4c5337c23fb9b159767c37bbfee8b8b62d4",
+          "mergeCommit": {
+            "oid": "bc7732dbdbbcb13aa5eb363360a43b06a48b4fcd"
+          },
+          "mergedAt": "2026-11-07T04:23:21Z",
+          "number": 139,
+          "state": "MERGED",
+          "title": "Make reader navigation discoverable with the author's marks"
+        }
+      ]
+    },
+    {
+      "name": "derived-decisions",
+      "oid": "082e3f782612885fb2c6e47a402dd75d906404e1",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "derived-decisions",
+          "headRefOid": "082e3f782612885fb2c6e47a402dd75d906404e1",
+          "mergeCommit": {
+            "oid": "7c3d5f4807d90fa16f12acd9c403bec90d4e9369"
+          },
+          "mergedAt": "2026-11-05T20:26:43Z",
+          "number": 98,
+          "state": "MERGED",
+          "title": "exports: derived decisions (numbering as-posted, participation around), labelled as derived"
+        }
+      ]
+    },
+    {
+      "name": "docs-chat-lanes-2026-11-05",
+      "oid": "6806d2c62b4b2f2410b071aed582cb80c200723b",
+      "ancestor": false,
+      "ahead": 4,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "docs-chat-lanes-2026-11-05",
+          "headRefOid": "6806d2c62b4b2f2410b071aed582cb80c200723b",
+          "mergeCommit": {
+            "oid": "3eadec631816d40766dbe28c1f2a32e893c8e422"
+          },
+          "mergedAt": "2026-11-05T23:11:48Z",
+          "number": 117,
+          "state": "MERGED",
+          "title": "docs(chats): record of the versforms launch lanes session (2026-11-05)"
+        }
+      ]
+    },
+    {
+      "name": "docs-noindex",
+      "oid": "f6b5088a2850a72de34ca9640f0e940f77d24b20",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "docs-noindex",
+          "headRefOid": "f6b5088a2850a72de34ca9640f0e940f77d24b20",
+          "mergeCommit": {
+            "oid": "89eacb30c09b39612db131717a4da7a5042f9f76"
+          },
+          "mergedAt": "2026-11-05T20:53:07Z",
+          "number": 99,
+          "state": "MERGED",
+          "title": "docs: noindex - where it lives and what removing it involves"
+        }
+      ]
+    },
+    {
+      "name": "docs-session-2026-11-05",
+      "oid": "ebd130cb079ee58df67d084b5445fdad841fe88d",
+      "ancestor": false,
+      "ahead": 4,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "docs-session-2026-11-05",
+          "headRefOid": "ebd130cb079ee58df67d084b5445fdad841fe88d",
+          "mergeCommit": {
+            "oid": "a476fa86514d59039b833d702c5a9c6a48e82965"
+          },
+          "mergedAt": "2026-11-05T21:53:41Z",
+          "number": 95,
+          "state": "MERGED",
+          "title": "docs(chats): local session record - finish and launch (2026-11-05)"
+        }
+      ]
+    },
+    {
+      "name": "docs/studio-access-repair-20261106",
+      "oid": "8ab45fe29aac6abd362c457a382870077a1fc717",
+      "ancestor": false,
+      "ahead": 2,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "docs/studio-access-repair-20261106",
+          "headRefOid": "8ab45fe29aac6abd362c457a382870077a1fc717",
+          "mergeCommit": {
+            "oid": "9c0e9c565fb9d7bef3a68b21faa744010a401f60"
+          },
+          "mergedAt": "2026-11-07T02:16:33Z",
+          "number": 138,
+          "state": "MERGED",
+          "title": "Block accidental Pages publication of raw private source"
+        }
+      ]
+    },
+    {
+      "name": "export/studio-db-2026-11-05",
+      "oid": "7a686b51c386a87861fcaf4333d3c60394121f89",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "export/studio-db-2026-11-05",
+          "headRefOid": "7a686b51c386a87861fcaf4333d3c60394121f89",
+          "mergeCommit": {
+            "oid": "12fb3146f2d0d4a972622bc5192ffb01ac05c914"
+          },
+          "mergedAt": "2026-11-05T17:37:09Z",
+          "number": 73,
+          "state": "MERGED",
+          "title": "Export review studio database (2026-11-05)"
+        }
+      ]
+    },
+    {
+      "name": "fail-check-on-unmanifested-content-8589277376079234858",
+      "oid": "b7333517455bc69be5ef0a0398726304aafbb0be",
+      "ancestor": false,
+      "ahead": 6,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "fail-check-on-unmanifested-content-8589277376079234858",
+          "headRefOid": "a49c0493fff2f33d91c0013cd32bd543d581c19d",
+          "mergeCommit": null,
+          "mergedAt": null,
+          "number": 2,
+          "state": "CLOSED",
+          "title": "Fail integrity check when content files are missing from MANIFEST.sha256"
+        }
+      ]
+    },
+    {
+      "name": "feat/studio-publish-20261106",
+      "oid": "bd0b57ac88dc8144bcf47d518bdf9a77fd55c77c",
+      "ancestor": false,
+      "ahead": 8,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "feat/studio-publish-20261106",
+          "headRefOid": "bd0b57ac88dc8144bcf47d518bdf9a77fd55c77c",
+          "mergeCommit": {
+            "oid": "952b4f6e1b365432b8709876aaea4d4577e33fd7"
+          },
+          "mergedAt": "2026-11-07T01:43:22Z",
+          "number": 137,
+          "state": "MERGED",
+          "title": "Publish confirmed snapshots directly from the Studio"
+        }
+      ]
+    },
+    {
+      "name": "fix/launch-completion-2026-11-06",
+      "oid": "bfa14d687a7ce8245105a6e45dc49478d907f112",
+      "ancestor": false,
+      "ahead": 3,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "fix/launch-completion-2026-11-06",
+          "headRefOid": "bfa14d687a7ce8245105a6e45dc49478d907f112",
+          "mergeCommit": {
+            "oid": "86148e1dbb7d899862218ad06a4439b6594eae37"
+          },
+          "mergedAt": "2026-11-06T17:05:51Z",
+          "number": 133,
+          "state": "MERGED",
+          "title": "Finish launch posting races, Release validation and verification records"
+        }
+      ]
+    },
+    {
+      "name": "fix/post-poem-hardening-complete-20261106",
+      "oid": "104be9cb000800bfc5c01b8a9ebbbbdf5e218922",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "fix/post-poem-hardening-complete-20261106",
+          "headRefOid": "104be9cb000800bfc5c01b8a9ebbbbdf5e218922",
+          "mergeCommit": {
+            "oid": "6d5b34f77432a0aaeaaefef5ca0ee5762bb24169"
+          },
+          "mergedAt": "2026-11-06T16:56:45Z",
+          "number": 132,
+          "state": "MERGED",
+          "title": "Complete #123 posting isolation, cleanup and privacy hardening"
+        }
+      ]
+    },
+    {
+      "name": "fix/public-metadata-diary1-20261106",
+      "oid": "a0646be8518d4c1833c7dbf599940340c2d4c089",
+      "ancestor": false,
+      "ahead": 2,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "fix/public-metadata-diary1-20261106",
+          "headRefOid": "a0646be8518d4c1833c7dbf599940340c2d4c089",
+          "mergeCommit": {
+            "oid": "1c48ff5f5ae233e4ae4d5a27934afce219d73c95"
+          },
+          "mergedAt": "2026-11-06T23:17:04Z",
+          "number": 136,
+          "state": "MERGED",
+          "title": "Fix public metadata and diary1 line mapping"
+        }
+      ]
+    },
+    {
+      "name": "guard-pages-workflow",
+      "oid": "bf9b0612322295fb2a910368eadf8688fa4f1cfb",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "guard-pages-workflow",
+          "headRefOid": "bf9b0612322295fb2a910368eadf8688fa4f1cfb",
+          "mergeCommit": {
+            "oid": "edcd05f00fe1d0a3a123aa8d2bd4318c3834962d"
+          },
+          "mergedAt": "2026-11-05T20:25:58Z",
+          "number": 93,
+          "state": "MERGED",
+          "title": "ci: require explicit confirmation to run the GitHub Pages workflow"
+        }
+      ]
+    },
+    {
+      "name": "integration/closeout-2026-11-06",
+      "oid": "1cf3bb345c81e0118f84b48564765bebeb42a992",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "integration/closeout-2026-11-06",
+          "headRefOid": "1cf3bb345c81e0118f84b48564765bebeb42a992",
+          "mergeCommit": {
+            "oid": "4e6360c34ca9390e1f941341eaeae04d21037eba"
+          },
+          "mergedAt": "2026-11-06T18:08:06Z",
+          "number": 134,
+          "state": "MERGED",
+          "title": "Complete private source, reader, persistence and release-contract integration"
+        }
+      ]
+    },
+    {
+      "name": "integration/private-engineering-closeout-2026-11-06",
+      "oid": "9939f2098fcf65e9fd009f9cf970c10064ea44b8",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": []
+    },
+    {
+      "name": "integration/private-preview-consumers-2026-11-06",
+      "oid": "e62b0c462bef1d1a2920cd5f0387418ec1773009",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "integration/private-preview-consumers-2026-11-06",
+          "headRefOid": "e62b0c462bef1d1a2920cd5f0387418ec1773009",
+          "mergeCommit": {
+            "oid": "9939f2098fcf65e9fd009f9cf970c10064ea44b8"
+          },
+          "mergedAt": "2026-11-06T20:44:43Z",
+          "number": 135,
+          "state": "MERGED",
+          "title": "Complete verified private realization and source-region consumers"
+        }
+      ]
+    },
+    {
+      "name": "main",
+      "oid": "c5e119425be30a4a734a511b33c561a294136437",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": []
+    },
+    {
+      "name": "playground",
+      "oid": "a4db9181e58581b2f46422e31a38f206490c2030",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "playground",
+          "headRefOid": "a4db9181e58581b2f46422e31a38f206490c2030",
+          "mergeCommit": {
+            "oid": "b30c517c496771d561637ab869634f74d22cd9c6"
+          },
+          "mergedAt": "2026-11-07T15:50:46Z",
+          "number": 140,
+          "state": "MERGED",
+          "title": "Playground: private companion app for the whole archive"
+        }
+      ]
+    },
+    {
+      "name": "playground-out-guard",
+      "oid": "6a3a04d719dff9df0075e93dddc3fa4d3ab14861",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "playground-out-guard",
+          "headRefOid": "6a3a04d719dff9df0075e93dddc3fa4d3ab14861",
+          "mergeCommit": {
+            "oid": "3c548488b886ffea86c9c5dbc28eaf9d3b402869"
+          },
+          "mergedAt": "2026-11-07T17:08:29Z",
+          "number": 141,
+          "state": "MERGED",
+          "title": "playground: guard --out against deleting non-empty directories"
+        }
+      ]
+    },
+    {
+      "name": "post-poem-gates",
+      "oid": "15cad30cb923161716be51b2d075a6b98062cad4",
+      "ancestor": false,
+      "ahead": 3,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "post-poem-gates",
+          "headRefOid": "15cad30cb923161716be51b2d075a6b98062cad4",
+          "mergeCommit": {
+            "oid": "06dccc0af91e563dc15e70d436569b7fe0cf9cba"
+          },
+          "mergedAt": "2026-11-06T00:05:01Z",
+          "number": 101,
+          "state": "MERGED",
+          "title": "Posting script: gates, hard stops and a public build for posting one poem (title versforms, font ajp-scribbles)"
+        }
+      ]
+    },
+    {
+      "name": "post-poem-hardening-2026-11-06",
+      "oid": "7d03ac7715a7ee4d2ca3f3f4d569498633c00e25",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "post-poem-hardening-2026-11-06",
+          "headRefOid": "7d03ac7715a7ee4d2ca3f3f4d569498633c00e25",
+          "mergeCommit": {
+            "oid": "7371dc394403fbcf09fd32bab563f1eb62ff3684"
+          },
+          "mergedAt": "2026-11-06T16:00:59Z",
+          "number": 131,
+          "state": "MERGED",
+          "title": "Finish #123 posting hardening"
+        }
+      ]
+    },
+    {
+      "name": "post-poem-hardening-wip",
+      "oid": "c78e903ac3c3589437c302d7b7cfee73dad85561",
+      "ancestor": false,
+      "ahead": 4,
+      "prs": []
+    },
+    {
+      "name": "rebuild-path-docs",
+      "oid": "1699449d3a18ef2c22863780900f790725df77e7",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "rebuild-path-docs",
+          "headRefOid": "1699449d3a18ef2c22863780900f790725df77e7",
+          "mergeCommit": {
+            "oid": "2a0ecc29b417361bd585fde6f9aa48a6e51fffb8"
+          },
+          "mergedAt": "2026-11-05T20:26:21Z",
+          "number": 92,
+          "state": "MERGED",
+          "title": "docs: README rebuild path (Step 6) - the scripts are missing and stated as missing"
+        }
+      ]
+    },
+    {
+      "name": "record-addendum-2026-11-06",
+      "oid": "5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "record-addendum-2026-11-06",
+          "headRefOid": "5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+          "mergeCommit": {
+            "oid": "038d01fb1862f2e569d231b5b3c4c3a4eb1aecda"
+          },
+          "mergedAt": "2026-11-06T00:36:38Z",
+          "number": 124,
+          "state": "MERGED",
+          "title": "docs(chats): record the posting script's post-merge findings (issue #123)"
+        }
+      ]
+    },
+    {
+      "name": "record-final-2026-11-05",
+      "oid": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "record-final-2026-11-05",
+          "headRefOid": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+          "mergeCommit": {
+            "oid": "fab6a82b72f23efb16278b90cdc4f7790ca55713"
+          },
+          "mergedAt": "2026-11-06T00:14:05Z",
+          "number": 122,
+          "state": "MERGED",
+          "title": "docs(chats): final close-out of the 2026-11-05 records"
+        }
+      ]
+    },
+    {
+      "name": "record-update-2026-11-05",
+      "oid": "69fa18cbf8251226d11732f33937aca777327240",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "record-update-2026-11-05",
+          "headRefOid": "69fa18cbf8251226d11732f33937aca777327240",
+          "mergeCommit": {
+            "oid": "efccd97f8c91fcabf8d45b5e60729e914300e434"
+          },
+          "mergedAt": "2026-11-05T22:57:34Z",
+          "number": 116,
+          "state": "MERGED",
+          "title": "docs(chats): close out the 2026-11-05 local session record"
+        }
+      ]
+    },
+    {
+      "name": "release-mark-posted",
+      "oid": "9914af909db9dc2ea257303eb64c7f2e99eb9b3a",
+      "ancestor": false,
+      "ahead": 4,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "release-mark-posted",
+          "headRefOid": "9914af909db9dc2ea257303eb64c7f2e99eb9b3a",
+          "mergeCommit": {
+            "oid": "8bd770c60275c834660bf2fb13232a97098e22ce"
+          },
+          "mergedAt": "2026-11-05T20:34:03Z",
+          "number": 89,
+          "state": "MERGED",
+          "title": "Release tab: Mark posted defaults, post URL, and Exposure log site/Instagram choices (Step 5)"
+        }
+      ]
+    },
+    {
+      "name": "site-v4-verification",
+      "oid": "9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+      "ancestor": false,
+      "ahead": 9,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "site-v4-verification",
+          "headRefOid": "9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+          "mergeCommit": {
+            "oid": "b2199a0798294a72df429a01a5e97209ca06504b"
+          },
+          "mergedAt": "2026-11-05T22:52:28Z",
+          "number": 97,
+          "state": "MERGED",
+          "title": "Headless-Chrome verification of the merged piece v4 (site/ unchanged): verifier and run record"
+        }
+      ]
+    },
+    {
+      "name": "studio-cloudflare",
+      "oid": "b231cb63827fcae82f65562596349cdd9822d7c0",
+      "ancestor": false,
+      "ahead": 12,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "studio-cloudflare",
+          "headRefOid": "b231cb63827fcae82f65562596349cdd9822d7c0",
+          "mergeCommit": {
+            "oid": "fa698367d3df3479b9ee92719aa568bcf6204091"
+          },
+          "mergedAt": "2026-11-05T21:03:09Z",
+          "number": 96,
+          "state": "MERGED",
+          "title": "Review studio on Cloudflare: Pages Functions, D1 (vf_ tables), R2, Access-verified API, browser adapter"
+        }
+      ]
+    },
+    {
+      "name": "t03/release-packet-2026-11-05",
+      "oid": "e0177fa8a53ee41eda31a90253fbab3cc798556e",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": []
+    },
+    {
+      "name": "t03/release-packet-2026-11-05-current",
+      "oid": "aff12fbb91ba56aeb6b0f2aac08aed8a96593f82",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t03/release-packet-2026-11-05-current",
+          "headRefOid": "aff12fbb91ba56aeb6b0f2aac08aed8a96593f82",
+          "mergeCommit": {
+            "oid": "ef3d263c455788c769547df9e1e6010a54b7719a"
+          },
+          "mergedAt": "2026-11-06T16:13:38Z",
+          "number": 119,
+          "state": "MERGED",
+          "title": "T03: private first-release packet and repeatable clearance procedure"
+        }
+      ]
+    },
+    {
+      "name": "t05/private-notes-contributions-2026-11-05",
+      "oid": "3eeee91a9c92b5a439a4f73e699e606e2d65a1c2",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t05/private-notes-contributions-2026-11-05",
+          "headRefOid": "3eeee91a9c92b5a439a4f73e699e606e2d65a1c2",
+          "mergeCommit": {
+            "oid": "4063ec2d1b91e18b0ce7bad6e8fec56a531f398a"
+          },
+          "mergedAt": "2026-11-06T16:12:10Z",
+          "number": 126,
+          "state": "MERGED",
+          "title": "T05: private versioned notes and contribution review"
+        }
+      ]
+    },
+    {
+      "name": "t06/identity-audience-2026-11-05",
+      "oid": "3c8eeada490417d624c3ea71be9b2702d553fe05",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t06/identity-audience-2026-11-05",
+          "headRefOid": "3c8eeada490417d624c3ea71be9b2702d553fe05",
+          "mergeCommit": {
+            "oid": "79123aa342e196e19c5cf849cd3ed5488e9a26bb"
+          },
+          "mergedAt": "2026-11-06T16:02:08Z",
+          "number": 125,
+          "state": "MERGED",
+          "title": "T06: sourced identity record and weekly audience workflow"
+        }
+      ]
+    },
+    {
+      "name": "t07/media-production-kit-2026-11-05",
+      "oid": "334ef91dd8b3622161e9892c6ff434c7972246ca",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t07/media-production-kit-2026-11-05",
+          "headRefOid": "334ef91dd8b3622161e9892c6ff434c7972246ca",
+          "mergeCommit": {
+            "oid": "ef97c735d0a13591e54bfa5c3cf40767cd49ed3a"
+          },
+          "mergedAt": "2026-11-06T16:11:36Z",
+          "number": 129,
+          "state": "MERGED",
+          "title": "T07: media production kit (private)"
+        }
+      ]
+    },
+    {
+      "name": "t08/source-regions-pilot-2026-11-05",
+      "oid": "ed040031265aa2d6a48e6411b938cd765a5fc60f",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t08/source-regions-pilot-2026-11-05",
+          "headRefOid": "ed040031265aa2d6a48e6411b938cd765a5fc60f",
+          "mergeCommit": {
+            "oid": "7198bc38f363212716b49536db12851d4007cad3"
+          },
+          "mergedAt": "2026-11-06T16:10:54Z",
+          "number": 130,
+          "state": "MERGED",
+          "title": "T08: shared source-region contract and one private pilot (#32, #52-#56)"
+        }
+      ]
+    },
+    {
+      "name": "t09/audio-pilot-2026-11-05",
+      "oid": "982058eef6ea6a9470498e6a1764f327c877628a",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t09/audio-pilot-2026-11-05",
+          "headRefOid": "982058eef6ea6a9470498e6a1764f327c877628a",
+          "mergeCommit": {
+            "oid": "92202e3655c09b063fe9195035bda2a5bdffe035"
+          },
+          "mergedAt": "2026-11-06T15:09:39Z",
+          "number": 127,
+          "state": "MERGED",
+          "title": "T09: reproducible private voice/audio pilot (fixture only)"
+        }
+      ]
+    },
+    {
+      "name": "t10/script-realization-glyphs-2026-11-05",
+      "oid": "f0a54a702a71afd5006268a98757f0b8e85d3b1d",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "t10/script-realization-glyphs-2026-11-05",
+          "headRefOid": "f0a54a702a71afd5006268a98757f0b8e85d3b1d",
+          "mergeCommit": {
+            "oid": "8cd9872acbccd28db9736c2340cdac9d1ba65f91"
+          },
+          "mergedAt": "2026-11-06T15:19:08Z",
+          "number": 128,
+          "state": "MERGED",
+          "title": "T10: private script realization fixture and author-glyph workflow"
+        }
+      ]
+    },
+    {
+      "name": "verify-cleanup-await-exit",
+      "oid": "33a29625922db138287dd49d30fa19500eec480a",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "verify-cleanup-await-exit",
+          "headRefOid": "33a29625922db138287dd49d30fa19500eec480a",
+          "mergeCommit": {
+            "oid": "d74df372ace00c8a7544ab3b5302cb05418d672c"
+          },
+          "mergedAt": "2026-11-05T23:29:06Z",
+          "number": 118,
+          "state": "MERGED",
+          "title": "verify_site: cleanup waits for the browser to exit; handshake test is count-agnostic; record corrected (#115 was already fixed)"
+        }
+      ]
+    },
+    {
+      "name": "workbench-launcher",
+      "oid": "6fc025b5311b372a13324ba124e1886093f20e76",
+      "ancestor": false,
+      "ahead": 3,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "workbench-launcher",
+          "headRefOid": "6fc025b5311b372a13324ba124e1886093f20e76",
+          "mergeCommit": {
+            "oid": "0be85542c2f8e520d0a2aeaca93ccb76841798ba"
+          },
+          "mergedAt": "2026-11-05T21:46:23Z",
+          "number": 100,
+          "state": "MERGED",
+          "title": "studio-cf: run the workbench locally with one command; fix a smoke-test race; README state"
+        }
+      ]
+    }
+  ]
+}

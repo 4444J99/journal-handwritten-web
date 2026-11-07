@@ -7,7 +7,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {CDP,withBrowser} from '../tools/cdp_client.mjs';
 import {freePort} from '../studio-cf/tests/helpers/wrangler.mjs';
-const CHROME='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME=process.env.CHROME_BIN || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 test('reader bookmarks keep the public pathname across snapshot changes',{timeout:30000},async()=>{
  const source=await fs.readFile(new URL('../site/index.html',import.meta.url),'utf8');
  const hashFunction=source.slice(source.indexOf('function setHash(){'),source.indexOf('function readHash(){'));
@@ -16,7 +16,7 @@ test('reader bookmarks keep the public pathname across snapshot changes',{timeou
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port;
  const profile=await fs.mkdtemp(path.join(os.tmpdir(),'reader-bookmark-'));
- try {await withBrowser({connect:CDP.connect,launch:async()=>{const port=await freePort();const proc=spawn(CHROME,['--headless=new','--remote-debugging-port='+port,'--user-data-dir='+profile,'--no-first-run','--disable-gpu','about:blank'],{stdio:'ignore'});for(let i=0;i<60;i++){try{const j=await(await fetch('http://127.0.0.1:'+port+'/json/version')).json();return{proc,wsUrl:j.webSocketDebuggerUrl};}catch{await new Promise(r=>setTimeout(r,100));}}proc.kill();throw Error('Chrome did not start');}},async cdp=>{
+ try {await withBrowser({connect:CDP.connect,launch:async()=>{const port=await freePort();const proc=spawn(CHROME,['--headless=new','--no-sandbox','--remote-debugging-port='+port,'--user-data-dir='+profile,'--no-first-run','--disable-gpu','about:blank'],{stdio:'ignore'});for(let i=0;i<60;i++){try{const j=await(await fetch('http://127.0.0.1:'+port+'/json/version')).json();return{proc,wsUrl:j.webSocketDebuggerUrl};}catch{await new Promise(r=>setTimeout(r,100));}}proc.kill();throw Error('Chrome did not start');}},async cdp=>{
  const {targetId}=await cdp.send('Target.createTarget',{url:'about:blank'}),{sessionId}=await cdp.send('Target.attachToTarget',{targetId,flatten:true});
  const send=(m,p={})=>cdp.send(m,p,sessionId);await send('Page.enable');await send('Runtime.enable');
  async function address(){for(let i=0;i<100;i++){const r=await send('Runtime.evaluate',{expression:'location.href',returnByValue:true});if(r.result.value.includes('#'))return r.result.value;await new Promise(r=>setTimeout(r,50));}throw Error('Reader hash missing');}
