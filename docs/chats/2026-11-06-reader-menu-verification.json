@@ -1,0 +1,638 @@
+{
+  "contract_version": "1.0",
+  "date": "2026-11-06",
+  "scope": "Reader menu, author-drawn controls, inverse palettes, About/Help structure and matching public engine pin",
+  "status": "implementation-verified; repository integration pending when this pre-integration receipt was written; subsequent disposition belongs in the associated pull requests",
+  "private_base": "9c0e9c565fb9d7bef3a68b21faa744010a401f60",
+  "public_base": "0fff63baeba6192515d640c23f6e7b9a12ee480a",
+  "source_sha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
+  "public_shell_sha256": "35bb01c5340f2501a4f949f91d989a729e21d9261239b9f94784562d22185cec",
+  "browser": {
+    "engine": "webkit",
+    "readerSha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
+    "checks": [
+      {
+        "name": "phone: actual artwork has painted",
+        "pass": true,
+        "details": {
+          "items": 839,
+          "drawn": 8,
+          "memory": {
+            "sprites": 0,
+            "sprPx": 0,
+            "tiles": 8,
+            "worker": true,
+            "pend": 0,
+            "dead": 0
+          }
+        }
+      },
+      {
+        "name": "phone: visible unobstructed launcher and no hidden tab stops",
+        "pass": true,
+        "details": {
+          "x": 271.59375,
+          "y": 780,
+          "width": 106.40625,
+          "height": 52
+        }
+      },
+      {
+        "name": "phone: one action exposes grouped labeled controls within the viewport",
+        "pass": true
+      },
+      {
+        "name": "menu stays open while the reader is deciding",
+        "pass": true
+      },
+      {
+        "name": "display selection changes the artwork and keeps its controls available",
+        "pass": true
+      },
+      {
+        "name": "phone: selection works, keys stay in the menu and Escape restores focus",
+        "pass": true
+      },
+      {
+        "name": "phone: native Enter/Space open once and explicit close restores focus",
+        "pass": true
+      },
+      {
+        "name": "phone: real touch opens and explicitly closes the menu",
+        "pass": true
+      },
+      {
+        "name": "phone About: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "phone Help: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "phone: author About remains empty and distinct from technical Help",
+        "pass": true
+      },
+      {
+        "name": "phone: Search receives input focus and restores it on dismissal",
+        "pass": true
+      },
+      {
+        "name": "phone: outside dismissal does not also activate or move the reader",
+        "pass": true
+      },
+      {
+        "name": "light palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(230, 224, 210)",
+          "ink": "rgb(43, 42, 39)",
+          "launcher": {
+            "color": "rgb(230, 224, 210)",
+            "background": "rgb(43, 42, 39)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(230, 224, 210)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(230, 224, 210)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgb(43, 42, 39)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(230, 224, 210)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "light About palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(230, 224, 210)",
+          "ink": "rgb(43, 42, 39)",
+          "launcher": {
+            "color": "rgb(230, 224, 210)",
+            "background": "rgb(43, 42, 39)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(230, 224, 210)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(230, 224, 210)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgb(43, 42, 39)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgb(43, 42, 39)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(230, 224, 210)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(230, 224, 210)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(230, 224, 210)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "dark palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(18, 17, 16)",
+          "ink": "rgb(231, 223, 205)",
+          "launcher": {
+            "color": "rgb(18, 17, 16)",
+            "background": "rgb(231, 223, 205)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(18, 17, 16)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(18, 17, 16)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgb(231, 223, 205)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(18, 17, 16)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "dark About palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(18, 17, 16)",
+          "ink": "rgb(231, 223, 205)",
+          "launcher": {
+            "color": "rgb(18, 17, 16)",
+            "background": "rgb(231, 223, 205)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(18, 17, 16)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(18, 17, 16)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgb(231, 223, 205)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgb(231, 223, 205)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(18, 17, 16)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(18, 17, 16)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(18, 17, 16)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "custom blue/gold palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(23, 54, 91)",
+          "ink": "rgb(244, 188, 83)",
+          "launcher": {
+            "color": "rgb(23, 54, 91)",
+            "background": "rgb(244, 188, 83)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(23, 54, 91)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(23, 54, 91)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgb(244, 188, 83)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(23, 54, 91)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "custom blue/gold About palette: launcher and crown swap the selected canvas/text colors",
+        "pass": true,
+        "details": {
+          "canvas": "rgb(23, 54, 91)",
+          "ink": "rgb(244, 188, 83)",
+          "launcher": {
+            "color": "rgb(23, 54, 91)",
+            "background": "rgb(244, 188, 83)",
+            "fill": "rgb(0, 0, 0)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "glyph": {
+            "color": "rgb(23, 54, 91)",
+            "background": "rgba(0, 0, 0, 0)",
+            "fill": "rgb(23, 54, 91)",
+            "filter": "none",
+            "blend": "normal"
+          },
+          "badges": [
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgb(244, 188, 83)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgb(244, 188, 83)",
+              "fill": "rgb(0, 0, 0)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ],
+          "crowns": [
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(23, 54, 91)",
+              "filter": "none",
+              "blend": "normal"
+            },
+            {
+              "color": "rgb(23, 54, 91)",
+              "background": "rgba(0, 0, 0, 0)",
+              "fill": "rgb(23, 54, 91)",
+              "filter": "none",
+              "blend": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "name": "phone: journal view controls change correctly with reading context",
+        "pass": true
+      },
+      {
+        "name": "phone: Revisions and Hand to font retain context controls and native input",
+        "pass": true
+      },
+      {
+        "name": "desktop: actual artwork has painted",
+        "pass": true,
+        "details": {
+          "items": 839,
+          "drawn": 12,
+          "memory": {
+            "sprites": 0,
+            "sprPx": 0,
+            "tiles": 12,
+            "worker": true,
+            "pend": 0,
+            "dead": 0
+          }
+        }
+      },
+      {
+        "name": "desktop: visible unobstructed launcher and no hidden tab stops",
+        "pass": true,
+        "details": {
+          "x": 1161.59375,
+          "y": 836,
+          "width": 106.40625,
+          "height": 52
+        }
+      },
+      {
+        "name": "desktop: one action exposes grouped labeled controls within the viewport",
+        "pass": true
+      },
+      {
+        "name": "desktop: selection works, keys stay in the menu and Escape restores focus",
+        "pass": true
+      },
+      {
+        "name": "desktop: native Enter/Space open once and explicit close restores focus",
+        "pass": true
+      },
+      {
+        "name": "search shortcut remains available after keyboard dismissal",
+        "pass": true
+      },
+      {
+        "name": "desktop About: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "desktop Help: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "desktop: author About remains empty and distinct from technical Help",
+        "pass": true
+      },
+      {
+        "name": "desktop: Search receives input focus and restores it on dismissal",
+        "pass": true
+      },
+      {
+        "name": "desktop: outside dismissal does not also activate or move the reader",
+        "pass": true
+      },
+      {
+        "name": "search result enters existing work and dismisses its controls cleanly",
+        "pass": true
+      },
+      {
+        "name": "desktop: journal view controls change correctly with reading context",
+        "pass": true
+      },
+      {
+        "name": "desktop: Revisions and Hand to font retain context controls and native input",
+        "pass": true
+      },
+      {
+        "name": "notebook spread retains its context-specific outline restriction",
+        "pass": true
+      },
+      {
+        "name": "opening Menu cancels both short and long active canvas gestures",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: actual artwork has painted",
+        "pass": true,
+        "details": {
+          "items": 839,
+          "drawn": 8,
+          "memory": {
+            "sprites": 0,
+            "sprPx": 0,
+            "tiles": 8,
+            "worker": true,
+            "pend": 0,
+            "dead": 0
+          }
+        }
+      },
+      {
+        "name": "narrow-phone: visible unobstructed launcher and no hidden tab stops",
+        "pass": true,
+        "details": {
+          "x": 201.59375,
+          "y": 504,
+          "width": 106.40625,
+          "height": 52
+        }
+      },
+      {
+        "name": "narrow-phone: one action exposes grouped labeled controls within the viewport",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: selection works, keys stay in the menu and Escape restores focus",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: native Enter/Space open once and explicit close restores focus",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: real touch opens and explicitly closes the menu",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone About: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone Help: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: author About remains empty and distinct from technical Help",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: Search receives input focus and restores it on dismissal",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: outside dismissal does not also activate or move the reader",
+        "pass": true
+      },
+      {
+        "name": "narrow-phone: journal view controls change correctly with reading context",
+        "pass": true
+      },
+      {
+        "name": "landscape: actual artwork has painted",
+        "pass": true,
+        "details": {
+          "items": 839,
+          "drawn": 8,
+          "memory": {
+            "sprites": 0,
+            "sprPx": 0,
+            "tiles": 8,
+            "worker": true,
+            "pend": 0,
+            "dead": 0
+          }
+        }
+      },
+      {
+        "name": "landscape: visible unobstructed launcher and no hidden tab stops",
+        "pass": true,
+        "details": {
+          "x": 725.59375,
+          "y": 326,
+          "width": 106.40625,
+          "height": 52
+        }
+      },
+      {
+        "name": "landscape: one action exposes grouped labeled controls within the viewport",
+        "pass": true
+      },
+      {
+        "name": "landscape: selection works, keys stay in the menu and Escape restores focus",
+        "pass": true
+      },
+      {
+        "name": "landscape: native Enter/Space open once and explicit close restores focus",
+        "pass": true
+      },
+      {
+        "name": "landscape: real touch opens and explicitly closes the menu",
+        "pass": true
+      },
+      {
+        "name": "landscape About: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "landscape Help: keyboard isolation, Escape and close restore the opener",
+        "pass": true
+      },
+      {
+        "name": "landscape: author About remains empty and distinct from technical Help",
+        "pass": true
+      },
+      {
+        "name": "landscape: Search receives input focus and restores it on dismissal",
+        "pass": true
+      },
+      {
+        "name": "landscape: outside dismissal does not also activate or move the reader",
+        "pass": true
+      },
+      {
+        "name": "landscape: journal view controls change correctly with reading context",
+        "pass": true
+      }
+    ],
+    "pageErrors": [],
+    "assetErrors": [],
+    "physicalDevices": "not tested",
+    "pass": true
+  },
+  "checks": {
+    "source_integrity": {
+      "references": 509,
+      "missing": 0,
+      "checksums": 536,
+      "pass": true
+    },
+    "public_metadata_tests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "public_package_tests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "studio_pin_matches_generated_engine": true,
+    "production_and_staging_shells_identical": true,
+    "unchanged_existing_content_files": 533,
+    "changed_existing_content_files": [
+      "site/index.html"
+    ],
+    "new_content_files": [
+      "site/ui/author-menu.svg",
+      "site/ui/author-crown.svg"
+    ],
+    "source_font_and_PAL_HF_unchanged": true,
+    "original_photo_not_embedded": true
+  },
+  "source_snapshot": {
+    "git_checkout": false,
+    "baseline_tree": "d7cefcb5b7e333ecae7cac66435efedb08376ef7",
+    "publication_method": "Planned: GitHub Git Data API using the pinned parent and existing base tree; verify remote blob hashes before integration"
+  },
+  "preservation": {
+    "prior_history": "Delivery requirement: preserve prior history through ordinary branches and merge commits; no deletions, force pushes or history rewriting",
+    "author_source_photo": "Referenced by the private reader-marks-provenance.json; not copied into reader assets"
+  },
+  "limits": [
+    "WebKit with mobile/touch emulation and reduced motion; no physical iPhone or second browser engine tested.",
+    "The broader Chromium/CDP/audio integration suite was not runnable in this environment; scoped menu and generated-package tests are complete.",
+    "Author-written About paragraphs remain empty and hidden until supplied.",
+    "No poem selection, release pointer, visibility, Access setting or noindex change.",
+    "Private memory packet 2026-10-16-v1.1/r2 was inaccessible; no unseen content or historical approval was used."
+  ]
+}
