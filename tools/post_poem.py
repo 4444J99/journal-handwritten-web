@@ -265,6 +265,8 @@ def gate_verified(src, db, pid):
 def gate_filed(db, pid):
     """Passes when ANY batch listing the piece is filed or registered (a piece may sit in a draft batch and
     also in a later filed one)."""
+    if db.get("decisions", {}).get("gruw-policy", {}).get("choice") == "skip":
+        return True, "standing GRUW policy is 'skip' (recorded author decision)"
     found, malformed = [], 0
     for bid, b in sorted(db["batches"].items()):
         items = b.get("items")

@@ -22,6 +22,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from check import studio_source  # noqa: E402
+from prepare_publish import prepare  # noqa: E402
 
 
 def main(argv=None):
@@ -62,6 +63,10 @@ def main(argv=None):
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dest)
         n += 1
+    # Publication sources and tiles are reachable only behind the same Access
+    # middleware as the rest of this deployment. They never enter the reader repo.
+    prepared = prepare(ROOT, out / "publish")
+    print(f"publisher shell sha256 {prepared['shellSha256']}")
     print(f"{n} files written to {out} ({len(missing)} missing)")
     return 1 if missing else 0
 
