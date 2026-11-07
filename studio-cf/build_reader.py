@@ -56,6 +56,7 @@ bucket_name = "versforms-staging"
         'shell.json': (json.dumps({'shellSha256': pin['shellSha256']}, indent=2) + '\n').encode(),
         'package.json': b'{"name":"versforms-reader","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs"}}\n',
         'tests/public-reader.test.mjs': (ROOT / 'studio-cf/tests/public-reader.unit.test.mjs').read_bytes(),
+        'tests/public-package-contract.test.mjs': (ROOT / 'studio-cf/tests/helpers/public-package-contract.mjs').read_bytes(),
     }
     # Keep staging's build output inside its own project directory. Pages dev
     # resolves configuration from that output; ../site selects the parent

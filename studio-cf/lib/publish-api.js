@@ -182,17 +182,22 @@ async function releaseAppearances(env,intent) {
   if(intent.action!=='publish')return true;
   const published=await doc(env,'snapshot.'+intent.to);
   check(published,'missing_snapshot_record');
+  // Read the release collection once per continuation. Rereading completed
+  // pieces individually eventually exhausts D1's free invocation budget.
+  const [rows,numbering]=await Promise.all([
+    env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('release').all(),
+    env.DB.prepare('SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2').bind('decisions','release-numbering').first(),
+  ]);
+  const releases=new Map(rows.results.map(r=>[r.id,r.data]));
+  let nextNum=1+Math.max(0,...rows.results.map(r=>JSON.parse(r.data).num).filter(n=>Number.isSafeInteger(n) && n>0));
   let changed=0;
   for(const pid of intent.added || published.pieces) {
-    const current=await env.DB.prepare('SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2').bind('release',pid).first();
-    const before=current?.data || null, value=before?JSON.parse(before):{};
+    const before=releases.get(pid) || null, value=before?JSON.parse(before):{};
     if((value.exposures || []).some(e=>e.publishId===intent.event))continue;
     if(changed===4)return false;
-    const numbering=await env.DB.prepare('SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2').bind('decisions','release-numbering').first();
     let num=value.num;
     if(intent.target==='production' && !num && numbering && JSON.parse(numbering.data).choice==='as-posted') {
-      const rows=await env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('release').all();
-      num=1+Math.max(0,...rows.results.map(r=>JSON.parse(r.data).num).filter(n=>Number.isSafeInteger(n) && n>0));
+      num=nextNum++;
     }
     const exposure={type:'site',date:intent.date,at:intent.at,where:intent.target==='staging'?'versforms-staging':'versforms',url:target(env,intent.target).url,publishId:intent.event,snapshotId:intent.to,target:intent.target};
     const after={...value,...(num?{num}:{}),exposures:[...(value.exposures || []),exposure],at:intent.at};
