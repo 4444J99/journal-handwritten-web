@@ -1,0 +1,10 @@
+[
+  {"ref": "#104", "what": "Switch the studio's runtime to Fail closed", "size": "one click"},
+  {"ref": "#105", "what": "Sort p001 to p010 into Series, Reserve or Archive", "size": "10 choices"},
+  {"ref": "#106", "what": "Register batch 1 with the copyright office before the first post, or post without", "size": "one decision; $85 if you file"},
+  {"ref": "#107", "what": "Supply the four missing build scripts, or lift the do-not-recreate instruction", "size": "one decision"},
+  {"ref": "#108", "what": "Three questions about the public build", "size": "3 choices"},
+  {"ref": "#109", "what": "Six design questions for the alive prototype", "size": "6 choices"},
+  {"ref": "#110", "what": "Font fill-in sheet photos", "size": "optional"},
+  {"ref": "#111", "what": "GitHub billing", "size": "when you can"}
+]

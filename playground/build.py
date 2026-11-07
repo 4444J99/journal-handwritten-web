@@ -91,6 +91,13 @@ def build_docs(out):
         name = re.sub(r"[^A-Za-z0-9.]+", "-", p.name)
         copy(p, out / "pdf" / name)
         pdfs.append({"title": p.stem, "file": "pdf/" + name, "bytes": p.stat().st_size, "path": str(p.relative_to(ROOT))})
+    # documents exported from claude.ai (playground/snapshots/docs)
+    for p in sorted((PG / "snapshots/docs").glob("*.md")):
+        t = p.read_text()
+        m = re.search(r"^([A-Z][a-z]{2} \d{1,2}, 20\d\d)", t[t.find("\n"):].strip())
+        date = __import__("datetime").datetime.strptime(m.group(1), "%b %d, %Y").date().isoformat() if m else ""
+        docs.append({"id": "a-" + p.stem[:60], "kind": "document", "title": title_of(t, p.stem), "date": date,
+                     "path": str(p.relative_to(ROOT)), "words": len(t.split()), "html": md_html(t)})
     # plan
     t = (ROOT / "docs/plan.md").read_text()
     docs.append({"id": "plan", "kind": "plan", "title": "Project plan", "date": "", "path": "docs/plan.md",
@@ -150,14 +157,14 @@ def build_catalog(out):
     for p in r["pages"]:
         pid = p["id"]
         copy(ROOT / "studio" / p["thumb"], out / "img/t" / (pid + ".jpg"))
-        mid = ROOT / "site/img/i" / (pid + ".jpg")
-        copy(mid if mid.exists() else ROOT / "site/img/p" / (pid + ".jpg"), out / "img/i" / (pid + ".jpg"))
+        # Mid-size scans and 2015 spreads are served once, from the reader copy (reader/img/...).
+        if not (ROOT / "site/img/i" / (pid + ".jpg")).exists():
+            raise SystemExit(f"missing site/img/i/{pid}.jpg")
         sp = None
         if p.get("spread"):
-            src = ROOT / "site" / p["spread"]["img"] if (ROOT / "site" / p["spread"]["img"]).exists() else ROOT / "site/img/s" / Path(p["spread"]["img"]).name
-            if src.exists():
-                copy(src, out / "img/s" / src.name)
-                sp = "img/s/" + src.name
+            name = Path(p["spread"]["img"]).name
+            if (ROOT / "site/img/s" / name).exists():
+                sp = "reader/img/s/" + name
         pages.append({"id": pid, "seq": p["seq"], "w": p["w"], "h": p["h"], "spread": sp, "uncertain": p["uncertain"],
                       "blocks": [{"t": b["t"], "note": b.get("note", ""), "spread": b.get("spread", False),
                                   "lines": [{"id": l["id"], "tx": reading(l), **({"machine": l["tx"]} if reading(l) != l["tx"] else {})} for l in b["lines"]]} for b in p["blocks"]]})
@@ -203,22 +210,59 @@ def build_designs(out):
     for slug in boards:
         for b in boards[slug]["boards"]:
             copy(PG / "designs" / slug / b["file"], out / "designs" / slug / b["file"])
-    for d in (PG / "snapshots").iterdir():
-        if d.is_dir():
-            for f in d.rglob("*"):
-                if f.is_file():
-                    dst = out / "snap" / d.name / f.relative_to(d)
-                    copy(f, dst)
-                    if f.suffix == ".html" and not f.read_text()[:200].lower().lstrip().startswith("<!doctype"):
-                        # artifact pages are stored without a skeleton; served as a plain file they need one
-                        dst.write_text(SKELETON.replace("%PAGE%", f.read_text()))
+    for d in sorted((PG / "snapshots").iterdir()):
+        if not d.is_dir() or d.name in SNAPSHOT_DATA_ONLY:
+            continue
+        rules = SNAPSHOT_REWRITES.get(d.name, [])
+        used = set()
+        for f in d.rglob("*"):
+            if not f.is_file():
+                continue
+            dst = out / "snap" / d.name / f.relative_to(d)
+            copy(f, dst)
+            if f.suffix in (".html", ".json"):
+                text = f.read_text()
+                for old_path, new_path in rules:
+                    if old_path in text:
+                        used.add(old_path)
+                        text = text.replace(old_path, new_path)
+                if f.suffix == ".html" and not text[:200].lower().lstrip().startswith("<!doctype"):
+                    # artifact pages are stored without a skeleton; served as a plain file they need one
+                    text = SKELETON.replace("%PAGE%", text)
+                dst.write_text(text)
+        missing = [r[0] for r in rules if r[0] not in used]
+        if missing:
+            raise SystemExit(f"snapshot {d.name}: expected paths not found: {missing}")
     return boards
 
 
-def main():
+# Snapshot pages that were published with their own copies of the scans load the
+# playground's shared copies instead (same bytes; checked when the snapshots were taken).
+SNAPSHOT_REWRITES = {
+    "first-reader": [("img/plates/", "../../reader/img/h/"), ("img/${esc(id)}.jpg", "../../reader/img/p/${esc(id)}.jpg"),
+                     ('"img/thumbs/', '"../../img/t/'), ('"img/spreads/', '"../../reader/img/s/'), ('"img/diary', '"../../reader/img/p/diary')],
+    "canvas-test": [('{dir:"img/thumbs/"', '{dir:"../../img/t/"'), ('{dir:"img/", h:1600}', '{dir:"../../reader/img/p/", h:1600}')],
+}
+# Snapshots whose content the playground renders itself (from data), not as a page.
+SNAPSHOT_DATA_ONLY = {"docs", "versforms-progress"}
+
+
+def build_reader(out):
+    """The merged piece (site/), as the reader prototype and the shared scan store."""
+    for f in sorted((ROOT / "site").rglob("*")):
+        if f.is_file() and f.name != "_worker.js":
+            copy(f, out / "reader" / f.relative_to(ROOT / "site"))
+
+
+def build_progress():
+    base = PG / "snapshots/versforms-progress/data"
+    return {f.stem: json.loads(f.read_text()) for f in sorted(base.glob("*.json"))}
+
+
+def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(PG / "dist"))
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)
@@ -227,7 +271,8 @@ def main():
     docs, pdfs, chats, records = build_docs(out)
     data = {"built": __import__("datetime").date.today().isoformat(), "sources": sources,
             "catalog": build_catalog(out), "designs": build_designs(out), "media": build_media(out),
-            "release": build_release(), "pdfs": pdfs}
+            "release": build_release(), "pdfs": pdfs, "progress": build_progress()}
+    build_reader(out)
     (out / "data").mkdir()
     (out / "data/core.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
     (out / "data/docs.json").write_text(json.dumps({"docs": docs, "chats": chats, "records": records},

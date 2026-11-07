@@ -1,0 +1,22 @@
+[
+  {"ref": "#73", "what": "Studio database export: 38 reviews", "landed": "17:37", "evidence": "merged on the author's yes"},
+  {"ref": "public #1", "what": "Public page title is versforms", "landed": "18:23", "evidence": "production fetched afterwards: title versforms, noindex kept"},
+  {"ref": "#93", "what": "Pages workflow refuses to run without an explicit confirmation", "landed": "20:25", "evidence": "local-ci green"},
+  {"ref": "#92", "what": "README: the rebuild path, with the missing scripts stated as missing", "landed": "20:26", "evidence": "local-ci green"},
+  {"ref": "#94", "what": "ci_local.py: runs every check locally and posts a local-ci status", "landed": "20:26", "evidence": "3 review findings fixed, each with a test that fails on the old code"},
+  {"ref": "#98", "what": "Derived decisions seeded: numbering as-posted, participation around", "landed": "20:26", "evidence": "read back from the deployed studio: 2 decisions, labelled derived"},
+  {"ref": "#89", "what": "Release tab: Mark posted defaults, post URL, Exposure choices", "landed": "20:34", "evidence": "14 Node tests; independent check found and fixed a URL-validation hole"},
+  {"ref": "#99", "what": "noindex: where it lives and what removing it involves", "landed": "20:53", "evidence": "docs only"},
+  {"ref": "#96", "what": "Review studio on Cloudflare: Functions, D1, R2, Access check", "landed": "21:03", "evidence": "independent check passed; deployed and read back signed in"},
+  {"ref": "#100", "what": "Studio workbench launcher and a smoke-test fix", "landed": "21:46", "evidence": "local suites green"},
+  {"ref": "#95", "what": "Session record: finish and launch", "landed": "21:53", "evidence": "integrity check OK"},
+  {"ref": "#91", "what": "Dashboard chat record marks #73 merged", "landed": "22:21", "evidence": "docs only; automated review found nothing"},
+  {"ref": "#103", "what": "claude/: the Project's plan, 12 research reports and 5 PDFs", "landed": "22:36", "evidence": "28 of 28 download hashes match after the move; both zips identical to site/ and studio/"},
+  {"ref": "#114", "what": "Integrity check now fails on a content file missing from the manifest (closes issue #1, replaces old draft #2)", "landed": "22:45", "evidence": "8 tests, 5 of them fail on the old script"},
+  {"ref": "#97", "what": "Headless-Chrome check of the v4 page: tool and run record", "landed": "22:52", "evidence": "green local-ci; review findings fixed with tests"},
+  {"ref": "#116", "what": "Session record closed out", "landed": "22:57", "evidence": "every figure read back from a command; integrity check OK"},
+  {"ref": "#117", "what": "Record of the posting-script, studio and verification lanes, corrected", "landed": "23:11", "evidence": "docs only; local-ci green"},
+  {"ref": "#118", "what": "Two review findings on the v4 check fixed (await browser exit; handshake test)", "landed": "23:29", "evidence": "automated review clean; local-ci green"},
+  {"ref": "#101", "what": "Posting script: gates, hard stops and a public build for one poem", "landed": "00:05 (6 Nov)", "evidence": "four independent checks; three found and fixed holes in the Reserve guard; 157 tests; local-ci green on the merged head"},
+  {"ref": "#122", "what": "Final close-out of the session records", "landed": "00:14 (6 Nov)", "evidence": "docs only; every figure read from a command; local-ci green"}
+]

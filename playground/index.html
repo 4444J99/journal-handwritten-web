@@ -1,37 +1,39 @@
 <title>versforms Playground</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
 <style>
-/* Layout: a ruled notebook workbench. One sticky shelf of rooms; each room is a ruled sheet; ids and dates sit in the margin in mono. */
+/* Layout: the Studio's sheet — warm paper, near-black ink, one margin-red accent, mono labels.
+   Tokens are the Studio's own (studio/index.html); see docs/design-principles.md. */
 :root{
-  --paper:#eceff3; --sheet:#fbfcfd; --ink:#1a2130; --ink-2:#566174; --ink-3:#8590a2;
-  --rule:#d3dbe5; --rule-2:#e4e9ef; --pen:#2a47b5; --pen-soft:rgba(42,71,181,.09);
-  --margin:#b4423a; --margin-soft:rgba(180,66,58,.10); --ok:#2f6b4e; --ok-soft:rgba(47,107,78,.11);
-  --scan:#f6f6f2; --shade:rgba(14,18,26,.72);
-  --display:"Instrument Serif","Iowan Old Style",Georgia,serif;
-  --read:"Newsreader","Iowan Old Style",Georgia,serif;
-  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --paper:#f5f3ed; --sheet:#fffdf8; --ink:#1d2129; --ink-2:#666b74; --ink-3:#8d9199;
+  --rule:#d5dde7; --rule-2:#e6ebf1; --pen:#c0503a; --pen-soft:rgba(192,80,58,.10);
+  --margin:#c0503a; --margin-soft:rgba(192,80,58,.10); --ok:#2f6a4a; --ok-soft:rgba(47,106,74,.10);
+  --scan:#fff; --shade:rgba(20,22,26,.55);
+  --display:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  --read:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gut-l:max(16px,env(safe-area-inset-left,0px)); --gut-r:max(16px,env(safe-area-inset-right,0px));
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --paper:#0f131a; --sheet:#161b24; --ink:#e3e8f0; --ink-2:#a1abbb; --ink-3:#6f7a8c;
-  --rule:#273041; --rule-2:#1e2633; --pen:#93a9ff; --pen-soft:rgba(147,169,255,.12);
-  --margin:#e5807a; --margin-soft:rgba(229,128,122,.13); --ok:#86c3a1; --ok-soft:rgba(134,195,161,.13);
-  --scan:#d8d7d1; --shade:rgba(0,0,0,.8); color-scheme:dark}}
+  --paper:#141619; --sheet:#1b1e22; --ink:#e6e2d8; --ink-2:#a2a5ab; --ink-3:#7d8087;
+  --rule:#2c333d; --rule-2:#23292f; --pen:#d9735e; --pen-soft:rgba(217,115,94,.14);
+  --margin:#d9735e; --margin-soft:rgba(217,115,94,.14); --ok:#86bd99; --ok-soft:rgba(134,189,153,.13);
+  --scan:#d9d6cf; --shade:rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --paper:#0f131a; --sheet:#161b24; --ink:#e3e8f0; --ink-2:#a1abbb; --ink-3:#6f7a8c;
-  --rule:#273041; --rule-2:#1e2633; --pen:#93a9ff; --pen-soft:rgba(147,169,255,.12);
-  --margin:#e5807a; --margin-soft:rgba(229,128,122,.13); --ok:#86c3a1; --ok-soft:rgba(134,195,161,.13);
-  --scan:#d8d7d1; --shade:rgba(0,0,0,.8); color-scheme:dark}
+  --paper:#141619; --sheet:#1b1e22; --ink:#e6e2d8; --ink-2:#a2a5ab; --ink-3:#7d8087;
+  --rule:#2c333d; --rule-2:#23292f; --pen:#d9735e; --pen-soft:rgba(217,115,94,.14);
+  --margin:#d9735e; --margin-soft:rgba(217,115,94,.14); --ok:#86bd99; --ok-soft:rgba(134,189,153,.13);
+  --scan:#d9d6cf; --shade:rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--ui);overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-a{color:var(--pen);text-underline-offset:3px;text-decoration-thickness:1px}
+a{color:var(--ink);text-decoration-color:var(--rule);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-color:var(--pen)}
 :focus-visible{outline:2px solid var(--pen);outline-offset:2px}
 .mono{font-family:var(--mono)}
 .wrap{max-width:1180px;margin:0 auto;padding-left:var(--gut-l);padding-right:var(--gut-r)}
@@ -40,7 +42,7 @@ a{color:var(--pen);text-underline-offset:3px;text-decoration-thickness:1px}
 .shelf{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--rule)}
 .shelf .wrap{display:flex;align-items:center;gap:14px;padding-block:10px 0;flex-wrap:wrap}
 .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
-.brand b{font:400 26px/1 var(--display);letter-spacing:-.01em}
+.brand b{font:600 13px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
 .brand span{font:500 10.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--margin);border:1px solid currentColor;border-radius:3px;padding:3px 5px 2px}
 .find{margin-left:auto;flex:0 1 260px;min-width:0}
 .find input{width:100%;padding:7px 10px;border:1px solid var(--rule);border-radius:7px;background:var(--sheet);font-size:14px}
@@ -51,7 +53,7 @@ a{color:var(--pen);text-underline-offset:3px;text-decoration-thickness:1px}
 .rooms a small{font:11px var(--mono);color:var(--ink-3);margin-left:4px}
 
 main{padding-block:22px 80px}
-h1.room{font:400 clamp(30px,5vw,44px)/1.05 var(--display);margin:4px 0 6px;text-wrap:balance}
+h1.room{font:600 clamp(24px,3.6vw,32px)/1.15 var(--display);margin:4px 0 6px;text-wrap:balance}
 .lede{color:var(--ink-2);max-width:68ch;margin:0 0 18px}
 h2.sec{font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin:30px 0 12px;display:flex;gap:10px;align-items:center}
 h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
@@ -69,7 +71,7 @@ h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
 .rung{padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px;border-left:1px solid var(--rule);min-width:0;position:relative}
 .rung:first-child{border-left:0}
 .rung .step{font:500 11px var(--mono);color:var(--ink-3);letter-spacing:.08em}
-.rung h3{margin:0;font:400 28px/1 var(--display)}
+.rung h3{margin:0;font:600 22px/1.1 var(--display)}
 .rung p{margin:0;font-size:13.5px;color:var(--ink-2)}
 .rung .url{font:12px var(--mono);overflow-wrap:anywhere}
 .rung.here{background:var(--pen-soft)}
@@ -78,7 +80,7 @@ h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
 .counts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
 .count{background:var(--sheet);padding:12px 14px;text-decoration:none;color:inherit;display:grid;gap:3px}
 .count:hover{background:var(--pen-soft)}
-.count b{font:400 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.count b{font:600 24px/1 var(--display);font-variant-numeric:tabular-nums}
 .count span{font:11px var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
 .feed{display:grid;gap:0}
 .feed a{display:grid;grid-template-columns:92px 74px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid var(--rule-2);text-decoration:none;color:inherit;align-items:baseline}
@@ -114,7 +116,7 @@ h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
 .crumbs{font:12px var(--mono);color:var(--ink-3);margin-bottom:6px}
 .crumbs a{color:var(--ink-2)}
 .piecehead{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline}
-.piecehead h1{font:400 clamp(28px,4.4vw,40px)/1.1 var(--read);margin:0;font-style:italic}
+.piecehead h1{font:600 clamp(22px,3.4vw,28px)/1.25 var(--read);margin:0}
 .facts{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
 .versions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(300px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x proximity}
 .ver{scroll-snap-align:start;display:flex;flex-direction:column;min-width:0}
@@ -154,7 +156,7 @@ h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
 /* designs */
 .dset{margin-bottom:30px}
 .dset header{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin-bottom:10px}
-.dset header h3{margin:0;font:400 24px/1.15 var(--display)}
+.dset header h3{margin:0;font:600 19px/1.25 var(--display)}
 .boards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 .board{border:1px solid var(--rule);background:var(--sheet);border-radius:8px;overflow:hidden;padding:0;text-align:left;display:flex;flex-direction:column;min-width:0}
 .board:hover{border-color:var(--pen)}
@@ -175,7 +177,7 @@ h2.sec::after{content:"";flex:1;border-top:1px solid var(--rule)}
 .item .s{font-size:12.5px;color:var(--ink-2);grid-column:2}
 .item .r{grid-row:1;grid-column:3}
 .article{max-width:72ch;margin:0 auto;font:17.5px/1.65 var(--read)}
-.article h1{font:400 clamp(28px,4.4vw,40px)/1.12 var(--display);text-wrap:balance;margin:.2em 0 .6em}
+.article h1{font:600 clamp(24px,3.6vw,32px)/1.2 var(--display);text-wrap:balance;margin:.2em 0 .6em}
 .article h2{font:600 22px/1.25 var(--read);margin:1.8em 0 .5em;text-wrap:balance}
 .article h3{font:600 18px/1.3 var(--read);margin:1.5em 0 .4em}
 .article p,.article li{max-width:68ch}
@@ -384,26 +386,32 @@ function renderOverview(m) {
     n(S.items.filter(i => i.g === 2).length, 'drafts', '#works'), n(S.items.reduce((a, i) => a + i.versions.length, 0), 'versions', '#works'),
     n(lines.toLocaleString(), 'lines', '#works'), n(c.accepted.length, 'reviewed', '#release'), n(dc, 'boards', '#designs'),
     n(S.core.media.reduce((a, x) => a + x.files.length, 0), 'media', '#media')));
-  m.append(h('h2', { class: 'sec' }, 'Elsewhere on claude.ai'));
+  m.append(h('h2', { class: 'sec' }, 'Prototypes, canvases and documents'));
   const arts = h('div', { class: 'arts' });
   for (const a of src.artifacts) arts.append(h('div', { class: 'art sheet' },
     h('div', { class: 'row' }, h('span', { class: 'chip ' + ({ design: 'pen', prototype: 'pen', reader: 'ok', studio: 'red' }[a.kind] || '') }, a.kind), h('span', { class: 'eyebrow' }, a.date)),
-    h('a', { class: 'n', href: a.url, target: '_blank', rel: 'noopener' }, a.title),
-    a.note ? h('p', null, a.note) : null,
-    h('div', { class: 'row' }, a.boards ? h('a', { href: '#designs', style: 'font-size:13px' }, 'Boards here') : null,
-      a.snapshot ? h('a', { href: '#designs', style: 'font-size:13px' }, 'Runs here') : null,
-      a.pdf ? h('a', { href: pdfFor(a.pdf), target: '_blank', rel: 'noopener', style: 'font-size:13px' }, 'PDF copy') : null)));
+    openLink(a, { class: 'n' }, a.title),
+    a.note ? h('p', null, a.note) : null));
   m.append(arts);
   const feed = h('div', { class: 'feed' }); m.append(h('h2', { class: 'sec' }, 'Latest first'), feed);
   docs().then(D => {
     const ev = [];
     for (const c2 of D.chats) ev.push({ d: c2.date, k: 'chat', t: c2.title, href: '#doc-' + c2.id });
     for (const r of D.docs) if (r.date) ev.push({ d: r.date, k: 'research', t: r.title, href: '#doc-' + r.id });
-    for (const a of src.artifacts) ev.push({ d: a.date, k: a.kind, t: a.title, href: a.url, ext: true });
+    for (const a of src.artifacts) ev.push({ d: a.date, k: a.kind, t: a.title, a });
     ev.sort((a, b) => b.d.localeCompare(a.d));
-    feed.append(...ev.slice(0, 24).map(e => h('a', { href: e.href, target: e.ext ? '_blank' : null, rel: e.ext ? 'noopener' : null },
-      h('span', { class: 'd' }, e.d), h('span', { class: 'c' }, h('span', { class: 'chip' }, e.k)), h('span', { class: 't' }, e.t))));
+    feed.append(...ev.slice(0, 24).map(e => { const kids = [h('span', { class: 'd' }, e.d), h('span', { class: 'c' }, h('span', { class: 'chip' }, e.k)), h('span', { class: 't' }, e.t)];
+      return e.a ? openLink(e.a, null, ...kids) : h('a', { href: e.href }, ...kids); }));
   });
+}
+// Every artifact opens inside the playground: a page in the full-screen viewer, a view by
+// hash, a PDF copy, or the Studio itself. Nothing links back to claude.ai.
+function openLink(a, attrs, ...kids) {
+  const at = Object.assign({}, attrs || {});
+  if (a.opens === 'page') return h('a', Object.assign(at, { href: a.open, onclick: e => { e.preventDefault(); openFrame(a.open, a.title); } }), ...kids);
+  if (a.opens === 'pdf') return h('a', Object.assign(at, { href: pdfFor(a.pdf), target: '_blank', rel: 'noopener' }), ...kids);
+  if (a.opens === 'site') return h('a', Object.assign(at, { href: a.open, target: '_blank', rel: 'noopener' }), ...kids);
+  return h('a', Object.assign(at, { href: a.open || '#overview' }), ...kids);
 }
 function pdfFor(name) { const p = S.core.pdfs.find(x => x.path.endsWith(name)); return p ? p.file : '#research'; }
 
@@ -456,7 +464,7 @@ function renderPiece(m, it) {
     const notes = v.blocks.map(b => p.blocks[b] && p.blocks[b].note ? 'b' + b + ': ' + p.blocks[b].note : null).filter(Boolean);
     row.append(h('section', { class: 'ver sheet' },
       h('div', { class: 'vh' }, h('b', null, 'v' + (vi + 1) + ' · ' + p.id), h('span', { class: 'eyebrow' }, v.blocks.length > 1 ? 'blocks ' + v.blocks.join(', ') : 'block ' + v.blocks[0])),
-      h('button', { type: 'button', class: 'scanbtn', 'aria-label': 'Open scan of ' + p.id, onclick: () => openImages(it.versions.map(x => ({ src: 'img/i/' + x.page + '.jpg', lab: x.page }))) .go(vi) }, h('img', { src: 'img/i/' + p.id + '.jpg', alt: 'Scan of ' + p.id, loading: 'lazy' })),
+      h('button', { type: 'button', class: 'scanbtn', 'aria-label': 'Open scan of ' + p.id, onclick: () => openImages(it.versions.map(x => ({ src: 'reader/img/i/' + x.page + '.jpg', lab: x.page }))) .go(vi) }, h('img', { src: 'reader/img/i/' + p.id + '.jpg', alt: 'Scan of ' + p.id, loading: 'lazy' })),
       lines,
       p.uncertain.length || notes.length ? h('details', { class: 'notes' }, h('summary', null, 'Transcriber notes (' + (p.uncertain.length + notes.length) + ')'),
         h('ul', null, ...p.uncertain.map(u => h('li', null, tx(u))), ...notes.map(x => h('li', null, x)))) : null));
@@ -478,8 +486,8 @@ function renderPage(m, p) {
   const all = S.core.catalog.pages, i = all.indexOf(p);
   m.append(h('div', { class: 'crumbs' }, h('a', { href: '#pages' }, 'Pages'), ' / ' + p.seq + ' · ' + p.id));
   m.append(h('div', { class: 'bar' }, i > 0 ? h('a', { href: '#page-' + all[i - 1].id }, '‹ ' + all[i - 1].id) : null, i < all.length - 1 ? h('a', { href: '#page-' + all[i + 1].id, style: 'margin-left:auto' }, all[i + 1].id + ' ›') : null));
-  const imgs = [{ src: 'img/i/' + p.id + '.jpg', lab: p.id }]; if (p.spread) imgs.push({ src: p.spread, lab: p.id + ' · 2015 spread' });
-  const left = h('div', null, h('button', { type: 'button', class: 'scanbtn', onclick: () => openImages(imgs).go(0) }, h('img', { src: 'img/i/' + p.id + '.jpg', alt: 'Scan of ' + p.id })),
+  const imgs = [{ src: 'reader/img/i/' + p.id + '.jpg', lab: p.id }]; if (p.spread) imgs.push({ src: p.spread, lab: p.id + ' · 2015 spread' });
+  const left = h('div', null, h('button', { type: 'button', class: 'scanbtn', onclick: () => openImages(imgs).go(0) }, h('img', { src: 'reader/img/i/' + p.id + '.jpg', alt: 'Scan of ' + p.id })),
     p.spread ? h('p', null, h('a', { href: '#', onclick: e => { e.preventDefault(); openImages(imgs).go(1); } }, 'Open the 2015 two-page spread')) : null);
   const right = h('div', null, h('h1', { class: 'room', style: 'margin-top:0' }, p.id),
     h('div', { class: 'facts' }, h('span', { class: 'chip' }, 'page ' + p.seq), h('span', { class: 'chip' }, p.w + '×' + p.h), S.flagged.has(p.id) ? h('span', { class: 'chip red' }, 'visibility flagged') : null),
@@ -495,22 +503,20 @@ function renderPage(m, p) {
 /* ---------- designs */
 function renderDesigns(m) {
   const src = S.core.sources;
-  m.append(h('h1', { class: 'room' }, 'Designs'), h('p', { class: 'lede' }, 'Every board from the design canvases, rendered still, plus the prototypes that run here. Open a canvas to edit it.'));
-  for (const a of src.artifacts.filter(x => x.snapshot)) {
-    m.append(h('section', { class: 'dset' }, h('header', null, h('h3', null, a.title), h('span', { class: 'eyebrow' }, a.date), h('a', { href: a.url, target: '_blank', rel: 'noopener' }, 'Live artifact')),
-      a.note ? h('p', { class: 'muted', style: 'margin:0 0 10px' }, a.note) : null,
-      h('div', { class: 'proto' }, h('div', { class: 'frame' }, h('iframe', { src: a.snapshot, title: a.title, loading: 'lazy' })),
-        h('div', null, h('button', { type: 'button', class: 'chip pen', style: 'border:0', onclick: () => openFrame(a.snapshot, a.title) }, 'Full screen')))));
-  }
+  m.append(h('h1', { class: 'room' }, 'Designs'), h('p', { class: 'lede' }, 'Every prototype, run in place, and every board from the design canvases, rendered still.'));
+  m.append(h('h2', { class: 'sec' }, 'Prototypes'));
+  m.append(h('div', { class: 'arts' }, ...src.artifacts.filter(a => a.opens === 'page').map(a => h('div', { class: 'art sheet' },
+    h('div', { class: 'row' }, h('span', { class: 'chip ' + (a.kind === 'reader' ? 'ok' : 'pen') }, a.kind), h('span', { class: 'eyebrow' }, a.date)),
+    openLink(a, { class: 'n' }, a.title), a.note ? h('p', null, a.note) : null,
+    h('div', { class: 'row' }, openLink(a, { class: 'chip pen', style: 'text-decoration:none' }, 'Run'))))));
+  m.append(h('h2', { class: 'sec' }, 'Design canvases'));
   for (const a of src.artifacts.filter(x => x.boards)) {
     const set = S.core.designs[a.boards]; if (!set) continue;
     const imgs = set.boards.map(b => ({ src: 'designs/' + a.boards + '/' + b.file, lab: set.title + ' · ' + b.title, w: b.w }));
-    m.append(h('section', { class: 'dset' }, h('header', null, h('h3', null, set.title), h('span', { class: 'eyebrow' }, a.date + ' · ' + set.boards.length + ' boards'), h('a', { href: a.url, target: '_blank', rel: 'noopener' }, 'Open canvas')),
+    m.append(h('section', { class: 'dset' }, h('header', null, h('h3', null, set.title), h('span', { class: 'eyebrow' }, a.date + ' · ' + set.boards.length + ' boards')),
       h('div', { class: 'boards' }, ...set.boards.map((b, i) => h('button', { type: 'button', class: 'board', onclick: () => openImages(imgs).go(i) },
         h('div', { class: 'im' }, h('img', { src: imgs[i].src, alt: b.title, loading: 'lazy' })), h('div', { class: 'cap' }, b.title, h('span', null, b.w + '×' + b.h)))))));
   }
-  m.append(h('h2', { class: 'sec' }, 'Readers and studios'), h('div', { class: 'arts' }, ...src.artifacts.filter(a => a.kind === 'reader' || a.kind === 'studio' || a.kind === 'doc').map(a => h('div', { class: 'art sheet' },
-    h('div', { class: 'row' }, h('span', { class: 'chip' }, a.kind), h('span', { class: 'eyebrow' }, a.date)), h('a', { class: 'n', href: a.url, target: '_blank', rel: 'noopener' }, a.title), a.note ? h('p', null, a.note) : null))));
   m.append(h('p', { class: 'muted', style: 'font-size:13px;margin-top:14px' }, 'The local-only “alive” prototype (proto/alive) reads the private archive and serves on 127.0.0.1; run it with node proto/alive/serve.mjs.'));
 }
 
@@ -523,7 +529,10 @@ async function renderResearch(m) {
   const D = await docs();
   const plan = D.docs.find(d => d.id === 'plan');
   m.append(h('div', { class: 'list' }, itemRow(plan, 'Plan of record · docs/plan.md')));
-  m.append(h('h2', { class: 'sec' }, 'Reports · ' + (D.docs.length - 1)), h('div', { class: 'list' }, ...D.docs.filter(d => d.kind === 'research').sort((a, b) => b.date.localeCompare(a.date)).map(d => itemRow(d, d.chat ? 'from ' + d.chat.slice(11) : ''))));
+  const adocs = D.docs.filter(d => d.kind === 'document');
+  if (adocs.length) m.append(h('h2', { class: 'sec' }, 'Documents · ' + adocs.length), h('div', { class: 'list' }, ...adocs.map(d => itemRow(d, d.path))));
+  const reps = D.docs.filter(d => d.kind === 'research');
+  m.append(h('h2', { class: 'sec' }, 'Reports · ' + reps.length), h('div', { class: 'list' }, ...D.docs.filter(d => d.kind === 'research').sort((a, b) => b.date.localeCompare(a.date)).map(d => itemRow(d, d.chat ? 'from ' + d.chat.slice(11) : ''))));
   m.append(h('h2', { class: 'sec' }, 'PDFs · ' + S.core.pdfs.length), h('div', { class: 'list' }, ...S.core.pdfs.map(p => h('a', { class: 'item', href: p.file, target: '_blank', rel: 'noopener' }, h('span', { class: 'd' }, 'PDF'), h('span', { class: 't' }, p.title), h('span', { class: 'r chip' }, fmtBytes(p.bytes))))));
 }
 async function renderProcess(m) {
@@ -543,10 +552,12 @@ async function renderDoc(m, id) {
   const d = D.docs.find(x => x.id === id) || D.chats.find(x => x.id === id) || D.records.find(x => x.id === id);
   if (!d) { m.append(h('p', { class: 'empty' }, 'No such record.')); return; }
   const back = d.kind === 'chat' || d.kind === 'record' ? '#process' : '#research';
-  m.append(h('div', { class: 'docmeta' }, h('a', { href: back }, d.kind === 'chat' || d.kind === 'record' ? 'Process' : 'Research'), ' / ', d.date || '', h('span', { class: 'chip' }, d.kind), d.url ? h('a', { href: d.url, target: '_blank', rel: 'noopener' }, 'Open chat') : null, h('span', null, d.path)));
+  m.append(h('div', { class: 'docmeta' }, h('a', { href: back }, d.kind === 'chat' || d.kind === 'record' ? 'Process' : 'Research'), ' / ', d.date || '', h('span', { class: 'chip' }, d.kind), h('span', null, d.path)));
   const art = h('article', { class: 'article', html: d.html });
   for (const t of art.querySelectorAll('table')) { const w = h('div', { class: 'tw' }); t.replaceWith(w); w.append(t); }
-  for (const a of art.querySelectorAll('a[href]')) { if (/^https?:/.test(a.getAttribute('href'))) { a.target = '_blank'; a.rel = 'noopener'; } else a.removeAttribute('href'); }
+  for (const a of art.querySelectorAll('a[href]')) { const u = a.getAttribute('href');
+    if (/^https?:\/\/([a-z0-9-]+\.)*claude\.ai\//i.test(u)) a.replaceWith(h('span', { class: 'mono', style: 'font-size:.85em' }, a.textContent));
+    else if (/^https?:/.test(u)) { a.target = '_blank'; a.rel = 'noopener'; } else a.removeAttribute('href'); }
   m.append(art);
   if (d.exchanges && d.exchanges.length) {
     m.append(h('h2', { class: 'sec', style: 'max-width:72ch;margin-inline:auto' }, 'Exchanges · ' + d.exchanges.length));
@@ -586,6 +597,17 @@ function renderRelease(m) {
       return h('tr', null, h('td', { class: 'mono' }, h('a', { href: '#piece-' + q.piece_id }, q.piece_id)), h('td', { class: 'f' }, it ? it.first : ''), h('td', { class: 'mono' }, q.first_page), h('td', null, q.recorded_kind + (q.recorded_status ? ' · ' + q.recorded_status : '')), h('td', null, q.pool || '—'),
         h('td', null, h('div', { style: 'display:flex;gap:8px;align-items:center' }, h('div', { class: 'meter', style: 'width:70px' }, h('i', { style: 'width:' + (t ? 100 * a / t : 0) + '%' })), a + '/' + t))); }))));
   m.append(h('h2', { class: 'sec' }, 'Gated dry run'), h('pre', { class: 'raw' }, R.dryrun));
+  const P = S.core.progress || {};
+  const asof = (P.asof && (P.asof[0] || {}).asof) || '';
+  const LAB = { live: 'Live state and checks', landed: 'Landed changes', checks: 'Local check results', openprs: 'Open pull requests', waiting: 'Waiting on the author' };
+  for (const k of ['live', 'landed', 'checks', 'openprs', 'waiting']) {
+    const rows = Array.isArray(P[k]) ? P[k] : (P[k] && (P[k].rows || P[k].data)) || [];
+    if (!rows.length) continue;
+    const cols = Object.keys(rows[0]);
+    m.append(h('h2', { class: 'sec' }, 'Build progress · ' + LAB[k] + (asof ? ' · ' + asof : '')),
+      h('div', { class: 'tbl' }, h('table', null, h('tr', null, ...cols.map(c => h('th', null, c))),
+        ...rows.map(r => h('tr', null, ...cols.map(c => h('td', null, typeof r[c] === 'object' ? JSON.stringify(r[c]) : String(r[c] ?? ''))))))));
+  }
 }
 
 /* ---------- search */

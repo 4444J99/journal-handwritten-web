@@ -32,8 +32,28 @@ Inputs: `studio/data/review.json`, `site/data/j.json`, `studio/img/thumbs`,
 renders) and `snapshots/` (copies of prototype artifacts).
 
 Output: `index.html` (with document skeleton, for a static host), `artifact.html`
-(same page without skeleton, for claude.ai), `data/core.json`, `data/docs.json`, and
-the images, PDFs, media and snapshots it references. About 356 files, 33 MB.
+(same page without skeleton), `data/core.json`, `data/docs.json`, `reader/` (a copy of
+`site/` without `_worker.js`: the merged piece, and the one store of full and mid-size scans
+everything else points at), and the images, PDFs, media and snapshots it references.
+About 870 files, 77 MB.
+
+## claude.ai artifacts, kept natively
+
+Nothing in the playground links to claude.ai. Each artifact has a copy here, listed in
+`sources.json` with `open` (where it opens) and `origin` (where it came from, not shown):
+
+| Artifact | Kept as |
+|---|---|
+| Journal, 2014–2015 (merged piece v4) | `reader/`, from `site/` |
+| Journal Review | the Studio itself |
+| First reader, canvas test, Minotaur Depths | `snapshots/<name>/` pages, run in the viewer; their own scan copies are replaced at build time by the shared ones (`SNAPSHOT_REWRITES` in `build.py`; same bytes, checked 2026-11-07) |
+| Four design canvases | still renders in `designs/` |
+| Control inventory, Publish implementation plan | Markdown exports in `snapshots/docs/`, shown under Research |
+| Versforms progress | its six data files in `snapshots/versforms-progress/data/`, shown under Release |
+| Mentor advisory, audio plan, state and gaps, voice banks | the PDFs in `claude/` |
+| Keep the Page, Animate the Revision | the report `claude/Dynamic presentation of handwritten poetry.md` |
+
+The first reader's embedded font is the private Etceter4 Diary build, as in `site/index.html`.
 
 ## Design boards
 
@@ -47,13 +67,12 @@ files and re-render.
 
 ## Serving it
 
-- **claude.ai**: published as a private artifact ("versforms Playground") from
-  `dist/artifact.html` in two batches (the host takes at most 255 files per publish).
-- **Cloudflare, behind Access**: not wired yet. The intended route is a `/playground/`
-  folder inside the studio's Pages output, so the existing Access policy covers it. That
-  needs a step in `studio-cf/build_dist.py` that copies `playground/dist/` into
-  `dist/playground/` and an owner redeploy. Do not create a separate Pages project for it
-  unless an Access policy is attached first.
+- **Cloudflare, behind Access** (the home): `studio-cf/build_dist.py` builds the playground
+  into `dist/playground/`, so it is served at `versforms-studio.pages.dev/playground/` behind
+  the Studio's Access login and its fail-closed middleware. It needs `Markdown` (pinned in
+  `studio-cf/requirements-build.txt`).
+- **claude.ai**: an earlier private artifact copy ("versforms Playground", 2026-11-07) is no
+  longer updated; at 870 files the playground is past the artifact host's 511-file limit.
 
 ## Rules
 

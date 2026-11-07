@@ -16,7 +16,7 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
-| 2026-11-07 | [Playground](2026-11-07-playground.md) | Private artifact built from the whole archive; Cloudflare route behind Access not wired. |
+| 2026-11-07 | [Playground](2026-11-07-playground.md) | Playground at /playground in the Studio, behind Access; claude.ai artifacts kept natively; shared design principles recorded. |
 | 2026-11-06 | [Reader navigation and About](2026-11-06-reader-navigation-and-about.md) | Author approved the compact hamburger/crown direction and reversed backing; About writing brief prepared; implementation checks, engine hash and delivery pending the integrator's receipt. |
 | 2026-11-06 | [Studio publishing implementation](2026-11-06-studio-publish.md) | Browser build, bounded verification, immutable snapshots and reader isolation; first publish remains an author action. |
 | 2026-10-24 | [Release methods and standards](2026-10-24-release-methods-and-standards.md) | Superseded by the naming chats; name/handle claim still open. |

@@ -1,0 +1,4 @@
+[
+  {"ref": "#102", "what": "Alive prototype on poem 1 (draft, proto/alive/)", "state": "draft by design; verified head 2664d104; later unverified work is on branches alive-prototype-wip and alive-prototype-wip-final", "next": "your review; six design questions are open (issue #109)"},
+  {"ref": "#119", "what": "T03 first-release packet (draft)", "state": "not part of this work; opened under your account at 23:36 UTC; stacked on the pre-fix head of #101; left untouched", "next": "its owner rebases it onto main"}
+]

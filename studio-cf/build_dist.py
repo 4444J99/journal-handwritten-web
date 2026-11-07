@@ -14,6 +14,7 @@ Nothing is uploaded by this script. Publication preparation also needs the pinne
 Pillow/fontTools/brotli build dependencies.
 """
 import argparse
+import importlib.util
 import json
 import shutil
 import sys
@@ -69,6 +70,18 @@ def main(argv=None):
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src, dest)
                 n += 1
+            # The private playground (playground/README.md) is served at /playground/ behind
+            # the same Access check as everything else here; it never goes to versforms.
+            playground_build = ROOT / "playground" / "build.py"
+            if playground_build.is_file():
+                spec = importlib.util.spec_from_file_location("playground_build", playground_build)
+                playground = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(playground)
+                try:
+                    playground.main(["--out", str(staged / "playground")])
+                except SystemExit as exc:  # keep the previous output, like any other failed step
+                    raise RuntimeError(f"playground build failed: {exc}") from exc
+                n += sum(1 for f in (staged / "playground").rglob("*") if f.is_file())
             prepared = prepare(ROOT, staged / "publish")
             previous = Path(temporary) / "previous"
             if out.exists():
