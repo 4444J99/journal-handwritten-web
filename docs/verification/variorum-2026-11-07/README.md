@@ -24,7 +24,7 @@ Environment: Node24, Chromium /usr/bin/chromium, pinned studio-cf requirements a
 
 ## Package and operations
 
-Reader commit: 830c8db. Shell SHA-256: 62f3098945ab43dcc467f74c1ad8b05de9ce9288743006446f7ccf493aea6b89. All generated file hashes are in reader-package.json. Source commits are recorded by git history on feat/variorum-builder.
+Reader commit: cd3ca69. Shell SHA-256: f0be4214d41d5a5ee97735b52238e55ba474e08f0f47f66f1c9e802645154171. All generated file hashes are in reader-package.json. Source commits are recorded by git history on feat/variorum-builder.
 
 Use the existing exact-output confirmation workflow for activation. Backend must be deployed before new Studio controls; the matching shell pin is required. Keep staging's private-source automatic deployment disabled. Staging remains public: private drafts stay behind Studio Access. Existing deployment IDs and bindings are recorded in ../../integration/2026-11-07-variorum-review.md.
 
