@@ -19,8 +19,8 @@
 
 ## Plan / next steps
 
-Complete the final review, publish both repository changes, verify the deployed Studio and blank readers, and retain the Python posting fallback. The author confirms the first actual p001 snapshot in staging, checks a real iPhone and laptop, and then confirms production. Those physical-device and first-publication steps are not agent test results.
+Both repository changes are pushed: private PR #137 and public shell PR #2. The reviewed Studio implementation and blank staging reader are deployed; the public production shell awaits author review. Retain the Python posting fallback. The author confirms the first actual p001 snapshot in staging, checks a real iPhone and laptop, and then confirms production. Those physical-device and first-publication steps are not agent test results.
 
 ## Status
 
-Implementation and local verification in progress. Hosted CPU measurements and final CI/review/deployment receipts are recorded in the implementation ledger and Studio publishing runbook. No real poem has been published by this session.
+Implementation, one review and its fixes, all local suites, real-export parity and the local Chrome publication flow are complete. Studio code commit 59c83c8 is deployed as 683ee733; staging reader 40249e0f serves blank paper. PRs #137 (private) and #2 (public) are open and unmerged. GitHub Actions is blocked by the account billing/spending condition; Cloudflare build configuration was corrected and its retry passed. Authenticated hosted owner flow, shell approval, first real confirmation and physical-device acceptance remain owner checks. See [verification](../verification/studio-publish-2026-11-06.md). No real poem has been published by this session.
