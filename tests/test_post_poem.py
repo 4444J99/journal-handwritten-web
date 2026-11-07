@@ -169,7 +169,7 @@ def ready_db(base, pids=("p001",), skip_review=(), **over):
 
 def git(repo, *args):
     r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
-    assert r.returncode == 0, r.stderr
+    assert r.returncode == 0, f"git {args!r} exited {r.returncode}: stdout={r.stdout!r}; stderr={r.stderr!r}"
     return r.stdout.strip()
 
 

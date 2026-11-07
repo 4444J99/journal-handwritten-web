@@ -12,6 +12,7 @@
 ## Author decisions
 
 - Implement the supplied Studio publishing plan.
+- Proceed with the reviewed merge/deployment next steps.
 - Strip unpublished page IDs from public output, blank optional font provenance/credit fields while preserving required license notices, and remove the public global verification-status line. Inspect the actual upload package, not only a filtered preview.
 - The author identified the updated 1Password item 4444j99-cloudflare-api for Cloudflare access. No credential values were written to source or logs.
 - The author asked whether the CPU limit can be MacGyvered. Implementation uses the plan's browser-build/bounded-server-verification fallback; no paid subscription was activated.
@@ -23,4 +24,4 @@ Both repository changes are pushed: private PR #137 and public shell PR #2. The 
 
 ## Status
 
-Implementation, one review and its fixes, all local suites, real-export parity and the local Chrome publication flow are complete. Studio code commit 59c83c8 is deployed as 683ee733; staging reader 40249e0f serves blank paper. PRs #137 (private) and #2 (public) are open and unmerged. GitHub Actions is blocked by the account billing/spending condition; Cloudflare build configuration was corrected and its retry passed. Authenticated hosted owner flow, shell approval, first real confirmation and physical-device acceptance remain owner checks. See [verification](../verification/studio-publish-2026-11-06.md). No real poem has been published by this session.
+Publishing implementation, review fixes, real-source parity, Chrome preview/confirmation flow and local suites are verified. The follow-up repaired canonical bookmarks and bounded bulk recovery reads. Public PR #2 is merged and both public readers are deployed blank. Private integration was authorized; exact final merge and deployment receipts are maintained on [PR #137](https://github.com/4444J99/journal-handwritten-web/pull/137) and the [verification record](../verification/studio-publish-2026-11-06.md). The first full follow-up run had one unnamed Git-fixture failure; all 391 Python tests passed on the complete diagnostic rerun, with the existing environment skip. GitHub Actions cannot start because of account billing/spending. Hosted owner-session verification, first actual p001 confirmation and physical iPhone/laptop acceptance remain owner checks. No real poem was published by this session.
