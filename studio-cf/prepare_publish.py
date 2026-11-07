@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import build_public  # noqa: E402
+from variorum_sources import read_supplement
 from PIL import Image  # noqa: E402
 
 
@@ -105,7 +106,8 @@ def prepare(root, out):
         if build_public.is_font(match.group(1), raw):
             desc = build_public.run_font_tool('describe', raw)
             font_records.append(desc['name_records'])
-    manifest = {'schema': 1, 'j': j, 'review': review, 'metadata': {'PAL': pal, 'HF': hf},
+    manifest = {'schema': 1, 'j': j, 'review': review, 'variorumSupplement': read_supplement(root),
+                'variorumFontEvidence': json.loads((root / 'source/variorum-font-evidence.json').read_text()) if (root / 'source/variorum-font-evidence.json').is_file() else None, 'metadata': {'PAL': pal, 'HF': hf},
                 'assets': assets, 'tiles': tiles, 'twins': {k: sorted(v) for k, v in twins.items() if v},
                 'shellSha256': sha(html.encode()), 'fonts': reports, 'fontRecords': font_records}
     text = json.dumps(manifest, ensure_ascii=False, separators=(',', ':'))

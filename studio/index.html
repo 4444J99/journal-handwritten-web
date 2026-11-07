@@ -361,6 +361,8 @@ details.tn ul{margin:4px 0;padding-left:18px}
   <div class="viewer-scroll" id="viewer-scroll"><div class="viewer-wrap" id="viewer-wrap"></div></div>
 </div>
 <script src="cf-adapter.js"></script>
+<script type="module" src="variorum-workbench.mjs"></script>
+<style>.vf-columns{display:flex;overflow-x:auto;gap:16px}.vf-columns section{min-width:260px;flex:1}.vf-line{display:block;text-align:left;white-space:pre-wrap;width:100%;background:var(--surface);color:var(--ink);border:1px solid var(--rule);padding:8px}.vf-line[data-verified="false"]{border-left:3px solid var(--warn)}#variorum-workbench pre{white-space:pre-wrap}</style>
 <script>
 (() => {
 'use strict';
@@ -512,6 +514,7 @@ async function connect() {
   S.user = user; S.assets = assets;
   if (!db) { S.dbState = 'none'; renderSave(); refreshAll(); return; }
   S.db = db;
+  import("./variorum-promotions.mjs").then(({installPromotionInventory})=>installPromotionInventory(db,cs=>{S.promotions=cs;scheduleRefresh();},()=>{S.saveMsg="Promotion sync stopped";renderSave();}));
   let can = null;
   try { can = user ? await user.can('data.write') : null; } catch (e) { can = null; }
   S.readOnly = can === false;
@@ -1149,6 +1152,9 @@ function renderVersions() {
   }
   root.append(up, h('h2', { class: 'sub' }, 'Added'), h('div', { id: 'vlist' }));
   renderStaged(); renderVersionsList();
+  const choose=h('select',{'aria-label':'Variorum piece'});for(const item of [...S.items,...(S.promotions||[]).map(c=>({id:c.pieceId,g:0}))].filter(it=>it.g!==4))choose.append(h('option',{value:item.id},item.id));
+  const work=h('section',{id:'variorum-workbench'});root.append(h('h2',{class:'sub'},'Variorum'),choose,work);
+  const mount=()=>window.dispatchEvent(new CustomEvent('variorum:mount',{detail:{root:work,pieceId:choose.value,canWrite:canWrite(),choose}}));choose.onchange=mount;setTimeout(mount,0);
 }
 function stage(file) {
   if (!/^image\//.test(file.type) && !/\.(jpe?g|png|gif|webp|heic|heif)$/i.test(file.name)) return;
@@ -1267,7 +1273,7 @@ function candidates() {
     if (v.pieceId) continue;
     out.push({ key: v.id, title: 'New poem', meta: `added ${fmtDate(v.at)}${v.note ? ' · ' + v.note : ''}`, verified: v.status === 'transcribed' || v.status === 'done', prog: v.status || 'new', seq: 1e6 + Date.parse(v.at || 0) / 1e9, ver: v });
   }
-  return out;
+  return [...out,...(S.promotions||[])];
 }
 function candMap() { const m = new Map(); for (const c of candidates()) m.set(c.key, c); return m; }
 function batchOf(key) { for (const [id, b] of call('batches')) if ((b.items || []).includes(key)) return { id, ...b }; return null; }
@@ -1329,7 +1335,7 @@ function renderRelease() {
   const cs = candidates(); const rels = call('release');
   const cnt = { series: 0, reserve: 0, archive: 0, unsorted: 0 };
   let posted = 0;
-  for (const c of cs) { const r = rels.get(c.key) || {}; cnt[r.pool || 'unsorted']++; if ((r.exposures || []).some(e => e.type === 'social' || (e.type === 'site' && e.target !== 'staging'))) posted++; }
+  for (const c of cs) { const r = rels.get(c.key) || {}; cnt[!r.pool||r.pool==='unassigned'?'unsorted':r.pool]++; if ((r.exposures || []).some(e => e.type === 'social' || (e.type === 'site' && e.target !== 'staging'))) posted++; }
   let registered = 0; for (const [, b] of call('batches')) if (b.status === 'registered') registered += (b.items || []).length;
   if (!canWrite()) root.append(h('p', { class: 'note' }, S.dbState === 'connecting' ? 'Connecting…' : 'Saving unavailable — shown read-only.'));
   root.append(h('div', { class: 'rsum' },
@@ -1348,7 +1354,7 @@ function updateRelease() {
   if (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { RF.dirty = true; return; }
   const y = window.scrollY; renderRelease(); window.scrollTo(0, y);
 }
-function openPiece(c) { if (c.item) { showView('review'); setItem(S.items.indexOf(c.item)); } }
+function openPiece(c) { if(c.promotion){showView('versions');const choose=document.querySelector('[aria-label="Variorum piece"]');if(choose){choose.value=c.pieceId;choose.dispatchEvent(new Event('change'));}return;} if (c.item) { showView('review'); setItem(S.items.indexOf(c.item)); } }
 function titleEl(c) {
   return h('button', { type: 'button', class: 'rt', onclick: () => openPiece(c) }, c.title);
 }
@@ -1367,7 +1373,7 @@ function rSort(body) {
   body.append(h('p', { class: 'note' }, 'Series pieces get posted. Reserve pieces never appear online in any form (text, scan, draft or fragment) so they stay eligible for journals that count any online appearance as published. Archive stays with the facsimile.'), fs);
   const groups = [[1, 'Complete poems and songs'], [2, 'Drafts and fragments'], [3, 'Prose, letters, notes'], [0, 'New poems']];
   for (const [g, gl] of groups) {
-    const list = candidates().filter(c => (c.item ? c.item.g : 0) === g).filter(c => { const p = rel(c.key).pool || ''; return RF.filter === 'all' || (RF.filter === 'unsorted' ? !p : p === RF.filter); });
+    const list = candidates().filter(c => (c.item ? c.item.g : 0) === g).filter(c => { const rawPool=rel(c.key).pool; const p = rawPool==='unassigned'?'':rawPool||''; return RF.filter === 'all' || (RF.filter === 'unsorted' ? !p : p === RF.filter); });
     if (!list.length) continue;
     body.append(h('div', { class: 'dsec' }, gl, h('small', null, ` ${list.length}`)));
     for (const c of list) {
