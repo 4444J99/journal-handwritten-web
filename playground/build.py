@@ -263,10 +263,13 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(PG / "dist"))
     a = ap.parse_args(argv)
-    out = Path(a.out)
-    if out.exists():
+    out = Path(a.out).resolve()
+    default = (PG / "dist").resolve()
+    if out.exists() and out != default and any(out.iterdir()):
+        raise SystemExit(f"refusing to write into a non-empty directory other than {default}: {out}")
+    if out == default and out.exists():
         shutil.rmtree(out)
-    out.mkdir(parents=True)
+    out.mkdir(parents=True, exist_ok=True)
     sources = json.loads((PG / "sources.json").read_text())
     docs, pdfs, chats, records = build_docs(out)
     data = {"built": __import__("datetime").date.today().isoformat(), "sources": sources,

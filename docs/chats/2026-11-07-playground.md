@@ -29,3 +29,4 @@
 
 ## Status
 PR #140 merged; production Studio build via the Git-connected Pages project. Live and Staging untouched. The old claude.ai artifact copy is no longer updated.
+Follow-up after merge: Codex flagged that `playground/build.py --out DIR` deleted any existing DIR. Fixed on `playground-out-guard`: only the default `playground/dist/` is cleared; any other non-empty directory is refused, as `studio-cf/build_dist.py` does.
