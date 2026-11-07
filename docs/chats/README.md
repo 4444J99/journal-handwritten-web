@@ -16,6 +16,7 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
+| 2026-11-07 | [Variorum and Builder](2026-11-07-variorum-builder.md) | Implemented and locally verified; housekeeping #143 repairs the historical timeout fixture. |
 | 2026-11-07 | [Repository housekeeping](2026-11-07-repository-housekeeping.md) | Cross-repository branch preservation, CI repair, scoped integration and cleanup. |
 | 2026-11-07 | [Playground](2026-11-07-playground.md) | Playground at /playground in the Studio, behind Access; claude.ai artifacts kept natively; shared design principles recorded. |
 | 2026-11-06 | [Reader navigation and About](2026-11-06-reader-navigation-and-about.md) | Author approved the compact hamburger/crown direction and reversed backing; About writing brief prepared; implementation checks, engine hash and delivery pending the integrator's receipt. |

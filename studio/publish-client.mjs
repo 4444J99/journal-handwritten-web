@@ -35,7 +35,7 @@ export function createPublishClient({fetchImpl=(...args)=>fetch(...args),mode='b
       pieces=context.current.pieces.filter(p=>p!==options.removePiece);
       allVersions=(context.current.allVersions || []).filter(p=>p!==options.removePiece);
     }
-    const payload={source:JSON.parse(sourceText),db:context.db,shell,pieces,allVersions,accepted:options.accepted || [],force:options.force===true};
+    const payload={target:options.target,source:JSON.parse(sourceText),db:context.db,shell,pieces,allVersions,accepted:options.accepted || [],force:options.force===true};
     onProgress({phase:'building',cursor:0,total:0});
     let result;
     if(compileImpl)result=await compileImpl(payload);

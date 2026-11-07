@@ -1,0 +1,33 @@
+== tools/check.py
+references: 509 checked, 0 missing
+checksums: 539 recorded
+OK
+✔ composite compilation is frozen and strips private provenance (29.671488ms)
+✔ production missing glyph evidence is a hard stop even with force (1.75517ms)
+✔ stale source correction and forged saved text cannot pass force (3.121748ms)
+✔ unverified composite cannot use legacy force override (1.72781ms)
+✔ approved glyph evidence is bound to exact pinned shell and coverage (4.937627ms)
+✔ tampered frozen line payload cannot pass even with unchanged text (1.255194ms)
+✔ imported lyric remains available as a selected version with safe line identities (2.286531ms)
+✔ promoted composite uses an independent identity without releasing its original source (3.902385ms)
+✔ photographed composite references only the immutable supplied photo (1.989123ms)
+✔ selecting the second refrain keeps occurrence two in the public spread (13.282632ms)
+✔ real p001 uses exact canonical versions, provisional maps require acceptance (4.170029ms)
+✔ duplicate lines and invalid order fail (0.254344ms)
+✔ pivot retains all occurrence row identities (0.247594ms)
+✔ case transforms preserve spacing and punctuation (0.304838ms)
+✔ missing supplement schema is refused (0.175869ms)
+✔ sparse occurrence IDs cannot cause unbounded row allocation (0.459135ms)
+✔ lyric import is not verification and current reviews are required (73.296238ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 232.035822
+playground: 868 files, 77.3 MB -> /workspace/journal-handwritten-web/studio-cf/.dist-build-585r5y5j/dist/playground
+  123 pages, 158 pieces, 37 design boards, 15 reports/plan, 46 chats (86 exchanges), 74 records, 53 media files, 5 PDFs
+publisher shell sha256 c4137a223ed2efe1b1e1a739be6e2c0305140cf8f6d9b04d96e31cf19155a1df
+1148 files written to /workspace/journal-handwritten-web/studio-cf/dist (0 missing)

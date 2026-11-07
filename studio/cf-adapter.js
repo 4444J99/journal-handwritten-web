@@ -26,7 +26,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
   'use strict';
 
-  var COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts'];
+  var COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts', 'parts', 'composites'];
   var POLL_MS = 4000;
   var MAX_BACKOFF_MS = 60000;
   var INITIAL_FAILURES_BEFORE_ERROR = 3;

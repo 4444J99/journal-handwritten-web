@@ -1,11 +1,12 @@
+import {handleVariorum} from './variorum-api.js';
 // JSON API for the review studio: collections of documents in D1, photos in R2.
 // Every function here runs after the middleware has authenticated the caller.
 import {NO_SOURCE_FENCE,SOURCE_COLLECTIONS} from './publish-fence.js';
 
-export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts']);
+export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts', 'parts', 'composites']);
 export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions', 'artifacts']);
 export const DOC_ID_RE = /^[A-Za-z0-9_.-]{1,128}$/;
-export const ASSET_ID_RE = /^[a-f0-9]{32}$/;
+export const ASSET_ID_RE = /^(?:[a-f0-9]{32}|[a-f0-9]{64})$/;
 export const MAX_DOC_BYTES = 64 * 1024;
 export const MAX_ASSET_BYTES = 15 * 1024 * 1024;
 // The page (studio/index.html toUploadable) sends jpeg, png, webp and gif untouched
@@ -181,6 +182,7 @@ export async function handleApi(request, env, user) {
   const method = request.method;
 
   try {
+    if (segs[0] === 'variorum') return await handleVariorum(request, env, user, segs.slice(1), readLimited);
     if (segs[0] === 'me' && segs.length === 1) {
       if (method !== 'GET') return fail(405, 'method_not_allowed');
       return json({ email: user.email, canWrite: user.canWrite });
@@ -209,6 +211,7 @@ export async function handleApi(request, env, user) {
       if (!DOC_ID_RE.test(id) || id === '.' || id === '..') return fail(400, 'bad_id');
       if (method === 'GET') return await getDoc(env, coll, id);
       if (method === 'PUT' || method === 'DELETE') {
+        if (['parts','composites'].includes(coll)) return fail(405, 'use_variorum_route');
         if (!user.canWrite || !sameOriginOk(request)) return fail(403, 'forbidden');
         return method === 'PUT' ? await putDoc(env, request, coll, id) : await deleteDoc(env, coll, id);
       }

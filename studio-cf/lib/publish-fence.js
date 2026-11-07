@@ -3,10 +3,10 @@
 // Recovery first invalidates the captured R2 ETag, then releases an abandoned
 // fence. A late conditional PUT consequently fails rather than publishing after
 // a Reserve/review edit. No new table, coordinator service or paid plan is needed.
-export const SOURCE_COLLECTIONS=Object.freeze(['reviews','decisions','versions','release','batches','rconfig']);
+export const SOURCE_COLLECTIONS=Object.freeze(['reviews','decisions','versions','release','batches','rconfig','parts','composites']);
 export const SOURCE_FENCE_ID='source-write-fence';
 export const NO_SOURCE_FENCE="NOT EXISTS (SELECT id FROM vf_docs WHERE collection = 'publish' AND id = 'source-write-fence')";
-const REVS='SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6) ORDER BY collection';
+const REVS='SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) ORDER BY collection';
 export const revisionStatement=env=>env.DB.prepare(REVS).bind(...SOURCE_COLLECTIONS);
 export const revisionValues=rows=>Object.fromEntries(SOURCE_COLLECTIONS.map(c=>[c,rows.find(r=>r.collection===c)?.rev || 0]));
 
@@ -22,7 +22,9 @@ export async function acquireFence(env,intent,revisions) {
     " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'versions'), 0) = ?5"+
     " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'release'), 0) = ?6"+
     " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'batches'), 0) = ?7"+
-    " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'rconfig'), 0) = ?8 ON CONFLICT(collection, id) DO NOTHING";
+    " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'rconfig'), 0) = ?8"+
+    " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'parts'), 0) = ?9"+
+    " AND COALESCE((SELECT rev FROM vf_revs WHERE collection = 'composites'), 0) = ?10 ON CONFLICT(collection, id) DO NOTHING";
   const result=await env.DB.prepare(sql).bind(JSON.stringify(intent),intent.at,...SOURCE_COLLECTIONS.map(c=>revisions[c])).run();
   return result.meta.changes===1;
 }

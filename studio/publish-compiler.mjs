@@ -1,5 +1,6 @@
 // Pure publication compiler. No credentials, network access, storage or git.
 // The Python posting path remains the reference; atlas tiles are prepared offline.
+import {buildVariorumCatalog,materializeComposite} from './variorum-model.mjs';
 import { stableJSON, logicalSourcePayload } from './source-fingerprint.mjs';
 
 export const BLANK = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>versforms</title><meta name="robots" content="noindex"><style>:root{--paper:#e6dfd2;color-scheme:light}@media(prefers-color-scheme:dark){:root{--paper:#16171a;color-scheme:dark}}html,body{margin:0;height:100%;background:var(--paper)}</style></head><body></body></html>';
@@ -13,6 +14,83 @@ export const encode = x => new TextEncoder().encode(x);
 export async function digest(bytes) {
   const out = await crypto.subtle.digest('SHA-256', typeof bytes === 'string' ? encode(bytes) : bytes);
   return [...new Uint8Array(out)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// Assemble only the requested pieces. Historical revisions are versions, not
+// replacement source; their materialized text stays frozen even after retagging.
+export function assembleEffectiveSource(source,db,{pieces=[]}={}) {
+  const effective=clone(source), records=Object.values(db.composites || {}).filter(r=>r.family==='composite' && pieces.includes(r.pieceId));
+  for(const p of Object.values(db.composites || {}))if(p.family==='promotion'&&pieces.includes(p.pieceId)){
+    const r=db.composites[p.originComposite?.revisionId];if(!r||r.family!=='composite')throw new Error('promotion_source_missing');
+    if(effective.j.pieces.some(pc=>pc.id===p.pieceId))throw new Error('promotion_piece_collision');
+    effective.j.pieces.push({id:p.pieceId,V:[],st:[],top:0});records.push({...r,pieceId:p.pieceId,versionId:p.pieceId+'-'+r.versionId});
+  }
+  const needs=(source.variorumSupplement?.sources || []).some(s=>pieces.includes(s.pieceId)) || records.length || Object.values(db.parts || {}).some(r=>r.family==='parts' && pieces.includes(r.pieceId));
+  if(!needs)return effective;
+  const catalog=buildVariorumCatalog({versionMap:source.j,review:source.review,reviews:db.reviews,supplement:source.variorumSupplement || {schemaVersion:1,sources:[]}});
+  for(const p of catalog.pieces)for(const v of p.versions)v.exposures=[...new Map([...(v.exposures || []),...(db.release?.[p.pieceId]?.exposures || []),...Object.entries(db.versions || {}).filter(([id,x])=>id===v.versionId||x.versionId===v.versionId).flatMap(([,x])=>x.exposures || x.exposure || [])].map(e=>[canonical(e),clone(e)])).values()];
+  for(const pc of effective.j.pieces){
+    if(!pieces.includes(pc.id))continue;
+    const head=db.parts?.['h.'+pc.id],origin=records.find(r=>r.pieceId===pc.id),parts=db.parts?.[head?.revisionId]||db.parts?.[origin?.partsRevisionId];
+    if(parts)pc.variorum=clone(parts);
+    for(const src of (source.variorumSupplement?.sources || []).filter(s=>s.pieceId===pc.id)){
+      const imported=catalog.pieces.find(p=>p.pieceId===pc.id)?.versions.find(v=>v.versionId===src.versionId);
+      if(!imported||pc.V.some(v=>v.id===src.versionId))throw new Error('invalid_supplemental_version');
+      const lines=imported.lines.map((l,i)=>({lineId:src.versionId+'-L'+(i+1),text:l.text,breakBefore:l.breakBefore}));
+      pc.V.push({id:src.versionId,P:[],render:'typeset',lines,_lineIdMap:Object.fromEntries(imported.lines.map((l,i)=>[l.lineId,lines[i].lineId])),text:lines.map(l=>(l.breakBefore?'\n':'')+l.text).join('\n'),
+        compositeEvidence:{error:imported.available?null:'source_unavailable',verified:imported.lines.length>0&&imported.lines.every(l=>l.verified===true),sourcePieces:[src.pieceId],exposures:imported.exposures || []}});
+      pc.st.push(pc.V.length-1);
+    }
+    for(const r of records.filter(r=>r.pieceId===pc.id)){
+      const map=db.parts?.[r.partsRevisionId];let error=null,resolved;
+      try{if(!map)throw new Error('parts_revision_missing');resolved=materializeComposite(catalog,map,r.recipe,r.caseMode);if(canonical(resolved.sourceSnapshots)!==canonical(r.sourceSnapshots)||resolved.text!==r.text||canonical(resolved.lines)!==canonical(r.lines))throw new Error('stale_composite_source');}catch(e){error=e.message;}
+      if(!['typeset','photo'].includes(r.render))error='invalid_composite_render';
+      if(!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/.test(r.versionId || '')||pc.V.some(v=>v.id===r.versionId))throw new Error('invalid_composite_version');
+      const lines=(r.lines || []).map((l,i)=>({lineId:r.versionId+'-L'+(i+1),text:l.text,breakBefore:l.breakBefore}));
+      const photo=r.photo;
+      const v={id:r.versionId,P:[],render:r.render,lines,text:r.text,compositeRevision:r.revisionId,
+        compositeEvidence:{error,verified:resolved?.verified===true,sourcePieces:(r.sourceSnapshots || []).map(x=>x.pieceId),exposures:resolved?.exposures || []}};
+      if(photo){v.photo={url:'img/p/'+r.versionId+'.jpg'};v.compositeEvidence.photo=clone(photo);}
+      if(pc.variorum && map){
+        const segments={},order=[];let offset=0;
+        for(const step of r.recipe || []){const occurrence=step.occurrence,key=step.partId;const count=map.maps?.[step.from]?.segments?.[key]?.find(o=>o.occurrence===occurrence)?.lines.length || 0;
+          if(!pc.variorum.parts.some(p=>p.id===key)){const part=map.parts.find(p=>p.id===key);if(part){pc.variorum.parts.push(clone(part));pc.variorum.canonicalOrder.push(key);}}
+          const outputOccurrence=step.occurrence;if(segments[key]?.some(o=>o.occurrence===outputOccurrence))throw new Error('duplicate_recipe_occurrence');(segments[key] ||= []).push({occurrence:outputOccurrence,lines:lines.slice(offset,offset+count).map(l=>l.lineId),accepted:true});order.push({partId:key,occurrence:outputOccurrence});offset+=count;
+        }
+        pc.variorum.maps[r.versionId]={segments,version_part_order:order};
+      }
+      pc.V.push(v);pc.st.push(pc.V.length-1);
+    }
+  }
+  return effective;
+}
+export function publicVersion(version){
+  const v=clone(version);delete v.compositeEvidence;delete v.compositeRevision;delete v._lineIdMap;
+  return v;
+}
+export function projectPublicVariorum(record,visibleVersions){
+  if(!record)return undefined;
+  const ids=new Set(visibleVersions.map(v=>v.id));
+  const maps={};
+  for(const [id,map] of Object.entries(record.maps || {}))if(ids.has(id)){
+    const remap=visibleVersions.find(v=>v.id===id)?._lineIdMap || {};
+    const segments={};for(const [part,occurrences]of Object.entries(map.segments || {}))segments[part]=occurrences.filter(o=>o.accepted).map(o=>({occurrence:o.occurrence,lines:o.lines.map(lid=>remap[lid] || lid)}));
+    maps[id]={segments,version_part_order:(map.version_part_order || []).filter(k=>segments[k.partId]?.some(o=>o.occurrence===k.occurrence))};
+  }
+  const used=new Set(Object.values(maps).flatMap(m=>Object.keys(m.segments)));
+  return {parts:record.parts.filter(p=>used.has(p.id)).map(p=>({id:p.id,name:p.name})),canonicalOrder:record.canonicalOrder.filter(id=>used.has(id)),maps};
+}
+function checkComposite(v,source,db,target){
+ const e=v.compositeEvidence;if(!e)return [];
+ const errors=[];if(e.error)errors.push(e.error);if(!e.verified)errors.push('unverified_composite');
+ if(e.sourcePieces.some(id=>['reserve','archive'].includes(db.release[id]?.pool)))errors.push('source_pool_withheld');
+ if(e.exposures.some(x=>x.type==='download') && db.release[e.sourcePieces[0]]?.pool==='reserve')errors.push('reserve_exposure');
+ if(v.render==='typeset' && target!=='staging'){
+  const f=source.variorumFontEvidence,points=new Set(f?.codepoints || []);
+  if(f?.approved!==true||f.coversShellSha256!==source.shellSha256||typeof f.approvalRef!=='string'||!f.approvalRef||[...v.text].some(c=>!/[\s]/u.test(c)&&!points.has(c.codePointAt(0))))errors.push('composite_glyph_evidence_missing');
+ }
+ if(v.render==='photo' && (!e.photo || !/^[a-f0-9]{64}$/.test(e.photo.sha256 || '') || !Number.isSafeInteger(e.photo.size)))errors.push('composite_photo_evidence_missing');
+ return errors;
 }
 
 // Decode common textual encodings before the byte scan. Embedded compressed
@@ -69,7 +147,7 @@ export function selection(pc, decisions, whole) {
   const found = new Set();
   for (const [id,doc] of Object.entries(decisions)) {
     if (!id.endsWith('-final') || typeof doc.choice !== 'string' || doc.choice === 'layers') continue;
-    pc.V.forEach((v,i) => { if(v.P.some(([pg,bs])=>bs.some(b=>doc.choice === `${pg}-${b}`)))found.add(i); });
+    pc.V.forEach((v,i) => { if(doc.choice===v.id || v.P.some(([pg,bs])=>bs.some(b=>doc.choice === `${pg}-${b}`)))found.add(i); });
   }
   if (found.size > 1) throw new Error('conflicting_final_decisions');
   return {indices:found.size ? [...found] : [pc.top],how:found.size ? 'decided final' : 'top of the stack; no decided final'};
@@ -91,7 +169,7 @@ function facing(source, direct) {
 
 // A stopped candidate returns diagnostic IDs and gate results but no files or
 // public data. This prevents an accidental preview route bypassing the stops.
-export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],accepted=[],force=false,publicPieces=pieces}) {
+export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],accepted=[],force=false,publicPieces=pieces,target='production'}) {
   const gates=[],stops=[],shared=[],warnings=[],versions={};
   const result = () => ({gates,stops,shared,warnings,versions,blocked:stops.length > 0 || gates.some(g=>!g.ok && !g.overridden),files:[],data:null});
   const stop = (piece,name) => stops.push({piece,name,ok:false});
@@ -102,6 +180,7 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
       if (!object(db[c])) throw new Error('invalid_collection_'+c);
       if (Object.values(db[c]).some(d=>!object(d))) throw new Error('malformed_document_'+c);
     }
+    source=assembleEffectiveSource(source,db,{pieces});
     const pcs = new Map(source.j.pieces.map(p=>[p.id,p]));
     const pages = new Map(source.j.pages.map(p=>[p.id,p]));
     const rpages = new Map(source.review.pages.map(p=>[p.id,p]));
@@ -117,15 +196,17 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
       const item=source.review.items.find(i=>i.id===pid);
       const lids = item ? unique(item.versions.flatMap(v=>v.blocks.flatMap(b=>rpages.get(v.page).blocks[b].lines.map(l=>l.id)))) : null;
       const bad = lids?.filter(l=>!(db.reviews[l]?.status === 'confirmed' || (db.reviews[l]?.status === 'corrected' && typeof db.reviews[l]?.text === 'string')));
-      gate(pid,'verified',lids !== null && !bad.length, bad?.length ? `${bad.length} unverified line(s)` : '');
-      gate(pid,'filed',db.decisions['gruw-policy']?.choice === 'skip' || Object.values(db.batches).some(b=>Array.isArray(b.items) && b.items.includes(pid) && ['filed','registered'].includes(b.status)));
       const sel=selection(pc,db.decisions,allVersions.includes(pid));
+      const onlyDerived=sel.indices.length>0&&sel.indices.every(i=>pc.V[i]?.compositeEvidence);
+      gate(pid,'verified',onlyDerived ? sel.indices.every(i=>pc.V[i].compositeEvidence.verified) : lids !== null && !bad.length, onlyDerived?'derived source verification':bad?.length ? `${bad.length} unverified line(s)` : '');
+      gate(pid,'filed',db.decisions['gruw-policy']?.choice === 'skip' || Object.values(db.batches).some(b=>Array.isArray(b.items) && b.items.includes(pid) && ['filed','registered'].includes(b.status)));
       if (!sel.indices.length || sel.indices.some(i=>!Number.isInteger(i) || !pc.V[i] || !pc.st.includes(i))) throw new Error('invalid_version_selection');
       chosen.set(pid,sel.indices); versions[pid]={...sel,total:pc.V.length,newest:pc.V.length-1,top:pc.top,unpublishedCorrected:0};
       const newv = new Map(sel.indices.map((i,n)=>[i,n]));
       const st=pc.st.filter(i=>newv.has(i)).map(i=>newv.get(i));
       for (const vi of sel.indices) {
         const v=pc.V[vi];
+        for(const issue of checkComposite(v,source,db,target))stop(pid,issue);
         if(v.sourceStatus === 'staged-untranscribed')throw new Error('untranscribed_version');
         for(const [pg,bs] of v.P) {
           const p=pages.get(pg);
@@ -174,7 +255,7 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
     }
     if(result().blocked)return result();
     const selectedPages=source.j.pages.filter(p=>[...owners.keys()].some(k=>k.startsWith(p.id+'/')));
-    const outPieces=want.map(pid=>{const pc=pcs.get(pid),sel=chosen.get(pid),nv=new Map(sel.map((v,i)=>[v,i])),st=pc.st.filter(i=>nv.has(i)).map(i=>nv.get(i));return {...clone(pc),V:sel.map(i=>clone(pc.V[i])),st,top:nv.has(pc.top)?nv.get(pc.top):st[0]};});
+    const outPieces=want.map(pid=>{const pc=pcs.get(pid),sel=chosen.get(pid),nv=new Map(sel.map((v,i)=>[v,i])),st=pc.st.filter(i=>nv.has(i)).map(i=>nv.get(i));const out={...clone(pc),V:sel.map(i=>publicVersion(pc.V[i])),st,top:nv.has(pc.top)?nv.get(pc.top):st[0]};delete out.variorum;const spread=projectPublicVariorum(pc.variorum,sel.map(i=>pc.V[i]));if(spread)out.variorum=spread;return out;});
     const outPages=[],atlas=[],files=[],bindings={},selectedLineIds=new Set();
     const addAsset=(path,sourcePath=path)=>{const a=source.assets[sourcePath];if(!a || !/^[a-f0-9]{64}$/.test(a.sha256))throw new Error('missing_asset:'+path);files.push({path,sourcePath,...a});};
     for(const [n,original] of selectedPages.entries()) {
@@ -195,6 +276,10 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
     }
     for (const pid of want) for(const vi of chosen.get(pid)) {
       const v=pcs.get(pid).V[vi],lines=[];
+      if(v.render){
+        if(v.render==='photo'){const photo=v.compositeEvidence.photo;const path='img/p/'+v.id+'.jpg';files.push({path,sourcePath:'photos/'+photo.assetId,sha256:photo.sha256,size:photo.size,contentType:photo.contentType});}
+        bindings[`${pid}/${v.id}`]={pieceId:pid,versionId:v.id,sourceFingerprint:'sha256:'+await digest(canonical(logicalSourcePayload({pieceId:pid,versionId:v.id,members:[],lines:v.lines.map(l=>({...l,blockType:'text'}))})))};continue;
+      }
       for(const [pg,bs] of v.P)for(const bi of bs) {
         const b=rpages.get(pg)?.blocks[bi],out=outPages.find(p=>p.id===pg).B[bi];
         if(!b || b.lines.length !== out.L.length)throw new Error('review_source_mismatch');
@@ -218,6 +303,6 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
     for(const f of dedup)if(f.text !== undefined){f.sha256=await digest(f.text);f.size=encode(f.text).length;if(hasNameLeak(f.text))stop('', 'name_leak');}
     if(!/<title>versforms<\/title>/.test(html) || !/<meta[^>]+name=["']?robots["']?[^>]+noindex/i.test(html))stop('','invalid_shell');
     if(result().blocked)return result();
-    return {...result(),data,files:dedup,published:[...owners.keys()],pieces:want,allVersions:allVersions.filter(p=>want.includes(p)),readerStrings:{title:'versforms',font:'ajp-scribbles',fontRecords:source.fontRecords || [],reviewStatus:'omitted',info:data.prov}};
+    return {...result(),data,files:dedup,sourceDependencies:unique(want.flatMap(pid=>chosen.get(pid).flatMap(vi=>pcs.get(pid).V[vi].compositeEvidence?.sourcePieces || []))).sort(),published:[...owners.keys()],pieces:want,allVersions:allVersions.filter(p=>want.includes(p)),readerStrings:{title:'versforms',font:'ajp-scribbles',fontRecords:source.fontRecords || [],reviewStatus:'omitted',info:data.prov}};
   } catch(e) {stop('',e.message || 'invalid_source');return result();}
 }

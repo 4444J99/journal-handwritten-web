@@ -9,6 +9,7 @@ are checked against the decoded source crop, including every line rectangle.
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import build_public  # noqa: E402
 import post_poem  # noqa: E402
+import variorum_publication  # noqa: E402
 from PIL import Image  # noqa: E402
 
 
@@ -25,28 +27,64 @@ def canonical(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
 
 
-def verify(root, prepared, db_path, pieces, all_versions=(), accepted=()):
+def verify(root, prepared, db_path, pieces, all_versions=(), accepted=(), target="production", photo_root=None):
     root, prepared = Path(root), Path(prepared)
     src = post_poem.Source(root)
-    db = post_poem.load_db_with_root(db_path, set(src.pieces))[1]
+    db_root, db = post_poem.load_db_with_root(db_path)
+    for collection in ('parts', 'composites'):
+        db[collection] = {}
+        if (db_root / collection).is_symlink():
+            raise ValueError('symlink supplemental collection')
+        for path in sorted((db_root / collection).glob('*.json')):
+            if path.is_symlink() or not re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', path.stem) or path.stem in ('.', '..'):
+                raise ValueError('symlink supplemental export')
+            value = json.loads(path.read_text(), parse_constant=lambda _: (_ for _ in ()).throw(ValueError('nonfinite supplemental input')))
+            if not isinstance(value, dict):
+                raise ValueError('invalid supplemental export document')
+            db[collection][path.stem] = value
     source = json.loads((prepared / 'source.json').read_text())
     payload = {'source': source, 'db': db, 'shell': (prepared / 'shell.html').read_text(),
-               'pieces': pieces, 'allVersions': list(all_versions), 'accepted': list(accepted), 'force': True}
+               'pieces': pieces, 'allVersions': list(all_versions), 'accepted': list(accepted), 'force': True, 'target': target}
     run = subprocess.run(['node', str(ROOT / 'studio-cf/tests/compile-fixture.mjs')],
                          input=json.dumps(payload), text=True, capture_output=True, check=True)
     candidate = json.loads(run.stdout)
     if candidate['blocked']:
         raise ValueError('candidate has hard stops: ' + json.dumps(candidate['stops']))
-    select = {pid: post_poem.select_versions(src, db, pid, pid in all_versions)[0] for pid in pieces}
-    corrections = {}
+    effective = variorum_publication.assemble_effective_source(source, db, pieces)
+    inventory = {p['id']: p for p in effective['j']['pieces']}
+    select, corrections = {}, {}
     for pid in pieces:
-        values, _, stale = post_poem.load_corrections(src, db, pid, select[pid])
-        if stale:
-            raise ValueError('stale review IDs: ' + ','.join(stale))
-        corrections.update(values)
+        pc = inventory[pid]
+        finals = {i for i, v in enumerate(pc['V']) for key, decision in db['decisions'].items()
+                  if key.endswith('-final') and decision.get('choice') != 'layers' and
+                  (decision.get('choice') == v['id'] or any(decision.get('choice') == f'{pg}-{bi}' for pg, bs in v['P'] for bi in bs))}
+        if len(finals) > 1:
+            raise ValueError('conflicting_final_decisions')
+        select[pid] = list(range(len(pc['V']))) if pid in all_versions else sorted(finals) if finals else [pc['top']]
+        for vi in select[pid]:
+            for pg, blocks in pc['V'][vi]['P']:
+                page = next(p for p in source['j']['pages'] if p['id'] == pg)
+                for bi in blocks:
+                    for li, text in enumerate(page['B'][bi]['L']):
+                        lid = f'{pg}-{bi}-{li}'
+                        review = db['reviews'].get(lid)
+                        if review and review.get('original') != text:
+                            raise ValueError('stale source transcript')
+                        if review and review.get('status') == 'corrected':
+                            corrections[(pg, bi, li)] = review['text']
+    photo_assets = {}
+    for pid, indices in select.items():
+        for vi in indices:
+            v = inventory[pid]['V'][vi]
+            if v.get('render') == 'photo':
+                asset = v['compositeEvidence']['photo']['assetId']
+                if photo_root is None:
+                    raise ValueError('photo parity requires --photo-root with original exported asset bytes')
+                photo_assets[asset] = Path(photo_root) / asset
+    (root / '.post-poem-work').mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='parity-', dir=root / '.post-poem-work') as scratch:
         out = Path(scratch) / 'python'
-        build_public.build(out, pieces, site=root / 'site', select=select, corrections=corrections)
+        build_public.build(out, pieces, site=root / 'site', select=select, corrections=corrections, source_data=effective['j'], publication_source=source, publication_db=db, target=target, photo_assets=photo_assets)
         expected = json.loads((out / 'data/j.json').read_text())
         expected['atlas'] = [source['tiles'][p['id']]['size'] for p in expected['pages']]
         for n, page in enumerate(expected['pages']):
@@ -104,5 +142,7 @@ if __name__ == '__main__':
     ap.add_argument('--piece', action='append', required=True)
     ap.add_argument('--all-versions', action='append', default=[])
     ap.add_argument('--accept-shared-scan', action='append', default=[])
+    ap.add_argument('--target', choices=('production', 'staging'), default='production')
+    ap.add_argument('--photo-root', type=Path)
     args = ap.parse_args()
-    print(json.dumps(verify(args.root, args.prepared, args.db, args.piece, args.all_versions, args.accept_shared_scan), indent=2))
+    print(json.dumps(verify(args.root, args.prepared, args.db, args.piece, args.all_versions, args.accept_shared_scan, args.target, args.photo_root), indent=2))

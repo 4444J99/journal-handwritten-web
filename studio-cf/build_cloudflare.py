@@ -20,5 +20,10 @@ if __name__ == '__main__':
     print('== tools/check.py', flush=True)
     if subprocess.run([sys.executable, str(ROOT / 'tools' / 'check.py')]).returncode:
         sys.exit('tools/check.py failed: build stopped, nothing deployed')
+    # Cloudflare remains a verification boundary when GitHub Actions is unavailable.
+    focused = ['node', '--test', str(ROOT / 'tests/test_variorum_model.mjs'),
+               str(ROOT / 'studio-cf/tests/variorum-publication.unit.test.mjs')]
+    if subprocess.run(focused, cwd=ROOT).returncode:
+        sys.exit('Variorum validation failed: build stopped, nothing deployed')
     os.environ.setdefault('VERSFORMS_FONT_PYTHON', sys.executable)
     sys.exit(main())

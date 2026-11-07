@@ -5,7 +5,7 @@ import {json,readLimited} from './api.js';
 import {revisionStatement,revisionValues,readFence,acquireFence,releaseFence} from './publish-fence.js';
 
 const ID=/^[a-f0-9]{64}$/;
-const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig'];
+const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig','parts','composites'];
 const BATCH_SIZE=4;
 const MAX_FILE=16*1024*1024;
 const fail=(status,code)=>{const e=new Error(code);e.status=status;throw e;};
@@ -67,7 +67,7 @@ async function inputs(env) {
   const source=JSON.parse(sourceText);
   if(await digest(shell)!==env.PUBLISH_SHELL_SHA256 || source.shellSha256!==env.PUBLISH_SHELL_SHA256)fail(503,'shell_pin_mismatch');
   const db=Object.fromEntries(COLLECTIONS.map((c,i)=>[c,Object.fromEntries(rows[i].results.map(r=>[r.id,JSON.parse(r.data)]))]));
-  return {source,shell,db,revisions:revisionValues(rows[6].results),sourceHash:await digest(sourceText),dbHash:await digest(canonical(db))};
+  return {source,shell,db,revisions:revisionValues(rows[COLLECTIONS.length].results),sourceHash:await digest(sourceText),dbHash:await digest(canonical(db))};
 }
 
 async function candidate(env,user,id,hash) {
@@ -103,7 +103,7 @@ async function build(env,user,body) {
   const input=await inputs(env);
   if(!Array.isArray(body.pieces) || body.pieces.length>200)fail(400,'invalid_pieces');
   // The request names the complete next release, not only the added poem.
-  const result=await buildCandidate({...input,pieces:body.pieces,allVersions:body.allVersions || [],accepted:body.accepted || [],force:body.force===true});
+  const result=await buildCandidate({...input,target:body.target,pieces:body.pieces,allVersions:body.allVersions || [],accepted:body.accepted || [],force:body.force===true});
   if(result.blocked)return json(result);
   const c={...result,sourceHash:input.sourceHash,dbHash:input.dbHash,revisions:input.revisions,shellSha256:env.PUBLISH_SHELL_SHA256,
     target:body.target,base:base.value,owner:user.email,createdAt:now(),nonce:crypto.randomUUID(),accepted:body.accepted || [],force:body.force===true};
@@ -133,10 +133,14 @@ async function materialize(env,user,body) {
     let bytes;
     if(f.text!==undefined)bytes=encode(f.text);
     else {
-      if(!/^(?:img\/[a-z]\/|tiles\/|reader-(?:features|packages)\.js$)/.test(f.sourcePath) || f.sourcePath.includes('..'))fail(409,'invalid_asset_path');
-      const response=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/assets/'+f.sourcePath));
-      if(!response.ok)fail(409,'source_asset_missing');
-      bytes=new Uint8Array(await response.arrayBuffer());
+      if(/^photos\/(?:[a-f0-9]{32}|[a-f0-9]{64})$/.test(f.sourcePath)) {
+        bytes=await bytesOf(await env.PHOTOS.get(f.sourcePath.slice('photos/'.length)));
+      } else {
+        if(!/^(?:img\/[a-z]\/|tiles\/|reader-(?:features|packages)\.js$)/.test(f.sourcePath) || f.sourcePath.includes('..'))fail(409,'invalid_asset_path');
+        const response=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/assets/'+f.sourcePath));
+        if(!response.ok)fail(409,'source_asset_missing');
+        bytes=new Uint8Array(await response.arrayBuffer());
+      }
     }
     await checked(bytes,f);
     await immutable(env.PHOTOS,fileKey(body.id,f.path),bytes,{httpMetadata:{contentType:f.contentType},customMetadata:{sha256:f.sha256}});
@@ -331,6 +335,7 @@ async function rollback(env,user,body) {
   check(input.sourceHash===c.sourceHash,'source_changed_rebuild');
   // Do not silently resurrect Reserve/Archive or unaccepted shared scans.
   for(const pid of c.pieces)check(input.db.release[pid]?.pool==='series','own_pool_not_series');
+  for(const pid of c.sourceDependencies || [])check(!['reserve','archive'].includes(input.db.release[pid]?.pool),'composite_source_pool_changed');
   for(const shared of c.shared)if(!c.pieces.includes(shared.id) && input.source.j.pieces.some(p=>p.id===shared.id))check(input.db.release[shared.id]?.pool==='series','shared_scan_pool_changed');
   const recordObj=await bucket.get(`snapshots/${body.id}/manifest.json`);
   check(recordObj,'snapshot_missing');

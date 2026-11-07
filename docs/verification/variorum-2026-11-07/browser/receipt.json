@@ -1,0 +1,26 @@
+[
+  {
+    "width": 1280,
+    "height": 900,
+    "colorScheme": "light",
+    "passed": true
+  },
+  {
+    "width": 1280,
+    "height": 900,
+    "colorScheme": "dark",
+    "passed": true
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "colorScheme": "light",
+    "passed": true
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "colorScheme": "dark",
+    "passed": true
+  }
+]

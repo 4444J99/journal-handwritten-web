@@ -1,0 +1,13 @@
+....F.
+======================================================================
+FAIL: test_timeout_kills_the_whole_process_group (test_ci_local.TimeoutKillsDescendants.test_timeout_kills_the_whole_process_group)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/variorum-pristine-baseline/tests/test_ci_local.py", line 73, in test_timeout_kills_the_whole_process_group
+    self.assertFalse(alive, "a process started by the suite survived the timeout")
+AssertionError: True is not false : a process started by the suite survived the timeout
+
+----------------------------------------------------------------------
+Ran 6 tests in 7.912s
+
+FAILED (failures=1)
