@@ -2,11 +2,14 @@
 // fixtures only; they are never written to the hosted author's database.
 import {spawnSync} from 'node:child_process';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';
-import {makeKey,signRS256,claims,startJwks} from './helpers/jwt.mjs';import {startPagesDev,STUDIO_CF} from './helpers/wrangler.mjs';import {createPublishClient} from '../../studio/publish-client.mjs';
+import {makeKey,signRS256,claims,startJwks} from './helpers/jwt.mjs';import {startPagesDev,STUDIO_CF,SCRATCH} from './helpers/wrangler.mjs';import {createPublishClient} from '../../studio/publish-client.mjs';
 test('authenticated free build, immutable preview, confirm, and separate public reader work through local bindings', {timeout:180000},async()=>{
- const dist=path.join(STUDIO_CF,'dist');
+ await fs.mkdir(SCRATCH,{recursive:true});
+ const buildRoot=await fs.mkdtemp(path.join(SCRATCH,'publish-build-'));
+ const dist=path.join(buildRoot,'studio');
+ const assembled=spawnSync('python3',[path.join(STUDIO_CF,'build_dist.py'),'--out',dist],{encoding:'utf8',timeout:120000});assert.equal(assembled.status,0,assembled.stderr);
  const readerDir=path.join(STUDIO_CF,'../.post-poem-work','public-reader-local-'+Date.now());
- const built=spawnSync('python3',[path.join(STUDIO_CF,'build_reader.py'),'--out',readerDir],{encoding:'utf8'});assert.equal(built.status,0,built.stderr);
+ const built=spawnSync('python3',[path.join(STUDIO_CF,'build_reader.py'),'--out',readerDir,'--prepared',path.join(dist,'publish')],{encoding:'utf8'});assert.equal(built.status,0,built.stderr);
  const pin=JSON.parse(await fs.readFile(path.join(dist,'publish/pin.json'),'utf8'));
  const source=JSON.parse(await fs.readFile(path.join(dist,'publish/source.json'),'utf8'));
  const key=makeKey('publish-local'),jwks=await startJwks({keys:[key]}),team='127.0.0.1:'+jwks.port,iss='https://'+team,owner='owner@example.test',aud='publish-local';

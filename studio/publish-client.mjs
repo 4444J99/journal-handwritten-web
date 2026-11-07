@@ -10,7 +10,9 @@ export function createPublishClient({fetchImpl=(...args)=>fetch(...args),mode='b
   async function materialize(candidate,onProgress=()=>{}) {
     if(candidate.blocked)return candidate;
     if(!/^[a-f0-9]{64}$/.test(candidate.id) || candidate.hash!==candidate.id)throw new Error('Invalid preview candidate.');
-    for(let n=0;n<1000;n++) {
+    // At most 200 pieces and 1,000 files are admitted. Each used page
+    // contributes files, so 2 + pieces + pages + files is below 2,202.
+    for(let n=0;n<2202;n++) {
       const state=await request('materialize',{id:candidate.id,hash:candidate.hash});
       onProgress(state);
       if(state.ready)return candidate;
@@ -55,13 +57,14 @@ export function createPublishClient({fetchImpl=(...args)=>fetch(...args),mode='b
     unpublish:async(options,onProgress)=>mode==='browser'?browserBuild({...options,removePiece:options.piece},onProgress):materialize(await request('unpublish',options),onProgress),
     async rollback(id,target,expectedCurrent) {
       let state=await request('rollback',{id,target,expectedCurrent});
-      for(let n=0;!state.done && n<1000;n++)state=await request('rollback',{id,target,job:state.job});
+      for(let n=0;!state.done && n<1001;n++)state=await request('rollback',{id,target,job:state.job});
       if(!state.done)throw new Error('Rollback did not finish. Inspect History before retrying.');
       return state;
     },
     async confirm(candidate,onProgress=()=>{}) {
       if(!/^[a-f0-9]{64}$/.test(candidate?.id) || candidate.hash!==candidate.id)throw new Error('Invalid preview candidate.');
-      for(let n=0;n<1000;n++) {
+      // Up to 1,000 copies followed by bounded release-record recovery.
+      for(let n=0;n<1100;n++) {
         const result=await request('confirm',{id:candidate.id,hash:candidate.hash});
         onProgress(result);
         if(result.done)return result;

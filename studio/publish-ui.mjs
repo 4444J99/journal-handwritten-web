@@ -22,10 +22,11 @@ function modal(title) {
 const failText=error=>el('p',{class:'err',role:'alert'},String(error.message || error));
 const progressText=s=>`${s.cursor || 0}/${s.total || 0} files`;
 
-export async function openPublisher({pieceId,canWrite=()=>true,hasPending=()=>false,onDone=()=>{},unpublish=false}={}) {
+export async function openPublisher({pieceId,canWrite=()=>true,hasPending=()=>false,onDone=()=>{},unpublish=false,target:initialTarget='staging'}={}) {
   const {dialog,body,close}=modal(unpublish?'Unpublish':'Publish');
   const api=createPublishClient();
   const target=el('select',{'aria-label':'Publish destination'},el('option',{value:'staging'},'Staging'),el('option',{value:'production'},'Production'));
+  target.value=initialTarget==='production'?'production':'staging';
   const status=el('p',{role:'status','aria-live':'polite'}),output=el('div');
   let candidate=null,busy=false,accepted=new Set(),force=false,history=null;
   const buildButton=el('button',{type:'button',class:'btn primary',onclick:build},unpublish?'Preview without this poem':'Build preview');
@@ -91,7 +92,7 @@ export async function openPublisher({pieceId,canWrite=()=>true,hasPending=()=>fa
         candidate=null;onDone(result);
       }catch(error){output.append(failText(error));confirm.disabled=false;status.textContent='Confirmation did not finish. Retry this exact preview or inspect History.';}
       finally{lock(false);}
-    }},unpublish?'Confirm unpublish':`Confirm publish to ${c.target}`);
+    }},unpublish?`Confirm unpublish from ${c.target}`:`Confirm publish to ${c.target}`);
     output.append(confirm);
   }
   await build();
@@ -115,7 +116,7 @@ export async function openPublishHistory({canWrite=()=>true,onDone=()=>{}}={}) {
           try{await api.rollback(s.id,s.target,history.pointers[s.target]);message.textContent='Rolled back. Reopen History for the current list.';onDone();}catch(e){body.append(failText(e));rollback.disabled=false;}finally{close.disabled=false;}
         }},'Roll back');row.append(rollback);
       }
-      if(current)for(const pieceId of s.pieces)row.append(el('button',{type:'button',class:'btn small',disabled:!canWrite(),onclick:()=>openPublisher({pieceId,canWrite,onDone,unpublish:true})},`Unpublish ${pieceId}`));
+      if(current)for(const pieceId of s.pieces)row.append(el('button',{type:'button',class:'btn small',disabled:!canWrite(),onclick:()=>openPublisher({pieceId,canWrite,onDone,unpublish:true,target:s.target})},`Unpublish ${pieceId}`));
       body.append(row);
     }
   }catch(error){body.append(failText(error));}

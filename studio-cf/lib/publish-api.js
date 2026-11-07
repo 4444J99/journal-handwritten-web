@@ -2,6 +2,7 @@
 // only copy progress and current.json change. The pointer is compare-and-swap.
 import {buildCandidate,canonical,digest,encode,hasNameLeak,hasByteNameLeak} from './publish.js';
 import {json,readLimited} from './api.js';
+import {revisionStatement,revisionValues,readFence,acquireFence,releaseFence} from './publish-fence.js';
 
 const ID=/^[a-f0-9]{64}$/;
 const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig'];
@@ -26,8 +27,10 @@ async function pointer(bucket) {
   const obj=await bucket.get('current.json');
   if(!obj)return{value:null,etag:null};
   const value=await obj.json();
+  if(value.id===null && /^[a-f0-9]{64}$/.test(value.fence || ''))return{value:null,etag:obj.etag};
   if(!ID.test(value.id))fail(503,'invalid_pointer');
-  return{value,etag:obj.etag};
+  const {fence,...logical}=value;
+  return{value:logical,etag:obj.etag};
 }
 const condition=etag=>({onlyIf:etag?{etagMatches:etag}:{etagDoesNotMatch:'*'}});
 async function immutable(bucket,path,body,options={}) {
@@ -40,6 +43,9 @@ async function immutable(bucket,path,body,options={}) {
 async function doc(env,id) {
   const row=await env.DB.prepare('SELECT data FROM vf_docs WHERE collection = ?1 AND id = ?2').bind('publish',id).first();
   return row ? JSON.parse(row.data) : null;
+}
+async function wasPublished(env,id) {
+  return !!await env.DB.prepare("SELECT id FROM vf_docs WHERE collection = 'publish' AND json_extract(data, '$.state') = 'committed' AND json_extract(data, '$.action') = 'publish' AND json_extract(data, '$.to') = ?1 LIMIT 1").bind(id).first();
 }
 async function record(env,id,data) {
   await env.DB.batch([
@@ -54,14 +60,14 @@ async function inputs(env) {
   const [s,h,rows]=await Promise.all([
     env.ASSETS.fetch(new Request('https://studio.invalid/publish/source.json')),
     env.ASSETS.fetch(new Request('https://studio.invalid/publish/shell')),
-    env.DB.batch(COLLECTIONS.map(c=>env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind(c))),
+    env.DB.batch([...COLLECTIONS.map(c=>env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind(c)),revisionStatement(env)]),
   ]);
   if(!s.ok || !h.ok)fail(503,'prepared_assets_missing');
   const sourceText=await s.text(),shell=await h.text();
   const source=JSON.parse(sourceText);
   if(await digest(shell)!==env.PUBLISH_SHELL_SHA256 || source.shellSha256!==env.PUBLISH_SHELL_SHA256)fail(503,'shell_pin_mismatch');
   const db=Object.fromEntries(COLLECTIONS.map((c,i)=>[c,Object.fromEntries(rows[i].results.map(r=>[r.id,JSON.parse(r.data)]))]));
-  return {source,shell,db,sourceHash:await digest(sourceText),dbHash:await digest(canonical(db))};
+  return {source,shell,db,revisions:revisionValues(rows[6].results),sourceHash:await digest(sourceText),dbHash:await digest(canonical(db))};
 }
 
 async function candidate(env,user,id,hash) {
@@ -99,7 +105,7 @@ async function build(env,user,body) {
   // The request names the complete next release, not only the added poem.
   const result=await buildCandidate({...input,pieces:body.pieces,allVersions:body.allVersions || [],accepted:body.accepted || [],force:body.force===true});
   if(result.blocked)return json(result);
-  const c={...result,sourceHash:input.sourceHash,dbHash:input.dbHash,shellSha256:env.PUBLISH_SHELL_SHA256,
+  const c={...result,sourceHash:input.sourceHash,dbHash:input.dbHash,revisions:input.revisions,shellSha256:env.PUBLISH_SHELL_SHA256,
     target:body.target,base:base.value,owner:user.email,createdAt:now(),nonce:crypto.randomUUID(),accepted:body.accepted || [],force:body.force===true};
   // Internal diagnostics that are already represented in the output need not
   // carry a duplicate private source model in the draft.
@@ -214,7 +220,22 @@ async function recoverCurrent(env,bucket) {
   if(cur.value?.event) {
     const intent=await doc(env,cur.value.event);
     if(!intent)fail(503,'pointer_audit_missing');
-    return await finishIntent(env,intent);
+    const complete=await finishIntent(env,intent);
+    if(complete)await releaseFence(env,intent.event);
+    else return false;
+  }
+  const fence=await readFence(env);
+  if(fence && target(env,fence.target).bucket===bucket && cur.value?.event!==fence.event) {
+    // A fresh sender may still be finishing. Time only controls when recovery
+    // is attempted; it NEVER grants source writers access to an expired lease.
+    if(Date.now()-Date.parse(fence.at)<5000)return false;
+    // R2 ETags are content-based. Rewriting identical bytes is not a barrier:
+    // include a fresh nonce even when retaining the same published snapshot.
+    const value={...(cur.value || {id:null}),fence:await digest(crypto.randomUUID())};
+    const barrier=await bucket.put('current.json',JSON.stringify(value),{...condition(cur.etag),httpMetadata:{contentType:'application/json'}});
+    if(!barrier)return false; // a concurrent CAS won; re-read on the next request
+    await record(env,fence.event+'.cancelled',{...fence,state:'cancelled',reason:'abandoned_confirmation_recovered',recoveredAt:now()});
+    await releaseFence(env,fence.event);
   }
   return true;
 }
@@ -225,13 +246,24 @@ async function movePointer(env,user,c,id,bucket,action,eventId) {
   const event=eventId || 'event.'+crypto.randomUUID();
   const previous=old.value?.id ? await doc(env,'snapshot.'+old.value.id) : null;
   const intent=await doc(env,event) || {event,action,target:c.target,from:old.value?.id || null,to:id,who:user.email,at:now(),date:stamp(),state:'prepared',added:c.pieces.filter(p=>!(previous?.pieces || []).includes(p))};
-  await record(env,event,intent);
-  const moved=await bucket.put('current.json',JSON.stringify({id,event}),{...condition(old.etag),httpMetadata:{contentType:'application/json'}});
-  if(!moved)fail(409,'current_snapshot_changed');
-  // A crash here is recovered before any later pointer move. Confirmation can
-  // also be retried: the current pointer binds the durable prepared intent.
-  const complete=await finishIntent(env,intent);
-  return {...intent,complete};
+  if(!await acquireFence(env,intent,c.revisions))fail(409,(await readFence(env))?'publication_in_progress_retry':'source_changed_rebuild');
+  let started=false;
+  try {
+    await record(env,event,intent);
+    // `old` was captured BEFORE acquiring the fence. Never refresh this ETag:
+    // the recovery barrier must be able to cancel even a delayed conditional PUT.
+    started=true;
+    const moved=await bucket.put('current.json',JSON.stringify({id,event}),{...condition(old.etag),httpMetadata:{contentType:'application/json'}});
+    if(!moved){await releaseFence(env,event);fail(409,'current_snapshot_changed');}
+    const complete=await finishIntent(env,intent);
+    if(complete)await releaseFence(env,event);
+    return {...intent,complete};
+  }catch(e){
+    if(!started)await releaseFence(env,event);
+    // An uncertain R2 result or unfinished appearance retains the fence until
+    // recovery establishes the outcome. It is never released merely by a timer.
+    throw e;
+  }
 }
 
 async function confirm(env,user,body) {
@@ -289,6 +321,7 @@ async function rollback(env,user,body) {
   if(c.mode==='browser')return (await import('./publish-browser.js')).rollbackBrowser(env,user,body,c);
   check(c.target===body.target,'target_mismatch');
   check(await doc(env,'snapshot.'+body.id),'snapshot_not_confirmed');
+  check(await wasPublished(env,body.id),'snapshot_not_confirmed');
   const input=await inputs(env);
   check(input.sourceHash===c.sourceHash,'source_changed_rebuild');
   // Do not silently resurrect Reserve/Archive or unaccepted shared scans.
@@ -304,7 +337,7 @@ async function rollback(env,user,body) {
     const h=await bucket.head(f.key);check(h && h.size===f.size && h.customMetadata?.sha256===f.sha256,'snapshot_file_missing_or_changed');
   }
   const base=(await pointer(bucket)).value;
-  await movePointer(env,user,{...c,base},body.id,bucket,'rollback');
+  await movePointer(env,user,{...c,base,revisions:input.revisions},body.id,bucket,'rollback');
   return json({done:true,id:body.id,url});
 }
 
@@ -319,12 +352,14 @@ export async function handlePublish(request,env,user) {
       if(request.method!=='GET')fail(405,'method_not_allowed');
       const pointers={};for(const t of ['staging','production'])if(env[t==='staging'?'STAGING':'PUBLIC']) {const {bucket}=target(env,t);await recoverCurrent(env,bucket);pointers[t]=(await pointer(bucket)).value;}
       const rows=await env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('publish').all();
-      return json({pointers,records:rows.results.map(r=>({id:r.id,...JSON.parse(r.data)}))});
+      const records=rows.results.map(r=>({id:r.id,...JSON.parse(r.data)}));
+      const committed=new Set(records.filter(r=>r.state==='committed' && r.action==='publish').map(r=>r.to));
+      return json({pointers,records:records.filter(r=>!r.hash || committed.has(r.id))});
     }
     if(request.method!=='POST')fail(405,'method_not_allowed');
     if(request.headers.get('origin')!==url.origin || (request.headers.get('sec-fetch-site') && request.headers.get('sec-fetch-site')!=='same-origin') || request.headers.get('content-type')?.split(';')[0].trim()!=='application/json')fail(403,'forbidden');
     if(parts.length!==1)fail(404,'not_found');
-    const bytes=await readLimited(request,parts[0]==='upload-data'?768*1024:192*1024);if(!bytes)fail(413,'too_large');
+    const bytes=await readLimited(request,parts[0]==='upload-data'?768*1024:parts[0]==='propose'?512*1024:192*1024);if(!bytes)fail(413,'too_large');
     let body;try{body=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail(400,'invalid_json');}
     if(!body || typeof body!=='object' || Array.isArray(body))fail(400,'invalid_json');
     switch(parts[0]) {
@@ -354,4 +389,4 @@ export async function handlePublish(request,env,user) {
 
 // Shared storage primitives for the bounded free-plan verifier. Importing that
 // verifier dynamically avoids adding work to unrelated Studio API requests.
-export {target,pointer,condition,immutable,doc,record,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey};
+export {target,pointer,condition,immutable,doc,wasPublished,record,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey};

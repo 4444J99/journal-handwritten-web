@@ -3,7 +3,8 @@
 // Untrusted browser output never advances the public pointer by itself.
 import {buildCandidate,selection,filterMetadata,canonical,digest,encode,BLANK} from './publish.js';
 import {json} from './api.js';
-import {target,pointer,condition,immutable,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey,doc} from './publish-api.js';
+import {revisionStatement,revisionValues} from './publish-fence.js';
+import {target,pointer,condition,immutable,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey,doc,wasPublished} from './publish-api.js';
 
 const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig'];
 const ID=/^[a-f0-9]{64}$/;
@@ -241,8 +242,10 @@ export async function verifyAndMaterialize(env,user,body,c,p) {
 export async function rollbackBrowser(env,user,body,c) {
   const {bucket,url}=target(env,body.target);check(c.target===body.target,'target_mismatch');
   check(await doc(env,'snapshot.'+body.id),'snapshot_not_confirmed');
+  check(await wasPublished(env,body.id),'snapshot_not_confirmed');
   const source=await pin(env);check(source.sourceSha256===c.sourceHash,'source_changed_rebuild');
-  const rows=await env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('release').all();
+  const [rows,revs]=await env.DB.batch([env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('release'),revisionStatement(env)]);
+  const currentRevisions=revisionValues(revs.results);
   const release=Object.fromEntries(rows.results.map(r=>[r.id,JSON.parse(r.data)]));
   for(const pid of c.pieces)check(release[pid]?.pool==='series','own_pool_not_series');
   // Only the recorded, already accepted shared scans are candidates for rollback.
@@ -254,7 +257,7 @@ export async function rollbackBrowser(env,user,body,c) {
     const m=await bucket.get(`snapshots/${body.id}/manifest.json`);check(m,'snapshot_missing');
     check(canonical(await m.json())===canonical(publicManifest(body.id,c)),'snapshot_manifest_mismatch');
     const job=await digest(crypto.randomUUID());
-    await immutable(env.PHOTOS,`rollbacks/${job}/job.json`,JSON.stringify({snapshot:body.id,target:body.target,base:cur.value,owner:user.email}));
+    await immutable(env.PHOTOS,`rollbacks/${job}/job.json`,JSON.stringify({snapshot:body.id,target:body.target,base:cur.value,owner:user.email,revisions:currentRevisions}));
     await immutable(env.PHOTOS,`rollbacks/${job}/state.json`,JSON.stringify({cursor:0,done:false}));
     return json({done:false,job,cursor:0,total:c.files.length});
   }
@@ -269,11 +272,12 @@ export async function rollbackBrowser(env,user,body,c) {
     return json({done:true,job:body.job,id:body.id,url});
   }
   check(canonical(cur.value)===canonical(job.base),'current_snapshot_changed');
+  check(canonical(currentRevisions)===canonical(job.revisions),'source_changed_rebuild');
   const manifest=publicManifest(body.id,c),file=manifest.files[state.cursor];check(file,'invalid_rollback_cursor');
   await checked(await bytesOf(await bucket.get(file.key)),file);
   const next={cursor:state.cursor+1,done:false};
   if(next.cursor===manifest.files.length) {
-    await movePointer(env,user,{...c,base:job.base},body.id,bucket,'rollback',event);next.done=true;
+    await movePointer(env,user,{...c,base:job.base,revisions:job.revisions},body.id,bucket,'rollback',event);next.done=true;
   }
   const saved=await env.PHOTOS.put(`rollbacks/${body.job}/state.json`,JSON.stringify(next),condition(stateObj.etag));
   check(saved,'rollback_busy_retry');

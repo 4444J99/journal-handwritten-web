@@ -32,7 +32,7 @@ class ImmutableRestoreTests(unittest.TestCase):
         self.db = sqlite3.connect(":memory:")
         self.addCleanup(self.db.close)
 
-    def test_all_nine_collections_export_restore_and_revision_history(self):
+    def test_all_collections_export_restore_and_revision_history(self):
         docs = documents()
         for c in ie.COLLECTIONS:
             if c in ie.IMMUTABLE_COLLECTIONS:
@@ -63,7 +63,7 @@ class ImmutableRestoreTests(unittest.TestCase):
         after = list(self.db.execute("SELECT * FROM vf_docs WHERE collection IN ('notes','contributions','artifacts') ORDER BY collection,id"))
         self.assertEqual(after, before)
         self.assertEqual(dict(self.db.execute("SELECT collection,rev FROM vf_revs")),
-                         {c: 1 if c in ie.IMMUTABLE_COLLECTIONS else 2 for c in ie.COLLECTIONS})
+                         {c: 1 if c in ie.COLLISION_SAFE_COLLECTIONS else 2 for c in ie.COLLECTIONS})
 
     def test_api_style_json_and_reordered_pretty_export_are_identical_retries(self):
         self.db.executescript((ie.HERE / "schema.sql").read_text())

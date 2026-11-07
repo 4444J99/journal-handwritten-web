@@ -18,8 +18,10 @@ class PrivateBuildDependencies(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             (root / "studio/data").mkdir(parents=True)
-            (root / "site").mkdir()
-            (root / "studio/data/review.json").write_text(json.dumps({"pages": []}))
+            (root / "site/data").mkdir(parents=True)
+            (root / "site/data/j.json").write_text(json.dumps({"v": 2, "pages": [], "pieces": [], "groups": [], "atlas": [], "prov": {}}))
+            (root / "site/index.html").write_text('<html><head><title>Fixture</title><meta name=viewport content=width=device-width></head><body></body></html>')
+            (root / "studio/data/review.json").write_text(json.dumps({"pages": [], "items": []}))
             (root / "site/reader-features.js").write_text("import './reader-packages.js';\n")
             out = root / "studio-cf/dist"
             out.mkdir(parents=True)
@@ -33,6 +35,11 @@ class PrivateBuildDependencies(unittest.TestCase):
                 self.assertEqual(builder.main([]), 0)
                 for module in ("reader-features.js", "reader-packages.js"):
                     self.assertEqual((out / "site" / module).read_bytes(), (root / "site" / module).read_bytes())
+                self.assertTrue((out / "publish/pin.json").is_file())
+                sentinel.write_bytes(b"keep the last successful build")
+                (root / "site/data/j.json").write_text("{}")
+                self.assertEqual(builder.main([]), 1)
+                self.assertEqual(sentinel.read_bytes(), b"keep the last successful build")
 
 
 if __name__ == "__main__":

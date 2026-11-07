@@ -13,3 +13,4 @@ production/tools/.build/
 # Generated private publishing catalogue and deployment output
 /studio-cf/publish-prepared/
 /studio-cf/dist/
+/studio-cf/.dist-build-*/

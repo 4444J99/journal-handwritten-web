@@ -20,7 +20,11 @@ function localD1() {
     async batch(statements) {
       sqlite.exec('BEGIN IMMEDIATE');
       try {
-        const out = statements.map(s => ({ results: sqlite.prepare(s.sql).all(...s.args) }));
+        const out = statements.map(s => {
+          const statement = sqlite.prepare(s.sql);
+          if (statement.columns().length) return { results: statement.all(...s.args), meta: { changes: 0 } };
+          return { results: [], meta: { changes: Number(statement.run(...s.args).changes) } };
+        });
         sqlite.exec('COMMIT');
         return out;
       } catch (e) { sqlite.exec('ROLLBACK'); throw e; }
