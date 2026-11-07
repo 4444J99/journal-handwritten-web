@@ -1,8 +1,8 @@
 {
   "sourceBranch": "feat/variorum-builder",
   "sourceImplementationHead": "e90262e",
-  "readerCommit": "830c8db",
-  "shellSha256": "62f3098945ab43dcc467f74c1ad8b05de9ce9288743006446f7ccf493aea6b89",
+  "readerCommit": "7f14cb9",
+  "shellSha256": "9a785e12284dd17a275619f4de3894ce0b273b464a148775f705e8478227cfc9",
   "review": "spec and quality approved; attachment followup approved",
   "cloudflareNode": {
     "passed": 157,
@@ -38,6 +38,51 @@
       390
     ],
     "viewSwitchesPerWidth": 18,
+    "passed": true
+  },
+  "hiddenDerivedBitmapRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "kinds": [
+      "p",
+      "s",
+      "f"
+    ],
+    "render": [
+      "typeset",
+      "photo"
+    ],
+    "passed": true
+  },
+  "pageLevelEntryAndStanzaRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "pageEntries": [
+      "button",
+      "keyboard",
+      "pinch"
+    ],
+    "withoutLineFocus": true,
+    "afterPageNavigation": true,
+    "frozenStanzaViews": [
+      "words",
+      "scan",
+      "study"
+    ],
+    "passed": true,
+    "alternateModeStaleSourcePrevented": true
+  },
+  "photoOnlyBookmarkRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "showsReleasedImage": true,
+    "transcribedPhotoRemainsWords": true,
     "passed": true
   }
 }

@@ -21,3 +21,13 @@ Local source and reader branches contain committed implementation; no live resou
 Verified and fixed review findings in the canonical reader: supplemental layout membership, composite photo canvas and thumbnails, scan-page lookup, accepted parsed readings, modal keyboard ownership, and Study rendering without synthetic source geometry or image requests. Added real Chromium regressions at desktop and phone widths; the same harness reproduces the Type-view exception on baseline e359698. Native single-version rendering remains supported. Regenerated both public shells and the matching Studio pin without publishing poem content.
 
 Housekeeping PR #143 subsequently resolved the baseline timeout test; integrated feature CI passed all five suites at a4690b64d93cde2d70a5feb015481cbe0833c249 (verification receipt: integrated-ci.json). Independent review approved the reader fixes. The generated reader follow-up is commit 830c8db; it is local and unpushed.
+
+Late reader review fixed derived transition bitmap snapshots when the live item is hidden. Snapshot drawing now receives a visible copy without changing the live item. Chromium checks both text and photo page/line bitmaps at desktop and phone widths, with nontransparent pixels and the hidden state preserved. Regenerated matching public shells and Studio pin; no content release.
+
+Final review moved hidden-bitmap observation entirely into the local browser harness through source instrumentation; the published reader has no additional mutable debug method. The same Chromium regression passes and the matching package/pin was regenerated.
+
+Additional verified reader fixes preserve page-level Variorum entry without a selected line and frozen stanza breaks in Words, Scan and Study. Variorum alone falls back to the current page piece/version; note anchors retain their line-scoped behavior. Chromium exercises button, keyboard and native touch pinch before/after page navigation at both widths and measures the stanza gaps. Matching shells/pin regenerated; no content release.
+
+Scoped review restricts the new no-line Variorum fallback to Journal mode; Hand ↔ Font and Revisions cannot resolve a stale journal page. Real-browser keyboard and touch pinch checks for both alternate modes pass without a wrong comparison modal.
+
+Final scoped bookmark fix opens photo-only supplemental versions in Scan so the released photograph is visible on a stable piece/version link. Versions with transcription retain their Words route. Chromium verifies the photo-only bookmark loads its image at both widths, and the same check fails against the previous source. Regenerated matching shells/pin; no release.

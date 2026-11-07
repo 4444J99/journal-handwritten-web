@@ -2036,6 +2036,7 @@ function wordsHTML(p){
     if (bi > 0) h += `<div class="wl sp" aria-hidden="true"></div>`;
     if (b.t === 5){ h += `<div class="wl sp" aria-hidden="true"></div>`; return; }
     b.L.forEach((raw, li) => {
+      if(bi===0 && p.frozenLines?.[li]?.breakBefore)h+=`<div class="wl sp" aria-hidden="true"></div>`;
       const nd = b._n[li];
       if (isQuote(nd)){ h += `<div class="wl q" role="separator"></div>`; return; }
       const ind = indentOf(raw);
@@ -2052,6 +2053,7 @@ function studyTextHTML(p){
     if (bi > 0) h += `<div class="ln gap" aria-hidden="true"></div>`;
     if (b.t === 5) return;
     b.L.forEach((raw, li) => {
+      if(bi===0 && p.frozenLines?.[li]?.breakBefore)h+=`<div class="ln gap" aria-hidden="true"></div>`;
       const nd = b._n[li];
       if (isQuote(nd)){ h += `<div class="ln q" role="separator"></div>`; return; }
       const box = !p.derivedRender && p.box[bi + "-" + li], ind = indentOf(raw);
@@ -2578,7 +2580,7 @@ function bitmapFor(it){ // a canvas carrying the line or page as drawn on the co
   const ar = it.w / it.h, W = Math.min(it.kind === "p" ? 700 : 900, Math.max(40, src ? src[3] : 200)), H = Math.max(8, W / ar);
   const c = document.createElement("canvas"); c.width = Math.round(W); c.height = Math.round(H);
   const x = c.getContext("2d");
-  if(p.derivedRender){drawItem(x,it,1,c.width/it.w,0,0,true,0,0,{x:it.w/2,y:it.h/2,r:0,s:1,a:1});return c;}
+  if(p.derivedRender){drawItem(x,{...it,hide:false},1,c.width/it.w,0,0,true,0,0,{x:it.w/2,y:it.h/2,r:0,s:1,a:1});return c;}
   if (it.kind === "p"){ x.fillStyle = TH.sheet; x.fillRect(0, 0, c.width, c.height); }
   if (src){ x.globalCompositeOperation = it.kind === "p" ? TH.blend : "source-over"; x.drawImage(src[0], src[1], src[2], src[3], src[4], 0, 0, c.width, c.height); }
   if (it.kind === "p"){ c.style.mixBlendMode = "normal"; c.style.boxShadow = "0 14px 34px -14px var(--sh-2)"; }
@@ -2695,7 +2697,7 @@ function finishToBook(){
   syncControls();
   if (document.activeElement && document.activeElement !== body && document.activeElement !== menuButton && !ov.contains(document.activeElement)) document.activeElement.blur();
 }
-function pinchClose(){ if (side === "book" && !xfer){const source=selectedSource();if(source&&PIECES.find(p=>p.id===source.pieceId)?.n>1)openVariorum(source.pieceId,source.versionId);else closeBook();} }
+function pinchClose(){ if (side === "book" && !xfer){const source=variorumSource();if(source&&PIECES.find(p=>p.id===source.pieceId)?.n>1)openVariorum(source.pieceId,source.versionId);else closeBook();} }
 function closeBook(){
   if (xfer || side !== "book") return;
   closePanels(); hideUI(true); stopPlay(); stopHF(); sourceChanged(); B.unavailableHash = null;
@@ -3110,6 +3112,14 @@ function selectedSource(){
   if (!L || !PIECES[L.piece] || L.vi === undefined) return null;
   return {pieceId:PIECES[L.piece].id, versionId:PIECES[L.piece].V[L.vi].id};
 }
+// Page-level Variorum entry does not change the line-scoped source used by notes.
+function variorumSource(){
+  const source=selectedSource();if(source)return source;
+  if(side!=="book"||B.mode!=="journal")return null;
+  const g=bookPiece();if(g===null)return null;
+  const pc=PIECES[g],version=pc.V[bookCurVer(g)];
+  return version?{pieceId:pc.id,versionId:version.id}:null;
+}
 /* Variorum: a view of the existing stack, with one vertical row grid. */
 let variorumClose = null;
 function openVariorum(pieceId, initialVersionId, single=false){
@@ -3147,8 +3157,8 @@ function openVariorum(pieceId, initialVersionId, single=false){
  dialog.append(toolbar,grid);document.body.append(dialog);dialog.addEventListener('cancel',e=>{e.preventDefault();close();},{signal:abort.signal});document.addEventListener('reader:sourcechange',close,{signal:abort.signal});grid.className='vf-grid';draw();dialog.showModal();exit.focus();
  if(document.fonts)document.fonts.ready.then(()=>{if(dialog.isConnected)draw();});
 }
-const variorumButton=document.createElement('button');variorumButton.type='button';variorumButton.className='b';variorumButton.textContent='Variorum';variorumButton.id='v-variorum';variorumButton.onclick=()=>{const source=selectedSource();if(source)openVariorum(source.pieceId,source.versionId);};document.querySelector('#dock-ver').append(variorumButton);
-document.addEventListener('keydown',e=>{if(variorumClose||e.repeat)return;if(e.key?.toLowerCase()==='v'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest?.('input,textarea,select,[contenteditable]')){const source=selectedSource();if(source){e.preventDefault();openVariorum(source.pieceId,source.versionId);}}});
+const variorumButton=document.createElement('button');variorumButton.type='button';variorumButton.className='b';variorumButton.textContent='Variorum';variorumButton.id='v-variorum';variorumButton.onclick=()=>{const source=variorumSource();if(source)openVariorum(source.pieceId,source.versionId);};document.querySelector('#dock-ver').append(variorumButton);
+document.addEventListener('keydown',e=>{if(variorumClose||e.repeat)return;if(e.key?.toLowerCase()==='v'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest?.('input,textarea,select,[contenteditable]')){const source=variorumSource();if(source){e.preventDefault();openVariorum(source.pieceId,source.versionId);}}});
 
 function selectedSourceBinding(){
   const source = selectedSource(); if (!source) return null;
@@ -3185,7 +3195,7 @@ function readHash(){
     if (!pc || vi < 0) return {unavailable:true, requested:raw};
     const V = pc.V[vi], pid = V.s === "j" ? V.P[0]?.[0] : V.pg, b = V.s === "j" ? V.P[0]?.[1]?.[0] : 0;
     if (!BYID[pid] || !BYID[pid].B[b]) return {unavailable:true, requested:raw};
-    return {side:"book", mode:"journal", view:BYID[pid].sourceStatus === "staged-untranscribed" ? "scan" : "words", pid, k:b + "-0"};
+    return {side:"book", mode:"journal", view:BYID[pid].sourceStatus === "staged-untranscribed" || (BYID[pid].derivedRender === "photo" && !V.lines?.some(line=>line.text.trim())) ? "scan" : "words", pid, k:b + "-0"};
   }
   const t = (location.hash || "").slice(1).toLowerCase().replace(/[^a-z0-9-]/g, "").split("-").filter(Boolean);
   const alias = {zoom:"unfold", font:"type"};
