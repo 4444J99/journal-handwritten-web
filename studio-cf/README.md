@@ -454,3 +454,9 @@ The original hosted server-build spike used 24 ms CPU for one published page and
 The first real p001 confirmation and physical iPhone/laptop acceptance remain author actions. The live source selects V[0]; five author corrections currently reside on unpublished versions. The preview reports that distinction.
 
 Final confirmation and rollback share a non-expiring D1 fence with Studio source writes. Recovery first changes the R2 pointer ETag before releasing an abandoned fence, preventing a delayed upload from publishing after a source edit. Source writes return 409 during that short final operation; opening Publication history completes recovery. Only committed publication receipts appear as rollback targets.
+
+### Prevent raw-source deployment
+
+The repository's site/ directory is private source. Its _worker.js deliberately returns 403 on Pages, including for data and images. Deploy Studio only from studio-cf/dist with its authenticated Functions; deploy readers only from the reviewed public reader package. The raw-source guard must not be copied into either generated output.
+
+Staging uses the public package's staging/ project directory and site/ output, with PUBLIC bound only to versforms-staging. Do not connect it to the private journal-handwritten-web repository or deploy that repository's top-level site/. The owner acceptance check exposed such a Dashboard connection; automatic Git deployments were disabled and the correct reader restored. Keep source, build root and uses_functions in the remote verification receipt, not only the commit label.
