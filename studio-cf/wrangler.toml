@@ -26,4 +26,4 @@ bucket_name = "versforms-public"
 
 [vars]
 PUBLISH_BUILD_MODE = "browser"
-PUBLISH_SHELL_SHA256 = "c4137a223ed2efe1b1e1a739be6e2c0305140cf8f6d9b04d96e31cf19155a1df"
+PUBLISH_SHELL_SHA256 = "62f3098945ab43dcc467f74c1ad8b05de9ce9288743006446f7ccf493aea6b89"

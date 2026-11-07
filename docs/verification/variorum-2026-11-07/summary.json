@@ -1,8 +1,8 @@
 {
   "sourceBranch": "feat/variorum-builder",
   "sourceImplementationHead": "e90262e",
-  "readerCommit": "037478ef425dd6a117948ec71cc137d10a1dedd8",
-  "shellSha256": "c4137a223ed2efe1b1e1a739be6e2c0305140cf8f6d9b04d96e31cf19155a1df",
+  "readerCommit": "830c8db",
+  "shellSha256": "62f3098945ab43dcc467f74c1ad8b05de9ce9288743006446f7ccf493aea6b89",
   "review": "spec and quality approved; attachment followup approved",
   "cloudflareNode": {
     "passed": 157,
@@ -19,11 +19,25 @@
   },
   "repositoryPython": {
     "run": 400,
-    "failed": 1,
+    "failed": 0,
     "skipped": 1,
-    "baselineFailure": "test_timeout_kills_the_whole_process_group reproduced from c5e1194"
+    "baselineFailureResolvedBy": "#143"
   },
   "browserScenarios": 4,
   "physicalIPhoneTested": false,
-  "deployed": false
+  "deployed": false,
+  "integratedCI": {
+    "sha": "a4690b64d93cde2d70a5feb015481cbe0833c249",
+    "passed": true,
+    "suites": 5,
+    "receipt": "integrated-ci.json"
+  },
+  "readerReviewRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "viewSwitchesPerWidth": 18,
+    "passed": true
+  }
 }
