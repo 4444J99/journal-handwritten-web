@@ -18,6 +18,7 @@ playground/designs/, playground/snapshots/, playground/sources.json.
 Writes only into the output directory.
 """
 import argparse
+import os
 import csv
 import json
 import re
@@ -263,8 +264,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(PG / "dist"))
     a = ap.parse_args(argv)
-    out = Path(a.out).resolve()
-    default = (PG / "dist").resolve()
+    # Compare lexically normalised paths, never resolved ones: a symlinked output
+    # directory must not make its target count as the generated default.
+    out = Path(os.path.abspath(a.out))
+    default = Path(os.path.abspath(PG / "dist"))
+    if out.is_symlink():
+        raise SystemExit(f"refusing to write through a symlink: {out}")
     if out.exists() and out != default and any(out.iterdir()):
         raise SystemExit(f"refusing to write into a non-empty directory other than {default}: {out}")
     if out == default and out.exists():
