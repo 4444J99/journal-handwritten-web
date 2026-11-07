@@ -1,0 +1,53 @@
+{
+  "sha": "b181fc2db97ffbce54811a3d99139ca3961b668c",
+  "branch": "chore/repository-reconciliation",
+  "tree": "clean",
+  "passed": true,
+  "suites": [
+    {
+      "suite": "check",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.1,
+      "detail": "OK",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "py-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 125.7,
+      "detail": "391 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "node-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 4.4,
+      "detail": "117 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-py",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.4,
+      "detail": "60 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-node",
+      "ok": true,
+      "exit": 0,
+      "seconds": 56.3,
+      "detail": "134 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    }
+  ]
+}

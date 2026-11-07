@@ -1,0 +1,497 @@
+[
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "alive-prototype",
+    "expectedOid": "0561f712e0061db5317115097af72e874c9652d9",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         alive-prototype"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "alive-prototype-wip",
+    "expectedOid": "04668785faae56eb71534849d385c1cd3f029507",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         alive-prototype-wip"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "alive-prototype-wip-final",
+    "expectedOid": "eece4f56ffaae81500aaf94fd18852b2038e06d6",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         alive-prototype-wip-final"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "chat-log-2026-11-05",
+    "expectedOid": "809a244a23a8416f05810ff7e6c2eca481bd3549",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         chat-log-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "check-fail-on-unmanifested",
+    "expectedOid": "6875395412227188d8d071f2a22d0335fb27ab08",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         check-fail-on-unmanifested"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "ci-local",
+    "expectedOid": "6a363d28ae5d120c48eded079d085f809134fe63",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         ci-local"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "ci-on-cloudflare",
+    "expectedOid": "50b47aa291e1b6faec3bfdfbaabd165db8b0702a",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         ci-on-cloudflare"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "claude-project-docs",
+    "expectedOid": "f68a56ee589e71b96ad2434294ce24aea45025e4",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         claude-project-docs"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "codex/reader-menu-author-marks-20261106",
+    "expectedOid": "2884c4c5337c23fb9b159767c37bbfee8b8b62d4",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         codex/reader-menu-author-marks-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "derived-decisions",
+    "expectedOid": "082e3f782612885fb2c6e47a402dd75d906404e1",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         derived-decisions"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "docs-chat-lanes-2026-11-05",
+    "expectedOid": "6806d2c62b4b2f2410b071aed582cb80c200723b",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         docs-chat-lanes-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "docs-noindex",
+    "expectedOid": "f6b5088a2850a72de34ca9640f0e940f77d24b20",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         docs-noindex"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "docs-session-2026-11-05",
+    "expectedOid": "ebd130cb079ee58df67d084b5445fdad841fe88d",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         docs-session-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "docs/studio-access-repair-20261106",
+    "expectedOid": "8ab45fe29aac6abd362c457a382870077a1fc717",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         docs/studio-access-repair-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "export/studio-db-2026-11-05",
+    "expectedOid": "7a686b51c386a87861fcaf4333d3c60394121f89",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         export/studio-db-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fail-check-on-unmanifested-content-8589277376079234858",
+    "expectedOid": "b7333517455bc69be5ef0a0398726304aafbb0be",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         fail-check-on-unmanifested-content-8589277376079234858"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "feat/studio-publish-20261106",
+    "expectedOid": "bd0b57ac88dc8144bcf47d518bdf9a77fd55c77c",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         feat/studio-publish-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/launch-completion-2026-11-06",
+    "expectedOid": "bfa14d687a7ce8245105a6e45dc49478d907f112",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         fix/launch-completion-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/post-poem-hardening-complete-20261106",
+    "expectedOid": "104be9cb000800bfc5c01b8a9ebbbbdf5e218922",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         fix/post-poem-hardening-complete-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/public-metadata-diary1-20261106",
+    "expectedOid": "a0646be8518d4c1833c7dbf599940340c2d4c089",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         fix/public-metadata-diary1-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "guard-pages-workflow",
+    "expectedOid": "bf9b0612322295fb2a910368eadf8688fa4f1cfb",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         guard-pages-workflow"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "integration/closeout-2026-11-06",
+    "expectedOid": "1cf3bb345c81e0118f84b48564765bebeb42a992",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         integration/closeout-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "integration/private-engineering-closeout-2026-11-06",
+    "expectedOid": "9939f2098fcf65e9fd009f9cf970c10064ea44b8",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         integration/private-engineering-closeout-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "integration/private-preview-consumers-2026-11-06",
+    "expectedOid": "e62b0c462bef1d1a2920cd5f0387418ec1773009",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         integration/private-preview-consumers-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "playground-out-guard",
+    "expectedOid": "6a3a04d719dff9df0075e93dddc3fa4d3ab14861",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         playground-out-guard"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "post-poem-gates",
+    "expectedOid": "15cad30cb923161716be51b2d075a6b98062cad4",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         post-poem-gates"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "post-poem-hardening-2026-11-06",
+    "expectedOid": "7d03ac7715a7ee4d2ca3f3f4d569498633c00e25",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         post-poem-hardening-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "post-poem-hardening-wip",
+    "expectedOid": "c78e903ac3c3589437c302d7b7cfee73dad85561",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         post-poem-hardening-wip"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "rebuild-path-docs",
+    "expectedOid": "1699449d3a18ef2c22863780900f790725df77e7",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         rebuild-path-docs"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "record-addendum-2026-11-06",
+    "expectedOid": "5c33bfa091dffca56b6ed329afb827f43f9bc4a5",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         record-addendum-2026-11-06"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "record-final-2026-11-05",
+    "expectedOid": "53293de0e1a2ca6255708fb44b0ffea8ecdd08a8",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         record-final-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "record-update-2026-11-05",
+    "expectedOid": "69fa18cbf8251226d11732f33937aca777327240",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         record-update-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "release-mark-posted",
+    "expectedOid": "9914af909db9dc2ea257303eb64c7f2e99eb9b3a",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         release-mark-posted"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "site-v4-verification",
+    "expectedOid": "9197ccc4a8654a6c51a8fa21974a2849785b6fad",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         site-v4-verification"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "studio-cloudflare",
+    "expectedOid": "b231cb63827fcae82f65562596349cdd9822d7c0",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         studio-cloudflare"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t03/release-packet-2026-11-05",
+    "expectedOid": "e0177fa8a53ee41eda31a90253fbab3cc798556e",
+    "disposition": "superseded by recorded successor",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t03/release-packet-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t03/release-packet-2026-11-05-current",
+    "expectedOid": "aff12fbb91ba56aeb6b0f2aac08aed8a96593f82",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t03/release-packet-2026-11-05-current"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t05/private-notes-contributions-2026-11-05",
+    "expectedOid": "3eeee91a9c92b5a439a4f73e699e606e2d65a1c2",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t05/private-notes-contributions-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t06/identity-audience-2026-11-05",
+    "expectedOid": "3c8eeada490417d624c3ea71be9b2702d553fe05",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t06/identity-audience-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t07/media-production-kit-2026-11-05",
+    "expectedOid": "334ef91dd8b3622161e9892c6ff434c7972246ca",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t07/media-production-kit-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t08/source-regions-pilot-2026-11-05",
+    "expectedOid": "ed040031265aa2d6a48e6411b938cd765a5fc60f",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t08/source-regions-pilot-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t09/audio-pilot-2026-11-05",
+    "expectedOid": "982058eef6ea6a9470498e6a1764f327c877628a",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t09/audio-pilot-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "t10/script-realization-glyphs-2026-11-05",
+    "expectedOid": "f0a54a702a71afd5006268a98757f0b8e85d3b1d",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         t10/script-realization-glyphs-2026-11-05"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "verify-cleanup-await-exit",
+    "expectedOid": "33a29625922db138287dd49d30fa19500eec480a",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         verify-cleanup-await-exit"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "workbench-launcher",
+    "expectedOid": "6fc025b5311b372a13324ba124e1886093f20e76",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/journal-handwritten-web.git\n - [deleted]         workbench-launcher"
+  },
+  {
+    "repository": "versforms",
+    "branch": "blank-title-versforms",
+    "expectedOid": "d66006bb34c384792170c737ba8d10c72ad9be42",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/versforms.git\n - [deleted]         blank-title-versforms"
+  },
+  {
+    "repository": "versforms",
+    "branch": "codex/reader-menu-author-marks-20261106",
+    "expectedOid": "0b8eab72e060565cc663d08f21266edfd1a373c8",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/versforms.git\n - [deleted]         codex/reader-menu-author-marks-20261106"
+  },
+  {
+    "repository": "versforms",
+    "branch": "feat/studio-publish-20261106",
+    "expectedOid": "2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+    "disposition": "integrated",
+    "preservedBy": "archive/branches-2026-11-07",
+    "result": "deleted",
+    "detail": "To https://github.com/4444J99/versforms.git\n - [deleted]         feat/studio-publish-20261106"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "chore/repository-reconciliation",
+    "expectedOid": "b181fc2db97ffbce54811a3d99139ca3961b668c",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "feat/variorum-builder",
+    "expectedOid": "a4690b64d93cde2d70a5feb015481cbe0833c249",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/variorum-reader-review",
+    "expectedOid": "5f7258a336889338ff1231fcacaa501a3464548f",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/variorum-transition-bitmap",
+    "expectedOid": "6c20ff56e0f412ca066d3add44ca3dddbcc08477",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/variorum-bookmark-theme",
+    "expectedOid": "53a4310387c56a968b5682cdeeeb8edefcdef309",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "journal-handwritten-web",
+    "branch": "fix/variorum-source-context",
+    "expectedOid": "6514d8a16db1c06159fc9af6caa7cc5361bfa10e",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  },
+  {
+    "repository": "versforms",
+    "branch": "feat/variorum-builder",
+    "expectedOid": "00c8717c0977afaa02a7766abf9197e145c74f7e",
+    "disposition": "integrated",
+    "preservedBy": "main ancestry and merged PR",
+    "result": "deleted",
+    "detail": "Exact-tip lease deletion completed; verified absent and ancestor of current main"
+  }
+]

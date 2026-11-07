@@ -1,0 +1,53 @@
+{
+  "sha": "6514d8a16db1c06159fc9af6caa7cc5361bfa10e",
+  "branch": "fix/variorum-source-context",
+  "tree": "clean",
+  "passed": true,
+  "suites": [
+    {
+      "suite": "check",
+      "ok": true,
+      "exit": 0,
+      "seconds": 0.1,
+      "detail": "OK",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "py-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 124.9,
+      "detail": "400 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "node-tests",
+      "ok": true,
+      "exit": 0,
+      "seconds": 4.4,
+      "detail": "128 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-py",
+      "ok": true,
+      "exit": 0,
+      "seconds": 1.7,
+      "detail": "68 tests, 1 skipped",
+      "skipped": 1,
+      "tail": []
+    },
+    {
+      "suite": "studio-cf-node",
+      "ok": true,
+      "exit": 0,
+      "seconds": 58.8,
+      "detail": "157 pass, 0 fail",
+      "skipped": 0,
+      "tail": []
+    }
+  ]
+}
