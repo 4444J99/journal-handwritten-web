@@ -18,10 +18,18 @@ const require = createRequire(import.meta.url);
 const playwright = require(arg('--playwright') || path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES || '', 'playwright'));
 const engine = arg('--browser') || 'chromium';
 if (!['chromium', 'webkit', 'firefox'].includes(engine)) throw new Error('Unknown browser engine.');
+const viewportCases = [
+  {name:'phone', width:390, height:844, touch:true},
+  {name:'desktop', width:1280, height:900, touch:false},
+  {name:'narrow-phone', width:320, height:568, touch:true},
+  {name:'landscape', width:844, height:390, touch:true},
+];
+const selectedViewports = arg('--viewports')?.split(',') || viewportCases.map(v => v.name);
+assert.ok(selectedViewports.length && selectedViewports.every(name => viewportCases.some(v => v.name === name)), 'Unknown viewport selection.');
 const html = arg('--html') ? path.resolve(arg('--html')) : path.join(root, 'site/index.html');
 const htmlBytes = fs.readFileSync(html), sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const checks = [], pageErrors = [], assetErrors = [];
-const report = {engine, readerSha256:sha(htmlBytes), checks, pageErrors, assetErrors, physicalDevices:'not tested'};
+const report = {engine, viewports:selectedViewports, readerSha256:sha(htmlBytes), checks, pageErrors, assetErrors, physicalDevices:'not tested'};
 const types = {'.html':'text/html; charset=utf-8', '.json':'application/json', '.js':'text/javascript', '.mjs':'text/javascript', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.png':'image/png', '.svg':'image/svg+xml', '.webp':'image/webp', '.woff2':'font/woff2', '.css':'text/css'};
 const server = http.createServer((req, res) => {
   const pathname = new URL(req.url, 'http://localhost').pathname;
@@ -40,6 +48,18 @@ const activate = async (locator, touch) => { await locator.scrollIntoViewIfNeede
 const readerState = page => page.evaluate(() => ({hash:location.hash, focus:__jc.focusKey(), cam:{...__jc.cam}, book:__jc.book()}));
 const visible = locator => locator.isVisible();
 let browser, activePage;
+
+async function assertReaderShortcutsBlocked(page, context) {
+  const snapshot = () => page.evaluate(() => {
+    const stack = __jc.stack();
+    return {side:__jc.side, transfer:__jc.xfer, hash:location.hash, focus:__jc.focusKey(), cam:{...__jc.cam}, book:__jc.book(), version:stack ? {front:stack.front, target:stack.pt} : null};
+  });
+  const before = await snapshot();
+  for (const key of ['ArrowRight', 'b', '=', '-', '[', ']']) {
+    await page.keyboard.press(key);
+    assert.deepEqual(await snapshot(), before, context + ': ' + key + ' must not change the reader underneath open controls.');
+  }
+}
 
 async function assertVisibleLabels(menu) {
   const labels = await menu.locator('button').evaluateAll(buttons => {
@@ -122,9 +142,7 @@ async function checkPanel(page, touch, launcher, {trigger, panel, close, name}) 
   await activate(page.locator(trigger), touch);
   await page.locator(panel).waitFor({state:'visible'});
   assert.equal(await page.locator(panel).evaluate(e => e.contains(document.activeElement)), true, name + ' must receive focus.');
-  const before = await readerState(page);
-  await page.keyboard.press('ArrowRight');
-  assert.deepEqual(await readerState(page), before, name + ' keyboard input must not navigate the work underneath.');
+  await assertReaderShortcutsBlocked(page, name);
   await page.keyboard.press('Escape');
   assert.equal(await visible(page.locator(panel)), false, 'Escape closes the active panel first.');
   assert.equal(await launcher.getAttribute('aria-expanded'), 'true', 'Closing a panel preserves the open menu.');
@@ -138,12 +156,7 @@ async function checkPanel(page, touch, launcher, {trigger, panel, close, name}) 
 
 try {
   browser = await playwright[engine].launch({headless:true, ...(arg('--executable') ? {executablePath:arg('--executable')} : {})});
-  for (const size of [
-    {name:'phone', width:390, height:844, touch:true},
-    {name:'desktop', width:1280, height:900, touch:false},
-    {name:'narrow-phone', width:320, height:568, touch:true},
-    {name:'landscape', width:844, height:390, touch:true},
-  ]) {
+  for (const size of viewportCases.filter(v => selectedViewports.includes(v.name))) {
     const context = await browser.newContext({viewport:{width:size.width, height:size.height}, hasTouch:size.touch, isMobile:size.touch, reducedMotion:'reduce', colorScheme:'light'});
     await context.route('**/*', route => new URL(route.request().url()).origin === base ? route.continue() : route.abort());
     const page = activePage = await context.newPage();
@@ -207,15 +220,28 @@ try {
     await page.waitForFunction(() => __jc.state.endsWith('-spiral') && __jc.settled);
     assert.equal(await page.locator('[data-a="spiral"]').getAttribute('aria-pressed'), 'true');
     await page.locator('[data-a="spiral"]').focus();
-    const beforeKey = await readerState(page);
-    await page.keyboard.press('ArrowRight');
-    assert.deepEqual(await readerState(page), beforeKey, 'Navigation keys on menu controls must not pan or turn the artwork.');
+    await assertReaderShortcutsBlocked(page, size.name + ' menu');
     await page.keyboard.press('Escape');
     assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
     assert.equal(await page.evaluate(() => document.activeElement.id), id);
     await page.keyboard.press('Escape');
     assert.equal(await launcher.getAttribute('aria-expanded'), 'false', 'Escape must not reopen a closed menu.');
     pass(size.name + ': selection works, keys stay in the menu and Escape restores focus');
+    if (size.name === 'desktop') {
+      const beforePan = await page.evaluate(() => __jc.cam.x);
+      await page.keyboard.press('ArrowRight');
+      const afterPan = await page.evaluate(() => __jc.cam.x);
+      assert.ok(afterPan > beforePan, 'ArrowRight must resume canvas navigation while the closed launcher retains focus after Escape.');
+      const beforeZoom = await page.evaluate(() => __jc.cam.s);
+      await page.keyboard.press('=');
+      const afterZoom = await page.evaluate(() => __jc.cam.s);
+      assert.ok(afterZoom > beforeZoom, 'Zoom-in shortcut remains available after Escape.');
+      await page.keyboard.press('-');
+      assert.ok(await page.evaluate(() => __jc.cam.s) < afterZoom, 'Zoom-out shortcut remains available after Escape.');
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
+      pass('closed launcher resumes canvas navigation and zoom after Escape', {beforePan, afterPan, beforeZoom, afterZoom});
+    }
 
     await launcher.press('Enter');
     assert.equal(await launcher.getAttribute('aria-expanded'), 'true');
@@ -226,6 +252,32 @@ try {
     assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
     assert.equal(await page.evaluate(() => document.activeElement.id), id);
     pass(size.name + ': native Enter/Space open once and explicit close restores focus');
+    if (size.name === 'desktop') {
+      const beforePan = await page.evaluate(() => __jc.cam.x);
+      await page.keyboard.press('ArrowRight');
+      assert.ok(await page.evaluate(() => __jc.cam.x) > beforePan, 'ArrowRight remains available after explicit Close.');
+      const beforeZoom = await page.evaluate(() => __jc.cam.s);
+      await page.keyboard.press('=');
+      assert.ok(await page.evaluate(() => __jc.cam.s) > beforeZoom, 'Zoom remains available after explicit Close.');
+      await page.keyboard.press('-');
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
+      pass('closed launcher resumes canvas navigation and zoom after Close');
+
+      await page.keyboard.press('b');
+      await page.waitForFunction(() => __jc.side === 'book' && !__jc.xfer);
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      await page.keyboard.press('Home');
+      await page.waitForFunction(() => __jc.book().pid === 'diary1');
+      const firstPage = await page.evaluate(() => __jc.book().pid);
+      await page.keyboard.press('ArrowRight');
+      await page.waitForFunction(pid => __jc.book().pid !== pid, firstPage);
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
+      await page.keyboard.press('b');
+      await page.waitForFunction(() => __jc.side === 'canvas' && !__jc.xfer);
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      pass('closed launcher preserves B switching and journal keyboard navigation');
+    }
     if (size.touch) {
       await launcher.tap();
       await page.locator('#menu-close').tap();
@@ -389,6 +441,25 @@ try {
         await page.keyboard.press('Escape');
       }
       pass('opening Menu cancels both short and long active canvas gestures');
+
+      const originalVersion = await page.evaluate(() => __jc.stack()?.front);
+      assert.ok(originalVersion && await page.evaluate(() => __jc.stack().n > 1), 'Version-shortcut check uses an existing multiversion work.');
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      await page.keyboard.press('[');
+      await page.waitForFunction(front => __jc.stack()?.front !== front, originalVersion);
+      await page.keyboard.press(']');
+      await page.waitForFunction(front => __jc.stack()?.front === front, originalVersion);
+      assert.equal(await launcher.getAttribute('aria-expanded'), 'false');
+      assert.equal(await page.evaluate(() => document.activeElement.id), id);
+      pass('closed launcher retains earlier/later version shortcuts after dismissal');
+
+      await launcher.press('Enter');
+      await assertReaderShortcutsBlocked(page, 'focused-version menu');
+      await page.locator('#b-info').click();
+      await assertReaderShortcutsBlocked(page, 'focused-version About');
+      await page.locator('#i-x').click();
+      await page.keyboard.press('Escape');
+      pass('open menu and About still suppress navigation, zoom and version shortcuts');
     }
     await context.close(); activePage = null;
   }

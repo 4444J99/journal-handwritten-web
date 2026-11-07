@@ -7,8 +7,14 @@
 - Updated the [reader menu design](../superpowers/specs/2026-11-06-reader-menu-design.md) and [implementation plan](../superpowers/plans/2026-11-06-reader-menu.md) to distinguish the original engineering proposal from the later approved drawing-based direction.
 - Prepared the private [About writing brief](../audience/about-writing-brief.md), including prompts, dated source limits and insertion instructions. No creative or interpretive About statement was written for the author.
 - Added the same scoped update to `docs/plan.md` and `claude/plan.md`, and indexed this session.
-- Implemented the source reader and traced author assets; independently verified 61 WebKit checks with no script/asset failures. The final source SHA-256 is `92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10`.
-- Rebuilt and tested the public package, with identical production/staging shells and matching versioned Studio pin `35bb01c5340f2501a4f949f91d989a729e21d9261239b9f94784562d22185cec`. The [verification receipt](2026-11-06-reader-menu-verification.json) binds the checks to those exact artifacts. Branch/PR integration and hosted deployment observations are recorded by the integrator in the associated pull requests.
+- Implemented the source reader and traced author assets; independently verified 66 WebKit checks with no script/asset failures. The final source SHA-256 is `fa881488d207db1532cd689f6d41fd4b2b37976a5e978b7164be69681c80e3fa`.
+- Rebuilt and tested the public package, with identical production/staging shells and matching versioned Studio pin `2eafbf061b5b0b8081545d1822885d94a462ae30f12953f1f9b74994a73ef3b3`. The [verification receipt](2026-11-06-reader-menu-verification.json) binds the checks to those exact artifacts. Branch/PR integration and hosted deployment observations are recorded by the integrator in the associated pull requests.
+
+## Review correction and delivery
+
+[Private PR #139](https://github.com/4444J99/journal-handwritten-web/pull/139) and [public PR #3](https://github.com/4444J99/versforms/pull/3) carry the paired source/template changes. Both initial heads received successful Cloudflare preview and Semgrep checks. Their automated review then identified a keyboard regression: closing Menu restored launcher focus, but its button guard blocked reader shortcuts. The new test reproduced Escape followed by ArrowRight failing before the fix. A launcher-only exception now preserves native Enter/Space and allows existing navigation, zoom and version keys when controls are closed. All 66 final WebKit checks pass.
+
+The 61-check result on the earlier artifact remains historical evidence; it did not cover the reported sequence. The verification receipt retains both the failing regression baseline and the corrected result. Private GitHub Actions failed without available step/log evidence, so its current cause is unverified. Final head, merge and production-deployment receipts belong in the PRs; preview success alone is not a production or authenticated-runtime check.
 
 ## Author decisions
 
@@ -41,7 +47,7 @@ The separate destinations, DOM IDs, practical help wording and detailed interact
 
 ## Status
 
-**Implementation and local verification complete; repository integration is tracked in the associated pull requests.** The inspected private main is `9c0e9c565fb9d7bef3a68b21faa744010a401f60`; no open PRs were reported at that fresh inspection. The local `reader-source` folder is a snapshot, not a Git checkout. Neither that baseline nor this documentation pass establishes a new commit, merged PR, deployed engine or posted poem.
+**Implementation and local verification complete after the review correction; PR #139 and PR #3 are open at this record’s preparation. Final integration is tracked in those pull requests.** The inspected private main is `9c0e9c565fb9d7bef3a68b21faa744010a401f60`; no open PRs were reported at that fresh inspection. The local `reader-source` folder is a snapshot, not a Git checkout. Neither that baseline nor this documentation pass establishes a new commit, merged PR, deployed engine or posted poem.
 
 The author still supplies the About description. Browser emulation does not establish physical-iPhone acceptance. No public creative copy is invented to fill the empty section.
 

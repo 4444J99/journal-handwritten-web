@@ -47,10 +47,11 @@ The integrator supplies `site/ui/author-menu.svg`, `site/ui/author-crown.svg`, `
 - [x] Preserve the initial proposal as history and record the author's later visual decisions in the spec, session record and both plan copies.
 - [x] Rebuild the candidate engine privately with pinned dependencies; record its exact hash and activation dependency.
 - [x] Refresh the manifest only for intentional changes and run `python3 tools/check.py`.
-- [ ] Independently review the diff, complete the integrator's authorized delivery sequence and record its exact remote head/PR outcome.
+- [x] Independently review the diff and the reported closed-launcher keyboard regression; verify its bounded correction.
+- [x] Prepare paired [private PR #139](https://github.com/4444J99/journal-handwritten-web/pull/139) and [public PR #3](https://github.com/4444J99/versforms/pull/3). The integrator records final merge/head/deployment outcomes in those PRs.
 
 ## Validation and residuals
 
-The final source `92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10` passed 61 WebKit checks with zero script/asset errors, 11 public-metadata tests, and the repository integrity check (509 references, 536 checksums). The generated public package passed 9 tests. The production/staging shell and the versioned Studio pin agree at `35bb01c5340f2501a4f949f91d989a729e21d9261239b9f94784562d22185cec`. See [the verification receipt](../../chats/2026-11-06-reader-menu-verification.json). The integrator will record subsequent integration and hosted deployment outcomes in the associated pull requests; this pre-integration snapshot does not itself prove deployment.
+The final source `fa881488d207db1532cd689f6d41fd4b2b37976a5e978b7164be69681c80e3fa` passed 66 WebKit checks with zero script/asset errors, 11 public-metadata tests, and the repository integrity check (509 references, 536 checksums). The generated public package passed 9 tests. The production/staging shell and the versioned Studio pin agree at `2eafbf061b5b0b8081545d1822885d94a462ae30f12953f1f9b74994a73ef3b3`. See [the verification receipt](../../chats/2026-11-06-reader-menu-verification.json). The integrator will record subsequent integration and hosted deployment outcomes in the associated pull requests; this pre-integration snapshot does not itself prove deployment.
 
 The author still supplies the About words. Exact engine activation uses the existing review and matching Studio shell-pin process; successful UI verification does not publish a poem or establish physical-device acceptance. The original private context packet `2026-10-16-v1.1` / `2026-10-16-v1.1-r2` remains inaccessible.

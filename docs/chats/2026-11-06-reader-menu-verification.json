@@ -2,14 +2,20 @@
   "contract_version": "1.0",
   "date": "2026-11-06",
   "scope": "Reader menu, author-drawn controls, inverse palettes, About/Help structure and matching public engine pin",
-  "status": "implementation-verified; repository integration pending when this pre-integration receipt was written; subsequent disposition belongs in the associated pull requests",
+  "status": "implementation-verified after review correction; paired PRs open at receipt creation; final integration and deployment disposition is recorded in those PRs",
   "private_base": "9c0e9c565fb9d7bef3a68b21faa744010a401f60",
   "public_base": "0fff63baeba6192515d640c23f6e7b9a12ee480a",
-  "source_sha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
-  "public_shell_sha256": "35bb01c5340f2501a4f949f91d989a729e21d9261239b9f94784562d22185cec",
+  "source_sha256": "fa881488d207db1532cd689f6d41fd4b2b37976a5e978b7164be69681c80e3fa",
+  "public_shell_sha256": "2eafbf061b5b0b8081545d1822885d94a462ae30f12953f1f9b74994a73ef3b3",
   "browser": {
     "engine": "webkit",
-    "readerSha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
+    "viewports": [
+      "phone",
+      "desktop",
+      "narrow-phone",
+      "landscape"
+    ],
+    "readerSha256": "fa881488d207db1532cd689f6d41fd4b2b37976a5e978b7164be69681c80e3fa",
     "checks": [
       {
         "name": "phone: actual artwork has painted",
@@ -376,11 +382,11 @@
         "pass": true,
         "details": {
           "items": 839,
-          "drawn": 12,
+          "drawn": 24,
           "memory": {
             "sprites": 0,
             "sprPx": 0,
-            "tiles": 12,
+            "tiles": 24,
             "worker": true,
             "pend": 0,
             "dead": 0
@@ -406,7 +412,25 @@
         "pass": true
       },
       {
+        "name": "closed launcher resumes canvas navigation and zoom after Escape",
+        "pass": true,
+        "details": {
+          "beforePan": -34.86219249552187,
+          "afterPan": 582.017957667508,
+          "beforeZoom": 0.2626117892708761,
+          "afterZoom": 0.3939176839063141
+        }
+      },
+      {
         "name": "desktop: native Enter/Space open once and explicit close restores focus",
+        "pass": true
+      },
+      {
+        "name": "closed launcher resumes canvas navigation and zoom after Close",
+        "pass": true
+      },
+      {
+        "name": "closed launcher preserves B switching and journal keyboard navigation",
         "pass": true
       },
       {
@@ -451,6 +475,14 @@
       },
       {
         "name": "opening Menu cancels both short and long active canvas gestures",
+        "pass": true
+      },
+      {
+        "name": "closed launcher retains earlier/later version shortcuts after dismissal",
+        "pass": true
+      },
+      {
+        "name": "open menu and About still suppress navigation, zoom and version shortcuts",
         "pass": true
       },
       {
@@ -524,11 +556,11 @@
         "pass": true,
         "details": {
           "items": 839,
-          "drawn": 8,
+          "drawn": 10,
           "memory": {
             "sprites": 0,
             "sprPx": 0,
-            "tiles": 8,
+            "tiles": 13,
             "worker": true,
             "pend": 0,
             "dead": 0
@@ -622,10 +654,10 @@
   "source_snapshot": {
     "git_checkout": false,
     "baseline_tree": "d7cefcb5b7e333ecae7cac66435efedb08376ef7",
-    "publication_method": "Planned: GitHub Git Data API using the pinned parent and existing base tree; verify remote blob hashes before integration"
+    "publication_method": "GitHub Git Data API with preserved parent/base tree; initial 17 changed-file remote blob hashes verified; corrected revision and final integration receipts belong in the associated PRs"
   },
   "preservation": {
-    "prior_history": "Delivery requirement: preserve prior history through ordinary branches and merge commits; no deletions, force pushes or history rewriting",
+    "prior_history": "Initial PR branches extend existing history; final delivery must retain ordinary commits without deletions, force pushes or history rewriting",
     "author_source_photo": "Referenced by the private reader-marks-provenance.json; not copied into reader assets"
   },
   "limits": [
@@ -634,5 +666,97 @@
     "Author-written About paragraphs remain empty and hidden until supplied.",
     "No poem selection, release pointer, visibility, Access setting or noindex change.",
     "Private memory packet 2026-10-16-v1.1/r2 was inaccessible; no unseen content or historical approval was used."
-  ]
+  ],
+  "pull_requests": {
+    "private": "https://github.com/4444J99/journal-handwritten-web/pull/139",
+    "public": "https://github.com/4444J99/versforms/pull/3"
+  },
+  "review_correction": {
+    "finding": "Closed launcher focus blocked reader navigation shortcuts after dismissal",
+    "private_comment": 4500027024,
+    "public_comments": [
+      4500024786,
+      4500032154
+    ],
+    "baseline_source_sha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
+    "baseline_public_shell_sha256": "35bb01c5340f2501a4f949f91d989a729e21d9261239b9f94784562d22185cec",
+    "failing_browser_receipt": {
+      "engine": "webkit",
+      "viewports": [
+        "desktop"
+      ],
+      "readerSha256": "92a04f8d3ea918079fa2961983e49a08658a66447f090716da9d3f6dae7a3d10",
+      "checks": [
+        {
+          "name": "desktop: actual artwork has painted",
+          "pass": true,
+          "details": {
+            "items": 839,
+            "drawn": 13,
+            "memory": {
+              "sprites": 0,
+              "sprPx": 0,
+              "tiles": 13,
+              "worker": true,
+              "pend": 0,
+              "dead": 0
+            }
+          }
+        },
+        {
+          "name": "desktop: visible unobstructed launcher and no hidden tab stops",
+          "pass": true,
+          "details": {
+            "x": 1161.59375,
+            "y": 836,
+            "width": 106.40625,
+            "height": 52
+          }
+        },
+        {
+          "name": "desktop: one action exposes grouped labeled controls within the viewport",
+          "pass": true
+        },
+        {
+          "name": "desktop: selection works, keys stay in the menu and Escape restores focus",
+          "pass": true
+        }
+      ],
+      "pageErrors": [],
+      "assetErrors": [],
+      "physicalDevices": "not tested",
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: ArrowRight must resume canvas navigation while the closed launcher retains focus after Escape.\n    at file:///workspace/scratch/b6164d535251/reader-source/tools/verify_reader_menu.mjs:226:14",
+      "failureState": {
+        "active": "b-menu",
+        "body": "side-canvas m-journal v-scan ready",
+        "hash": "#lines-spiral",
+        "menu": "false",
+        "panels": [
+          {
+            "id": "searchp",
+            "hidden": true
+          },
+          {
+            "id": "infop",
+            "hidden": true
+          },
+          {
+            "id": "helpp",
+            "hidden": true
+          }
+        ]
+      }
+    },
+    "change": "Allow existing reader shortcuts from the closed launcher, preserving native Enter/Space and all other menu/panel/control guards",
+    "verification": "66/66 WebKit checks pass on the corrected exact source; 11 metadata and 9 package checks pass on the regenerated artifacts"
+  },
+  "initial_remote_checks": {
+    "private_head": "adcb3aaa4e4617ec2c9b1cb1a8eee9754987cd1f",
+    "public_head": "85e06c6ee51550e34567ce06523716c9f141649d",
+    "cloudflare_previews": "success for both initial heads",
+    "semgrep": "success for both initial heads",
+    "github_actions": "private check failed; supported tools returned no steps/log evidence, annotations were unavailable and log fetch returned BlobNotFound; cause unverified",
+    "deployment_scope": "Initial preview successes do not establish deployment of this corrected artifact; consult the PRs for final-head results"
+  }
 }
