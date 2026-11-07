@@ -1,0 +1,5 @@
+STATUS: private test material; not cleared for publication or distribution.
+may_publish: false
+author_clearance: null
+The manifest that hashes this zip is one level above the kit output.
+Private test material only. Nothing in this kit is cleared for publication, scheduling or distribution. A green build, a `filed`/`registered` string, `pool=series`, a Series label or a `--force` flag is not permission.

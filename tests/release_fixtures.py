@@ -1,0 +1,43 @@
+"""Synthetic release evidence for positive controls, never author decisions."""
+import release_contract as rc
+
+
+def clearance(manifest):
+    return {"schema": rc.CLEARANCE, "status": "approved", "manifestDigest": manifest["manifestDigest"],
+            "execution_authority": False,
+            "author_clearance": {"actor": "synthetic-test-only", "source": "synthetic:test-only",
+                                 "at": "2026-01-01T00:00:00Z", "manifestDigest": manifest["manifestDigest"]},
+            "pool_clearance": [{"pieceId": s["pieceId"], "versionId": s["versionId"],
+                                "pool": "series", "source": "synthetic:test-only"} for s in manifest["sources"]],
+            "evidence": {k: "synthetic:test-only" for k in
+                         ("filing_workflow", "image_exposure", "identity_metadata", "device_acceptance")}}
+
+
+def context(sources, components):
+    files = {c["path"]: {"path": c["path"], "bytes": 1, "sha256": c["sha256"]} for c in components}
+    body = {"schema": rc.SCHEMA, "files": list(files.values()), "sources": sources,
+            "components": components, "inputs": {}, "code": {}, "exposure": {"test_only": True}}
+    manifest = {**body, "manifestDigest": rc.digest(body)}
+    assert rc.validate_manifest(manifest) == []
+    return {"manifest": manifest, "clearance": clearance(manifest), "current_sources": sources}
+
+
+def regions(manifest):
+    import source_regions as sr
+    snapshots = []
+    for piece, version in sorted({(a["piece_id"], a["version_id"]) for a in manifest["atoms"]}):
+        atoms = [a for a in manifest["atoms"] if (a["piece_id"], a["version_id"]) == (piece, version)]
+        line_ids = sorted({a["source_ids"]["line_id"] for a in atoms if a.get("source_ids", {}).get("line_id")} |
+                          {line for a in atoms for line in a.get("lineage", {}).get("source_line_ids", [])})
+        if not line_ids:
+            line_ids = ["synthetic-" + piece + "-source-line"]
+        snapshots.append({"pieceId": piece, "versionId": version, "members": [[atoms[0]["page_id"], [0]]],
+                          "lines": [{"lineId": lid, "text": "SYNTHETIC RELEASE TEST SOURCE", "blockType": "text", "breakBefore": False} for lid in line_ids]})
+    bindings = sr.current_source_bindings(manifest, snapshots=snapshots)
+    sha = "sha256:" + sr.manifest_digest(manifest)
+    components = [{"kind": "regions", "id": sr.region_component_id(s["pieceId"], s["versionId"]),
+                   **s, "revisionDigest": sha, "fixture": False, "path": "regions.json", "sha256": sha}
+                  for s in bindings]
+    result = context(bindings, components)
+    result["source_snapshots"] = snapshots
+    return result

@@ -12,9 +12,9 @@ the document's data object exactly as the page stored it; the file name (minus
     python3 studio-cf/import_export.py EXPORT_DIR --sql-out import.sql --remote
 
 --dry-run   validate and print per-collection counts and rejects; write nothing.
---sql-out   write idempotent SQL: the schema (CREATE TABLE IF NOT EXISTS), one
-            rev bump per collection that receives documents, and one
-            INSERT OR REPLACE per document.
+--sql-out   write idempotent SQL: schema, collection revs and document writes.
+            The six legacy collections replace matching IDs. Notes and
+            contributions preserve matching revisions and reject collisions.
 --local DIR apply to the local wrangler D1 simulation persisted in DIR
             (wrangler d1 execute --local). Never touches Cloudflare.
 --remote    only PRINTS the command for the author to run; it is never executed
@@ -43,7 +43,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import sqlguard  # noqa: E402
 
-COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig")
+COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts", "publish")
+IMMUTABLE_COLLECTIONS = ("notes", "contributions", "artifacts")
+COLLISION_SAFE_COLLECTIONS = IMMUTABLE_COLLECTIONS + ("publish",)
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
 MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
@@ -84,8 +86,21 @@ def compact_size(data):
     return len(compact_json(data).encode("utf-8"))
 
 
+def valid_revision(collection, doc_id, data):
+    """Minimum persistence envelope. The studio model validates the full record."""
+    family = {"notes": "note", "contributions": "contribution", "artifacts": "artifact"}.get(collection)
+    def valid_id(value):
+        return isinstance(value, str) and DOC_ID_RE.fullmatch(value) and value not in (".", "..")
+    parents = data.get("parents")
+    return (type(data.get("schemaVersion")) is int and data["schemaVersion"] == 1
+            and data.get("family") == family and data.get("revisionId") == doc_id
+            and valid_id(data.get("recordId")) and isinstance(parents, list)
+            and all(valid_id(p) and p != doc_id for p in parents)
+            and len(set(parents)) == len(parents))
+
+
 def scan(export_dir):
-    """Returns (docs, rejects). docs: {collection: {id: data}} for all six collections."""
+    """Returns (docs, rejects). docs: {collection: {id: data}} for every collection."""
     root = Path(export_dir)
     if not root.is_dir():
         raise SystemExit(f"not a directory: {root}")
@@ -127,6 +142,9 @@ def scan(export_dir):
             if not isinstance(data, dict):
                 rejects.append(Reject(rel, "top level is not a JSON object"))
                 continue
+            if entry.name in IMMUTABLE_COLLECTIONS and not valid_revision(entry.name, doc_id, data):
+                rejects.append(Reject(rel, "invalid immutable revision envelope"))
+                continue
             try:
                 size = compact_size(data)
             except ValueError:
@@ -146,6 +164,20 @@ def sql_string(s):
     return "'" + s.replace("'", "''") + "'"
 
 
+def same_json_sql(left, right):
+    """Structural JSON equality, independent of object order/Unicode escaping.
+
+    json_tree reads only the supplied JSON values. Container nodes retain type;
+    leaves retain their full path, type and value, including array order.
+    JSON numbers compare numerically, as they do after the API's JSON.parse.
+    """
+    def tree(value):
+        return ("SELECT fullkey, CASE WHEN type IN ('integer', 'real') THEN 'number' ELSE type END, atom "
+                f"FROM json_tree({value})")
+    a, b = tree(left), tree(right)
+    return f"NOT EXISTS ({a} EXCEPT {b}) AND NOT EXISTS ({b} EXCEPT {a})"
+
+
 def build_sql(docs, now, include_schema=True):
     parts = []
     if include_schema:
@@ -156,14 +188,28 @@ def build_sql(docs, now, include_schema=True):
         if not items:
             continue
         c = sql_string(coll)
-        parts.append(f"INSERT INTO vf_revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
+        if coll in COLLISION_SAFE_COLLECTIONS:
+            for doc_id, data in items.items():
+                if coll in IMMUTABLE_COLLECTIONS and not valid_revision(coll, doc_id, data):
+                    raise ValueError(f"invalid immutable revision envelope: {coll}/{doc_id}")
+            ids = ", ".join(sql_string(doc_id) for doc_id in sorted(items))
+            absent = f"(SELECT count(*) FROM vf_docs WHERE collection = {c} AND id IN ({ids})) < {len(items)}"
+            parts.append(f"INSERT INTO vf_revs (collection, rev) SELECT {c}, 1 WHERE {absent} ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
+        else:
+            parts.append(f"INSERT INTO vf_revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
         for doc_id in sorted(items):
             # ensure_ascii keeps the statement pure ASCII with no raw newlines
             text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"), allow_nan=False)
-            parts.append(
-                "INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES "
-                f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}));"
-            )
+            values = f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}))"
+            if coll in COLLISION_SAFE_COLLECTIONS:
+                # A differing same-ID revision violates data's existing NOT NULL
+                # constraint and aborts this statement; it never replaces history.
+                # An identical retry retains original data, updated_at and rev.
+                parts.append("INSERT INTO vf_docs (collection, id, data, updated_at, rev) VALUES " + values
+                             + " ON CONFLICT(collection, id) DO UPDATE SET data = CASE WHEN "
+                             + same_json_sql("vf_docs.data", "excluded.data") + " THEN vf_docs.data ELSE NULL END;")
+            else:
+                parts.append("INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES " + values + ";")
     sql = "\n".join(parts) + "\n"
     # The database is shared with another project: refuse anything that is not a vf_ object.
     sqlguard.check(sql)

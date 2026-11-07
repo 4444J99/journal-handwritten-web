@@ -1,0 +1,10 @@
+--- a/studio/index.html
++++ b/studio/index.html
+@@ -310,6 +310,7 @@
+     <button role="tab" data-view="release" aria-selected="false">Release</button>
+     <button role="tab" data-view="search" aria-selected="false">Search</button>
+   </nav>
++  <p class="notes-entry"><a href="notes.html">Notes &amp; contributions</a></p>
+ </header>
+ 
+ <main id="main">

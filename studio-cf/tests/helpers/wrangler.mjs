@@ -65,10 +65,11 @@ export async function startPagesDev(vars, label = 'run', opts = {}) {
   if (!opts.persist) await d1Execute(persist, ['--file', path.join(STUDIO_CF, 'schema.sql')]);
 
   const port = await freePort();
-  const args = ['pages', 'dev', ...(opts.dir ? [opts.dir] : []), '--cwd', STUDIO_CF, '--ip', '127.0.0.1', '--port', String(port), '--persist-to', persist,
+  const args = ['pages', 'dev', opts.dir || path.resolve(STUDIO_CF, '../studio'), '--cwd', opts.cwd || STUDIO_CF, '--ip', '127.0.0.1', '--port', String(port), '--persist-to', persist,
     '--inspector-port', String(await freePort())];
+  if (opts.debug) args.push('--log-level', 'debug');
   for (const [k, v] of Object.entries(vars)) args.push('--binding', `${k}=${v}`);
-  const child = spawn(WRANGLER, args, { env, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn(WRANGLER, args, { cwd: opts.cwd || STUDIO_CF, env, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';
   const ready = new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('wrangler did not become ready in 90 s:\n' + log)), 90000);

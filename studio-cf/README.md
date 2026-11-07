@@ -159,17 +159,39 @@ All responses are `application/json`, `Cache-Control: no-store`.
 | `GET /api/me` | `{email, canWrite}` |
 | `GET /api/db/COLLECTION` | `{rev, docs:[{id,data}]}`; with `?since=REV`, `{rev, changed:false}` when the collection is still at `REV` |
 | `GET /api/db/COLLECTION/DOCID` | `{id, data}` or 404 |
-| `PUT /api/db/COLLECTION/DOCID` | body = a JSON object up to 64 KiB (counted in bytes); replaces the document; `{ok, rev}` |
-| `DELETE /api/db/COLLECTION/DOCID` | `{ok, rev}` |
+| `PUT /api/db/COLLECTION/DOCID` | body = a JSON object up to 64 KiB (counted in bytes); replaces a legacy document, appends an immutable notes/contributions revision; `{ok, rev}` |
+| `DELETE /api/db/COLLECTION/DOCID` | `{ok, rev}` for legacy collections; notes/contributions return 409 |
 | `POST /api/assets` | raw image body, `Content-Type` `image/jpeg`, `image/png`, `image/webp`, `image/gif` or `image/heic`, up to 15 MiB; the first bytes must match the type; `201 {id}` |
 | `GET /_blob/ID` | the stored photo, stored content type, `Cache-Control: private, max-age=31536000, immutable` |
 
-Collections: `reviews decisions versions release batches rconfig`. Document ids
+Collections: `reviews decisions versions release batches rconfig notes contributions`. Document ids
 match `^[A-Za-z0-9_.-]{1,128}$` (`.` and `..` alone are also refused). Each
 collection has a `rev` that rises by one in the same D1 batch (one transaction)
-as every write; a deleted document also bumps it, so polling needs no tombstones.
+as every new write; a deleted legacy document also bumps it, so polling needs no tombstones.
 Writes need `canWrite`, and a browser write must be same-origin
 (`Sec-Fetch-Site` / `Origin` are checked when present).
+
+### Immutable notes and contribution revisions (T05)
+
+`notes/{revisionId}` and `contributions/{revisionId}` use the existing tables.
+Their minimal envelope must identify schema version 1, the correct family, a
+record ID, a matching revision ID, and parent revision IDs. The content model
+performs the full document/graph/source validation before browser or backup-CLI
+writes. The generic API/importer is not a publication validator.
+
+The API inserts a new revision in one D1 batch. A semantically identical retry
+(including JSON object key reordering) succeeds without changing its timestamp
+or collection revision. Different content under the same ID and any DELETE
+return 409. The six original collections retain replacement/deletion behavior.
+The importer similarly refuses a changed revision ID; its SQL uses read-only
+`json_tree(...)` to compare JSON values, the sole non-table source admitted by
+the SQL guard. A restore can add a prefix before a later collision or failure;
+it is resumable and does not erase history, but is not a file-wide transaction.
+
+See [notes workflow and migration](../docs/notes-workflow.md) and the
+[integration handoff](../docs/integration/t05-handoff.md). The Cloudflare path
+is verified locally; packaging and conditional-write behavior of the original
+Claude artifact backend remain separate integration checks.
 
 Upload types follow the page's own code: the file inputs use `accept="image/*"`, and
 `toUploadable()` in `studio/index.html` sends `image/jpeg`, `image/png`, `image/webp`
@@ -391,3 +413,50 @@ python3 -m unittest discover -s studio-cf/tests -p 'test_*.py'
 
 Test files, wrangler logs and persisted state go to `STUDIO_CF_SCRATCH` (default
 `/Volumes/Archive4T/Temporary/versforms-work/studio-cf`).
+
+## Publish from the Studio
+
+Release > Calendar provides Publish and Publication history. The first destination is Staging. The browser builds the complete candidate in a module worker; the server independently verifies its exact piece/version selection, line readings, source bindings, withheld blocks, page geometry, metadata and file list before preview is available. Confirm names the previewed SHA-256. Copy and verification run in bounded requests; immutable content-addressed images are reused. The only mutable public object is current.json, changed conditionally against the previous pointer. Prepared/committed audit records allow a retry to complete the appearance record after a pointer move. Only newly added poems receive a new site appearance; staging never consumes an as-posted production number.
+
+The compiler lives in studio/publish-compiler.mjs, re-exported by lib/publish.js for Functions. The Python posting path remains supported and honors a recorded decisions/gruw-policy choice of exactly skip. Series, verification and filing are the only overridable gates; Reserve/Archive/unknown pools, stale reviews, leaks and unchecked shared scans remain hard stops.
+
+### Build and bindings
+
+From the repository root:
+
+~~~sh
+python3 studio-cf/build_dist.py
+python3 studio-cf/build_reader.py --out .post-poem-work/reader-package
+~~~
+
+Reader output must be new or empty. The reader package is reviewed into 4444J99/versforms. It contains the blank shell, approved pinned engine, read-only R2 function and standalone staging configuration; it contains no private source data or scans. Staging must retain its own package/library root: local Pages compilation otherwise resolves the parent production configuration.
+
+Studio needs DB, PHOTOS, STAGING=versforms-staging, PUBLIC=versforms-public, PUBLISH_BUILD_MODE=browser and the exact PUBLISH_SHELL_SHA256 from dist/publish/pin.json. Existing ACCESS_AUD, ACCESS_TEAM_DOMAIN and OWNER_EMAILS remain dashboard-owned secrets. Fail closed remains enabled. The public project binds only PUBLIC=versforms-public; staging binds only PUBLIC=versforms-staging. Raw R2 public access is unnecessary.
+
+For the Git-connected Studio build, set the project root to studio-cf, output to dist, and build command python3 -m pip install -r requirements-build.txt && python3 build_cloudflare.py. The project root must contain functions/ so the authentication middleware is compiled (https://developers.cloudflare.com/pages/functions/get-started/). The wrapper selects the hosted interpreter rather than this Mac's font venv. Exact package versions are pinned to those used for the approved shell. Cloudflare's supported Python build runtimes are documented at https://developers.cloudflare.com/pages/configuration/build-image/. A different shell hash fails closed; it is not silently accepted.
+
+Atlas tiles preserve the original decoded pixels as PNG bytes, served with image/png under the engine's existing .jpg routes. The engine already supports multiple atlas textures. No Pillow/fontTools work runs on a Publish tap. Source fragments, the source catalogue and all unpublished assets are behind Access in the Studio deployment.
+
+### Verification and limits
+
+~~~sh
+python3 tools/check.py
+node --test studio-cf/tests/publish.unit.test.mjs studio-cf/tests/publish-storage.unit.test.mjs studio-cf/tests/public-reader.unit.test.mjs studio-cf/tests/publish-client.unit.test.mjs
+node --test studio-cf/tests/publish-local.test.mjs
+python3 studio-cf/verify_publish_parity.py --db EXPORT_DIR --piece p001
+python3 tools/ci_local.py
+~~~
+
+The local integration test builds its own checkout assets in a unique scratch directory and uses local-only review confirmations, D1 and R2. It does not alter the hosted author's reviews. Node's built-in sqlite module is used by storage unit tests. Real-export parity compares canonical JSON in one shared JavaScript numeric model (Python's 1.0 and JavaScript's 1 represent the same JSON number), all non-atlas file hashes and exact tile pixels/line geometry. The source compiler still refuses stale transcripts.
+
+The original hosted server-build spike used 24 ms CPU for one published page and 166 ms for 123 synthetic pages. The free fallback splits verification and image copying across requests. Synthetic worst-case bounded traces passed, with warm checks around 3-8 ms and occasional cold checks at 11 ms. This is measured evidence, not a guarantee against Cloudflare CPU exhaustion; no billing plan was changed. An interrupted operation is retried using the same candidate hash, or rebuilt when source revisions changed.
+
+The first real p001 confirmation and physical iPhone/laptop acceptance remain author actions. The live source selects V[0]; five author corrections currently reside on unpublished versions. The preview reports that distinction.
+
+Final confirmation and rollback share a non-expiring D1 fence with Studio source writes. Recovery first changes the R2 pointer ETag before releasing an abandoned fence, preventing a delayed upload from publishing after a source edit. Source writes return 409 during that short final operation; opening Publication history completes recovery. Only committed publication receipts appear as rollback targets.
+
+### Prevent raw-source deployment
+
+The repository's site/ directory is private source. Its _worker.js deliberately returns 403 on Pages, including for data and images. Deploy Studio only from studio-cf/dist with its authenticated Functions; deploy readers only from the reviewed public reader package. The raw-source guard must not be copied into either generated output.
+
+Staging uses the public package's staging/ project directory and site/ output, with PUBLIC bound only to versforms-staging. Do not connect it to the private journal-handwritten-web repository or deploy that repository's top-level site/. The owner acceptance check exposed such a Dashboard connection; automatic Git deployments were disabled and the correct reader restored. Keep source, build root and uses_functions in the remote verification receipt, not only the commit label.

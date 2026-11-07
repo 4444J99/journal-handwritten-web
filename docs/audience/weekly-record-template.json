@@ -1,0 +1,203 @@
+{
+  "schema": "versforms.audience-week.v1",
+  "record_id": null,
+  "is_template": true,
+  "status": "not-ready",
+  "timezone": "America/New_York",
+  "prepared_at": null,
+  "authority": {
+    "author_clearance_ref": null,
+    "execution_authority_ref": null,
+    "may_publish": false,
+    "may_schedule_external_actions": false
+  },
+  "identity": {
+    "project_direction": "vers.forms",
+    "public_title": "versforms",
+    "public_font": "ajp-scribbles",
+    "destination_account": null,
+    "account_control_verified_at": null,
+    "account_control_evidence_ref": null,
+    "account_region": null
+  },
+  "decisions": {
+    "D01": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D02": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D03": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D04": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D05": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D06": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D07": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D08": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D09": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D10": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D11": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D12": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D13": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D14": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    },
+    "D15": {
+      "value": null,
+      "author_source": null,
+      "decided_at": null
+    }
+  },
+  "release": {
+    "manifest_digest": null,
+    "contract_schema": "versforms.release-clearance.v1",
+    "contract_ref": null,
+    "contract_revision": null,
+    "clearance_receipt_ref": null,
+    "source_revision": null,
+    "builder_revision": null,
+    "reader_revision": null,
+    "input_manifest_ref": null,
+    "piece_id": null,
+    "version_ids": [],
+    "source_page_ids": [],
+    "source_block_line_ids": [],
+    "release_number": null,
+    "pool_clearance_ref": null,
+    "reviews_ref": null,
+    "filing_evidence_ref": null,
+    "batch_workflow_ref": null,
+    "shared_scan_resolution_ref": null,
+    "exposure_manifest_ref": null,
+    "identity_metadata_ref": null,
+    "acceptance_receipt_ref": null,
+    "release_event_contract_ref": null,
+    "rollback_record_ref": null
+  },
+  "media": {
+    "t07_manifest_ref": null,
+    "author_asset_approval_ref": null,
+    "assets": []
+  },
+  "author_copy": {
+    "caption_ref": null,
+    "hashtag_list": null,
+    "alt_text_refs": [],
+    "bio_ref": null,
+    "project_description_ref": null,
+    "approval_ref": null
+  },
+  "schedule": {
+    "weekly_slot": null,
+    "planned_post_at": null,
+    "reply_window": null,
+    "first_release_date_ref": null
+  },
+  "events": [],
+  "observation_template": {
+    "post_url": null,
+    "surface": null,
+    "metric_source": null,
+    "native_metric_labels": {},
+    "observed_at": null,
+    "window_start": null,
+    "window_end": null,
+    "elapsed_hours": null,
+    "reach_accounts": null,
+    "views": null,
+    "nonfollower_reach_accounts": null,
+    "nonfollower_reach_percent": null,
+    "saves": null,
+    "shares": null,
+    "comments": null,
+    "post_attributed_follows": null,
+    "likes": null,
+    "response_events_per_100_reached": null,
+    "substantive_reader_responses": null,
+    "intensity_flag": null,
+    "unavailable_reasons": {},
+    "confounders": [],
+    "operational_notes": null
+  },
+  "observations": [],
+  "format_comparison": {
+    "enabled": false,
+    "approval_ref": null,
+    "same_piece_id": null,
+    "same_version_ids": [],
+    "release_number": null,
+    "variant_a_manifest_ref": null,
+    "variant_b_manifest_ref": null,
+    "chosen_variable": null,
+    "held_constant": [],
+    "confounders": [],
+    "result": "not-run"
+  },
+  "incident": {
+    "status": "none-recorded",
+    "exposure_refs": [],
+    "containment_authority_ref": null,
+    "action_taken": null,
+    "publication_or_eligibility_assessment_ref": null
+  },
+  "tools": {
+    "muse_enabled": false,
+    "automations_enabled": false,
+    "connectors_enabled": [],
+    "new_spend_authorized": false
+  },
+  "handoff": {
+    "t03_status": "awaiting-current-clearance",
+    "t07_status": "awaiting-approved-asset-manifest",
+    "reviewed_by_author_at": null
+  }
+}

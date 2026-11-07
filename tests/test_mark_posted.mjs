@@ -121,3 +121,20 @@ test('exposure entry from each choice carries the account only when there is one
   const ig = exposureEntry(expoChoice(draft, 'instagram'), 'X', 'T');
   assert.deepEqual({ ...ig }, { type: 'social', where: 'Instagram', account: 'vers.forms', date: '2026-11-04', url: '', ver: 'final', at: 'T' });
 });
+
+test('exposure entries never retain an unsafe or relative link', () => {
+  for (const url of ['javascript:alert(1)', 'data:text/html,x', 'ftp://example.org', '/relative', 'https:x', 'https://x\u200by.com']) {
+    const draft = { type: 'site', where: 'Example', url, ver: 'scan' };
+    const before = JSON.stringify(draft);
+    const entry = exposureEntry(draft, 'D', 'T');
+    assert.equal(entry.url, '', url);
+    assert.equal(JSON.stringify(draft), before, 'the draft remains available for correction');
+    assert.equal(entry.ver, 'scan');
+  }
+});
+
+test('exposure links use the same optional absolute-URL contract as Mark posted', () => {
+  for (const url of ['', '  ', null, undefined, ' https://example.org/a?b#c ', 'HTTP://example.org/']) {
+    assert.equal(exposureEntry({ type: 'site', url }, 'D', 'T').url, postedEntry({ url }, 'D', 'T').url);
+  }
+});

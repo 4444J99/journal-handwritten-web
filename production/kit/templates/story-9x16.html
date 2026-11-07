@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>T07 9:16 story assembly template</title>
+<style>
+  :root {
+    --paper: #f7f5ef;
+    --ink: #1f1e1d;
+    --page: url("../../assets/diary1.jpg");
+    --background: url("../../assets/diary1.jpg");
+    --avatar: url("../../assets/vers_forms_profile_v3.jpg");
+    --frame-w: 405px;        /* preview; export at 1080 */
+    --reveal: 50%;           /* write-on progress: 0% = blank page, 100% = full */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #e9e7df; color: var(--ink);
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  body { padding: 32px; display: flex; gap: 32px; align-items: flex-start; }
+  .board { display: flex; flex-direction: column; gap: 8px; }
+  .board h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+  .board p { margin: 0; max-width: calc(var(--frame-w) * .92); color: #5d5a54; }
+
+  .frame {
+    position: relative; width: var(--frame-w); aspect-ratio: 9 / 16;
+    background: var(--paper); overflow: hidden;
+    box-shadow: 0 10px 28px rgba(30, 26, 20, .16);
+  }
+  .layer { position: absolute; inset: 0; }
+
+  /* 3 · background loop slot (provisional still) */
+  .layer.background {
+    background-image: var(--background); background-size: cover;
+    background-position: center; filter: blur(16px) brightness(.72);
+  }
+  .layer.background::after {
+    content: ""; position: absolute; inset: 0; background: rgba(247, 245, 239, .08); }
+
+  /* 2 · recorded handwriting, revealed by a moving mask */
+  .layer.page {
+    inset: 6% 6%; overflow: hidden;
+    background: #fff; box-shadow: 0 12px 30px rgba(20, 16, 10, .28); }
+  .layer.page img { display: block; width: 100%; height: 100%; object-fit: cover;
+    object-position: center 40%; }
+  .layer.page .reveal-mask {
+    position: absolute; inset: 0; background: var(--paper);
+    clip-path: inset(0 0 calc(100% - var(--reveal)) 0);
+    /* Replace with per-line rectangles for a line-by-line write-on. */ }
+
+  /* 1 · photo loop slot: explicitly empty in the assembly */
+  .slot {
+    position: absolute; top: 9%; right: 7%; width: 30%; aspect-ratio: 4 / 5;
+    border: 2px dashed rgba(40, 36, 30, .55); border-radius: 14px;
+    background: rgba(255, 255, 255, .08);
+    display: grid; place-content: center; text-align: center;
+    color: rgba(40, 36, 30, .65); font-size: 10px; letter-spacing: .06em;
+    text-transform: uppercase; }
+  .chip {
+    position: absolute; top: 4%; right: 6%; width: 14%; aspect-ratio: 1;
+    border: 3px solid #fff; border-radius: 22%; overflow: hidden;
+    box-shadow: 0 6px 18px rgba(20, 16, 10, .25); }
+  .chip img { width: 100%; height: 100%; object-fit: cover; }
+
+  .timeline { max-width: var(--frame-w); font-size: 11px; color: #5d5a54; }
+  .timeline table { width: 100%; border-collapse: collapse; }
+  .timeline td { padding: 2px 4px; border-bottom: 1px solid #d8d4c9; }
+</style>
+</head>
+<body>
+
+  <section class="board">
+    <h2>9:16 assembly — provisional</h2>
+    <div class="frame">
+      <div class="layer background"></div>
+      <div class="layer page">
+        <img src="../../assets/diary1.jpg" alt="">
+        <div class="reveal-mask"></div>
+      </div>
+      <div class="slot">photo clip<br>3 s loop</div>
+      <div class="chip"><img src="../../assets/vers_forms_profile_v3.jpg" alt=""></div>
+    </div>
+    <p>Move <code>--reveal</code> from 0% to 100% to preview the write-on. The generator
+      uses per-line rectangles from <code>site/data/j.json</code>; this mask is the
+      editable single-rectangle approximation.</p>
+  </section>
+
+  <section class="board">
+    <h2>Timing and missing clips</h2>
+    <div class="timeline">
+      <table>
+        <tr><td>0.0–4.5 s</td><td>recorded-ink write-on, line by line</td></tr>
+        <tr><td>4.5–9.0 s</td><td>hold</td></tr>
+        <tr><td>background</td><td>4.5 s loop slot — original clip missing</td></tr>
+        <tr><td>photo</td><td>3 s loop slot — original Live Photo/video missing</td></tr>
+      </table>
+      <p>Do not substitute an AI-generated clip for the author's recording. Replace
+        the two slots with supplied clips and re-run the kit; the composite holds at
+        9 s until the clip loops are provided.</p>
+    </div>
+  </section>
+
+</body>
+</html>

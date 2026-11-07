@@ -1,0 +1,16 @@
+{
+  "schema": "versforms.source-build-report.v1",
+  "write": false,
+  "changed": [],
+  "counts": {
+    "pages": 123,
+    "pieces": 126,
+    "versions": 156,
+    "lines": 2190,
+    "reviews": 38,
+    "unavailableAnchors": 589
+  },
+  "templatesModified": [],
+  "imagesModified": [],
+  "fontsModified": []
+}

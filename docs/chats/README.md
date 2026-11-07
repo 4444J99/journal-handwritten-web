@@ -16,6 +16,9 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
+| 2026-11-07 | [Playground](2026-11-07-playground.md) | Playground at /playground in the Studio, behind Access; claude.ai artifacts kept natively; shared design principles recorded. |
+| 2026-11-06 | [Reader navigation and About](2026-11-06-reader-navigation-and-about.md) | Author approved the compact hamburger/crown direction and reversed backing; About writing brief prepared; implementation checks, engine hash and delivery pending the integrator's receipt. |
+| 2026-11-06 | [Studio publishing implementation](2026-11-06-studio-publish.md) | Browser build, bounded verification, immutable snapshots and reader isolation; first publish remains an author action. |
 | 2026-10-24 | [Release methods and standards](2026-10-24-release-methods-and-standards.md) | Superseded by the naming chats; name/handle claim still open. |
 | 2026-10-26 | [Etceter4 journal (main build)](2026-10-26-etceter4-journal-build.md) | Open — the two feature proposals have not been built. |
 | 2026-10-26 | [Footnotes and endnotes for poetry](2026-10-26-footnotes-and-endnotes.md) | Open — placement of notes undecided. |
@@ -38,25 +41,41 @@ Conventions
 | 2026-11-03 | [Cut-up technique research report](2026-11-03-cut-up-technique-research.md) | Research only. |
 | 2026-11-04 | [Profile picture edit](2026-11-04-profile-picture-edit.md) | Open — handle/domain checks outstanding. |
 | 2026-11-05 | [Versforms dashboard](2026-11-05-versforms-dashboard.md) | Open — PR #73 to merge; Actions runners not starting |
+| 2026-11-06 | [Launch code completion and live-state reconciliation](2026-11-06-launch-completion.md) | Verified code fixes and recovered prototype tracked in scoped PRs; authenticated deployed acceptance and owner gates remain open. |
+| 2026-11-06 | [Integration execution (partial)](2026-11-06-integration-execution.md) | Two PRs merged (#127 audio, #128 fingerprint); ci_local green on main@8cd9872a; remaining tranche work open. |
 | 2026-11-05 | [Project advisory request](2026-11-05-project-advisory.md) | Open — this is the launch checklist. |
 | 2026-11-05 | [Launch day: log every chat to the repository](2026-11-05-launch-day-chat-log.md) | Logging done; site live; leftovers handed to local Claude Code (docs/handoff-2026-11-05.md) |
 | 2026-11-05 | [Local Claude Code: launch-leftovers handoff](2026-11-05-local-claude-code-handoff.md) | Do-now done (tags pushed, etceter4 read, check passes); PR #73 merged on his yes; other asks wait on the author; Actions blocked by billing |
-| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | In progress — #89, #92, #93, #94, #96, #98, #99, #100 and versforms#1 merged; #97 and the post-poem PR still open; studio data in D1, nothing deployed, no poem posted |
+| 2026-11-05 | [T03: first-release technical preparation](2026-11-05-t03-release-preparation.md) | Private packet and repeatable checks; author clearance, classification, filing evidence and integration gates remain open |
+| 2026-11-05 | [Local session: finish and launch](2026-11-05-local-session-finish-and-launch.md) | Closed out as far as it can be — see its Status; studio deployed behind Cloudflare Access, nothing posted; owner items are issues #104-#113 and #121 |
+| 2026-11-05 | [Local Claude Code: versforms launch lanes](2026-11-05-versforms-launch-lanes.md) | Done — #96, #97 and #101 merged; nothing posted publicly; the rulings it asked for are issue #108 |
+| 2026-11-05 | [T05: private notes and contribution review](2026-11-05-t05-private-notes-contributions.md) | Private workflow verified for draft review; T01/T02/T03/T04 integration and author choices remain open; no publication |
+| 2026-11-05 | [T07 media production kit](2026-11-05-t07-media-production-kit.md) | Open — private kit only; physical device test, original clips and author clearance outstanding |
+| 2026-11-05 | [Local agent: T08 source-region model and private pilot](2026-11-05-t08-source-regions-pilot.md) | Pilot, contract and tests done in an isolated branch; draft PR #130 only; public release correctly refused; T02 hand-off and author inputs open |
+| 2026-11-05 | [T06: identity and audience operations](2026-11-05-t06-identity-audience.md) | Private review packet prepared; current identity and policy sources, weekly SOP, finite choices, avatar/T03/T07 handoffs; no public or account action |
+| 2026-11-05 | [T10: private script realization and author-glyph workflow](2026-11-05-t10-script-realization-glyphs.md) | Technical fixture and reusable tools prepared; author language/text/glyph inputs and T02/T03 integration remain open. |
+| 2026-11-05 | [T09 audio/DSP pilot](2026-11-05-t09-audio-dsp-pilot.md) | Fixture preparation delivered in a draft; author recording, listening and voice/audio milestone remain open. |
+| 2026-11-06 | [Posting hardening completion](2026-11-06-posting-hardening-completion.md) | Follow-up repair for #123: tests, Git isolation, owned cleanup and accurate runbook; review PR, no publication |
+| 2026-11-06 | [Integration closeout](2026-11-06-integration-closeout.md) | T01–T10 source/reader/feature integration and exact-output verification in progress; private changes only |
+| 2026-11-06 | [Canonical source reconstruction](2026-11-06-t02-source-foundation.md) | Preserved originals, applied 38 reviews additively, deterministic rebuild and independent restore verified. |
 
 ## Repository state (checked 2026-11-05)
-- `main` at `957584e` (docs: record the repository in the plan).
+- `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
 - Tags `v2026.10.27` (`957584e`) and `v2026.11.05` (`2744d7a`) pushed to GitHub on 2026-11-05 by the local session (lightweight, unsigned).
-- CI check workflow runs (last success 2026-11-01).
-- Open issue #1 and PR #2 (not from a chat) ("Fail integrity check when content files are missing from MANIFEST.sha256", opened 2026-10-28) — not from a Project chat; unreviewed.
+- GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
+- Issue #1 closed by #114; draft PR #2 closed as superseded.
 - `site/index.html` is merged-piece v4 (since 2744d7a).
-- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages).
+- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages): the blank page, title `versforms`, `noindex`. Nothing is posted.
+- Review studio live at https://versforms-studio.pages.dev/ (Pages project `versforms-studio`, direct upload), behind a Cloudflare Access login for the owner's email only. `claude/` holds the claude.ai Project's text documents; the full download is on the archive volume.
 
 ## Launch list (consolidated from the open plans above)
 Owner in brackets. Order follows the 2026-11-05 advisory.
-1. [Claude] Copy merged-piece v4 `index.html` from the artifact into `site/`, refresh the manifest, commit, tag.
-2. [Claude + author] Back up the scans and spreads outside the artifact store (R2 / Dropbox / local).
+1. [Claude] Copy merged-piece v4 `index.html` from the artifact into `site/`, refresh the manifest, commit, tag. **Done** (tag `v2026.11.05`).
+2. [Claude + author] Back up the scans and spreads outside the artifact store (R2 / Dropbox / local). **Done locally** (`Archives/versforms/journal-originals-2026-11-05/` and `claude-project-artifacts-2026-11-05/`, both hashed); an offsite copy is still open.
 3. [author] Confirm the name (`vers.forms`); [Claude] check handle and domain availability.
-4. [author] Verify the first poems in the review studio; sort them into Series.
-5. [author] Decide GRUW: file one batch before posting, or post without (both were Claude suggestions; no decision yet).
-6. [author] Pick poem 1 and the first-post date; [Claude] build the Instagram template from his material.
+4. [author] Verify the first poems in the review studio (now live behind Access); sort them into Series (issue #105).
+5. [author] Decide GRUW: file one batch before posting, or post without (both views are on issue #106; no decision yet).
+6. [author] Pick poem 1 (`p001`, journal page order) and the first-post date (runbook: issue #113); [Claude] build the Instagram template from his material.
 7. [author] Post.
+
+| 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |

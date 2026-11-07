@@ -1,0 +1,40 @@
+{
+  "schema": "versforms.source-eligibility-report.v1",
+  "scope": "private-local",
+  "policy_id": "t08-p001-derived-2026-11-05",
+  "manifest_sha256": "748100506ab676b34eb717a1e167581c053c098841e0435e91419fffb895b151",
+  "allowed": true,
+  "summary": {
+    "atoms": 445,
+    "atoms_rejected": 0,
+    "reason_counts": {},
+    "inherited_pool": "unassigned"
+  },
+  "manifest_reasons": [],
+  "atom_reasons": {},
+  "warnings": [
+    "reading:open-uncertainty-present"
+  ],
+  "atom_warnings": {
+    "vf:atom:p001/p001-diary1-0/poem": [
+      "reading:open-uncertainty"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-0": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-1": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-2": [
+      "reading:owner-withdrawn-crop"
+    ],
+    "vf:atom:p001/p001-diary1-0/diary1/line-3-2/word-3": [
+      "reading:owner-withdrawn-crop"
+    ]
+  },
+  "required_actions": [],
+  "closures_checked": 445
+}

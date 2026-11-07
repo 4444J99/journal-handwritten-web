@@ -19,6 +19,10 @@ an unquoted, unqualified ``vf_`` name. Quoted identifiers, ``schema.table`` name
 ATTACH, DETACH, PRAGMA, VACUUM, REINDEX, TRIGGER, VIEW and UPDATE (other than the
 ``DO UPDATE`` of an upsert) are refused. String literals and comments are ignored by
 the scan (JSON data may contain anything). Messages never echo string literals.
+
+The only non-table FROM/JOIN source allowed is SQLite's read-only json_tree(...)
+function, used to compare immutable revision JSON. Its argument's subqueries
+and all following joins are still scanned for forbidden table references.
 """
 import re
 
@@ -116,6 +120,22 @@ def _name_ok(toks, i):
     return None
 
 
+def _json_tree_end(toks, i):
+    """End index of a bare json_tree(...) call, or None; never a table bypass."""
+    if (i + 1 >= len(toks) or toks[i][0] != "WORD" or toks[i][1].upper() != "JSON_TREE"
+            or toks[i + 1] != ("PUNCT", "(")):
+        return None
+    depth = 0
+    for j in range(i + 1, len(toks)):
+        if toks[j] == ("PUNCT", "("):
+            depth += 1
+        elif toks[j] == ("PUNCT", ")"):
+            depth -= 1
+            if depth == 0:
+                return j + 1
+    return None
+
+
 def _check_statement(toks):
     errs = []
     words = [t[1].upper() if t[0] == "WORD" else None for t in toks]
@@ -181,11 +201,15 @@ def _check_statement(toks):
             if j < len(toks) and toks[j] == ("PUNCT", "("):
                 continue  # subselect; its own FROM is checked on its own turn
             while True:
-                e = _name_ok(toks, j)
-                if e:
-                    errs.append(e)
-                    break
-                j += 1
+                function_end = _json_tree_end(toks, j)
+                if function_end is not None:
+                    j = function_end
+                else:
+                    e = _name_ok(toks, j)
+                    if e:
+                        errs.append(e)
+                        break
+                    j += 1
                 # optional alias
                 if j < len(toks) and toks[j][0] == "WORD" and toks[j][1].upper() == "AS":
                     j += 2

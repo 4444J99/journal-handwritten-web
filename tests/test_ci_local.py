@@ -116,5 +116,30 @@ class StatusNeedsAnUnchangedCheckout(unittest.TestCase):
         self.assertNotIn("changed while the suites ran", p.stderr)
 
 
+class SkippedCoverageIsVisible(unittest.TestCase):
+    def test_successful_suites_report_skips_in_console_and_receipt(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "print('OK')\n")
+            tests = repo / "tests"
+            tests.mkdir()
+            (tests / "test_fixture.py").write_text(
+                "import unittest\nclass Fixture(unittest.TestCase):\n"
+                " def test_pass(self): pass\n"
+                " @unittest.skip('fixture dependency is absent')\n"
+                " def test_skip(self): pass\n")
+            (tests / "fixture.mjs").write_text(
+                "import {test} from 'node:test';\n"
+                "test('runs',()=>{}); test.skip('dependency absent',()=>{});\n")
+            receipt = Path(base) / "receipt.json"
+            p = subprocess.run([sys.executable, str(TOOLS / "ci_local.py"), "--root", str(repo),
+                                "--only", "py-tests", "--only", "node-tests", "--json", str(receipt)],
+                               capture_output=True, text=True)
+            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+            self.assertIn("2 tests, 1 skipped", p.stdout)
+            self.assertIn("1 pass, 0 fail, 1 skipped", p.stdout)
+            self.assertIn("RESULT: PASS (2 skipped)", p.stdout)
+            self.assertEqual([r["skipped"] for r in json.loads(receipt.read_text())["suites"]], [1, 1])
+
+
 if __name__ == "__main__":
     unittest.main()

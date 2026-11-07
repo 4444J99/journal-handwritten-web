@@ -1,6 +1,6 @@
 name = "versforms-studio"
 compatibility_date = "2026-06-01"
-pages_build_output_dir = "../studio"
+pages_build_output_dir = "dist"
 
 # Nothing here has been deployed. The D1 database already exists on the owner's
 # account and is shared with another project (it holds that project's own
@@ -15,3 +15,15 @@ database_id = "f1a89504-2ddd-4c9b-ade8-eb52f6aee7a3"
 # "ASSETS" is reserved by Pages (the static-file binding), so the bucket is bound as PHOTOS.
 binding = "PHOTOS"
 bucket_name = "versforms-studio-assets"
+
+[[r2_buckets]]
+binding = "STAGING"
+bucket_name = "versforms-staging"
+
+[[r2_buckets]]
+binding = "PUBLIC"
+bucket_name = "versforms-public"
+
+[vars]
+PUBLISH_BUILD_MODE = "browser"
+PUBLISH_SHELL_SHA256 = "2eafbf061b5b0b8081545d1822885d94a462ae30f12953f1f9b74994a73ef3b3"

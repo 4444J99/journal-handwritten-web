@@ -1,3 +1,19 @@
 .DS_Store
 __pycache__/
 _studio_publish/
+.post-poem-work/
+# T07 build artifacts
+production/tools/.build/
+
+# T09 local sessions and outputs; author masters are never release assets.
+/audio-work/
+/recording/sessions/
+/recording/private/
+
+# Generated private publishing catalogue and deployment output
+/studio-cf/publish-prepared/
+/studio-cf/dist/
+/studio-cf/.dist-build-*/
+
+# Playground build output (private; never deploy to versforms, Staging or Live)
+/playground/dist/

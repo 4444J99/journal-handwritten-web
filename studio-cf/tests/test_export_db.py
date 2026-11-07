@@ -137,7 +137,7 @@ class RoundTripTests(unittest.TestCase):
             # the export (README included) is a valid input for the importer again
             docs, rejects = ie.scan(out)
             self.assertEqual(rejects, [])
-            self.assertEqual({c: len(v) for c, v in docs.items()}, {"reviews": 3, "decisions": 1, "versions": 0, "release": 0, "batches": 1, "rconfig": 0})
+            self.assertEqual({c: len(v) for c, v in docs.items()}, {"reviews": 3, "decisions": 1, "versions": 0, "release": 0, "batches": 1, "rconfig": 0, "notes": 0, "contributions": 0, "artifacts": 0, "publish": 0})
 
     def test_second_cycle_is_stable(self):
         with tmpdir() as d:

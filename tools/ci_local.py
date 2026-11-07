@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run this repository's checks locally and, optionally, post the result as a commit status.
 
-GitHub Actions cannot start runners for this account (billing), so the `check` workflow never
-runs. This script runs the same check plus every test suite it can find, prints a receipt, and
+When a hosted job cannot run, its cause must be established separately from local results.
+This script runs the same check plus every test suite it can find, prints a receipt, and
 with --status posts one commit status (context "local-ci") on the exact commit that was tested,
 so a pull request shows a real result instead of a failed, step-less job.
 
@@ -158,17 +158,25 @@ def main():
     for name, cmd, counter in selected:
         code, out, secs = run(cmd, str(root), a.timeout, env)
         detail = ""
+        skipped = 0
         if counter == "unittest":
             n = count_unittest(out)
             detail = f"{n} tests" if n is not None else ""
+            skip_match = re.search(r"\bskipped=(\d+)", out)
+            skipped = int(skip_match.group(1)) if skip_match else 0
         elif counter == "node":
             ok, bad = count_node(out)
             detail = f"{ok} pass, {bad} fail" if ok is not None else ""
+            skip_match = re.search(r"(?:%s|#)\s+skipped\s+(\d+)" % INFO, out)
+            skipped = int(skip_match.group(1)) if skip_match else 0
             if bad:
                 code = code or 1
         elif name == "check":
             detail = out.strip().splitlines()[-1] if out.strip() else ""
-        results.append({"suite": name, "ok": code == 0, "exit": code, "seconds": round(secs, 1), "detail": detail, "tail": out.strip().splitlines()[-12:] if code else []})
+        if skipped:
+            detail += f", {skipped} skipped"
+        results.append({"suite": name, "ok": code == 0, "exit": code, "seconds": round(secs, 1), "detail": detail,
+                        "skipped": skipped, "tail": out.strip().splitlines()[-12:] if code else []})
 
     if not results:
         print("refused: no suite selected", file=sys.stderr)
@@ -180,7 +188,8 @@ def main():
         print(f"  {'PASS' if r['ok'] else 'FAIL'}  {r['suite']:<15} {r['detail']:<28} {r['seconds']:>6.1f}s")
         for line in r["tail"]:
             print("        " + line)
-    print("RESULT:", "PASS" if passed else "FAIL")
+    total_skipped = sum(r["skipped"] for r in results)
+    print("RESULT:", ("PASS" if passed else "FAIL") + (f" ({total_skipped} skipped)" if total_skipped else ""))
 
     receipt = {"sha": sha, "branch": branch, "tree": "dirty" if dirty else "clean", "passed": passed, "suites": results}
     if a.json_out:
@@ -201,7 +210,8 @@ def main():
             print(f"refused: cannot read owner/repo from origin {url!r}", file=sys.stderr)
             return 2
         desc = "; ".join(f"{r['suite']} {'ok' if r['ok'] else 'FAILED'}" + (f" ({r['detail']})" if r["detail"] and r["ok"] else "") for r in results)
-        desc = ("run locally, not by GitHub Actions: " + desc)[:140]
+        coverage = f" ({total_skipped} skipped)" if total_skipped else ""
+        desc = (f"run locally{coverage}, not by GitHub Actions: " + desc)[:140]
         p = subprocess.run(["gh", "api", "-X", "POST", f"repos/{m.group(1)}/{m.group(2)}/statuses/{sha}", "-f", f"state={'success' if passed else 'failure'}", "-f", "context=local-ci", "-f", f"description={desc}", "--jq", ".url"], capture_output=True, text=True)
         if p.returncode:
             print("status NOT posted: " + (p.stderr or p.stdout).strip(), file=sys.stderr)

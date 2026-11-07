@@ -310,6 +310,7 @@ details.tn ul{margin:4px 0;padding-left:18px}
     <button role="tab" data-view="release" aria-selected="false">Release</button>
     <button role="tab" data-view="search" aria-selected="false">Search</button>
   </nav>
+<p class="notes-entry"><a href="notes.html">Notes &amp; contributions</a> · <a href="artifact-preview.html">Private artifact previews</a></p>
 </header>
 
 <main id="main">
@@ -1301,7 +1302,8 @@ function expoChoiceId(e) {
 }
 function exposureEntry(e, today, at) {
   const s = v => String(v == null ? '' : v).trim();
-  const o = { type: e.type, where: s(e.where), date: e.date || today, url: s(e.url), ver: s(e.ver), at };
+  const link = checkPostUrl(e.url);
+  const o = { type: e.type, where: s(e.where), date: e.date || today, url: link.ok ? link.url : '', ver: s(e.ver), at };
   if (s(e.account)) o.account = s(e.account);
   return o;
 }
@@ -1327,7 +1329,7 @@ function renderRelease() {
   const cs = candidates(); const rels = call('release');
   const cnt = { series: 0, reserve: 0, archive: 0, unsorted: 0 };
   let posted = 0;
-  for (const c of cs) { const r = rels.get(c.key) || {}; cnt[r.pool || 'unsorted']++; if ((r.exposures || []).some(e => e.type === 'social')) posted++; }
+  for (const c of cs) { const r = rels.get(c.key) || {}; cnt[r.pool || 'unsorted']++; if ((r.exposures || []).some(e => e.type === 'social' || (e.type === 'site' && e.target !== 'staging'))) posted++; }
   let registered = 0; for (const [, b] of call('batches')) if (b.status === 'registered') registered += (b.items || []).length;
   if (!canWrite()) root.append(h('p', { class: 'note' }, S.dbState === 'connecting' ? 'Connecting…' : 'Saving unavailable — shown read-only.'));
   root.append(h('div', { class: 'rsum' },
@@ -1385,6 +1387,15 @@ function setPool(key, pool) {
   relSet(key, patch);
 }
 
+async function studioPublish(pieceId) {
+  const { openPublisher } = await import('./publish-ui.mjs');
+  return openPublisher({ pieceId, canWrite, hasPending: () => S.inflight > 0 || S.failed.length > 0, onDone: () => scheduleRefresh() });
+}
+async function studioPublishHistory() {
+  const { openPublishHistory } = await import('./publish-ui.mjs');
+  return openPublishHistory({ canWrite, onDone: () => scheduleRefresh() });
+}
+function isPublicAppearance(e) { return e.type === 'social' || (e.type === 'site' && e.target !== 'staging'); }
 /* calendar */
 function rCalendar(body) {
   const st = h('input', { type: 'date', id: 'r-start', value: cfg().start || '' });
@@ -1393,11 +1404,12 @@ function rCalendar(body) {
   body.append(h('div', { class: 'rbar' },
     h('label', { for: 'r-start' }, 'First post'), st,
     h('span', { class: 'note' }, 'One poem a week. Numbering: ', mode === 'fixed' ? 'fixed in advance (queue order)' : mode === 'as-posted' ? 'assigned when posted' : 'not decided (see Decisions)')));
+  body.append(h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: studioPublishHistory }, 'Publication history'));
   const xs = seriesList();
   if (!xs.length) { body.append(h('p', { class: 'empty-note' }, 'No Series pieces yet. Sort pieces into Series first.')); return; }
   let postedN = 0;
   xs.forEach(({ c, r }, i) => {
-    const posted = (r.exposures || []).find(e => e.type === 'social');
+    const posted = (r.exposures || []).find(isPublicAppearance);
     if (posted) postedN++;
     const num = mode === 'fixed' ? i + 1 : r.num || null;
     const b = batchOf(c.key);
@@ -1415,6 +1427,7 @@ function rCalendar(body) {
       posted && posted.url && checkPostUrl(posted.url).ok ? h('div', { class: 'rmeta' }, h('a', { href: posted.url, target: '_blank', rel: 'noopener noreferrer', class: 'rlink' }, 'post link')) : null,
       open ? calDetail(c, r, b, ready, posted) : null));
     row.append(h('div', { class: 'rside col' },
+      h('button', { type: 'button', class: 'btn primary small', disabled: !canWrite(), onclick: () => studioPublish(c.key) }, 'Publish'),
       h('button', { type: 'button', class: 'btn small', onclick: () => { RF.open = open ? null : c.key; renderRelease(); } }, open ? 'Close' : 'Open'),
       h('div', { class: 'ud' },
         h('button', { type: 'button', class: 'btn small', 'aria-label': 'Move earlier', disabled: !canWrite() || i === 0, onclick: () => swap(xs, i, i - 1) }, '↑'),
@@ -1466,6 +1479,9 @@ function calDetail(c, r, b, ready, posted) {
 
 /* copyright */
 function rCopyright(body) {
+  const gruw = dv('gruw-policy');
+  body.append(h('p', { class: 'note' }, gruw && gruw.choice === 'skip' ? 'Standing GRUW policy: skip. The filing gate passes without an override.' : 'No standing GRUW skip policy is recorded.'));
+  body.append(h('button', { type: 'button', class: 'btn small', disabled: !canWrite() || (gruw && gruw.choice === 'skip'), onclick: () => write('decisions', 'gruw-policy', { choice: 'skip', at: nowISO(), source: 'author decision, Studio publishing plan 2026-11-06' }) }, 'Record GRUW skip policy'));
   body.append(h('p', { class: 'note' }, 'Group registration for unpublished works: up to 10 poems by you, filed before any of them is posted. Record which version each filing covered; later revisions are new material.'));
   const cm = candMap();
   const bs = Array.from(call('batches'), ([id, b]) => ({ id, ...b })).sort((a, b) => String(a.created || '').localeCompare(String(b.created || '')));
@@ -1562,7 +1578,18 @@ function rExposure(body) {
   form.append(choices); syncChoices();
   const key = RF.expoKey;
   if (key && rel(key).pool === 'reserve') form.append(h('p', { class: 'err' }, 'This is a Reserve piece. Logging an appearance means strict journals will treat it as published.'));
+  const linkError = h('p', { class: 'err', id: 'ex-url-error', role: 'alert' });
+  const linkInput = form.querySelector('#ex-url');
+  linkInput.setAttribute('aria-describedby', 'ex-url-error');
+  linkInput.addEventListener('input', () => { linkError.textContent = ''; linkInput.removeAttribute('aria-invalid'); });
+  form.append(linkError);
   form.append(h('button', { type: 'button', class: 'btn primary', disabled: !canWrite() || !key, onclick: () => {
+    if (!checkPostUrl(e.url).ok) {
+      linkError.textContent = 'Use an absolute http:// or https:// link, or leave it blank.';
+      linkInput.setAttribute('aria-invalid', 'true');
+      linkInput.focus();
+      return;
+    }
     relSet(key, { exposures: [...exposures(key), exposureEntry(e, new Date().toISOString().slice(0, 10), nowISO())] });
     RF.expo = { type: e.type, where: '', account: '', date: '', url: '', ver: '' };
   } }, 'Log appearance'));
@@ -1573,8 +1600,9 @@ function rExposure(body) {
   body.append(h('div', { class: 'dsec' }, 'Logged', h('small', null, ` ${all.length}`)));
   if (!all.length) body.append(h('p', { class: 'empty-note' }, 'Nothing logged yet.'));
   for (const { c, x, i, pool } of all) {
+    const link = checkPostUrl(x.url);
     body.append(h('div', { class: 'rrow slim' },
-      h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, `${x.date || ''} · ${EXPO_LABEL[x.type] || x.type}${x.where ? ' · ' + x.where : ''}${x.account ? ' · ' + x.account : ''}${x.ver ? ' · ' + x.ver : ''}`, x.url ? h('a', { href: x.url, target: '_blank', rel: 'noopener', class: 'rlink' }, ' link') : null)),
+      h('div', { class: 'rmain' }, titleEl(c), h('div', { class: 'rmeta' }, `${x.date || ''} · ${EXPO_LABEL[x.type] || x.type}${x.where ? ' · ' + x.where : ''}${x.account ? ' · ' + x.account : ''}${x.ver ? ' · ' + x.ver : ''}`, link.ok && link.url ? h('a', { href: link.url, target: '_blank', rel: 'noopener noreferrer', class: 'rlink' }, ' link') : null)),
       h('div', { class: 'rside' }, pool === 'reserve' ? chip('reserve', 'warn') : null, EXPO_PUB[x.type] ? chip('copyright: published', 'warn') : null,
         h('button', { type: 'button', class: 'btn small', disabled: !canWrite(), onclick: () => relSet(c.key, { exposures: exposures(c.key).filter((_, j) => j !== i) }) }, 'Remove'))));
   }

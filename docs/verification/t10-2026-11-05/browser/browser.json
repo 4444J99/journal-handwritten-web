@@ -1,0 +1,373 @@
+{
+  "fixture": true,
+  "origin": "loopback-only",
+  "generatedAt": "2026-11-06T01:52:50.402Z",
+  "cases": [
+    {
+      "name": "desktop-light",
+      "viewport": {
+        "width": 1280,
+        "height": 960,
+        "mobile": false,
+        "scheme": "light"
+      },
+      "checks": {
+        "sourceLinesExact": true,
+        "lineCount": true,
+        "language": true,
+        "script": true,
+        "direction": true,
+        "writingMode": true,
+        "noHorizontalOverflow": true,
+        "detailsHidden": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "authorFontUsed": true,
+        "combiningSequencePreserved": true,
+        "combiningRunIntact": true,
+        "fallbackUsed": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true
+      },
+      "observation": {
+        "lineCount": 22,
+        "language": "en",
+        "script": "Latn",
+        "direction": "ltr",
+        "writingMode": "horizontal-tb",
+        "overflow": false,
+        "detailsClosed": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "background": "rgb(242, 238, 230)",
+        "fallbackRunCount": 0
+      },
+      "fontUse": {
+        "fonts": [
+          {
+            "familyName": "Etceter4 Diary",
+            "postScriptName": "Etceter4Diary-Regular",
+            "isCustomFont": true,
+            "glyphCount": 9
+          }
+        ]
+      },
+      "fallbackUse": {
+        "fonts": [
+          {
+            "familyName": "DejaVu Serif",
+            "postScriptName": "DejaVuSerif",
+            "isCustomFont": false,
+            "glyphCount": 1
+          }
+        ]
+      },
+      "unicode": {
+        "nfd": [
+          65,
+          769
+        ],
+        "nfc": [
+          193
+        ],
+        "nfdWidth": 28.88671875,
+        "nfcWidth": 28.88671875,
+        "nfdTextNodes": 1,
+        "nfdDirection": "ltr"
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "name": "phone-light",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true,
+        "scheme": "light"
+      },
+      "checks": {
+        "sourceLinesExact": true,
+        "lineCount": true,
+        "language": true,
+        "script": true,
+        "direction": true,
+        "writingMode": true,
+        "noHorizontalOverflow": true,
+        "detailsHidden": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "authorFontUsed": true,
+        "combiningSequencePreserved": true,
+        "combiningRunIntact": true,
+        "fallbackUsed": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true
+      },
+      "observation": {
+        "lineCount": 22,
+        "language": "en",
+        "script": "Latn",
+        "direction": "ltr",
+        "writingMode": "horizontal-tb",
+        "overflow": false,
+        "detailsClosed": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "background": "rgb(242, 238, 230)",
+        "fallbackRunCount": 0
+      },
+      "fontUse": {
+        "fonts": [
+          {
+            "familyName": "Etceter4 Diary",
+            "postScriptName": "Etceter4Diary-Regular",
+            "isCustomFont": true,
+            "glyphCount": 9
+          }
+        ]
+      },
+      "fallbackUse": {
+        "fonts": [
+          {
+            "familyName": "DejaVu Serif",
+            "postScriptName": "DejaVuSerif",
+            "isCustomFont": false,
+            "glyphCount": 1
+          }
+        ]
+      },
+      "unicode": {
+        "nfd": [
+          65,
+          769
+        ],
+        "nfc": [
+          193
+        ],
+        "nfdWidth": 28.88671875,
+        "nfcWidth": 28.88671875,
+        "nfdTextNodes": 1,
+        "nfdDirection": "ltr"
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "name": "desktop-dark",
+      "viewport": {
+        "width": 1280,
+        "height": 960,
+        "mobile": false,
+        "scheme": "dark"
+      },
+      "checks": {
+        "sourceLinesExact": true,
+        "lineCount": true,
+        "language": true,
+        "script": true,
+        "direction": true,
+        "writingMode": true,
+        "noHorizontalOverflow": true,
+        "detailsHidden": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "authorFontUsed": true,
+        "combiningSequencePreserved": true,
+        "combiningRunIntact": true,
+        "fallbackUsed": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true
+      },
+      "observation": {
+        "lineCount": 22,
+        "language": "en",
+        "script": "Latn",
+        "direction": "ltr",
+        "writingMode": "horizontal-tb",
+        "overflow": false,
+        "detailsClosed": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "background": "rgb(24, 26, 27)",
+        "fallbackRunCount": 0
+      },
+      "fontUse": {
+        "fonts": [
+          {
+            "familyName": "Etceter4 Diary",
+            "postScriptName": "Etceter4Diary-Regular",
+            "isCustomFont": true,
+            "glyphCount": 9
+          }
+        ]
+      },
+      "fallbackUse": {
+        "fonts": [
+          {
+            "familyName": "DejaVu Serif",
+            "postScriptName": "DejaVuSerif",
+            "isCustomFont": false,
+            "glyphCount": 1
+          }
+        ]
+      },
+      "unicode": {
+        "nfd": [
+          65,
+          769
+        ],
+        "nfc": [
+          193
+        ],
+        "nfdWidth": 28.88671875,
+        "nfcWidth": 28.88671875,
+        "nfdTextNodes": 1,
+        "nfdDirection": "ltr"
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "name": "phone-dark",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true,
+        "scheme": "dark"
+      },
+      "checks": {
+        "sourceLinesExact": true,
+        "lineCount": true,
+        "language": true,
+        "script": true,
+        "direction": true,
+        "writingMode": true,
+        "noHorizontalOverflow": true,
+        "detailsHidden": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "authorFontUsed": true,
+        "combiningSequencePreserved": true,
+        "combiningRunIntact": true,
+        "fallbackUsed": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true
+      },
+      "observation": {
+        "lineCount": 22,
+        "language": "en",
+        "script": "Latn",
+        "direction": "ltr",
+        "writingMode": "horizontal-tb",
+        "overflow": false,
+        "detailsClosed": true,
+        "closedControlClear": true,
+        "fontLoaded": true,
+        "background": "rgb(24, 26, 27)",
+        "fallbackRunCount": 0
+      },
+      "fontUse": {
+        "fonts": [
+          {
+            "familyName": "Etceter4 Diary",
+            "postScriptName": "Etceter4Diary-Regular",
+            "isCustomFont": true,
+            "glyphCount": 9
+          }
+        ]
+      },
+      "fallbackUse": {
+        "fonts": [
+          {
+            "familyName": "DejaVu Serif",
+            "postScriptName": "DejaVuSerif",
+            "isCustomFont": false,
+            "glyphCount": 1
+          }
+        ]
+      },
+      "unicode": {
+        "nfd": [
+          65,
+          769
+        ],
+        "nfc": [
+          193
+        ],
+        "nfdWidth": 28.88671875,
+        "nfcWidth": 28.88671875,
+        "nfdTextNodes": 1,
+        "nfdDirection": "ltr"
+      },
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Chromium only; touch emulation is not a physical iPhone.",
+    "Latin fixture only; other scripts need separate author input and shaping acceptance."
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "HeadlessChrome/153.0.8010.0",
+    "revision": "@86cee6df69e0463a839c0cc8435c9d4c259434d3",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+    "jsVersion": "15.3.76"
+  },
+  "glyphCases": [
+    {
+      "name": "capture-sheet",
+      "checks": {
+        "noHorizontalOverflow": true,
+        "sourceHashPresent": true,
+        "privateLabel": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true,
+        "repertoire": true,
+        "threeBlankSamples": true
+      },
+      "observation": {
+        "rows": 37,
+        "slots": 111,
+        "blankSlots": true,
+        "images": [],
+        "overflow": false,
+        "sourceHashPresent": true,
+        "privateLabel": true
+      },
+      "errors": [],
+      "pass": true
+    },
+    {
+      "name": "glyph-proof",
+      "checks": {
+        "noHorizontalOverflow": true,
+        "sourceHashPresent": true,
+        "privateLabel": true,
+        "noExternalRequests": true,
+        "noRuntimeErrors": true,
+        "oneDeclaredGlyph": true,
+        "cropLoaded": true
+      },
+      "observation": {
+        "rows": 1,
+        "slots": 0,
+        "blankSlots": true,
+        "images": [
+          {
+            "loaded": true,
+            "width": 127,
+            "height": 126
+          }
+        ],
+        "overflow": false,
+        "sourceHashPresent": true,
+        "privateLabel": true
+      },
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "pass": true
+}

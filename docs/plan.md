@@ -1,8 +1,84 @@
 # Handwritten journal: plan and state
 
-Working document for the journal-handwritten-web project. Last updated 2026-10-28.
+## Reader navigation and About — November 6, 2026
+
+The author reported poor menu discovery, triggering and control hierarchy, and asked to write an About explanation. The initial engineering proposal used a permanently visible text-labeled Menu launcher; it was not an approved visual design. He subsequently asked for three options before implementation, specified a mainly hidden menu with a small icon/drawing, and supplied a crown and heavy hamburger photograph for assessment. He accepted the assistant's recommendation of the bold hamburger launcher with a small handwritten `menu` label and the crown inside Menu/About, and approved a small backing with canvas/text color roles reversed. His later instruction to proceed resumes the original menu/About work. This dated update supersedes the earlier launcher proposal while preserving it as history.
+
+The current implementation plan keeps full controls hidden until the compact launcher is opened and groups and labels them clearly. Separate About and How to explore destinations are an implementation choice within the accepted approach. The author's description belongs in `#about-author`, initially hidden and genuinely empty. Technical help may be maintained with the interface; no creative or interpretive About text is supplied on his behalf. See [the session record](chats/2026-11-06-reader-navigation-and-about.md), [design](superpowers/specs/2026-11-06-reader-menu-design.md) and [private writing brief](audience/about-writing-brief.md).
+
+The inspected main is `9c0e9c565fb9d7bef3a68b21faa744010a401f60`; the local working folder is a snapshot, not a Git checkout. At this documentation pass, browser/integration results, generated-engine hash, manifest checks and remote delivery remain pending the integrator's closeout evidence. Existing poem clearance and exact-engine/Studio-pin activation requirements remain; this update does not select or publish a poem. Shared packet `2026-10-16-v1.1` / `2026-10-16-v1.1-r2` and its original files remain inaccessible. Earlier dated status and proposal sections below remain history.
+
+## Author-directed publication fixes - November 6, 2026
+
+This update supersedes earlier deferral/decision wording for three public metadata items and diary1 block 2. The author instructed removal of unpublished page IDs, blank optional handwriting-font provenance, omission of the global transcription status and completion of the four-line scan mapping before posting. The real posting builder already filters PAL/HF by exact selected membership. Public font name IDs 0/10 are now blanked, the global claim omitted, and diary1 block 2 canonical geometry repaired with original geometry retained for archival reconstruction. Existing release classification, filing and exact-output clearance gates remain. See [the session record](chats/2026-11-06-publication-metadata-diary1.md) for implementation and verification.
+
+
+## Private integration update — November 6, 2026
+
+This dated update supersedes earlier statements that the source foundation and
+reader adapters were unimplemented. The integration reconstructs the missing
+source/review/rebuild path, applies all 38 preserved reviews without changing raw
+originals, retains 123 pages / 126 pieces / 156 versions / 2,190 line IDs, and
+provides independent source and nine-collection database recovery. Original
+missing generators and the reported T04 local patch were not recovered; their
+bounded replacements are identified as new implementation.
+
+Current source bindings include stanza boundaries and are checked against exact
+selected versions. Reader, private notes/artifact workbenches, media provenance,
+source regions and script/audio adapters share these identities. Exact-output
+clearance binds files and revisions; fixture approval and outward execution are
+separate. The private public-build candidate now excludes withheld PAL/HF
+metadata. Missing geometry stays unavailable, with page/text fallback.
+
+The release whitelist is still empty. The author retains classification, final
+version, filing, public metadata/wording, device acceptance and final output
+clearance. Creative choices, author recordings, new glyphs, avatar treatment and
+clips remain unfulfilled. Historical dates do not create a new posting schedule.
+Hosted Access/write checks and runner/account decisions remain separately owned.
+No public deployment, new service, account change or retained-ref cleanup is part
+of this integration.
+
+The current evidence and issue-by-issue dispositions are linked from
+[the integration closeout](chats/2026-11-06-integration-closeout.md). Earlier dated claims below remain historical evidence.
+
+## Launch code reconciliation — 2026-11-06
+
+This dated update supersedes the repository-status assertions in older sections, while retaining their history. Live private main was `ef3d263c455788c769547df9e1e6010a54b7719a`: PR #131 posting hardening and #119 T03 release packet had already merged. #119's account attribution does not establish an explicit owner keep/discard decision. The final alive work and README fix exist remotely at `eece4f56ffaae81500aaf94fd18852b2038e06d6`; #102 is now updated at `0561f712e0061db5317115097af72e874c9652d9`, retained as a draft private prototype with byte-identical atom reproduction and a passing 12-case local rendering matrix.
+
+During final verification, PR #132 also merged as `6d5b34f77432a0aaeaaefef5ca0ee5762bb24169` and closed #123. The completion branch preserves its additional privacy/configuration fixes while retaining detached verification, conditional branch updates and immutable-SHA pushes. Both histories are retained.
+
+The Release browser checks now have a passing, isolated local D1 run: Mark posted, Exposure, save/reload, touch-phone and desktop light/dark layouts, and refusal of a signed unlisted email. Exposure URL validation was corrected. These checks do not establish hosted save behavior or live Access policy. The live public page is blank/noindex and the studio presents Access login; authenticated Cloudflare runtime/bindings and deployed acceptance remain unverified. No publication or live poem classification was performed.
+
+The [completion record](chats/2026-11-06-launch-completion.md) preserves exact commit IDs, PR #119 provenance, inaccessible sources and the verified owner-issue mapping. #104–#109, #111–#113 and #121 remain open. #110 is closed in GitHub, but receipt/ingestion of the optional photos is unverified. Missing original builders (#107), owner source correction (#121), publication choices, noindex, name/date, spending and account creation remain gated. Repository conflict markers were repaired without dropping historical plan content or unique session records.
+
+Working document for the journal-handwritten-web project. Last updated 2026-11-06; dated earlier sections are historical.
+
+## T06 identity and audience update — 2026-11-05 (America/New_York)
+
+This dated addendum narrows the historical identity/audience items below; it does not approve a release or replace T03's clearance procedure. The current author-directed identity is `vers.forms`, public title `versforms`, public font `ajp-scribbles`; earlier naming candidates remain history. Account/email control and a custom domain are not established by an old availability result. The existing `versforms.pages.dev` endpoint is the no-spend destination option.
+
+T06 prepared a private identity/status record, avatar provenance/T07 handoff, weekly posting/reply/review SOP, finite decision register, inactive optional-tool brief, later press criteria and a disposition for #4/#43/#49–#51/#57–#61/#70. See [the T06 packet](audience/README.md). The existing #61 research is retained; the first-12-poems no-analytics rule was proposed, not accepted, and #59's older scheduled-agent proposal is superseded. No optional automation is active.
+
+The author still chooses account separation, slot/reply window, observation thresholds, all public copy, exposure response, exact scan use and optional tools. Avatar arm treatment awaits author/T07 review; inaccessible original/v2 sources are identified rather than regenerated. One future release consumes T03's exact version/output clearance and T07's approved media manifest. No account change, spending, outreach, issue closure, merge, deploy or public posting is authorized by this addendum.
+
 
 > Repository copy of the claude.ai Project doc `claude/plan.md` as of 2026-10-28 (synced 2026-11-05). The Project doc is the working copy; this file is versioned here so each revision of the plan is kept. Per-chat plans and their status: `docs/chats/`.
+
+## T03 preparation addendum — 2026-11-05
+
+The [T03 release procedure](releases/t03-release-procedure.md), [author-decision packet](releases/t03-author-decisions.md), [sourced policy](releases/t03-policy-and-disposition.md) and [clearance contract](releases/release-clearance-contract.md) now use PR #101 head `e5ae157ef556690e73047e30225cad61c5484cf9`. The original `5d111c1` / `e0177fa` eight-file rehearsal is preserved at `release/packets/2026-11-05-t03-baseline/`; current output is at `release/packets/2026-11-05-t03-current/`. Baseline counts and hashes are not current acceptance.
+
+The bounded private preview selects `p001-diary1-0`; both p001 and that version remain derived candidates awaiting the author. Journal-page order is preserved; `as-posted` and participation `around` remain derived defaults. The author-selected title and font are versforms and ajp-scribbles.
+
+The genuine preserved export has 38 reviews and zero release records. The current posting CLI stops at **exit 3** in the empty-release loader. The private helper uses `studio-cf/import_export.scan` and separately evaluates the existing gates: reviews pass, Series false, batch false. No fake release record is added. Keep the documented filed/registered-batch gate, distinguishing workflow confirmation and actual filing evidence. Older skip-filing advice is not policy.
+
+Content exclusion (text/version data and images) passes, but 13 withheld-page identifiers and PAL/HF block structures remain in `index.html`; **complete technical exclusion is false**. An explicit author metadata rule or a T04/builder fix and a new check remains required. The private comparison shows p126 on diary62a; no shared-scan flag provides clearance.
+
+Reserve-size and launch-bank proposals remain unresolved. Weekly cadence and existing-resource/no-spend constraints remain. Replace elapsed dates with an author-confirmed T0 after clearance and weekly intervals; no future date is committed. Both Site/social false values are UI enum classifications, not stored `pub` event fields. Event semantics remain an author/integrator decision. The local D1 receipt's 12 passing checks include a narrow desktop 390-pixel viewport; separate release-browser touch emulation is not physical-phone acceptance. No physical-phone pass is claimed.
+
+Both this versioned plan and its repository counterpart now carry the addendum. PR #103 restored the historical `claude/plan.md`; the matching addendum patch has already been applied in this checkout and is retained only as a reproducible historical handoff. The underlying October 28 plan remains historical. Source/deposit and phone interfaces remain with T02/T04; shared studio changes go through T01. PR #101 review [4487062599](https://github.com/4444J99/journal-handwritten-web/pull/101#discussion_r4487062599) remains a non-dry-run execution gate.
+
+No live state, private whitelist, publication, filing, merge or deployment is changed. The private shared memory packet remains inaccessible; the addendum uses accessible repository evidence and the current integrator receipts.
 
 ## Source
 - 123 scanned journal pages, c. 2014–2015, from github.com/4444J99/etceter4 (commit dfcbf0f, `img/photos/diary/`); 63 two-page spreads scanned September 2015 (`diary_originals.zip`).
@@ -76,6 +152,18 @@ Items 2–9 are answerable in the review studio (Decisions and Release tabs).
 ## Release tab (review studio, v2)
 Sections, all saved to the studio database:
 - **Sort**: assign each piece (journal items and "New poem" uploads) to Series, Reserve or Archive. Warns when a Reserve piece has a logged appearance.
+
+## T07 media-production kit (2026-11-05/06)
+
+A reusable private kit lives in `production/`. It produces the 4:5 stills
+(three cover treatments), a paired Reel and carousel, a provisional 9:16
+assembly, and a private scan-based widget kit from one source package, with
+phone-size QA and manifests. The second piece (`p004`) runs through the same
+code path and passes `production/tools/check_substitution.py`. Nothing is
+cleared: `may_publish: false`, `author_clearance: null`. Original Live
+Photo/video clips, the physical iPhone widget test, target-journal Story
+treatment and T06 D13 identity approval remain open. See
+`production/DISPOSITION.md`.
 - **Calendar**: Series queue, one per week from a chosen first-post date; reorder; per-poem prep checklist (edits, response end note, footnotes, endnotes, citations, academic note, social post); gates for verified, GRUW filed, prep complete; Mark posted (asks for a second tap if not ready). Number shown per the numbering decision.
 - **Copyright**: GRUW batches of up to 10 Series pieces; draft → filed (date, case number) → registered (reg. number, effective date); shows the `make_deposit.py` command for the batch.
 - **Exposure**: log of every place any version appeared (social, own site, member layer, recording, sold, download, journal, anthology); flags types that count as publication for copyright.
@@ -103,5 +191,92 @@ Photo → `app_build/ingest_version.py <photo> --piece <id|new>` (straighten, cl
 - Deposit generator: `release/copyright/make_deposit.py <up to 10 piece ids>` builds one PDF per poem (text + page scan) and a manifest; refuses unverified pieces unless overridden. The Release tab prints this command per batch.
 
 ## Rebuild order (technical)
+
+### T05 addendum — 2026-11-05
+
+Private versioned notes and contribution review are implemented on an isolated
+draft branch; see [workflow](notes-workflow.md) and
+[integration handoff](integration/t05-handoff.md). This does not replace the
+historical author decisions above. The stored `around` participation default
+from November 5 is Claude-derived; type, invited/open format and permission
+terms remain the author's choices. It never increments the author's n/100.
+
+T01 owns the staged studio entry/persistence integration, T02 the proposed
+fingerprint/word-anchor agreement, T03 release-event/manifest integration, and
+T04 final requested reader placement/lifecycle. New note and contribution
+collections must travel with complete private exports; old six-collection
+exporters are insufficient. Reflection text and final timing/placement remain
+with the author. Invites, submissions and publication stay inactive.
+
+### Existing rebuild sequence
 1. Export the studio's `reviews`, `decisions`, `versions`, `release`, `batches`, `rconfig` collections → `review_build/apply_reviews.py` (backs up first; `--dry-run`) → transcripts and `archive/data/journal.json` updated.
 2. Archive build → `review_build/build_data.py` + `assemble.py` (republish studio) and `app_build/build.py` → `app_build/assemble.py` → publish `app/index.html` to artifact `1Pcbgrvp7BqfmcYhzZLEss` (≤255 files per publish, ≤511 per version). The studio page source with the Release tab is version 2 of `MVognnZQrtRQ6QCMaF7341`; a rebuild must start from that page, not the older `review/index.html`. **The merged piece must start from artifact version 4's `index.html`** (or the generator must take the v4 changes), not the older template.
+## T08 source-region contract and private pilot (2026-11-05)
+
+Work is in an isolated branch `t08/source-regions-pilot-2026-11-05`; nothing is merged or published.
+
+- **Contract**: one atom identity/region/method/lineage/credit model for line, word, glyph, mark and
+  derived combinations; a separate, dateable visibility policy. Implemented in
+  `tools/source_regions.py`, documented in `docs/contracts/source-regions.md`, tested in
+  `tests/test_source_regions.py`.
+- **Pilot**: `p001` / `p001-diary1-0` / page `diary1`, 441 atoms, 22 lines, centered line-length
+  structure, no poem text. Owner segmentation reused read-only from `alive-prototype` (HEAD
+  `eece4f5`), not reimplemented.
+- **Eligibility**: the derived policy allows a private-local build and refuses public release
+  (`pool: unassigned`, empty whitelist, no clearance). A successful check is not artistic approval.
+- **Evidence**: owner prototype reproduced headless — 0 atlas pixels outside 22 line regions, all 22
+  source line ids used, no console errors (`docs/pilots/t08-p001/evidence/`).
+- **Hand-offs**: Cut and Key Sheet/page:line:word cipher contracts are prepared for author-operated
+  tools and staged through the studio integrator; no UI is built. T02's identifier/deposit contract
+  was not located, so ids stay provisional. T03's clearance contract is a draft (PR #119), not
+  authority.
+- **Open artistic questions** remain as mapped in `docs/pilots/t08-p001/decision-map.md`: chance vs
+  rule; revised/struck/inserted atoms; borrowed-line credit; puzzle locks/hints/solver credit;
+  participation; journal-vocabulary constraint; poem 100 from poems 1–99. Markov/n-gram text,
+  sensors, location/weather, reconstructed strokes and an automatic misread generator are not built
+  and must not be inferred from the contract.
+
+## T10 technical preparation — 2026-11-05 review baseline
+
+The later roots/glyphs work in #12 and research follow-ups in #33 now have an isolated, private script-realization fixture and author-glyph workflow. See [the T10 record](t10-script-realizations.md). This is technical preparation: exact existing `p001` / `p001-diary1-0`, English/Latin, unchanged source reading, original supplied font. It is not adoption of Greek-first, a translated poem, an expanded multi-script font, or a release decision.
+
+The proposal keeps realization revisions independent from editorial poem versions, matches the proposed T05 source fingerprint, and hands schema/font interfaces to T02 for review. Current public output is empty pending T03's actual manifest-based clearance adapter. LingFrame was inspected at a pinned commit; a narrow local diagnostic interface is proposed, with no repository coupling. Optional weekly practice fields remain the author's work. Current journal/grant follow-ups are sourced in the T10 packet; no application, inquiry, schedule or publication is authorized by those findings.
+
+Next author input can be one exact line, its source/version association, language/script/orthography and operation, plus only its necessary glyph samples. Preserve the earlier history above; its proposals and historical approvals do not become new authority. #12 and #33 remain open with existing ownership.
+
+## T09 addendum · 2026-11-05 · private audio pilot
+
+This dated addendum preserves the earlier plan as history. The current scoped request is issues
+#23, #24 and #35: prepare the acquisition/processing tools before requesting a recording. Sources,
+author decisions, proposals and fixture verification are separated in `docs/audio/README.md`.
+
+- **Author decisions retained:** use his own recordings for both forward/backward speech and
+  voice-derived ambience; reusable methods; creative performance and text remain his.
+- **Engineering preparation:** bounded manifest-driven renderer, explicit alignment/cutter,
+  calibration fixtures, prompt packet and private local listening/prompter workbench. Test scope
+  and limitations are recorded in `docs/verification/t09-audio/README.md`. Fixture results do not
+  establish a finished or intelligible author voice bank.
+- **Proposal replacing two recording requests:** one 50-prompt session designed for approximately
+  30 minutes (2 calibration, 24 speech-transition, 24 texture prompts). Existing equipment only;
+  record after choosing the finite acquisition inputs. This is not full-bank acquisition.
+- **Author inputs still open:** the 14-choice sheet in `docs/audio/author-decisions.md`, actual
+  recordings, reviewed pronunciations/labels and a listening decision naming exact render hashes.
+- **Sequence:** prepared tools → combined author pilot → labeled comparable samples → author
+  listening selection → revised full-bank scope and one reader/studio playback integration.
+  Performed supplements and release follow their own author choices.
+- **Integration owners retained:** T02 source/version identity; T04 reader lifecycle/hidden controls;
+  T03 exact-output publication eligibility; shared studio UI through its single integrator. No
+  production audio or new studio collection is enabled by this draft.
+- **Privacy and identity:** raw masters are held private and outside served paths. Raw-bank sharing,
+  voice reuse and release of rendered audio remain separate decisions. The journal is a distinct
+  body of work in `versforms`, separate from ETCETER4. No merge, deployment, release or issue closure is part of T09.
+- **Context limit:** shared packet `2026-10-16-v1.1` / projection `2026-10-16-v1.1-r2` remained
+  inaccessible; no claims or approvals are attributed to unseen contents.
+
+## Integration execution — 2026-11-06 (partial)
+
+Remote `main` is `8cd9872acbccd28db9736c2340cdac9d1ba65f91`. Merged PR #127 (audio filename contract) and #128 (fingerprint v2 incl. breakBefore). `tools/check.py` and `tools/ci_local.py` pass. Remaining tranche work (T01–T08 integration, #123 posting hardening, T03 release packet) remains open.
+
+## Studio publishing implementation - 2026-11-06
+
+The accepted implementation plan is `.codex/plans/2026-11-06-studio-publish.md`. The browser compiles the candidate; owner-authenticated Pages Functions verify one piece/page at a time, materialize immutable drafts, and confirm the exact hash into a separately bound R2 bucket. The public reader can read only its bucket. Author metadata policy: filter unpublished PAL/HF membership, blank optional font fields, remove the global review-status line, preserve license notices and noindex. Python remains the parity reference and posting fallback. See `studio-cf/README.md` and the session record `docs/chats/2026-11-06-studio-publish.md` for implementation evidence and remaining owner acceptance. No first-poem publication is inferred from a successful build or deployment.

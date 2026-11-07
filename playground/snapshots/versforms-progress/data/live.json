@@ -1,0 +1,10 @@
+[
+  {"what": "Public site", "result": "blank page, title versforms, noindex kept", "how": "fetched with curl; nothing is posted"},
+  {"what": "Studio, logged out", "result": "5 of 5 requests sent to the Cloudflare login", "how": "curl: root, /api/me, /data/review.json, the deployment host, a preview-style host"},
+  {"what": "Studio, signed in", "result": "page loads; your email has write access", "how": "browser pane: /api/me, 38 reviews, 2 decisions, scans load"},
+  {"what": "Studio settings", "result": "3 secrets and 2 bindings present", "how": "read in the Cloudflare dashboard"},
+  {"what": "Studio database", "result": "38 reviews, 2 decisions; the other project's table untouched", "how": "D1 query"},
+  {"what": "Claude.ai download on the archive", "result": "28 of 28 hashes match after the move", "how": "SHA-256 before and after"},
+  {"what": "Saving a change in the studio", "result": "not tested", "how": "waits on your first sort (issue #105)"},
+  {"what": "Runtime Fail closed", "result": "not set", "how": "your one click (issue #104)"}
+]

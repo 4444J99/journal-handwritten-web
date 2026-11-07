@@ -1,0 +1,5 @@
+# Versions used to produce the approved shell and lossless tiles.
+Pillow==13.0.0
+fonttools==4.68.0
+brotli==1.2.1
+Markdown==3.11

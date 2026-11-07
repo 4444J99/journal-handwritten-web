@@ -10,18 +10,23 @@ for every full-size image, so a real deploy publishes this assembled directory:
     python3 studio-cf/build_dist.py
     (cd studio-cf && wrangler pages deploy dist --project-name versforms-studio)
 
-Nothing is uploaded by this script. Stdlib only.
+Nothing is uploaded by this script. Publication preparation also needs the pinned
+Pillow/fontTools/brotli build dependencies.
 """
 import argparse
+import importlib.util
 import json
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(HERE))
 from check import studio_source  # noqa: E402
+from prepare_publish import prepare  # noqa: E402
 
 
 def main(argv=None):
@@ -38,6 +43,9 @@ def main(argv=None):
     for p in sorted((ROOT / "studio").rglob("*")):
         if p.is_file():
             published[p.relative_to(ROOT / "studio").as_posix()] = p
+    # One lifecycle implementation serves the reader and private Studio adapters.
+    for asset in ("reader-features.js", "reader-packages.js"):
+        published["site/" + asset] = ROOT / "site" / asset
     data = json.loads((ROOT / "studio/data/review.json").read_text())
     for page in data["pages"]:
         for pub in filter(None, [page["img"], page["thumb"], (page.get("spread") or {}).get("img")]):
@@ -47,16 +55,47 @@ def main(argv=None):
     missing = sorted(k for k, v in published.items() if not v.is_file())
     for m in missing:
         print(f"MISSING {m}")
-    if out.exists():
-        shutil.rmtree(out)
+    if missing:
+        return 1
     n = 0
-    for pub, src in published.items():
-        if not src.is_file():
-            continue
-        dest = out / pub
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dest)
-        n += 1
+    out.parent.mkdir(parents=True, exist_ok=True)
+    # Keep the last successful deployment intact until all source and font/atlas
+    # preparation succeeds. Staging lives on the same filesystem as the output.
+    try:
+        with tempfile.TemporaryDirectory(prefix=".dist-build-", dir=out.parent) as temporary:
+            staged = Path(temporary) / "dist"
+            staged.mkdir()
+            for pub, src in published.items():
+                dest = staged / pub
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dest)
+                n += 1
+            # The private playground (playground/README.md) is served at /playground/ behind
+            # the same Access check as everything else here; it never goes to versforms.
+            playground_build = ROOT / "playground" / "build.py"
+            if playground_build.is_file():
+                spec = importlib.util.spec_from_file_location("playground_build", playground_build)
+                playground = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(playground)
+                try:
+                    playground.main(["--out", str(staged / "playground")])
+                except SystemExit as exc:  # keep the previous output, like any other failed step
+                    raise RuntimeError(f"playground build failed: {exc}") from exc
+                n += sum(1 for f in (staged / "playground").rglob("*") if f.is_file())
+            prepared = prepare(ROOT, staged / "publish")
+            previous = Path(temporary) / "previous"
+            if out.exists():
+                out.replace(previous)
+            try:
+                staged.replace(out)
+            except Exception:
+                if previous.exists() and not out.exists():
+                    previous.replace(out)
+                raise
+    except Exception as exc:
+        print(f"Studio preparation failed ({type(exc).__name__}); previous output retained", file=sys.stderr)
+        return 1
+    print(f"publisher shell sha256 {prepared['shellSha256']}")
     print(f"{n} files written to {out} ({len(missing)} missing)")
     return 1 if missing else 0
 

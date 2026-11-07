@@ -1,0 +1,20 @@
+{
+  "name": "root-python",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_*.py"
+  ],
+  "startedAt": "2026-11-06T00:39:22.942630+00:00",
+  "finishedAt": "2026-11-06T00:40:36.520287+00:00",
+  "exitCode": 0,
+  "environment": {
+    "VERSFORMS_FONT_PYTHON": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "PYTHONPATH": "/workspace/scratch/d5c1b1e5f42b/runtime-python"
+  }
+}

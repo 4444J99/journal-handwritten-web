@@ -1,0 +1,18 @@
+{
+  "name": "root-node",
+  "command": [
+    "node",
+    "--test",
+    "tests/test_cdp_client.mjs",
+    "tests/test_mark_posted.mjs",
+    "tests/test_notes_backup.mjs",
+    "tests/test_notes_model.mjs",
+    "tests/test_notes_reader.mjs",
+    "tests/test_notes_store.mjs",
+    "tests/test_verify_site_cleanup.mjs"
+  ],
+  "startedAt": "2026-11-06T00:37:06.607045+00:00",
+  "finishedAt": "2026-11-06T00:37:13.956368+00:00",
+  "exitCode": 0,
+  "fontPython": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+}

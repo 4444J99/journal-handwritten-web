@@ -1,0 +1,8 @@
+{
+  "schema": "schemas/script-realization.schema.json",
+  "jsonParsed": true,
+  "localReferenceTargetsExist": true,
+  "semanticFixtureValidation": true,
+  "independentDraft202012EngineRun": false,
+  "limitation": "No JSON Schema engine available in the inspected runtime; semantic validator and schema/reference inspection passed. T02 schema adoption remains proposed."
+}

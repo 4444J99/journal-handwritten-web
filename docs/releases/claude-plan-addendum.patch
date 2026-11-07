@@ -1,0 +1,11 @@
+--- a/claude/plan.md
++++ b/claude/plan.md
+@@ -3,0 +4,8 @@
++
++## T03 preparation addendum — 2026-11-05
++
++See `docs/releases/t03-release-procedure.md`, `t03-author-decisions.md`, the sourced release policy/dispositions, and `release-clearance-contract.md`. The bounded private preview reuses PR #101 and selects `p001-diary1-0`; p001 and this selection are derived candidates, not release approval. Page order is preserved; `as-posted` and `around` remain derived defaults pending confirmation.
++
++The documented filed/registered-batch gate is retained while author confirmation and actual filing evidence are distinguished. No release or batch document exists in the preserved export, so the actual posting dry run refuses. The older skip-filing advice is not policy. Reserve-size and launch-bank proposals remain unresolved. Weekly cadence and existing-resource/no-spend constraints remain; choose a confirmed start only after clearance, without turning old or provisional dates into commitments.
++
++The private packet inventories versions, text, page tiers, spreads, plates, atlas regions and embedded font metadata. Its comparison exposes p126 on diary62a; a shared-scan flag gives no clearance. Source/deposit and reader/device integration are handed to T02/T04; studio changes go through T01. No whitelist, live record, publication, filing, merge or deployment is changed. The shared private memory packet remains inaccessible; all conclusions use accessible repository evidence.

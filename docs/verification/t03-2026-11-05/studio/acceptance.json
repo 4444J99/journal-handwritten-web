@@ -1,0 +1,201 @@
+{
+  "tested_revision": "5d111c13764655312c32ddf1b55390198bc7f70c",
+  "runner_sha256": "1fd5bc239c10423521ae2f841aefcc3c54928f0311be1486cb2a0833295fc0cb",
+  "runtime": {
+    "node": "v24.22.1",
+    "platform": "linux",
+    "playwright": "1.62.1"
+  },
+  "source_root": "/workspace/scratch/d5c1b1e5f42b/studio-acceptance/source",
+  "started": "2026-11-05T23:01:15.450Z",
+  "scope": "Disposable local D1, actual studio + cf-adapter, loopback JWKS, synthetic release state; no live DB or publishing.",
+  "checks": [
+    {
+      "name": "Owner connects to disposable D1",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid Mark posted URL neither arms nor writes",
+      "status": "pass"
+    },
+    {
+      "name": "Unready first tap arms without DB write",
+      "status": "pass"
+    },
+    {
+      "name": "Unready second tap persists one social event and derived number 1",
+      "status": "pass"
+    },
+    {
+      "name": "Reload reads persisted Mark posted record and removes repeat button",
+      "status": "pass"
+    },
+    {
+      "name": "Site shortcut writes site event, scan version, omitted empty account",
+      "status": "pass"
+    },
+    {
+      "name": "Site-only exposure persists after reload but Calendar remains unposted",
+      "status": "pass"
+    },
+    {
+      "name": "Instagram shortcut defaults and manual-edit deselection",
+      "status": "pass"
+    },
+    {
+      "name": "Instagram event appends without replacing Site event",
+      "status": "pass"
+    },
+    {
+      "name": "Fresh page reload reads all three persisted events",
+      "status": "pass"
+    },
+    {
+      "name": "Site and social source flags false and no published badge rendered for persisted events",
+      "status": "pass"
+    },
+    {
+      "name": "390px emulator has no document horizontal overflow",
+      "status": "pass",
+      "viewport": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390
+    }
+  ],
+  "source_hashes": {
+    "studio/index.html": "91f1449902d52fa43d36d0a8ee9eea10f658bda49bd1b7cf8b33fc6e053648e7",
+    "studio/cf-adapter.js": "2e62027abc6851ee10b72bf7045240a15175716cf582d1f0cf69e9b087e8e7c1",
+    "studio-cf/lib/api.js": "526c8dfd528120de540c91bea9285ec4aa91b57bda2758fde60ef329021d4c09",
+    "studio-cf/schema.sql": "efe3ebd9b143063d4e24053faf7f9cce6d40370b739b5620ed46c1b55423532c"
+  },
+  "local_persist": "/workspace/scratch/d5c1b1e5f42b/studio-acceptance/reproducible-run/runtime/state-t03-2-1793919675482",
+  "fixture_keys": [
+    "p001",
+    "p002"
+  ],
+  "browser": "153.0.8010.0",
+  "mark_posted_record": {
+    "pool": "series",
+    "order": 0,
+    "exposures": [
+      {
+        "type": "social",
+        "where": "versforms.pages.dev",
+        "account": "vers.forms",
+        "date": "2026-11-05",
+        "url": "https://versforms.pages.dev/#p001",
+        "ver": "final",
+        "at": "2026-11-05T23:01:20.634Z"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "num": 1,
+    "at": "2026-11-05T23:01:20.634Z"
+  },
+  "site_record": {
+    "pool": "series",
+    "order": 1,
+    "exposures": [
+      {
+        "type": "site",
+        "where": "versforms.pages.dev",
+        "date": "2026-11-05",
+        "url": "https://example.test/local-site-fixture",
+        "ver": "scan",
+        "at": "2026-11-05T23:01:22.062Z"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "at": "2026-11-05T23:01:22.062Z"
+  },
+  "exposure_record": {
+    "pool": "series",
+    "order": 1,
+    "exposures": [
+      {
+        "type": "site",
+        "where": "versforms.pages.dev",
+        "date": "2026-11-05",
+        "url": "https://example.test/local-site-fixture",
+        "ver": "scan",
+        "at": "2026-11-05T23:01:22.062Z"
+      },
+      {
+        "type": "social",
+        "where": "Instagram",
+        "date": "2026-11-05",
+        "url": "https://example.test/local-instagram-fixture",
+        "ver": "draft",
+        "at": "2026-11-05T23:01:23.103Z",
+        "account": "vers.forms"
+      }
+    ],
+    "fixture": "T03 LOCAL ONLY; not author approval",
+    "at": "2026-11-05T23:01:23.103Z"
+  },
+  "publication_flags": {
+    "social": false,
+    "site": false
+  },
+  "mobile_layout": {
+    "viewport": 390,
+    "documentWidth": 390,
+    "bodyWidth": 390
+  },
+  "release_collection": {
+    "rev": 5,
+    "docs": [
+      {
+        "id": "p001",
+        "data": {
+          "pool": "series",
+          "order": 0,
+          "exposures": [
+            {
+              "type": "social",
+              "where": "versforms.pages.dev",
+              "account": "vers.forms",
+              "date": "2026-11-05",
+              "url": "https://versforms.pages.dev/#p001",
+              "ver": "final",
+              "at": "2026-11-05T23:01:20.634Z"
+            }
+          ],
+          "fixture": "T03 LOCAL ONLY; not author approval",
+          "num": 1,
+          "at": "2026-11-05T23:01:20.634Z"
+        }
+      },
+      {
+        "id": "p002",
+        "data": {
+          "pool": "series",
+          "order": 1,
+          "exposures": [
+            {
+              "type": "site",
+              "where": "versforms.pages.dev",
+              "date": "2026-11-05",
+              "url": "https://example.test/local-site-fixture",
+              "ver": "scan",
+              "at": "2026-11-05T23:01:22.062Z"
+            },
+            {
+              "type": "social",
+              "where": "Instagram",
+              "date": "2026-11-05",
+              "url": "https://example.test/local-instagram-fixture",
+              "ver": "draft",
+              "at": "2026-11-05T23:01:23.103Z",
+              "account": "vers.forms"
+            }
+          ],
+          "fixture": "T03 LOCAL ONLY; not author approval",
+          "at": "2026-11-05T23:01:23.103Z"
+        }
+      }
+    ]
+  },
+  "status": "pass",
+  "finished": "2026-11-05T23:01:23.788Z"
+}

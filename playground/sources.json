@@ -1,0 +1,179 @@
+{
+  "_note": "Hand-kept catalogue. Deployments are the three sites. Each claude.ai artifact lives natively in the playground at `open` (a page, a view or a file); `origin` records where it came from and is never shown as a link. Checked 2026-11-07.",
+  "deployments": [
+    {
+      "id": "studio",
+      "name": "Studio",
+      "url": "https://versforms-studio.pages.dev/",
+      "access": "private · Cloudflare Access, owner email only",
+      "holds": "Every page, piece and draft; review, decisions, release and publish. Saves to D1 (vf_ tables) and R2.",
+      "source": "journal-handwritten-web · studio/ + studio-cf/ (direct upload)"
+    },
+    {
+      "id": "staging",
+      "name": "Staging",
+      "url": "https://versforms-staging.pages.dev/",
+      "access": "public URL · noindex",
+      "holds": "A rehearsal of Live: the reader shell plus whatever the studio last published to the versforms-staging bucket.",
+      "source": "versforms · staging/ (R2 binding versforms-staging)"
+    },
+    {
+      "id": "live",
+      "name": "Live",
+      "url": "https://versforms.pages.dev/",
+      "access": "public · noindex",
+      "holds": "Posted poems only. release/public.json is empty, so the page is blank paper.",
+      "source": "versforms · site/ (R2 binding versforms-public)"
+    }
+  ],
+  "artifacts": [
+    {
+      "title": "Journal, 2014–2015",
+      "kind": "reader",
+      "date": "2026-10-28",
+      "note": "Merged piece v4 (canvas + book). Copied from site/ in this repository.",
+      "origin": "https://claude.ai/code/artifact/03284d0f-bfc0-45aa-91ac-d4d99c48ec72",
+      "open": "reader/index.html",
+      "opens": "page"
+    },
+    {
+      "title": "Journal Review",
+      "kind": "studio",
+      "date": "2026-10-28",
+      "note": "Review studio. Now runs as the Studio itself, on Cloudflare behind Access.",
+      "origin": "https://claude.ai/code/artifact/a5fc5ebb-3c06-4c0d-ae83-608e65cc8de6",
+      "open": "https://versforms-studio.pages.dev/",
+      "opens": "site"
+    },
+    {
+      "title": "Journal, 2014–2015 (first reader)",
+      "kind": "reader",
+      "date": "2026-10-25",
+      "note": "Earlier reader prototype: 123 pages, Etceter4 Diary font, 2015 spreads.",
+      "origin": "https://claude.ai/code/artifact/467da310-26e3-4d88-8d84-7adeefd2075b",
+      "open": "snap/first-reader/index.html",
+      "opens": "page"
+    },
+    {
+      "title": "ajp-journal--2013-15 (canvas test)",
+      "kind": "reader",
+      "date": "2026-10-25",
+      "note": "Infinite-canvas test with ink-only page images.",
+      "origin": "https://claude.ai/code/artifact/06ad27b0-f8f3-4525-bc67-4d054149da6d",
+      "open": "snap/canvas-test/index.html",
+      "opens": "page"
+    },
+    {
+      "title": "Minotaur Depths",
+      "kind": "prototype",
+      "date": "2026-11-07",
+      "note": "Prototype built on diary1 and diary62a. A copy runs inside the playground.",
+      "origin": "https://claude.ai/code/artifact/3b959352-5f54-492d-a21e-1b352ba807ac",
+      "open": "snap/minotaur-depths/index.html",
+      "opens": "page"
+    },
+    {
+      "title": "Journal piece — menu, five takes",
+      "kind": "design",
+      "date": "2026-11-07",
+      "boards": "menu-five-takes",
+      "origin": "https://claude.ai/code/artifact/c34bd5dd-a2c7-4ef3-9ba7-a742cf1120a6",
+      "open": "#designs",
+      "opens": "view"
+    },
+    {
+      "title": "Journal piece — edge objects storyboard",
+      "kind": "design",
+      "date": "2026-11-07",
+      "boards": "edge-objects-storyboard",
+      "origin": "https://claude.ai/code/artifact/ddd3bd28-6812-4e97-8da8-04ae2b4a87a5",
+      "open": "#designs",
+      "opens": "view"
+    },
+    {
+      "title": "Journal piece — icon matrix",
+      "kind": "design",
+      "date": "2026-11-07",
+      "boards": "icon-matrix",
+      "origin": "https://claude.ai/code/artifact/2f85a99f-aca0-41a8-aaf3-e55f78aae622",
+      "open": "#designs",
+      "opens": "view"
+    },
+    {
+      "title": "forms_verse mockups",
+      "kind": "design",
+      "date": "2026-11-04",
+      "boards": "forms-verse-mockups",
+      "origin": "https://claude.ai/code/artifact/45372f0b-9624-4130-be76-962ef51ccd5c",
+      "open": "#designs",
+      "opens": "view"
+    },
+    {
+      "title": "Journal piece — control inventory",
+      "kind": "doc",
+      "date": "2026-11-07",
+      "note": "Every control by kind, 25 planned features, the zoom-is-the-hierarchy direction.",
+      "origin": "https://claude.ai/code/artifact/e7138ec2-0485-4053-a91d-a7f0bb97dd48",
+      "open": "#doc-a-journal-piece-control-inventory",
+      "opens": "view"
+    },
+    {
+      "title": "versforms: Publish from the Studio — Implementation Plan",
+      "kind": "plan",
+      "date": "2026-11-06",
+      "origin": "https://claude.ai/code/artifact/03edc7a1-64e6-4edd-a8c8-df4f6bda284e",
+      "open": "#doc-a-versforms-publish-from-the-studio-implementation-plan",
+      "opens": "view"
+    },
+    {
+      "title": "Versforms progress",
+      "kind": "plan",
+      "date": "2026-11-05",
+      "origin": "https://claude.ai/code/artifact/af9bdfeb-c3bd-48cc-ab50-8dfb1ba04aa2",
+      "open": "#release",
+      "opens": "view",
+      "note": "Build progress on 5–6 Nov: what landed, checks, live state, open PRs, owner items."
+    },
+    {
+      "title": "vers.forms — Mentor Advisory",
+      "kind": "plan",
+      "date": "2026-11-05",
+      "pdf": "vers.forms — Mentor Advisory.pdf",
+      "origin": "https://claude.ai/code/artifact/2232c253-0cf5-4f0c-9b83-4a68c87d209c",
+      "opens": "pdf"
+    },
+    {
+      "title": "Audio implementation plan",
+      "kind": "plan",
+      "date": "2026-11-05",
+      "pdf": "Audio implementation plan.pdf",
+      "origin": "https://claude.ai/code/artifact/294db3d5-beea-426f-aab3-a020addba32b",
+      "opens": "pdf"
+    },
+    {
+      "title": "Journal project: state, gaps and the weekly poem",
+      "kind": "plan",
+      "date": "2026-11-05",
+      "pdf": "Journal project state, gaps and the weekly poem.pdf",
+      "origin": "https://claude.ai/code/artifact/0e39a7a9-7c83-4754-a1a6-29af7434e073",
+      "opens": "pdf"
+    },
+    {
+      "title": "Voice Banks: Buildout Spec",
+      "kind": "plan",
+      "date": "2026-10-28",
+      "pdf": "Voice Banks Buildout Spec.pdf",
+      "origin": "https://claude.ai/code/artifact/2dc1e4f2-d1b8-4398-b450-d482c7aea5a5",
+      "opens": "pdf"
+    },
+    {
+      "title": "Keep the Page, Animate the Revision",
+      "kind": "research",
+      "date": "2026-10-24",
+      "note": "Published form of the report 'Dynamic presentation of handwritten poetry'.",
+      "origin": "https://claude.ai/code/artifact/71436778-eea4-4daf-917d-5d7f52925d0a",
+      "open": "#doc-r-dynamic-presentation-of-handwritten-poetry",
+      "opens": "view"
+    }
+  ]
+}

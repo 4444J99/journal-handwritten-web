@@ -1,0 +1,54 @@
+test_changed_sample_identity_denied (test_audio_harness.HarnessTest.test_changed_sample_identity_denied) ... 127.0.0.1 - - [05/Nov/2026 20:48:52] "GET /samples/fixture.wav HTTP/1.1" 409 -
+ok
+test_foreign_host_and_writes_denied (test_audio_harness.HarnessTest.test_foreign_host_and_writes_denied) ... 127.0.0.1 - - [05/Nov/2026 20:48:52] "GET /receipt.json HTTP/1.1" 403 -
+127.0.0.1 - - [05/Nov/2026 20:48:52] code 501, message Unsupported method ('POST')
+127.0.0.1 - - [05/Nov/2026 20:48:52] "POST /receipt.json HTTP/1.1" 501 -
+ok
+test_loopback_static_receipt_prompts_and_only_listed_sample (test_audio_harness.HarnessTest.test_loopback_static_receipt_prompts_and_only_listed_sample) ... 127.0.0.1 - - [05/Nov/2026 20:48:53] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /playback.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /style.css HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /receipt.json HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /prompts.json HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "GET /samples/fixture.wav HTTP/1.1" 200 -
+127.0.0.1 - - [05/Nov/2026 20:48:53] "HEAD /samples/fixture.wav HTTP/1.1" 200 -
+ok
+test_missing_or_invalid_manifest_identity_denied (test_audio_harness.HarnessTest.test_missing_or_invalid_manifest_identity_denied) ... ok
+test_raw_directories_traversal_encodings_and_unlisted_files_denied (test_audio_harness.HarnessTest.test_raw_directories_traversal_encodings_and_unlisted_files_denied) ... 127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/ HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/unlisted.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /../raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/../raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/%2e%2e/raw.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/%66ixture.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /%FF HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples\\fixture.wav HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /receipt.json?raw=1 HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /serve.py HTTP/1.1" 404 -
+127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /timing/forward.json HTTP/1.1" 404 -
+ok
+test_sample_symlink_swap_denied (test_audio_harness.HarnessTest.test_sample_symlink_swap_denied) ... 127.0.0.1 - - [05/Nov/2026 20:48:54] "GET /samples/fixture.wav HTTP/1.1" 409 -
+ok
+test_symlink_or_traversal_in_initial_receipt_denied (test_audio_harness.HarnessTest.test_symlink_or_traversal_in_initial_receipt_denied) ... ok
+test_decisions_require_explicit_nonblank_string_records (test_audio_pilot.AudioPilotTests.test_decisions_require_explicit_nonblank_string_records) ... ok
+test_diphone_midpoints_and_direction_semantics (test_audio_pilot.AudioPilotTests.test_diphone_midpoints_and_direction_semantics) ... ok
+test_exact_text_hash_required (test_audio_pilot.AudioPilotTests.test_exact_text_hash_required) ... ok
+test_finite_parameters_resource_bounds_and_pitch (test_audio_pilot.AudioPilotTests.test_finite_parameters_resource_bounds_and_pitch) ... ok
+test_fixture_replay_has_identical_manifest_audio_timings_and_receipt (test_audio_pilot.AudioPilotTests.test_fixture_replay_has_identical_manifest_audio_timings_and_receipt) ... ok
+test_json_nan_privacy_output_and_path_traversal_rejected (test_audio_pilot.AudioPilotTests.test_json_nan_privacy_output_and_path_traversal_rejected) ... ok
+test_label_review_gaps_and_bool_frames_fail (test_audio_pilot.AudioPilotTests.test_label_review_gaps_and_bool_frames_fail) ... ok
+test_manifest_mutation_during_render_is_rejected (test_audio_pilot.AudioPilotTests.test_manifest_mutation_during_render_is_rejected) ... ok
+test_missing_units_stop_and_write_diagnostic_without_samples (test_audio_pilot.AudioPilotTests.test_missing_units_stop_and_write_diagnostic_without_samples) ... ok
+test_packet_is_one_finite_proposal_with_no_author_defaults (test_audio_pilot.AudioPilotTests.test_packet_is_one_finite_proposal_with_no_author_defaults) ... ok
+test_raw_and_alignment_mutation_during_render_are_rejected (test_audio_pilot.AudioPilotTests.test_raw_and_alignment_mutation_during_render_are_rejected) ... ok
+test_reviewed_labels_bind_exact_wav_hash_rate_and_frames (test_audio_pilot.AudioPilotTests.test_reviewed_labels_bind_exact_wav_hash_rate_and_frames) ... ok
+test_supplied_shape_intake_binds_packet_and_preserves_original (test_audio_pilot.AudioPilotTests.test_supplied_shape_intake_binds_packet_and_preserves_original) ... ok
+test_textgrid_import_requires_review_and_preserves_seconds_and_hash (test_audio_pilot.AudioPilotTests.test_textgrid_import_requires_review_and_preserves_seconds_and_hash) ... ok
+test_unknown_and_unsupported_tokens_are_visible_with_source (test_audio_pilot.AudioPilotTests.test_unknown_and_unsupported_tokens_are_visible_with_source) ... ok
+test_wav_and_alignment_hash_mismatch_fail (test_audio_pilot.AudioPilotTests.test_wav_and_alignment_hash_mismatch_fail) ... ok
+test_wav_format_depth_clipping_and_silence (test_audio_pilot.AudioPilotTests.test_wav_format_depth_clipping_and_silence) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 6.083s
+
+OK

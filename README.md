@@ -1,11 +1,47 @@
 # journal-handwritten-web
 
-Source of record for the handwritten-journal web piece and its review studio.
-`journal-handwritten-web` is a working name; the project's public name is not chosen yet
-(see `docs/plan.md`, Open item 1), and the repository will be renamed when it is.
+Private source of record for **versforms**, its reader, review studio and release tools.
+The public output lives in the separate `4444J99/versforms` repository. The earlier
+working-name discussion is retained in the dated plan; the current identity is
+`vers.forms` / `versforms`. This does not establish account or domain ownership.
 
 This is not ETCETER4. Scans originate from `4444J99/etceter4` (commit `dfcbf0f`,
 `img/photos/diary/`), recorded in `site/data/j.json` → `prov`.
+
+## Current engineering state — November 6, 2026
+
+The integration adds a reconstructed canonical source and deterministic data rebuild,
+actual private Studio entry points for notes and artifact previews, shared reader
+lifecycle and version navigation, immutable evidence storage, and exact-output
+release checks. The original missing generators were not recovered. Their bounded
+replacement preserves the current HTML templates, raw transcripts, stable identities
+and image bytes. See the [source contract](docs/contracts/canonical-source.md),
+[integration record](docs/chats/2026-11-06-integration-closeout.md), and
+[release/artifact contract](docs/integration/exact-output-and-private-artifacts.md).
+
+- Source: 123 pages, 126 pieces, 156 versions and 2,190 line IDs. All 38 preserved
+  reviews are applied as overlays: 33 confirmations and five corrections. Raw
+  originals remain available for stale-review checks.
+- Reconstruction: `python3 tools/source_foundation.py validate`, followed by
+  `rebuild` (dry run) or `rebuild --write`. `apply-reviews --help`, `backup --help`,
+  `restore --help` and `ingest-photo --help` document controlled updates and recovery.
+- Studio: the Cloudflare implementation is the tested persistence route. Its nine
+  collections include append-only notes, contributions and artifacts. Local tests
+  exercise save, reload, restart, export, independent restore, forks and unrelated
+  table preservation. New studio links expose private workbenches through the same API.
+- Reader: exact piece/version links, selected-version bounds and cleanup use one
+  lifecycle. Missing line geometry retains page/text fallback; no author mapping is
+  inferred. Audio and realization previews require explicit invocation.
+- Publication: `release/public.json` remains empty. A private packet or passing
+  technical check does not provide author clearance or execution authority.
+
+The hosted studio was reported deployed behind Access in the November 5 record.
+This integration's local acceptance does not establish deployed save/reload,
+rejection of a second real identity, current dashboard configuration, or physical
+phone acceptance. Those owner checks remain in #104. The native Claude artifact
+route has an almost-full historical file map and unverified conditional writes;
+it does not inherit the Cloudflare route's guarantees. GitHub runner state and
+local test results are recorded separately; no billing or security setting is changed.
 
 ## Layout
 
@@ -19,13 +55,16 @@ site/                     the merged piece — a static site, deployable as-is
   img/s/                  2015 two-page spreads (recovered text)    6
   img/a/                  line atlases for the canvas (t0/t1, k0/k1)
   img/h/                  Hand↔Font plates                          3
-studio/                   review studio (runs as a Claude artifact; see below)
+studio/                   review studio and private workbenches (Cloudflare route below)
   index.html              page + code (v2, with the Release tab)
   data/review.json        pages, pieces, flagged-page list
   img/thumbs/             thumbnails                              123
                           full scans and spreads are shared from site/img/p, site/img/s
 docs/plan.md              project plan, versioned copy of the Project doc
+claude/                   the claude.ai Project's text documents: plan.md (the Project doc), 12 research reports, 5 PDFs
 tools/check.py            integrity check: every referenced file present + checksums
+tools/source_foundation.py canonical source, reviews, rebuild, photo staging, backup/restore
+source/canonical.json     preserved identities, raw readings, reviews and asset lineage
 tools/studio_files.py     file map for republishing the studio artifact
 tools/build_public.py     builds the public site (released pieces only) for 4444J99/versforms
 release/public.json       the released pieces — the only content that leaves this repository
@@ -67,9 +106,10 @@ until the author decides the site is public: a GitHub Pages site is readable by 
 the repository is private. A custom domain is added once the name is chosen (`site/CNAME` +
 DNS).
 
-**Review studio (`studio/`)** — stays a Claude artifact (`MVognnZQrtRQ6QCMaF7341`) because its
-reviews, decisions and release records are stored in that artifact's database, which only works
-there. The repo holds its page and data, not its saved records. To republish it from the repo:
+**Review studio, historical artifact route** — the earlier artifact (`MVognnZQrtRQ6QCMaF7341`) keeps its
+reviews, decisions and release records in that artifact's database. The current
+Cloudflare route is documented in `studio-cf/README.md`; export each backend's saved
+state explicitly. The older artifact publishing command is retained for reference:
 `python3 tools/studio_files.py` prints the `files` map (published path → repo path).
 Export the database collections (`reviews`, `decisions`, `versions`, `release`, `batches`,
 `rconfig`) into the repo before any change to the studio that alters their keys.
@@ -93,6 +133,17 @@ content-hashed file names with long cache lifetimes so repeat visits load from c
 worker for offline reading. GitHub Pages and Cloudflare Pages both serve from a CDN.
 
 ## Rebuild path
+
+**Current replacement (November 6, 2026):** `tools/source_foundation.py` implements
+the bounded reconstruction described above. Review application keeps originals
+and provenance, requires a complete backup before mutation, and is idempotent.
+Rebuild writes only data, leaving the accepted reader and Release-tab HTML intact.
+Photo staging retains supplied bytes and marks transcription and anchors unavailable
+until supplied and reviewed. Source backup and independent restore include every
+export collection, including immutable history. See
+[verification receipts](docs/verification/t02-source/README.md).
+
+### Historical recovery inventory — November 5, 2026
 
 **Status (checked 2026-11-05): the scripts that turn reviewed data back into published pages
 are not in this repository and were not found on the author's machine.** The order below is the
