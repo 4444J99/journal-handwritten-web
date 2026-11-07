@@ -23,3 +23,5 @@ Verified and fixed review findings in the canonical reader: supplemental layout 
 Housekeeping PR #143 subsequently resolved the baseline timeout test; integrated feature CI passed all five suites at a4690b64d93cde2d70a5feb015481cbe0833c249 (verification receipt: integrated-ci.json). Independent review approved the reader fixes. The generated reader follow-up is commit 830c8db; it is local and unpushed.
 
 Late reader review fixed derived transition bitmap snapshots when the live item is hidden. Snapshot drawing now receives a visible copy without changing the live item. Chromium checks both text and photo page/line bitmaps at desktop and phone widths, with nontransparent pixels and the hidden state preserved. Regenerated matching public shells and Studio pin; no content release.
+
+Final review moved hidden-bitmap observation entirely into the local browser harness through source instrumentation; the published reader has no additional mutable debug method. The same Chromium regression passes and the matching package/pin was regenerated.
