@@ -56,7 +56,14 @@ def fake_gh(base):
 
 class TimeoutKillsDescendants(unittest.TestCase):
     def test_timeout_kills_the_whole_process_group(self):
-        code = "import subprocess,time;p=subprocess.Popen(['sleep','60']);print(p.pid,flush=True);time.sleep(60)"
+        # Let the fixture reap its child when the whole group gets SIGTERM.
+        # Minimal container PID 1 implementations may leave orphaned zombies;
+        # kill(pid, 0) would then misclassify an already dead child as running.
+        # Killing only the leader still fails: its handler waits on the live child.
+        code = ("import subprocess,time,signal,sys;"
+                "p=subprocess.Popen(['sleep','60']);"
+                "signal.signal(signal.SIGTERM,lambda *_:(p.wait(),sys.exit(0)));"
+                "print(p.pid,flush=True);time.sleep(60)")
         rc, out, _ = ci_local.run([sys.executable, "-c", code], os.getcwd(), 2, dict(os.environ))
         self.assertEqual(rc, 124)
         pid = int(out.split()[0])

@@ -1,0 +1,118 @@
+{
+  "refs": [
+    "refs/heads/feat/variorum-builder 037478ef425dd6a117948ec71cc137d10a1dedd8",
+    "refs/heads/main 037478ef425dd6a117948ec71cc137d10a1dedd8",
+    "refs/remotes/origin/HEAD 8bd13aad1d03d81c5401d94d692d0d3f0f683c28",
+    "refs/remotes/origin/blank-title-versforms d66006bb34c384792170c737ba8d10c72ad9be42",
+    "refs/remotes/origin/codex/reader-menu-author-marks-20261106 0b8eab72e060565cc663d08f21266edfd1a373c8",
+    "refs/remotes/origin/feat/studio-publish-20261106 2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+    "refs/remotes/origin/main 8bd13aad1d03d81c5401d94d692d0d3f0f683c28"
+  ],
+  "prs": [
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/reader-menu-author-marks-20261106",
+      "headRefOid": "0b8eab72e060565cc663d08f21266edfd1a373c8",
+      "mergeCommit": {
+        "oid": "8bd13aad1d03d81c5401d94d692d0d3f0f683c28"
+      },
+      "mergedAt": "2026-11-07T04:22:21Z",
+      "number": 3,
+      "state": "MERGED",
+      "title": "Use author-drawn controls for the hidden reader menu"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "feat/studio-publish-20261106",
+      "headRefOid": "2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+      "mergeCommit": {
+        "oid": "0fff63baeba6192515d640c23f6e7b9a12ee480a"
+      },
+      "mergedAt": "2026-11-07T01:17:22Z",
+      "number": 2,
+      "state": "MERGED",
+      "title": "Read confirmed Studio publications from an isolated R2 bucket"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "blank-title-versforms",
+      "headRefOid": "d66006bb34c384792170c737ba8d10c72ad9be42",
+      "mergeCommit": {
+        "oid": "1fe6b507b24bbe20ba0d45a917031f42cc171b58"
+      },
+      "mergedAt": "2026-11-05T18:23:33Z",
+      "number": 1,
+      "state": "MERGED",
+      "title": "Blank page title: versforms"
+    }
+  ],
+  "branches": [
+    {
+      "name": "blank-title-versforms",
+      "oid": "d66006bb34c384792170c737ba8d10c72ad9be42",
+      "ancestor": false,
+      "ahead": 1,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "blank-title-versforms",
+          "headRefOid": "d66006bb34c384792170c737ba8d10c72ad9be42",
+          "mergeCommit": {
+            "oid": "1fe6b507b24bbe20ba0d45a917031f42cc171b58"
+          },
+          "mergedAt": "2026-11-05T18:23:33Z",
+          "number": 1,
+          "state": "MERGED",
+          "title": "Blank page title: versforms"
+        }
+      ]
+    },
+    {
+      "name": "codex/reader-menu-author-marks-20261106",
+      "oid": "0b8eab72e060565cc663d08f21266edfd1a373c8",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "codex/reader-menu-author-marks-20261106",
+          "headRefOid": "0b8eab72e060565cc663d08f21266edfd1a373c8",
+          "mergeCommit": {
+            "oid": "8bd13aad1d03d81c5401d94d692d0d3f0f683c28"
+          },
+          "mergedAt": "2026-11-07T04:22:21Z",
+          "number": 3,
+          "state": "MERGED",
+          "title": "Use author-drawn controls for the hidden reader menu"
+        }
+      ]
+    },
+    {
+      "name": "feat/studio-publish-20261106",
+      "oid": "2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+      "ancestor": false,
+      "ahead": 4,
+      "prs": [
+        {
+          "baseRefName": "main",
+          "headRefName": "feat/studio-publish-20261106",
+          "headRefOid": "2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+          "mergeCommit": {
+            "oid": "0fff63baeba6192515d640c23f6e7b9a12ee480a"
+          },
+          "mergedAt": "2026-11-07T01:17:22Z",
+          "number": 2,
+          "state": "MERGED",
+          "title": "Read confirmed Studio publications from an isolated R2 bucket"
+        }
+      ]
+    },
+    {
+      "name": "main",
+      "oid": "8bd13aad1d03d81c5401d94d692d0d3f0f683c28",
+      "ancestor": true,
+      "ahead": 0,
+      "prs": []
+    }
+  ]
+}

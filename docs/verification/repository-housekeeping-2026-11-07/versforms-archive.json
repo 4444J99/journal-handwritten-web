@@ -1,0 +1,20 @@
+{
+  "tag": "archive/branches-2026-11-07",
+  "archiveCommit": "f41a47134139fd38cb26538be3c07b7754776b28",
+  "preservedTips": [
+    "037478ef425dd6a117948ec71cc137d10a1dedd8",
+    "0b8eab72e060565cc663d08f21266edfd1a373c8",
+    "2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+    "8bd13aad1d03d81c5401d94d692d0d3f0f683c28",
+    "d66006bb34c384792170c737ba8d10c72ad9be42"
+  ],
+  "mapping": [
+    "refs/heads/feat/variorum-builder 037478ef425dd6a117948ec71cc137d10a1dedd8",
+    "refs/heads/main 037478ef425dd6a117948ec71cc137d10a1dedd8",
+    "refs/remotes/origin/HEAD 8bd13aad1d03d81c5401d94d692d0d3f0f683c28",
+    "refs/remotes/origin/blank-title-versforms d66006bb34c384792170c737ba8d10c72ad9be42",
+    "refs/remotes/origin/codex/reader-menu-author-marks-20261106 0b8eab72e060565cc663d08f21266edfd1a373c8",
+    "refs/remotes/origin/feat/studio-publish-20261106 2c848ebf6ea1ce4d0f21faf86694c5f2cf665577",
+    "refs/remotes/origin/main 8bd13aad1d03d81c5401d94d692d0d3f0f683c28"
+  ]
+}
