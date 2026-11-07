@@ -9,3 +9,8 @@ production/tools/.build/
 /audio-work/
 /recording/sessions/
 /recording/private/
+
+# Generated private publishing catalogue and deployment output
+/studio-cf/publish-prepared/
+/studio-cf/dist/
+/studio-cf/.dist-build-*/

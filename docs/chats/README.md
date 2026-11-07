@@ -16,6 +16,7 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
+| 2026-11-06 | [Studio publishing implementation](2026-11-06-studio-publish.md) | Browser build, bounded verification, immutable snapshots and reader isolation; first publish remains an author action. |
 | 2026-10-24 | [Release methods and standards](2026-10-24-release-methods-and-standards.md) | Superseded by the naming chats; name/handle claim still open. |
 | 2026-10-26 | [Etceter4 journal (main build)](2026-10-26-etceter4-journal-build.md) | Open — the two feature proposals have not been built. |
 | 2026-10-26 | [Footnotes and endnotes for poetry](2026-10-26-footnotes-and-endnotes.md) | Open — placement of notes undecided. |

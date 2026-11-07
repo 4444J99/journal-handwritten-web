@@ -1,5 +1,6 @@
 // JSON API for the review studio: collections of documents in D1, photos in R2.
 // Every function here runs after the middleware has authenticated the caller.
+import {NO_SOURCE_FENCE,SOURCE_COLLECTIONS} from './publish-fence.js';
 
 export const COLLECTIONS = Object.freeze(['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts']);
 export const IMMUTABLE_COLLECTIONS = Object.freeze(['notes', 'contributions', 'artifacts']);
@@ -131,20 +132,22 @@ async function putDoc(env, request, coll, id) {
     return await putRevision(env, coll, id, doc, text, now);
   }
   const res = await env.DB.batch([
-    env.DB.prepare(SQL_BUMP).bind(coll),
-    env.DB.prepare('INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) VALUES (?1, ?2, ?3, ?4, (SELECT rev FROM vf_revs WHERE collection = ?1))').bind(coll, id, text, now),
+    env.DB.prepare(SOURCE_COLLECTIONS.includes(coll)?'INSERT INTO vf_revs (collection, rev) SELECT ?1, 1 WHERE '+NO_SOURCE_FENCE+' ON CONFLICT(collection) DO UPDATE SET rev = rev + 1 WHERE '+NO_SOURCE_FENCE:SQL_BUMP).bind(coll),
+    env.DB.prepare('INSERT OR REPLACE INTO vf_docs (collection, id, data, updated_at, rev) SELECT ?1, ?2, ?3, ?4, (SELECT rev FROM vf_revs WHERE collection = ?1) WHERE '+(SOURCE_COLLECTIONS.includes(coll)?NO_SOURCE_FENCE:'1')).bind(coll, id, text, now),
     env.DB.prepare(SQL_REV).bind(coll),
   ]);
+  if(SOURCE_COLLECTIONS.includes(coll) && !res[1].meta.changes)return fail(409,'publication_in_progress_retry');
   return json({ ok: true, rev: res[2].results[0].rev });
 }
 
 async function deleteDoc(env, coll, id) {
   if (IMMUTABLE_COLLECTIONS.includes(coll)) return fail(409, 'immutable_revision');
   const res = await env.DB.batch([
-    env.DB.prepare('DELETE FROM vf_docs WHERE collection = ?1 AND id = ?2').bind(coll, id),
-    env.DB.prepare(SQL_BUMP).bind(coll),
+    env.DB.prepare('DELETE FROM vf_docs WHERE collection = ?1 AND id = ?2 AND '+(SOURCE_COLLECTIONS.includes(coll)?NO_SOURCE_FENCE:'1')).bind(coll, id),
+    env.DB.prepare(SOURCE_COLLECTIONS.includes(coll)?'INSERT INTO vf_revs (collection, rev) SELECT ?1, 1 WHERE '+NO_SOURCE_FENCE+' ON CONFLICT(collection) DO UPDATE SET rev = rev + 1 WHERE '+NO_SOURCE_FENCE:SQL_BUMP).bind(coll),
     env.DB.prepare(SQL_REV).bind(coll),
   ]);
+  if(SOURCE_COLLECTIONS.includes(coll) && !res[1].meta.changes)return fail(409,'publication_in_progress_retry');
   return json({ ok: true, rev: res[2].results[0].rev });
 }
 

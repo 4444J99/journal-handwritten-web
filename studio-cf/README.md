@@ -413,3 +413,44 @@ python3 -m unittest discover -s studio-cf/tests -p 'test_*.py'
 
 Test files, wrangler logs and persisted state go to `STUDIO_CF_SCRATCH` (default
 `/Volumes/Archive4T/Temporary/versforms-work/studio-cf`).
+
+## Publish from the Studio
+
+Release > Calendar provides Publish and Publication history. The first destination is Staging. The browser builds the complete candidate in a module worker; the server independently verifies its exact piece/version selection, line readings, source bindings, withheld blocks, page geometry, metadata and file list before preview is available. Confirm names the previewed SHA-256. Copy and verification run in bounded requests; immutable content-addressed images are reused. The only mutable public object is current.json, changed conditionally against the previous pointer. Prepared/committed audit records allow a retry to complete the appearance record after a pointer move. Only newly added poems receive a new site appearance; staging never consumes an as-posted production number.
+
+The compiler lives in studio/publish-compiler.mjs, re-exported by lib/publish.js for Functions. The Python posting path remains supported and honors a recorded decisions/gruw-policy choice of exactly skip. Series, verification and filing are the only overridable gates; Reserve/Archive/unknown pools, stale reviews, leaks and unchecked shared scans remain hard stops.
+
+### Build and bindings
+
+From the repository root:
+
+~~~sh
+python3 studio-cf/build_dist.py
+python3 studio-cf/build_reader.py --out .post-poem-work/reader-package
+~~~
+
+Reader output must be new or empty. The reader package is reviewed into 4444J99/versforms. It contains the blank shell, approved pinned engine, read-only R2 function and standalone staging configuration; it contains no private source data or scans. Staging must retain its own package/library root: local Pages compilation otherwise resolves the parent production configuration.
+
+Studio needs DB, PHOTOS, STAGING=versforms-staging, PUBLIC=versforms-public, PUBLISH_BUILD_MODE=browser and the exact PUBLISH_SHELL_SHA256 from dist/publish/pin.json. Existing ACCESS_AUD, ACCESS_TEAM_DOMAIN and OWNER_EMAILS remain dashboard-owned secrets. Fail closed remains enabled. The public project binds only PUBLIC=versforms-public; staging binds only PUBLIC=versforms-staging. Raw R2 public access is unnecessary.
+
+For the Git-connected Studio build, set the project root to studio-cf, output to dist, and build command python3 -m pip install -r requirements-build.txt && python3 build_cloudflare.py. The project root must contain functions/ so the authentication middleware is compiled (https://developers.cloudflare.com/pages/functions/get-started/). The wrapper selects the hosted interpreter rather than this Mac's font venv. Exact package versions are pinned to those used for the approved shell. Cloudflare's supported Python build runtimes are documented at https://developers.cloudflare.com/pages/configuration/build-image/. A different shell hash fails closed; it is not silently accepted.
+
+Atlas tiles preserve the original decoded pixels as PNG bytes, served with image/png under the engine's existing .jpg routes. The engine already supports multiple atlas textures. No Pillow/fontTools work runs on a Publish tap. Source fragments, the source catalogue and all unpublished assets are behind Access in the Studio deployment.
+
+### Verification and limits
+
+~~~sh
+python3 tools/check.py
+node --test studio-cf/tests/publish.unit.test.mjs studio-cf/tests/publish-storage.unit.test.mjs studio-cf/tests/public-reader.unit.test.mjs studio-cf/tests/publish-client.unit.test.mjs
+node --test studio-cf/tests/publish-local.test.mjs
+python3 studio-cf/verify_publish_parity.py --db EXPORT_DIR --piece p001
+python3 tools/ci_local.py
+~~~
+
+The local integration test builds its own checkout assets in a unique scratch directory and uses local-only review confirmations, D1 and R2. It does not alter the hosted author's reviews. Node's built-in sqlite module is used by storage unit tests. Real-export parity compares canonical JSON in one shared JavaScript numeric model (Python's 1.0 and JavaScript's 1 represent the same JSON number), all non-atlas file hashes and exact tile pixels/line geometry. The source compiler still refuses stale transcripts.
+
+The original hosted server-build spike used 24 ms CPU for one published page and 166 ms for 123 synthetic pages. The free fallback splits verification and image copying across requests. Synthetic worst-case bounded traces passed, with warm checks around 3-8 ms and occasional cold checks at 11 ms. This is measured evidence, not a guarantee against Cloudflare CPU exhaustion; no billing plan was changed. An interrupted operation is retried using the same candidate hash, or rebuilt when source revisions changed.
+
+The first real p001 confirmation and physical iPhone/laptop acceptance remain author actions. The live source selects V[0]; five author corrections currently reside on unpublished versions. The preview reports that distinction.
+
+Final confirmation and rollback share a non-expiring D1 fence with Studio source writes. Recovery first changes the R2 pointer ETag before releasing an abandoned fence, preventing a delayed upload from publishing after a source edit. Source writes return 409 during that short final operation; opening Publication history completes recovery. Only committed publication receipts appear as rollback targets.

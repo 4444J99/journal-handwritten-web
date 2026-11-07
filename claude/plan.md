@@ -228,3 +228,7 @@ author decisions, proposals and fixture verification are separated in `docs/audi
 ## Integration execution — 2026-11-06 (partial)
 
 Remote `main` is `8cd9872acbccd28db9736c2340cdac9d1ba65f91`. Merged PR #127 (audio filename contract) and #128 (fingerprint v2 incl. breakBefore). `tools/check.py` and `tools/ci_local.py` pass. Remaining tranche work remains open.
+
+## Studio publishing implementation - 2026-11-06
+
+The accepted implementation plan is `.codex/plans/2026-11-06-studio-publish.md`. The browser compiles the candidate; owner-authenticated Pages Functions verify one piece/page at a time, materialize immutable drafts, and confirm the exact hash into a separately bound R2 bucket. The public reader can read only its bucket. Author metadata policy: filter unpublished PAL/HF membership, blank optional font fields, remove the global review-status line, preserve license notices and noindex. Python remains the parity reference and posting fallback. See `studio-cf/README.md` and the session record `docs/chats/2026-11-06-studio-publish.md` for implementation evidence and remaining owner acceptance. No first-poem publication is inferred from a successful build or deployment.

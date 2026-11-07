@@ -43,8 +43,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import sqlguard  # noqa: E402
 
-COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts")
+COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts", "publish")
 IMMUTABLE_COLLECTIONS = ("notes", "contributions", "artifacts")
+COLLISION_SAFE_COLLECTIONS = IMMUTABLE_COLLECTIONS + ("publish",)
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
 MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
@@ -187,9 +188,9 @@ def build_sql(docs, now, include_schema=True):
         if not items:
             continue
         c = sql_string(coll)
-        if coll in IMMUTABLE_COLLECTIONS:
+        if coll in COLLISION_SAFE_COLLECTIONS:
             for doc_id, data in items.items():
-                if not valid_revision(coll, doc_id, data):
+                if coll in IMMUTABLE_COLLECTIONS and not valid_revision(coll, doc_id, data):
                     raise ValueError(f"invalid immutable revision envelope: {coll}/{doc_id}")
             ids = ", ".join(sql_string(doc_id) for doc_id in sorted(items))
             absent = f"(SELECT count(*) FROM vf_docs WHERE collection = {c} AND id IN ({ids})) < {len(items)}"
@@ -200,7 +201,7 @@ def build_sql(docs, now, include_schema=True):
             # ensure_ascii keeps the statement pure ASCII with no raw newlines
             text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"), allow_nan=False)
             values = f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}))"
-            if coll in IMMUTABLE_COLLECTIONS:
+            if coll in COLLISION_SAFE_COLLECTIONS:
                 # A differing same-ID revision violates data's existing NOT NULL
                 # constraint and aborts this statement; it never replaces history.
                 # An identical retry retains original data, updated_at and rev.
