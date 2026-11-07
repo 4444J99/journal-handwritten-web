@@ -346,7 +346,9 @@ function setRoom(k) { for (const a of document.querySelectorAll('#rooms a')) a.t
 
 function route() {
   const hsh = decodeURIComponent(location.hash.slice(1)) || 'overview';
-  const m = $('#main'); m.replaceChildren();
+  // Each route renders into its own container, so an async render that finishes after the
+  // reader has moved on writes into a detached element instead of the new room.
+  const m = h('div'); $('#main').replaceChildren(m);
   let room = hsh.split('-')[0];
   const rest = hsh.slice(room.length + 1);
   if (room === 'q') { renderSearch(m, rest); room = ''; }
@@ -450,7 +452,7 @@ function renderPiece(m, it) {
     const lines = h('div', { class: 'lines' }); let n = 0;
     for (const bi of v.blocks) { const b = p.blocks[bi]; if (!b) continue;
       lines.append(h('div', { class: 'blk' }, 'b' + bi + (b.t !== 'text' ? ' · ' + b.t : '') + (b.spread ? ' · 2015 spread' : '')));
-      for (const l of b.lines) { n++; lines.append(h('div', { class: 'ln' + (S.accepted.has(l.id) ? ' ok' : '') }, h('i', { title: S.accepted.has(l.id) ? 'reviewed' : 'machine reading' }, n), tx(l.tx))); } }
+      for (const l of b.lines) { n++; lines.append(h('div', { class: 'ln' + (S.accepted.has(l.id) ? ' ok' : ''), title: l.machine ? 'Machine reading: ' + plain(l.machine) : null }, h('i', { title: S.accepted.has(l.id) ? 'reviewed' : 'machine reading' }, n), tx(l.tx))); } }
     const notes = v.blocks.map(b => p.blocks[b] && p.blocks[b].note ? 'b' + b + ': ' + p.blocks[b].note : null).filter(Boolean);
     row.append(h('section', { class: 'ver sheet' },
       h('div', { class: 'vh' }, h('b', null, 'v' + (vi + 1) + ' · ' + p.id), h('span', { class: 'eyebrow' }, v.blocks.length > 1 ? 'blocks ' + v.blocks.join(', ') : 'block ' + v.blocks[0])),

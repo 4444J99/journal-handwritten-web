@@ -135,6 +135,17 @@ def build_docs(out):
 def build_catalog(out):
     r = json.loads((ROOT / "studio/data/review.json").read_text())
     j = json.loads((ROOT / "site/data/j.json").read_text())
+    accepted = j.get("acceptedReadings", {})
+    corrected = {k: v for k, v in r.get("acceptedReviews", {}).items() if v.get("status") == "corrected" and isinstance(v.get("text"), str)}
+
+    def reading(line):
+        # Same precedence as the reader's prepData: an accepted reading replaces the machine reading.
+        if line["id"] in accepted:
+            return accepted[line["id"]]
+        if line["id"] in corrected:
+            return corrected[line["id"]]["text"]
+        return line["tx"]
+
     pages = []
     for p in r["pages"]:
         pid = p["id"]
@@ -149,7 +160,7 @@ def build_catalog(out):
                 sp = "img/s/" + src.name
         pages.append({"id": pid, "seq": p["seq"], "w": p["w"], "h": p["h"], "spread": sp, "uncertain": p["uncertain"],
                       "blocks": [{"t": b["t"], "note": b.get("note", ""), "spread": b.get("spread", False),
-                                  "lines": [{"id": l["id"], "tx": l["tx"]} for l in b["lines"]]} for b in p["blocks"]]})
+                                  "lines": [{"id": l["id"], "tx": reading(l), **({"machine": l["tx"]} if reading(l) != l["tx"] else {})} for l in b["lines"]]} for b in p["blocks"]]})
     jv = {pc["id"]: [{"id": v["id"], "s": v.get("s"), "d": v.get("d"), "P": v["P"]} for v in pc["V"]] for pc in j["pieces"]}
     items = []
     for it in r["items"]:
