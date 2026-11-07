@@ -1,8 +1,8 @@
 {
   "sourceBranch": "feat/variorum-builder",
   "sourceImplementationHead": "e90262e",
-  "readerCommit": "aa94f0b",
-  "shellSha256": "d114262ab761ba0a86f81ecf71e7e101695d6a8aab535b5bb02d3b69d1c4f4ee",
+  "readerCommit": "00c8717",
+  "shellSha256": "a206cb90fb65ba2871713fe65ed0eb166102b221c21e6ebd968b06c156b299e0",
   "review": "spec and quality approved; attachment followup approved",
   "cloudflareNode": {
     "passed": 157,
@@ -94,6 +94,19 @@
     "nativeVersionControlBookmarkReload": true,
     "ordinaryPageRouteUnchanged": true,
     "minimumComparisonContrast": 4.5,
+    "passed": true
+  },
+  "sourceContextAndKeyboardRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "unavailableDerivedAnchors": true,
+    "keyboardComparison": [
+      "Enter",
+      "Space"
+    ],
+    "retainedAndNullFocusAlternateModeGuard": true,
     "passed": true
   }
 }
