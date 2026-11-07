@@ -29,3 +29,5 @@ Final review moved hidden-bitmap observation entirely into the local browser har
 Additional verified reader fixes preserve page-level Variorum entry without a selected line and frozen stanza breaks in Words, Scan and Study. Variorum alone falls back to the current page piece/version; note anchors retain their line-scoped behavior. Chromium exercises button, keyboard and native touch pinch before/after page navigation at both widths and measures the stanza gaps. Matching shells/pin regenerated; no content release.
 
 Scoped review restricts the new no-line Variorum fallback to Journal mode; Hand ↔ Font and Revisions cannot resolve a stale journal page. Real-browser keyboard and touch pinch checks for both alternate modes pass without a wrong comparison modal.
+
+Final scoped bookmark fix opens photo-only supplemental versions in Scan so the released photograph is visible on a stable piece/version link. Versions with transcription retain their Words route. Chromium verifies the photo-only bookmark loads its image at both widths, and the same check fails against the previous source. Regenerated matching shells/pin; no release.

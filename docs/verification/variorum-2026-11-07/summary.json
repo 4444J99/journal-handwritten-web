@@ -1,8 +1,8 @@
 {
   "sourceBranch": "feat/variorum-builder",
   "sourceImplementationHead": "e90262e",
-  "readerCommit": "9bbdc9f",
-  "shellSha256": "060642fbe8f4947f2c348b501d3451d04fa2ea3bb7fd24067631f87bf1ee310f",
+  "readerCommit": "7f14cb9",
+  "shellSha256": "9a785e12284dd17a275619f4de3894ce0b273b464a148775f705e8478227cfc9",
   "review": "spec and quality approved; attachment followup approved",
   "cloudflareNode": {
     "passed": 157,
@@ -75,5 +75,14 @@
     ],
     "passed": true,
     "alternateModeStaleSourcePrevented": true
+  },
+  "photoOnlyBookmarkRegression": {
+    "widths": [
+      1280,
+      390
+    ],
+    "showsReleasedImage": true,
+    "transcribedPhotoRemainsWords": true,
+    "passed": true
   }
 }
