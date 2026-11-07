@@ -258,7 +258,7 @@ def load_release(path):
     return json.loads(p.read_text()) if p.exists() else {"pieces": []}
 
 
-def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True):
+def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True, source_data=None, publication_source=None, publication_db=None, target="production", photo_assets=None):
     """Write the public site for the pieces in `want` into `out`; returns a summary dict.
 
     select       {piece id: [indices into the piece's V]} versions to publish; default all
@@ -270,7 +270,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     out, site = Path(out), Path(site)
     want = list(dict.fromkeys(want))
     select, corrections = select or {}, dict(corrections or {})
-    d = json.loads((site / "data" / "j.json").read_text())
+    d = json.loads(json.dumps(source_data)) if source_data is not None else json.loads((site / "data" / "j.json").read_text())
     pieces = {p["id"]: p for p in d["pieces"]}
     missing = [k for k in want if k not in pieces]
     if missing:
@@ -286,6 +286,13 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
             sys.exit(f"bad version selection for {k}: {sel}")
         for vi in sel:
             version = pieces[k]["V"][vi]
+            if version.get('render'):
+                if not isinstance(version.get('compositeEvidence'), dict):
+                    raise ValueError('derived version requires authoritative evidence')
+                from variorum_publication import check_composite
+                if publication_source is None or publication_db is None:
+                    raise ValueError('composite publication requires captured source and database')
+                check_composite(version, publication_source, publication_db, target)
             if version.get("sourceStatus") == "staged-untranscribed":
                 sys.exit(f"selected version {version['id']} is staged-untranscribed; output unchanged")
             for page_id, blocks in version["P"]:
@@ -317,7 +324,11 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
         newv = {old: new for new, old in enumerate(sel)}
         st = [newv[i] for i in pc["st"] if i in newv]
         top = newv[pc["top"]] if pc["top"] in newv else st[0]
-        out_pieces.append(dict(pc, V=[pc["V"][i] for i in sel], st=st, top=top))
+        from variorum_publication import public_version, project_public_variorum
+        projected = dict(pc, V=[public_version(pc["V"][i]) for i in sel], st=st, top=top)
+        if pc.get('variorum'):
+            projected['variorum'] = project_public_variorum(pc['variorum'], [pc['V'][i] for i in sel])
+        out_pieces.append(projected)
         for old in sel:
             for pg, blocks in pc["V"][old]["P"]:
                 keep.setdefault(pg, set()).update(blocks)
@@ -364,6 +375,15 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 correction_values={lid: value for lid, value in effective_lines.items() if lid in line_ids})
             bindings[f"{piece_id}/{version_id}"] = source_binding(snapshot)
 
+    from variorum_publication import fingerprint
+    for piece_id, selected in chosen.items():
+        for vi in selected:
+            v = pieces[piece_id]['V'][vi]
+            if not v.get('render'):
+                continue
+            bindings[f"{piece_id}/{v['id']}"] = {'pieceId': piece_id, 'versionId': v['id'],
+                'sourceFingerprint': fingerprint(piece_id, v['id'], [], [{**l, 'blockType': 'text'} for l in v['lines']])}
+
     # which other pieces (and unpublished versions of published pieces) share a published page
     shared, siblings = {}, {}
     for p in d["pieces"]:
@@ -376,6 +396,20 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 elif vi not in chosen[p["id"]]:
                     siblings.setdefault(pg, set()).add(p["id"])
 
+    prepared_photos = {}
+    for piece_id, selected in chosen.items():
+        for vi in selected:
+            v = pieces[piece_id]['V'][vi]
+            if v.get('render') == 'photo':
+                photo = v['compositeEvidence']['photo']
+                supplied = (photo_assets or {}).get(photo['assetId'])
+                if supplied is None:
+                    raise ValueError('missing composite photo bytes')
+                data = Path(supplied).read_bytes() if isinstance(supplied, (str, Path)) else bytes(supplied)
+                import hashlib
+                if len(data) != photo['size'] or hashlib.sha256(data).hexdigest() != photo['sha256']:
+                    raise ValueError('composite photo byte mismatch')
+                prepared_photos[v['id']] = data
     if out.exists():
         shutil.rmtree(out)
     (out / "data").mkdir(parents=True)
@@ -433,6 +467,10 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 (out / "img" / "h").mkdir(parents=True, exist_ok=True)
                 shutil.copy2(plate, out / "img" / "h" / plate.name)
         pages = new_pages
+    for version_id, data in prepared_photos.items():
+        dest = out / 'img/p' / (version_id + '.jpg')
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
     if corrections:
         sys.exit(f"corrections for lines outside the published blocks: {sorted(corrections)[:5]}")
 

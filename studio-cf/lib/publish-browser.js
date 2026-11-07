@@ -1,12 +1,12 @@
 // Free-plan path: the browser compiles the whole candidate. Each request here
 // independently checks ONE piece or page against a pinned private source slice.
 // Untrusted browser output never advances the public pointer by itself.
-import {buildCandidate,selection,filterMetadata,canonical,digest,encode,BLANK} from './publish.js';
+import {buildCandidate,selection,filterMetadata,canonical,digest,encode,BLANK,assembleEffectiveSource,publicVersion,projectPublicVariorum} from './publish.js';
 import {json} from './api.js';
 import {revisionStatement,revisionValues} from './publish-fence.js';
 import {target,pointer,condition,immutable,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey,doc,wasPublished} from './publish-api.js';
 
-const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig'];
+const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig','parts','composites'];
 const ID=/^[a-f0-9]{64}$/;
 const STUB='<!doctype html><html><head><title>versforms</title><meta name="robots" content="noindex"></head><body><script>const PAL = []; const HF = [];</script></body></html>';
 const object=x=>x!==null && typeof x==='object' && !Array.isArray(x);
@@ -22,7 +22,7 @@ async function pin(env) {
   return p;
 }
 async function revisions(env) {
-  const rows=await env.DB.prepare('SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6) ORDER BY collection').bind(...COLLECTIONS).all();
+  const rows=await env.DB.prepare('SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) ORDER BY collection').bind(...COLLECTIONS).all();
   return Object.fromEntries(COLLECTIONS.map(c=>[c,rows.results.find(r=>r.collection===c)?.rev || 0]));
 }
 export async function assertFresh(env,c) {
@@ -35,9 +35,9 @@ export async function browserContext(env,user,name) {
   const p=await pin(env),base=(await pointer(bucket)).value;
   const results=await env.DB.batch([
     ...COLLECTIONS.map(c=>env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind(c)),
-    env.DB.prepare('SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6) ORDER BY collection').bind(...COLLECTIONS),
+    env.DB.prepare('SELECT collection, rev FROM vf_revs WHERE collection IN (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) ORDER BY collection').bind(...COLLECTIONS),
   ]);
-  const revs=Object.fromEntries(COLLECTIONS.map(c=>[c,results[6].results.find(r=>r.collection===c)?.rev || 0]));
+  const revs=Object.fromEntries(COLLECTIONS.map(c=>[c,results[COLLECTIONS.length].results.find(r=>r.collection===c)?.rev || 0]));
   const db=Object.fromEntries(COLLECTIONS.map((c,i)=>[c,Object.fromEntries(results[i].results.map(r=>[r.id,JSON.parse(r.data)]))]));
   const id=await digest(crypto.randomUUID()),context={id,owner:user.email,target:name,base,revisions:revs,sourceHash:p.sourceSha256,catalogHash:p.catalogSha256,shellSha256:p.shellSha256,createdAt:new Date().toISOString()};
   await immutable(env.PHOTOS,`contexts/${id}.json`,JSON.stringify(context));
@@ -49,7 +49,7 @@ function selectedPiece(pc,decisions,whole) {
   const {indices,how}=selection(pc,decisions,whole),nv=new Map(indices.map((vi,i)=>[vi,i]));
   check(indices.length>0 && indices.every(i=>Number.isInteger(i) && pc.V[i] && pc.st.includes(i)),'invalid_version_selection');
   const st=pc.st.filter(i=>nv.has(i)).map(i=>nv.get(i));
-  return {piece:{...pc,V:indices.map(i=>pc.V[i]),st,top:nv.has(pc.top)?nv.get(pc.top):st[0]},indices,how};
+  const piece={...pc,V:indices.map(i=>publicVersion(pc.V[i])),st,top:nv.has(pc.top)?nv.get(pc.top):st[0]};delete piece.variorum;const spread=projectPublicVariorum(pc.variorum,indices.map(i=>pc.V[i]));if(spread)piece.variorum=spread;return {piece,indices,how};
 }
 function ownersOf(c) {
   const owners=new Map();
@@ -77,6 +77,28 @@ async function pieceDb(env,source,pid) {
     ...Object.fromEntries(others.map((c,i)=>[c,Object.fromEntries(rows[statements.length+i].results.map(r=>[r.id,JSON.parse(r.data)]))]))};
 }
 
+async function capturedDb(env){
+ const rows=await env.DB.batch(COLLECTIONS.map(c=>env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind(c)));
+ return Object.fromEntries(COLLECTIONS.map((c,i)=>[c,Object.fromEntries(rows[i].results.map(r=>[r.id,JSON.parse(r.data)]))]));
+}
+async function hydratedPiece(env,hashes,pid,db){
+ const promotion=Object.values(db.composites || {}).find(r=>r.family==='promotion'&&r.pieceId===pid),origin=promotion&&db.composites[promotion.originComposite?.revisionId];
+ const dependencies=new Set([origin?.pieceId || pid]);
+ for(const r of Object.values(db.composites || {}))if(r.family==='composite'&&(r.pieceId===pid||r===origin))for(const x of r.sourceSnapshots || [])dependencies.add(x.pieceId);
+ for(const r of Object.values(db.parts || {}))if(r.family==='parts'&&r.pieceId===pid)for(const id of r.linkedPieces || [])dependencies.add(id);
+ check(dependencies.size<=200,'source_dependency_limit');
+ const fragments=[];
+ for(const id of dependencies){check(/^p[0-9]+$/.test(id),'invalid_source_dependency');const path=`pieces/${id}.json`,text=await staticText(env,path);check(hashes[path]&&await digest(text)===hashes[path],'source_fragment_changed');fragments.push(JSON.parse(text));}
+ const source=fragments[0],pages=new Map(source.j.pages.map(p=>[p.id,p])),reviewPages=new Map();
+ for(const f of fragments){for(const p of f.review.pages)reviewPages.set(p.id,p);for(const p of f.j.pages)if(p.B?.some(b=>Array.isArray(b.L)))pages.set(p.id,p);}
+ // Prepared accepted readings and anchors are partitioned with page text. A
+ // linked source needs the same authoritative inputs as the full source path.
+ for(const field of ['acceptedReadings','sourceAnchors'])if(fragments.some(f=>f.j[field]))source.j[field]=Object.assign({},...fragments.map(f=>f.j[field] || {}));
+ if(fragments.some(f=>f.review.acceptedReviews))source.review.acceptedReviews=Object.assign({},...fragments.map(f=>f.review.acceptedReviews || {}));
+ source.j.pages=source.j.pages.map(p=>pages.get(p.id));source.review.pages=[...reviewPages.values()];
+ return {source,paths:[...dependencies].map(id=>`pieces/${id}.json`)};
+}
+
 export async function proposeBrowser(env,user,body) {
   check(ID.test(body.context || ''),'invalid_context');
   const obj=await env.PHOTOS.get(`contexts/${body.context}.json`);if(!obj)fail(404,'context_not_found');
@@ -87,6 +109,8 @@ export async function proposeBrowser(env,user,body) {
   check(Array.isArray(body.allVersions) && body.allVersions.every(p=>body.pieces.includes(p)) && Array.isArray(body.accepted) && body.accepted.every(id=>typeof id==='string'),'invalid_options');
   const text=await staticText(env,'catalog.json');check(await digest(text)===ctx.catalogHash,'source_catalog_changed');
   const cat=JSON.parse(text),byId=new Map(cat.pieces.map(p=>[p.id,p]));
+  const db=await capturedDb(env),dependencyPaths=new Set();
+  for(const pid of body.pieces){{const h=await hydratedPiece(env,cat.fragments,pid,db);h.paths.forEach(p=>dependencyPaths.add(p));const effective=assembleEffectiveSource(h.source,db,{pieces:[pid]});byId.set(pid,effective.j.pieces.find(p=>p.id===pid));}}
   check(body.pieces.every(p=>byId.has(p)),'unknown_piece');
   const decisionRows=await env.DB.prepare('SELECT id, data FROM vf_docs WHERE collection = ?1 ORDER BY id').bind('decisions').all();
   const decisions=Object.fromEntries(decisionRows.results.map(r=>[r.id,JSON.parse(r.data)]));
@@ -107,6 +131,7 @@ export async function proposeBrowser(env,user,body) {
     // but their complete path set is prepared in the catalogue below.
     for(const path of cat.spreadAssets?.[pg] || [])asset(path);
   }
+  for(const x of selected)for(const vi of x.indices){const v=byId.get(x.piece.id).V[vi],photo=v.compositeEvidence?.photo;if(v.render==='photo'){check(photo&&ID.test(photo.sha256),'composite_photo_evidence_missing');expected.push({path:`img/p/${v.id}.jpg`,sourcePath:'photos/'+photo.assetId,sha256:photo.sha256,size:photo.size,contentType:photo.contentType});}}
   if(body.pieces.length)for(const path of ['reader-features.js','reader-packages.js'])if(cat.assets[path])asset(path);
   check(Array.isArray(body.files) && body.files.length<=1000 && body.files.every(f=>object(f)),'invalid_file_list');
   for(const path of body.pieces.length?['index.html','data/j.json']:['index.html']) {
@@ -119,11 +144,12 @@ export async function proposeBrowser(env,user,body) {
   const selectedLines=new Set([...owner.keys()].flatMap(k=>cat.lineIdsByBlock[k] || []));
   const anchors=Object.fromEntries(Object.entries(cat.sourceAnchors || {}).filter(([id])=>selectedLines.has(id)));
   const bindingKeys=selectedPieces.flatMap(p=>p.V.map(v=>`${p.id}/${v.id}`));
-  const fragmentPaths=[...body.pieces.map(p=>`pieces/${p}.json`),...pageOrder.map(p=>`pages/${p}.json`)];
+  const fragmentPaths=[...new Set([...dependencyPaths,...pageOrder.map(p=>`pages/${p}.json`)])];
   const c={mode:'browser',target:ctx.target,base:ctx.base,owner:user.email,createdAt:new Date().toISOString(),nonce:crypto.randomUUID(),
     sourceHash:ctx.sourceHash,catalogHash:ctx.catalogHash,shellSha256:ctx.shellSha256,revisions:ctx.revisions,
     pieces:body.pieces,allVersions:body.allVersions,accepted:body.accepted,force:body.force===true,files,
     gates:body.gates || [],stops:[],shared:body.shared || [],warnings:body.warnings || [],versions:body.versions || {},
+    sourceDependencies:[...new Set(selected.flatMap(x=>x.indices.flatMap(vi=>byId.get(x.piece.id).V[vi].compositeEvidence?.sourcePieces || [])))].sort(),
     selectedPieces,pageOrder,metadata:cat.metadata,sharedPieceIds:[...new Set((body.shared || []).filter(s=>byId.has(s.id)).map(s=>s.id))],
     pageBlockCounts:Object.fromEntries(cat.pageOrder.map(pg=>[pg,Object.keys(cat.lineIdsByBlock).filter(k=>k.startsWith(pg+'/')).length])),
     fragmentHashes:Object.fromEntries(fragmentPaths.map(p=>[p,cat.fragments[p]])),
@@ -167,8 +193,8 @@ function compareHeader(c,data) {
   check(c.gates.length===c.pieces.length*3,'gate_list_mismatch');
 }
 async function verifyPiece(env,id,c,pid,data) {
-  const source=await trustedFragment(env,c,`pieces/${pid}.json`),db=await pieceDb(env,source,pid);
-  const out=await buildCandidate({source,db,shell:STUB,pieces:[pid],allVersions:c.allVersions,accepted:c.accepted,force:c.force,publicPieces:c.pieces});
+  const db=await capturedDb(env),source=(await hydratedPiece(env,c.fragmentHashes,pid,db)).source;
+  const out=await buildCandidate({source,db,shell:STUB,pieces:[pid],allVersions:c.allVersions,accepted:c.accepted,force:c.force,publicPieces:c.pieces,target:c.target});
   check(!out.blocked,'server_gate_or_hard_stop');
   const i=c.pieces.indexOf(pid);
   check(canonical(out.data.pieces[0])===canonical(c.selectedPieces[i]) && canonical(data.pieces[i])===canonical(c.selectedPieces[i]),'version_selection_mismatch');
@@ -229,8 +255,8 @@ export async function verifyAndMaterialize(env,user,body,c,p) {
   let bytes;
   if(!file.sourcePath)bytes=await bytesOf(await env.PHOTOS.get(fileKey(body.id,file.path)));
   else {
-    const r=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/assets/'+file.sourcePath));
-    if(!r.ok)fail(409,'source_asset_missing');bytes=new Uint8Array(await r.arrayBuffer());
+    if(/^photos\/[a-f0-9]{32}$/.test(file.sourcePath))bytes=await bytesOf(await env.PHOTOS.get(file.sourcePath.slice(7)));
+    else {const r=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/assets/'+file.sourcePath));if(!r.ok)fail(409,'source_asset_missing');bytes=new Uint8Array(await r.arrayBuffer());}
   }
   await checked(bytes,file);
   await immutable(env.PHOTOS,fileKey(body.id,file.path),bytes,{httpMetadata:{contentType:file.contentType},customMetadata:{sha256:file.sha256}});
@@ -248,6 +274,7 @@ export async function rollbackBrowser(env,user,body,c) {
   const currentRevisions=revisionValues(revs.results);
   const release=Object.fromEntries(rows.results.map(r=>[r.id,JSON.parse(r.data)]));
   for(const pid of c.pieces)check(release[pid]?.pool==='series','own_pool_not_series');
+  for(const pid of c.sourceDependencies || [])check(!['reserve','archive'].includes(release[pid]?.pool),'composite_source_pool_changed');
   // Only the recorded, already accepted shared scans are candidates for rollback.
   // A once-Series co-resident cannot silently become Reserve in an old scan.
   for(const pid of c.sharedPieceIds)check(release[pid]?.pool==='series','shared_scan_pool_changed');

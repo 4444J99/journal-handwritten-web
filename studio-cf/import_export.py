@@ -43,9 +43,10 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import sqlguard  # noqa: E402
 
-COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts", "publish")
+COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "notes", "contributions", "artifacts", "publish", "parts", "composites")
+SOURCE_COLLECTIONS = ("reviews", "decisions", "versions", "release", "batches", "rconfig", "parts", "composites")
 IMMUTABLE_COLLECTIONS = ("notes", "contributions", "artifacts")
-COLLISION_SAFE_COLLECTIONS = IMMUTABLE_COLLECTIONS + ("publish",)
+COLLISION_SAFE_COLLECTIONS = IMMUTABLE_COLLECTIONS + ("publish", "parts", "composites")
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
 MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
@@ -178,11 +179,57 @@ def same_json_sql(left, right):
     return f"NOT EXISTS ({a} EXCEPT {b}) AND NOT EXISTS ({b} EXCEPT {a})"
 
 
-def build_sql(docs, now, include_schema=True):
+def build_sql(docs, now, include_schema=True, reconcile_heads=None):
+    """Generate one atomic D1 file import; never run these statements separately.
+
+    Wrangler's --file import runs as one transaction (including schema/preflight)
+    and rolls back on failure. Its serialized transaction makes head preflight a
+    CAS against the same snapshot used by writes. A nontransactional SQL runner
+    is not a supported execution mechanism for this generated restore script.
+    """
+    reconcile_heads = {} if reconcile_heads is None else reconcile_heads
+    if not isinstance(reconcile_heads, dict):
+        raise ValueError("head reconciliation must be an object")
+    for key, expected in reconcile_heads.items():
+        if not isinstance(key, str):
+            raise ValueError("head reconciliation key must be a string")
+        coll, _, doc_id = key.partition("/")
+        if coll not in ("parts", "composites") or not doc_id.startswith("h.") or doc_id not in docs.get(coll, {}):
+            raise ValueError("reconciliation must name an imported parts/composites head")
+        if expected is not None and (not isinstance(expected, str) or not DOC_ID_RE.fullmatch(expected) or not expected.startswith('r.')):
+            raise ValueError("expected head must be a revision ID or null")
     parts = []
     if include_schema:
         parts.append((HERE / "schema.sql").read_text())
     parts.append(f"-- review studio import, {sum(len(v) for v in docs.values())} documents")
+    if any(docs.get(collection) for collection in SOURCE_COLLECTIONS):
+        # Deliberate NOT NULL violation aborts an import during final publication.
+        parts.append("INSERT INTO vf_docs(collection,id,data,updated_at,rev) SELECT 'publish','restore-refused',NULL,'',0 WHERE EXISTS (SELECT id FROM vf_docs WHERE collection='publish' AND id='source-write-fence');")
+    # Preflight every immutable collision/head expectation before any feed or document write.
+    for coll in COLLISION_SAFE_COLLECTIONS:
+        for doc_id, data in (docs.get(coll) or {}).items():
+            key = coll + "/" + doc_id
+            where = "collection=" + sql_string(coll) + " AND id=" + sql_string(doc_id)
+            if key in reconcile_heads:
+                expected = reconcile_heads[key]
+                if expected is None:
+                    bad = "EXISTS (SELECT id FROM vf_docs WHERE " + where + ")"
+                else:
+                    bad = "COALESCE((SELECT json_extract(data,'$.revisionId') FROM vf_docs WHERE " + where + "),'') != " + sql_string(expected)
+                target = data.get("revisionId")
+                revision = docs.get(coll, {}).get(target) if isinstance(target, str) else None
+                record_id = doc_id[2:]
+                family = 'parts' if coll == 'parts' else 'composite'
+                if (not isinstance(target, str) or not target.startswith('r.') or not isinstance(revision, dict)
+                        or type(revision.get('schemaVersion')) is not int or revision.get('schemaVersion') != 1 or revision.get('family') != family
+                        or revision.get('revisionId') != target or revision.get('recordId') != record_id
+                        or not DOC_ID_RE.fullmatch(record_id) or record_id in ('.', '..')
+                        or data.get('recordId') != record_id or type(data.get('schemaVersion')) is not int or data.get('schemaVersion') != 1):
+                    raise ValueError("reconciled head must point to its imported immutable revision")
+            else:
+                text = json.dumps(data, ensure_ascii=True, separators=(",", ":"), allow_nan=False)
+                bad = "EXISTS (SELECT id FROM vf_docs WHERE " + where + " AND NOT (" + same_json_sql("data", sql_string(text)) + "))"
+            parts.append("INSERT INTO vf_docs(collection,id,data,updated_at,rev) SELECT 'publish','restore-refused',NULL,'',0 WHERE " + bad + ";")
     for coll in COLLECTIONS:
         items = docs.get(coll) or {}
         if not items:
@@ -194,6 +241,10 @@ def build_sql(docs, now, include_schema=True):
                     raise ValueError(f"invalid immutable revision envelope: {coll}/{doc_id}")
             ids = ", ".join(sql_string(doc_id) for doc_id in sorted(items))
             absent = f"(SELECT count(*) FROM vf_docs WHERE collection = {c} AND id IN ({ids})) < {len(items)}"
+            changing = [doc_id for doc_id in items if coll + "/" + doc_id in reconcile_heads]
+            if changing:
+                changed = ["EXISTS (SELECT id FROM vf_docs WHERE collection=" + c + " AND id=" + sql_string(i) + " AND NOT (" + same_json_sql("data", sql_string(json.dumps(items[i], separators=(",", ":")))) + "))" for i in changing]
+                absent = "(" + absent + " OR " + " OR ".join(changed) + ")"
             parts.append(f"INSERT INTO vf_revs (collection, rev) SELECT {c}, 1 WHERE {absent} ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
         else:
             parts.append(f"INSERT INTO vf_revs (collection, rev) VALUES ({c}, 1) ON CONFLICT(collection) DO UPDATE SET rev = rev + 1;")
@@ -201,7 +252,9 @@ def build_sql(docs, now, include_schema=True):
             # ensure_ascii keeps the statement pure ASCII with no raw newlines
             text = json.dumps(items[doc_id], ensure_ascii=True, separators=(",", ":"), allow_nan=False)
             values = f"({c}, {sql_string(doc_id)}, {sql_string(text)}, {sql_string(now)}, (SELECT rev FROM vf_revs WHERE collection = {c}))"
-            if coll in COLLISION_SAFE_COLLECTIONS:
+            if coll + "/" + doc_id in reconcile_heads:
+                parts.append("INSERT OR REPLACE INTO vf_docs(collection,id,data,updated_at,rev) VALUES " + values + ";")
+            elif coll in COLLISION_SAFE_COLLECTIONS:
                 # A differing same-ID revision violates data's existing NOT NULL
                 # constraint and aborts this statement; it never replaces history.
                 # An identical retry retains original data, updated_at and rev.
@@ -274,6 +327,9 @@ def run_local(args, sql_path, persist):
                 proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 proc.kill()
+                proc.wait()
+        if proc.stdout is not None:
+            proc.stdout.close()
     if not ok:
         raise SystemExit("wrangler d1 execute --local failed:\n" + "".join(out))
     return "".join(out)
@@ -290,6 +346,7 @@ def main(argv=None):
     ap.add_argument("--no-schema", action="store_true", help="leave the CREATE TABLE statements out of the SQL")
     ap.add_argument("--now", help="updated_at value (default: current UTC time)")
     ap.add_argument("--wrangler", help="path to wrangler (default /opt/homebrew/bin/wrangler, else PATH)")
+    ap.add_argument("--reconcile-heads", metavar="JSON", help="explicit {collection/head-id: expected-current-revision-or-null} CAS reconciliation")
     ap.add_argument("--timeout", type=int, default=120, help="seconds to wait for wrangler --local")
     args = ap.parse_args(argv)
 
@@ -309,8 +366,9 @@ def main(argv=None):
 
     now = args.now or time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     try:
-        sql = build_sql(docs, now, include_schema=not args.no_schema)
-    except sqlguard.SqlGuardError as e:
+        reconcile = loads_strict(Path(args.reconcile_heads).read_text()) if args.reconcile_heads else None
+        sql = build_sql(docs, now, include_schema=not args.no_schema, reconcile_heads=reconcile)
+    except (sqlguard.SqlGuardError, ValueError, OSError) as e:
         print(str(e), file=sys.stderr)
         return 1
 
