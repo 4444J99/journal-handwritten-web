@@ -185,8 +185,8 @@ class SourceScanTests(unittest.TestCase):
 
     def test_wrangler_toml_names_the_shared_database(self):
         toml = (ROOT / "wrangler.toml").read_text()
-        self.assertIn('database_name = "object-lessons-submissions"', toml)
-        self.assertIn('database_id = "f1a89504-2ddd-4c9b-ade8-eb52f6aee7a3"', toml)
+        self.assertIn('database_name = "studio-documents-prod"', toml)
+        self.assertIn('database_id = "68b1a11f-00a8-4bc7-923b-0931292980c7"', toml)
         self.assertIn('bucket_name = "versforms-studio-assets"', toml)
 
 

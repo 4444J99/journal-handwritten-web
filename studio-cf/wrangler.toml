@@ -8,8 +8,14 @@ pages_build_output_dir = "dist"
 # The R2 bucket also already exists.
 [[d1_databases]]
 binding = "DB"
-database_name = "object-lessons-submissions"
-database_id = "f1a89504-2ddd-4c9b-ade8-eb52f6aee7a3"
+database_name = "studio-documents-prod"
+database_id = "68b1a11f-00a8-4bc7-923b-0931292980c7"
+
+[env.preview]
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "studio-documents-preview"
+database_id = "5d3efc40-6e2d-4880-ae59-cae0b39680e5"
 
 [[r2_buckets]]
 # "ASSETS" is reserved by Pages (the static-file binding), so the bucket is bound as PHOTOS.
