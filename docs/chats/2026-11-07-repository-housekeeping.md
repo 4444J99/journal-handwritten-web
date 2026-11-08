@@ -2,16 +2,16 @@
 
 ## Produced
 
-Inventoried both repositories and their branches, PRs, local worktrees and stashes. Independently restored full bundles and created remote archive/branches-2026-11-07 tags preserving original histories. Diagnosed account billing blocking Actions and Linux zombie fixture false failure. Corrected timeout fixture to reap its terminated child; retained assertions that killing only the leader is insufficient. Made existing Chrome test executable configurable.
+Inventoried and preserved both repositories, independently restored bundles and remote archive tags, retired48 stale branches plus completed integration branches with exact-tip leases, merged source PRs143–148 and readerPR4, fixed the baseline timeout fixture, completed reader review regressions, and verified clean main/ref and deployment parity. See ../verification/repository-housekeeping-2026-11-07/README.md and its receipts.
 
 ## Author decisions
 
-The author requested repository housekeeping: reconcile, merge, make checks green and clean branches, then do the same for Variorum work. This authorizes scoped PR integration and eligible branch retirement; no new poem release or billing changes.
+The author requested all repository branches reconciled/merged, tests green and cleanup, then the same treatment for Variorum work. No billing changes, new poem release, source certification or artistic decisions were inferred.
 
 ## Plan / next steps
 
-Merge the verified housekeeping PR, retire integrated/superseded branches using exact-tip leases after recovery verification, preserve playground because its active deployment URL depends on it, then merge and validate the two Variorum branches. Account-level Actions billing remains outside repository control; report it rather than suppressing checks.
+Repository/code work is complete. Retire this documentation-only closeout branch after merge and reobserve final refs. Playground remains intentionally active and synchronized with main. Repair GitHub account billing/spending limit to allow Actions runners; issue111 remains open. Do not hide that check or close owner/release issues administratively.
 
 ## Status
 
-In progress. Branch dispositions and final exact OIDs will be recorded in the closeout receipt. No data migration or release activation performed.
+Both application repositories are merged and deployed; all runnable suites and Cloudflare/security checks pass. Hosted Actions green remains partially blocked by account billing. Original branch histories are recoverable. No new poem snapshot publication was invoked.

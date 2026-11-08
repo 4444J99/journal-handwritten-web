@@ -1,0 +1,44 @@
+{
+  "contractVersion": "1.0.0",
+  "snapshotKind": "application integration; documentation-only closeout follows",
+  "observedAt": "2026-11-07T18:59:46.505402-05:00",
+  "authority": "Author requested repository housekeeping, merges, green checks and cleanup, then same for Variorum",
+  "status": "partial",
+  "repositoryWork": "application integration and branch retirement complete",
+  "remainingBlocker": "GitHub Actions runner startup rejected by account billing/spending limit; issue111 retained",
+  "codeHeads": {
+    "journal-handwritten-web": "093d34083d7c6207502d4e980788855e8bc26d1e",
+    "versforms": "f164cb186f821ee63577d9ecbf61fa7e1f590d83"
+  },
+  "testedSourceHead": "6514d8a16db1c06159fc9af6caa7cc5361bfa10e",
+  "testedReaderHead": "00c8717c0977afaa02a7766abf9197e145c74f7e",
+  "mergedPRs": {
+    "source": [
+      143,
+      144,
+      145,
+      146,
+      147,
+      148
+    ],
+    "reader": [
+      4
+    ]
+  },
+  "retiredRemoteBranches": 55,
+  "activePreview": "playground fast-forwarded to same tested main",
+  "recoveryTags": {
+    "source": "archive/branches-2026-11-07",
+    "reader": "archive/branches-2026-11-07"
+  },
+  "recoveryVerification": "Full bundles independently cloned with matching refs and fsck; remote archive tags independently fetched and all inventoried tip objects verified",
+  "openIssuesRetained": 68,
+  "issueScope": "Historical exchange records and owner/release choices are not closed by branch cleanup",
+  "sourceProduction": "093d340 successfully deployed",
+  "readerProduction": "f164cb1 successfully deployed",
+  "pin": "a206cb90fb65ba2871713fe65ed0eb166102b221c21e6ebd968b06c156b299e0",
+  "sourceAndReaderPinsMatch": true,
+  "stagingPrivateSourceAutoDeploy": false,
+  "poemReleaseInvoked": false,
+  "notes": "Documentation-only closeout ref must be rechecked and retired after merge; final observed refs recorded in external closeout receipt to avoid self-referential commit IDs"
+}

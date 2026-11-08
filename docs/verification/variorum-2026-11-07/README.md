@@ -1,5 +1,7 @@
 # Variorum and Builder delivery — 7 November 2026
 
+Subsequent repository integration and deployment are recorded in [the housekeeping closeout](../repository-housekeeping-2026-11-07/README.md). Earlier local-delivery scope and failed-run logs below are historical; the timeout fixture is now fixed and all runnable suites pass.
+
 Implemented on local feat/variorum-builder branches in the source and generated reader repositories. No deployment, remote database write, release selection or public activation was performed.
 
 ## Delivered

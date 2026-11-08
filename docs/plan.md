@@ -1,5 +1,9 @@
 # Handwritten journal: plan and state
 
+## Repository closeout (7 November 2026)
+
+Source housekeeping/Variorum PRs143–148 and readerPR4 are merged. All runnable tests pass; the previous timeout fixture is corrected. Original branch histories are preserved, completed branches retired, and the active playground branch synchronized with main. [Closeout evidence](verification/repository-housekeeping-2026-11-07/README.md) records exact tested/integrated OIDs and recovery. GitHub Actions runner startup remains account-billing-blocked (#111); no checks are suppressed. No source verification, filing, physical-device acceptance or new poem release is inferred.
+
 ## Variorum implementation (7 November 2026)
 
 The author's explicit implementation handoff supersedes earlier pending-decisions language. Variorum, author Builder, immutable history, promotion, publication parity and fenced recovery are implemented on feat/variorum-builder. [Delivery and verification](verification/variorum-2026-11-07/README.md) records package hashes, browser evidence and the pre-existing timeout-test failure. No live deployment or poem clearance was performed. Historical reconciliation below remains evidence, not a request to repeat resolved decisions.
