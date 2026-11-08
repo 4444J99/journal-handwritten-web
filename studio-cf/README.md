@@ -21,7 +21,7 @@ own Cloudflare account, so the studio no longer depends on the artifact:
 **Nothing here has been deployed and this lane created no Cloudflare resource
 and made no Cloudflare call.** Storage is two existing resources on the owner's
 account (author decision, 2026-11-05): the empty D1 database
-`object-lessons-submissions` (`database_id` `f1a89504-2ddd-4c9b-ade8-eb52f6aee7a3`,
+`studio-documents-prod` (`database_id` `68b1a11f-00a8-4bc7-923b-0931292980c7`,
 now in `wrangler.toml`) and the R2 bucket `versforms-studio-assets`. The account
 is at its 10-database cap, so no D1 database is created.
 
