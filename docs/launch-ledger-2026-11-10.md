@@ -17,7 +17,7 @@ proved it. This document records state; it publishes nothing, adds no piece to `
 | Issues #76, #86, #87, #90 open | their work is done or re-homed; #86 and #87 closed with a pointer here; #76 and #90 stay open because the GitHub Apps removal on `4444J99/versforms` is still the author's choice |
 
 Still open and the author's alone: GitHub billing, GitHub Apps removal on `versforms`, GRUW (#106), the Pages
-"Fail closed" switch (#104), name and handle availability, first-post date, offsite scan copy (section 4).
+"Fail closed" switch (#104), name and handle availability, first-post date, offsite scan copy: done, see section 4.
 
 ## 2. Which host is which, and what each renders
 
@@ -47,7 +47,7 @@ snapshot is V[0] (`p001-diary1-0`).
 ## 3. Launch list status (supersedes the list in `docs/chats/README.md` where they differ)
 
 1. v4 into `site/`, tag: done.
-2. Scan backup: local custody copy verified (section 4); offsite copy still open.
+2. Scan backup: local custody copy verified (section 4); offsite copy made 2026-11-10 (section 4).
 3. Name `vers.forms`, handle/domain availability: author, open.
 4. Verify first poems in the Studio and sort into Series: only `p001` is verified (38 reviews) and sorted
    (`series`). `p002` onward have no line reviews and no pool.
@@ -68,6 +68,11 @@ snapshot is V[0] (`p001-diary1-0`).
 - Gap: the custody copy exists on one local volume; GitHub holds the originals but under the repositories the
   author has said should stop carrying them. An offsite copy (Dropbox/Drive/R2) is the open item in launch step 2.
   It was not made here because it was not asked and the author owns which store holds his scans.
+
+- Offsite copy, 2026-11-10: Google Drive (rclone remote `gdrive`), folder
+  `Archive/journal-scans-custody-20261110`, made with `rclone copy` (additive, nothing deleted). 126 objects,
+  103,982,387 bytes. `rclone check <custody dir> gdrive:Archive/journal-scans-custody-20261110 --one-way`:
+  0 differences, 126 matching files. Under the 5 GB threshold, so no restart note is needed.
 
 ## 5. First-release tranche: candidates and recommendation
 
