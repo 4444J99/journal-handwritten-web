@@ -25,3 +25,6 @@
 - **author**, open: Fix the GitHub billing / spending limit so Actions can start.
 - **author**, open: Decide which GitHub Apps to remove from `versforms`.
 - **Claude**, open: Push the two tags from a local clone; check etceter4 visibility read-only (handed off in exchange 11).
+
+## Update 2026-11-10
+Reconciled against GitHub evidence in [`docs/launch-ledger-2026-11-10.md`](../../launch-ledger-2026-11-10.md): PR #73 merged 2026-11-05; both tags are on origin; the etceter4 read-only check was done. The billing item and the GitHub Apps choice remain with the author.
