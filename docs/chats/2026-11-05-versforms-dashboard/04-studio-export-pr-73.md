@@ -24,3 +24,6 @@ Asked for the exports to go to Google Drive or GitHub.
 - Fix the Actions runner problem on the private repo (billing/minutes or Actions setting) — **author**, **open**.
 - Remove the data export and v4 file from the prompt's "waiting on me" list — **author**, **open**.
 - Re-check PR #73 review state — **Claude**, **done** (Codex reported no problems).
+
+## Update 2026-11-10
+PR #73 merged 2026-11-05T17:37:09Z; the "Merge PR #73" plan line above is done. Actions still cannot start runners (billing). See [`docs/launch-ledger-2026-11-10.md`](../../launch-ledger-2026-11-10.md).

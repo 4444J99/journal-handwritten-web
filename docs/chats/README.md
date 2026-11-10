@@ -67,7 +67,7 @@ Conventions
 - GitHub Actions cannot start runners (billing); `tools/ci_local.py --status` posts a `local-ci` commit status instead (issue #111).
 - Issue #1 closed by #114; draft PR #2 closed as superseded.
 - `site/index.html` is merged-piece v4 (since 2744d7a).
-- Public site live at https://versforms.pages.dev/ from `4444J99/versforms` (Cloudflare Pages): the blank page, title `versforms`, `noindex`. Nothing is posted.
+- Public site https://versforms.pages.dev/ is the reviewed reader package in `4444J99/versforms` (Cloudflare Pages Functions reading R2 `versforms-public`), title `versforms`, `noindex`. As of 2026-11-10 it serves the published `p001` snapshot (owner's Studio publication, 2026-11-07), not a blank page; see [the ledger](../launch-ledger-2026-11-10.md). No Instagram or other post is recorded.
 - Review studio live at https://versforms-studio.pages.dev/ (Pages project `versforms-studio`, direct upload), behind a Cloudflare Access login for the owner's email only. `claude/` holds the claude.ai Project's text documents; the full download is on the archive volume.
 
 ## Launch list (consolidated from the open plans above)
@@ -80,4 +80,5 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 6. [author] Pick poem 1 (`p001`, journal page order) and the first-post date (runbook: issue #113); [Claude] build the Instagram template from his material.
 7. [author] Post.
 
+| 2026-11-10 | [Launch ledger reconciliation](2026-11-10-launch-ledger-reconciliation.md) | Ledger reconciled against GitHub, Cloudflare and disk evidence; stale handoff checklist superseded; first-release tranche recommendation written; nothing published by this session |
 | 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
