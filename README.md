@@ -59,6 +59,12 @@ missing it exits 2 and prints the setup command instead of failing deep inside a
 `bootstrap_env.py --check` reports what is missing without installing anything. `.venv` is
 untracked. `studio-cf/requirements-build.txt` keeps the exact pins for the approved tile build.
 
+## What blocks a release
+
+`tools/release_readiness.mjs` runs the Studio's own publish gates (`studio/publish-compiler.mjs`)
+offline against a database export and prints, per piece, which gates fail and the Studio step that
+clears each one. See [docs/release-readiness.md](docs/release-readiness.md). It reads only.
+
 ## Layout
 
 ```
