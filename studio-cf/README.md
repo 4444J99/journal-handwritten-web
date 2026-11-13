@@ -207,7 +207,7 @@ the page's "Unsupported image type." message.
 before the page's main script (the only edit to `studio/index.html`). It does
 nothing when `window.claude.use` already exists. `use()` returns a promise and
 rejects when `/api/me` fails (so the page shows its "not saving" state).
-`onSnapshot` polls about every 4 s with exponential backoff (cap 60 s), pauses
+`onSnapshot` polls about every 15 s with exponential backoff (cap 60 s), pauses
 while the tab is hidden, polls at once after the page's own write, shares one
 poller per collection, returns an unsubscribe function, delivers a first
 snapshot even for an empty collection, and keeps the last snapshot through

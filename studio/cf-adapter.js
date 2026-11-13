@@ -4,7 +4,7 @@
  * studio page uses inside claude.ai, backed by /api/*. It does nothing when
  * window.claude already provides use(), so the page still runs inside claude.ai.
  *
- * Reads are polled (about every 4 s, exponential backoff on failure, paused
+ * Reads are polled (about every 15 s, exponential backoff on failure, paused
  * while the tab is hidden, immediate poll after the page's own write).
  */
 (function (root, factory) {
@@ -27,7 +27,7 @@
   'use strict';
 
   var COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'notes', 'contributions', 'artifacts', 'parts', 'composites'];
-  var POLL_MS = 4000;
+  var POLL_MS = 15000;
   var MAX_BACKOFF_MS = 60000;
   var INITIAL_FAILURES_BEFORE_ERROR = 3;
 

@@ -82,3 +82,4 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 
 | 2026-11-10 | [Launch ledger reconciliation](2026-11-10-launch-ledger-reconciliation.md) | Ledger reconciled against GitHub, Cloudflare and disk evidence; stale handoff checklist superseded; first-release tranche recommendation written; nothing published by this session |
 | 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
+| 2026-11-13 | [Studio poll cadence](2026-11-13-studio-poll-cadence.md) | Studio polling 4 s to 15 s (issue 112); adapter unit tests 26 of 26; redeploy pending |
