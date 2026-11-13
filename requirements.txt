@@ -1,0 +1,10 @@
+# Python dependencies for the local test gate (tools/ci_local.py) and the build tools.
+# Set up with:  python3 tools/bootstrap_env.py      (creates .venv, installs this file, verifies imports)
+# Ranges, not pins: the exact versions that produced the approved shell and lossless tiles
+# stay pinned in studio-cf/requirements-build.txt and are used only by that build.
+# Node (>= 22) and wrangler on PATH are also needed for the node and studio-cf-node suites.
+Pillow>=11
+fonttools>=4.50
+brotli>=1.1
+Markdown>=3.5
+numpy>=1.26

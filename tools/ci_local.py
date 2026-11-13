@@ -6,6 +6,7 @@ This script runs the same check plus every test suite it can find, prints a rece
 with --status posts one commit status (context "local-ci") on the exact commit that was tested,
 so a pull request shows a real result instead of a failed, step-less job.
 
+    python3 tools/bootstrap_env.py                 # once per checkout: .venv with the Python packages (needs Node and wrangler too)
     python3 tools/ci_local.py                      # run everything, print the receipt
     python3 tools/ci_local.py --status             # also post the status (clean tree, pushed HEAD)
     python3 tools/ci_local.py --root PATH          # run against another checkout or worktree
@@ -36,6 +37,8 @@ import time
 from pathlib import Path
 
 SUITES = ["check", "py-tests", "node-tests", "studio-cf-py", "studio-cf-node"]
+# import name -> pip name; keep in step with requirements.txt and tools/bootstrap_env.py
+REQUIRED_MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy"}
 INFO = chr(0x2139)  # the information mark node's test reporter prints before counts
 
 
@@ -91,16 +94,41 @@ def count_node(out):
     return (int(ok.group(1)) if ok else None), (int(bad.group(1)) if bad else None)
 
 
-def plan(root):
+def pick_python(root, override=None):
+    """The interpreter the suites run under: --python, else <root>/.venv, else the one running this script."""
+    if override:
+        return os.path.abspath(override)  # not resolve(): a venv python is a symlink and must stay one
+    for sub in ("bin/python", "Scripts/python.exe"):
+        cand = root / ".venv" / sub
+        if cand.exists():
+            return str(cand)
+    return sys.executable
+
+
+def preflight(root, python):
+    """Names of required Python packages `python` lacks. Only roots that carry requirements.txt are
+    checked, so a bare checkout of something else is not refused for packages it never needs."""
+    if not (root / "requirements.txt").exists():
+        return []
+    code = ("import importlib.util, sys\n"
+            "print(' '.join(n for n in sys.argv[1:] if importlib.util.find_spec(n) is None))")
+    p = subprocess.run([python, "-I", "-c", code, *REQUIRED_MODULES], capture_output=True, text=True)
+    if p.returncode:
+        return [f"(interpreter {python} failed: {p.stderr.strip().splitlines()[-1] if p.stderr.strip() else p.returncode})"]
+    return [REQUIRED_MODULES[m] for m in p.stdout.split()]
+
+
+def plan(root, python=None):
     """Return [(name, cmd, counter)] for the suites whose files exist under root."""
-    out = [("check", [sys.executable, str(root / "tools" / "check.py")], None)]
+    python = python or sys.executable
+    out = [("check", [python, str(root / "tools" / "check.py")], None)]
     if glob.glob(str(root / "tests" / "test_*.py")):
-        out.append(("py-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(root / "tests"), "-p", "test_*.py"], "unittest"))
+        out.append(("py-tests", [python, "-m", "unittest", "discover", "-s", str(root / "tests"), "-p", "test_*.py"], "unittest"))
     node_files = sorted(glob.glob(str(root / "tests" / "*.mjs")))
     if node_files:
         out.append(("node-tests", ["node", "--test", *node_files], "node"))
     if glob.glob(str(root / "studio-cf" / "tests" / "test_*.py")):
-        out.append(("studio-cf-py", [sys.executable, "-m", "unittest", "discover", "-s", str(root / "studio-cf" / "tests"), "-p", "test_*.py"], "unittest"))
+        out.append(("studio-cf-py", [python, "-m", "unittest", "discover", "-s", str(root / "studio-cf" / "tests"), "-p", "test_*.py"], "unittest"))
     cf_node = sorted(glob.glob(str(root / "studio-cf" / "tests" / "*.test.mjs")))
     if cf_node:
         out.append(("studio-cf-node", ["node", "--test", "--test-concurrency=1", *cf_node], "node"))
@@ -118,6 +146,8 @@ def main():
     ap.add_argument("--skip", action="append", default=[], choices=SUITES, help="suite to skip (repeatable)")
     ap.add_argument("--only", action="append", default=[], choices=SUITES, help="run only these suites (repeatable)")
     ap.add_argument("--timeout", type=int, default=900, help="seconds per suite (default 900)")
+    ap.add_argument("--python", help="interpreter for the Python suites (default <root>/.venv if present, else this one)")
+    ap.add_argument("--no-preflight", action="store_true", help="do not refuse when required Python packages are missing")
     ap.add_argument("--tmpdir", help="directory for TMPDIR while tests run (keeps scratch off the system disk)")
     ap.add_argument("--json", dest="json_out", help="write the receipt as JSON to this path")
     ap.add_argument("--status", action="store_true", help='post one commit status, context "local-ci", on HEAD')
@@ -153,7 +183,18 @@ def main():
         tmpdir.mkdir(parents=True, exist_ok=True)
         env["TMPDIR"] = str(tmpdir)
 
-    selected = [s for s in plan(root) if (not a.only or s[0] in a.only) and s[0] not in a.skip]
+    python = pick_python(root, a.python)
+    if python != sys.executable:
+        # Suites also spawn a bare `python3` (build_dist.py, build_reader.py, ...); it must be the same environment.
+        env["PATH"] = str(Path(python).parent) + os.pathsep + env.get("PATH", "")
+        env["VIRTUAL_ENV"] = str(Path(python).parent.parent)
+    if not a.no_preflight:
+        miss = preflight(root, python)
+        if miss:
+            print(f"refused: {python} lacks {', '.join(miss)}.\nSet up the environment once with:  python3 tools/bootstrap_env.py\n(or pass --python PATH, or --no-preflight to run anyway)", file=sys.stderr)
+            return 2
+
+    selected = [s for s in plan(root, python) if (not a.only or s[0] in a.only) and s[0] not in a.skip]
     results = []
     for name, cmd, counter in selected:
         code, out, secs = run(cmd, str(root), a.timeout, env)

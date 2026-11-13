@@ -43,6 +43,22 @@ route has an almost-full historical file map and unverified conditional writes;
 it does not inherit the Cloudflare route's guarantees. GitHub runner state and
 local test results are recorded separately; no billing or security setting is changed.
 
+## Running the local gate
+
+GitHub Actions does not run for this repository, so `tools/ci_local.py` is the gate of record.
+It needs Python 3.12+, Node 22+ and `wrangler` on PATH (for the studio-cf suites), plus the
+Python packages in `requirements.txt` (Pillow, fonttools, brotli, Markdown, numpy).
+
+```
+python3 tools/bootstrap_env.py     # once per checkout: creates .venv and installs requirements.txt
+python3 tools/ci_local.py          # runs check, py-tests, node-tests, studio-cf-py, studio-cf-node
+```
+
+`ci_local.py` uses `.venv/bin/python` automatically, or `--python PATH`; with required packages
+missing it exits 2 and prints the setup command instead of failing deep inside a suite.
+`bootstrap_env.py --check` reports what is missing without installing anything. `.venv` is
+untracked. `studio-cf/requirements-build.txt` keeps the exact pins for the approved tile build.
+
 ## Layout
 
 ```

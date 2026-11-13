@@ -17,3 +17,6 @@ production/tools/.build/
 
 # Playground build output (private; never deploy to versforms, Staging or Live)
 /playground/dist/
+
+# Local Python environment created by tools/bootstrap_env.py
+/.venv/

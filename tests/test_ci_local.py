@@ -148,5 +148,86 @@ class SkippedCoverageIsVisible(unittest.TestCase):
             self.assertEqual([r["skipped"] for r in json.loads(receipt.read_text())["suites"]], [1, 1])
 
 
+class InterpreterAndPreflight(unittest.TestCase):
+    """The suites run under <root>/.venv when it exists, and a root that declares requirements.txt is
+    refused with the setup command when its interpreter lacks a required package."""
+
+    def run_ci(self, repo, *extra):
+        return subprocess.run([sys.executable, str(TOOLS / "ci_local.py"), "--root", str(repo), "--only", "check", *extra],
+                              capture_output=True, text=True)
+
+    def test_venv_interpreter_is_preferred_over_the_running_one(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "import sys\nprint('EXE=' + sys.executable)\n")
+            fake = repo / ".venv" / "bin"
+            fake.mkdir(parents=True)
+            shim = fake / "python"
+            shim.write_text('#!/bin/sh\necho "EXE=venv-shim"\n')
+            shim.chmod(0o755)
+            self.assertEqual(ci_local.pick_python(repo), str(shim))
+            self.assertEqual(ci_local.pick_python(repo, "/x/y/python"), "/x/y/python")
+            p = self.run_ci(repo, "--json", str(Path(base) / "r.json"))
+            self.assertEqual(json.loads((Path(base) / "r.json").read_text())["suites"][0]["detail"], "EXE=venv-shim", p.stdout + p.stderr)
+
+    def test_bare_python3_in_a_suite_resolves_to_the_chosen_environment(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "import shutil, os\nprint('P3=' + os.path.realpath(shutil.which('python3')))\n")
+            fake = repo / ".venv" / "bin"
+            fake.mkdir(parents=True)
+            (fake / "python").symlink_to(sys.executable)
+            (fake / "python3").symlink_to(sys.executable)
+            receipt = Path(base) / "r.json"
+            self.run_ci(repo, "--json", str(receipt))
+            detail = json.loads(receipt.read_text())["suites"][0]["detail"]
+            self.assertEqual(detail, "P3=" + os.path.realpath(sys.executable))
+
+    def test_without_a_venv_the_running_interpreter_is_used(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "")
+            self.assertEqual(ci_local.pick_python(repo), sys.executable)
+
+    def test_root_without_requirements_is_not_preflighted(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "")
+            self.assertEqual(ci_local.preflight(repo, "/nonexistent/python"), [])
+            self.assertEqual(self.run_ci(repo).returncode, 0)
+
+    def test_missing_packages_refuse_with_the_setup_command(self):
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(base, "")
+            (repo / "requirements.txt").write_text("numpy\n")
+            # A venv without packages and without system site stands in for a bare interpreter.
+            import venv
+            venv.EnvBuilder(with_pip=False).create(Path(base) / "bare")
+            py = str(Path(base) / "bare" / "bin" / "python")
+            miss = ci_local.preflight(repo, py)
+            self.assertIn("numpy", miss)
+            p = self.run_ci(repo, "--python", py)
+            self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
+            self.assertIn("tools/bootstrap_env.py", p.stderr)
+            self.assertIn("numpy", p.stderr)
+            self.assertEqual(self.run_ci(repo, "--python", py, "--no-preflight").returncode, 0)
+
+    def test_requirement_lists_agree(self):
+        import bootstrap_env
+        self.assertEqual(ci_local.REQUIRED_MODULES, bootstrap_env.MODULES)
+        text = (TOOLS.parent / "requirements.txt").read_text().lower()
+        for pip_name in bootstrap_env.MODULES.values():
+            self.assertIn(pip_name.lower(), text)
+
+    def test_bootstrap_check_reports_missing_without_installing(self):
+        import bootstrap_env
+        with tempfile.TemporaryDirectory() as base:
+            import venv
+            venv.EnvBuilder(with_pip=False).create(Path(base) / "v")
+            miss = bootstrap_env.missing_modules(bootstrap_env.venv_python(Path(base) / "v"))
+            self.assertEqual(sorted(miss), sorted(bootstrap_env.MODULES))
+            p = subprocess.run([sys.executable, str(TOOLS / "bootstrap_env.py"), "--check", "--venv", str(Path(base) / "v")],
+                               capture_output=True, text=True)
+            self.assertEqual(p.returncode, 1)
+            self.assertIn("missing", p.stdout)
+            self.assertEqual(sorted(p.stdout.split("missing")[1].replace(",", " ").split()), sorted(bootstrap_env.MODULES.values()))
+
+
 if __name__ == "__main__":
     unittest.main()
