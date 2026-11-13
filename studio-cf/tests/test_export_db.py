@@ -343,9 +343,9 @@ class QueryGuardTests(unittest.TestCase):
     def test_query_and_printed_command_touch_only_vf_tables(self):
         self.assertEqual(sqlguard.violations(ed.QUERY), [])
         cmd = ed.remote_command()
-        self.assertIn("wrangler d1 execute object-lessons-submissions --remote --json", cmd)
+        self.assertIn("wrangler d1 execute studio-documents-prod --remote --json", cmd)
         self.assertIn("vf_docs", cmd)
-        self.assertNotIn("submissions ", cmd.replace("object-lessons-submissions", ""))
+        self.assertNotIn("submissions ", cmd.replace("studio-documents-prod", ""))
 
 
 if __name__ == "__main__":

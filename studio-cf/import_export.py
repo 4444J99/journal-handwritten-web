@@ -50,7 +50,7 @@ COLLISION_SAFE_COLLECTIONS = IMMUTABLE_COLLECTIONS + ("publish", "parts", "compo
 DOC_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,128}$")
 MAX_DOC_BYTES = 64 * 1024  # the API's limit on a document, measured on its compact JSON (see compact_size)
 MAX_FILE_BYTES = 8 * MAX_DOC_BYTES  # sanity cap on what is read at all; a pretty-printed file is larger than its stored form
-DB_NAME = "object-lessons-submissions"
+DB_NAME = "studio-documents-prod"
 DEFAULT_WRANGLER = "/opt/homebrew/bin/wrangler"
 
 

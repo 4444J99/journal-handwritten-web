@@ -9,7 +9,7 @@ README.md with per-collection counts.
 Sources (give exactly one):
 
   --from-json FILE    the output of
-                          wrangler d1 execute object-lessons-submissions --remote --json \\
+                          wrangler d1 execute studio-documents-prod --remote --json \\
                             --command "SELECT collection, id, data FROM vf_docs ORDER BY collection, id" > FILE
                       (a list of result objects, one result object, or a bare list of rows)
   --local PERSIST_DIR a local wrangler D1 persist directory (the one given to
