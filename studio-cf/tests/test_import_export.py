@@ -267,7 +267,7 @@ class RemoteAndLocalTests(unittest.TestCase):
                 code, out, _ = run_main([d, "--sql-out", str(sql), "--remote"])
             self.assertEqual(code, 0)
             self.assertIn("NOT executed", out)
-            self.assertIn("wrangler d1 execute object-lessons-submissions --remote", out)
+            self.assertIn("wrangler d1 execute studio-documents-prod --remote", out)
             self.assertIn(str(sql.resolve()), out)
             sql.unlink()
 
@@ -296,7 +296,7 @@ class RemoteAndLocalTests(unittest.TestCase):
             code, out, err = run_main([d, "--local", str(persist), "--wrangler", str(fake), "--timeout", "20"])
             self.assertEqual(code, 0, err)
             argv = json.loads(argv_log.read_text())
-            self.assertEqual(argv[:3], ["d1", "execute", "object-lessons-submissions"])
+            self.assertEqual(argv[:3], ["d1", "execute", "studio-documents-prod"])
             self.assertIn("--local", argv)
             self.assertNotIn("--remote", argv)
             self.assertEqual(argv[argv.index("--persist-to") + 1], str(persist.resolve()))

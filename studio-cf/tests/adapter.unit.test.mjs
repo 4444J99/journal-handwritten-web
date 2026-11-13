@@ -124,7 +124,7 @@ describe('snapshots and polling', () => {
     assert.deepEqual(snaps[0].docs, []);
     assert.equal(snaps[0].size, 0);
     rev = 1; docs = [{ id: 'd1', data: { a: 1, n: { b: [1] } } }];
-    await h.advance(4100);
+    await h.advance(15100);
     assert.equal(snaps.length, 2);
     const d = snaps[1].docs[0];
     assert.equal(d.id, 'd1'); assert.equal(d.exists, true);
@@ -139,22 +139,22 @@ describe('snapshots and polling', () => {
     const coll = await open(h); let n = 0;
     coll.onSnapshot(() => n++);
     await h.advance(0); assert.equal(n, 1);
-    await h.advance(4100 * 5);
+    await h.advance(15100 * 5);
     assert.equal(n, 1);
     assert.ok(h.polls('reviews').length >= 5);
     assert.ok(h.polls('reviews').slice(1).every(c => c.url === '/api/db/reviews?since=7'));
   });
 
-  test('polls about every 4 s', async () => {
+  test('polls about every 15 s', async () => {
     const h = harness();
     h.on(u => u.startsWith('/api/db/'), () => ok({ rev: 1, changed: false, docs: [] }));
     const coll = await open(h);
     coll.onSnapshot(() => {});
     await h.advance(0);
     const before = h.polls('reviews').length;
-    await h.advance(20000);
+    await h.advance(75000);
     const n = h.polls('reviews').length - before;
-    assert.ok(n >= 4 && n <= 6, 'polls in 20 s: ' + n);
+    assert.ok(n >= 4 && n <= 6, 'polls in 75 s: ' + n);
   });
 
   test('pause while hidden, immediate poll when visible again', async () => {
@@ -163,15 +163,15 @@ describe('snapshots and polling', () => {
     coll.onSnapshot(() => {});
     await h.advance(0);
     h.hidden = true;
-    await h.advance(5000); // the poll in flight at 4 s ends the loop because the tab is hidden
+    await h.advance(16000); // the poll in flight at 15 s ends the loop because the tab is hidden
     const frozen = h.polls('reviews').length;
-    await h.advance(60000);
+    await h.advance(120000);
     assert.equal(h.polls('reviews').length, frozen, 'no polling while hidden');
     assert.deepEqual(h.pending(), []);
     h.hidden = false; h.visibleCbs.forEach(f => f());
     await h.advance(0);
     assert.equal(h.polls('reviews').length, frozen + 1, 'one poll as soon as the tab is visible');
-    await h.advance(4100);
+    await h.advance(15100);
     assert.equal(h.polls('reviews').length, frozen + 2, 'normal cadence resumes');
   });
 
@@ -182,17 +182,17 @@ describe('snapshots and polling', () => {
     coll.onSnapshot(() => snaps++, () => errs++);
     await h.advance(0); assert.equal(snaps, 1);
     mode = 'bad';
-    await h.advance(4100); // fails (1)
-    assert.deepEqual(h.pending(), [7900], 'next try 8 s after the failed poll (100 ms already elapsed)');
-    await h.advance(8100); // fails (2)
-    assert.deepEqual(h.pending(), [15800], 'then 16 s (200 ms already elapsed)');
+    await h.advance(15100); // fails (1)
+    assert.deepEqual(h.pending(), [29900], 'next try 30 s after the failed poll (100 ms already elapsed)');
+    await h.advance(30100); // fails (2)
+    assert.deepEqual(h.pending(), [59800], 'then 60 s, the cap (200 ms already elapsed)');
     for (let i = 0; i < 8; i++) await h.advance(70000);
     assert.ok(h.pending()[0] <= 60000, 'capped at 60 s');
     assert.equal(errs, 0, 'a listener that already had data is not told about transient failures');
     mode = 'ok';
     await h.advance(61000);
     await h.advance(0);
-    assert.ok(h.pending()[0] <= 4000, 'cadence returns to 4 s after success: ' + h.pending()[0]);
+    assert.ok(h.pending()[0] <= 15000, 'cadence returns to 15 s after success: ' + h.pending()[0]);
   });
 
   test('initial failures: errCb(unavailable) after 3 tries, and the listener is dropped', async () => {
@@ -200,8 +200,8 @@ describe('snapshots and polling', () => {
     const coll = await open(h); const errs = [];
     coll.onSnapshot(() => assert.fail('no snapshot'), e => errs.push(e.code));
     await h.advance(0); assert.deepEqual(errs, []);
-    await h.advance(10000); assert.deepEqual(errs, []);
-    await h.advance(20000);
+    await h.advance(20000); assert.deepEqual(errs, []);
+    await h.advance(90000); // third failure lands at 90 s (tries at 0, 30, 30+60)
     assert.deepEqual(errs, ['unavailable']);
     const n = h.polls('reviews').length;
     await h.advance(120000);
@@ -239,7 +239,7 @@ describe('snapshots and polling', () => {
     coll.onSnapshot(() => snaps++, () => errs++);
     await h.advance(0); assert.equal(snaps, 1);
     const before = h.polls('reviews').length;
-    await h.advance(40000);
+    await h.advance(150000);
     const n = h.polls('reviews').length - before;
     assert.ok(n <= 11, 'one poller only: ' + n);
   });
@@ -252,7 +252,7 @@ describe('snapshots and polling', () => {
     await h.advance(0);
     assert.equal(a, 1); assert.equal(b, 1);
     const c0 = h.polls('reviews').length;
-    await h.advance(8100);
+    await h.advance(30100);
     assert.ok(h.polls('reviews').length - c0 <= 3, 'shared poller');
     ua(); ub();
     const c1 = h.polls('reviews').length;
@@ -268,7 +268,7 @@ describe('snapshots and polling', () => {
     coll.onSnapshot(s => seen.push(s.docs[0].data().v));
     await h.advance(0);
     await coll.doc('w').set({ v: 2 });
-    await h.advance(50); // far less than 4 s
+    await h.advance(50); // far less than 15 s
     assert.deepEqual(seen, [1, 2]);
     const put = h.calls.find(c => c.method === 'PUT');
     assert.equal(put.url, '/api/db/reviews/w');
