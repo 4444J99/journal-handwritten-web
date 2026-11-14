@@ -52,15 +52,16 @@ export function reviewProgress(source, db, pid) {
   const item = source.review.items.find(i => i.id === pid);
   if (!item) return {lines: 0, confirmed: 0, corrected: 0};
   const pages = new Map(source.review.pages.map(p => [p.id, p]));
-  const ids = new Set();
-  for (const v of item.versions) for (const b of v.blocks) for (const l of pages.get(v.page)?.blocks[b]?.lines || []) ids.add(l.id);
+  const lines = new Map();
+  for (const v of item.versions) for (const b of v.blocks) for (const l of pages.get(v.page)?.blocks[b]?.lines || []) lines.set(l.id, l.tx ?? '');
   let confirmed = 0, corrected = 0;
-  for (const id of ids) {
+  for (const [id, tx] of lines) {
     const r = db.reviews[id];
-    if (r?.status === 'confirmed') confirmed++;
-    else if (r?.status === 'corrected' && typeof r.text === 'string') corrected++;
+    if (r?.original !== tx) continue; // reviewed text has since changed: the gate stops it as stale_transcript
+    if (r.status === 'confirmed') confirmed++;
+    else if (r.status === 'corrected' && typeof r.text === 'string') corrected++;
   }
-  return {lines: ids.size, confirmed, corrected};
+  return {lines: lines.size, confirmed, corrected};
 }
 
 export async function assess({source, shell, db, pieces, target = 'staging'}) {

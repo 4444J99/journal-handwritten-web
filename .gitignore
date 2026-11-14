@@ -20,3 +20,6 @@ production/tools/.build/
 
 # Local Python environment created by tools/bootstrap_env.py
 /.venv/
+
+# Private readiness report (tools/release_report.mjs): carries unpublished line text
+/readiness-report/

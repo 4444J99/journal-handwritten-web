@@ -36,3 +36,20 @@ blocked, 2 bad arguments or an unassessed `--require` piece.
 
 The report also shows the version the gate would publish and whether it came from a decided final or
 the top of the stack, so a piece with several versions shows that choice is still open.
+
+## Readable report page
+
+`tools/release_report.mjs` renders the same assessment as one self-contained HTML page (no scripts, no
+network, `noindex`, light and dark): a "what to do next, cheapest first" list, then one card per piece
+with its blockers, the Studio step that clears each, review progress and a page-by-page queue showing
+the first line still waiting.
+
+```
+node tools/release_report.mjs --prepared /scratch/prepared --db exports/studio-db-2026-11-05 \
+     --pieces p002,p003,p004,p005 --out readiness-report/index.html
+```
+
+Private by construction: the page contains line text from unpublished pieces, so `--out` is refused
+when it lies inside the repository and is not git-ignored (`/readiness-report/` is ignored). It reads an
+export, calls no Cloudflare API, and builds, uploads and publishes nothing. Tests:
+`node --test tests/test_release_report.mjs`.
