@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync, mkdirSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -15,12 +15,18 @@ const source = {
     items: [{id: 'p9', versions: [{page: 'pg1', blocks: [0, 1]}, {page: 'pg1', blocks: [0]}, {page: 'pg2', blocks: [0]}]}],
   },
 };
-const db = {reviews: {a: {status: 'confirmed'}, b: {status: 'corrected', text: 'x'}, c: {status: 'corrected'}}};
+const db = {reviews: {a: {status: 'confirmed', original: 'one'}, b: {status: 'corrected', text: 'x', original: 'two <b>'}, c: {status: 'corrected', original: 'three'}}};
 
 test('reviewQueue counts each line once per page and names the first waiting line', () => {
   const q = reviewQueue(source, db, 'p9');
   assert.deepEqual(q.map(r => [r.page, r.lines, r.confirmed, r.corrected, r.waiting, r.next]), [['pg1', 3, 1, 1, 1, 'three'], ['pg2', 1, 0, 0, 1, 'four']]);
   assert.deepEqual(reviewQueue(source, db, 'nope'), []);
+});
+
+test('a review of since-changed text goes back to waiting, as the gate stops it as stale', () => {
+  const stale = {reviews: {...db.reviews, a: {status: 'confirmed', original: 'older wording'}}};
+  const q = reviewQueue(source, stale, 'p9');
+  assert.deepEqual([q[0].confirmed, q[0].waiting, q[0].next], [0, 2, 'one']);
 });
 
 const rows = [
@@ -30,7 +36,9 @@ const rows = [
 ];
 
 test('plan orders steps cheapest first and groups pieces', () => {
-  assert.deepEqual(plan(rows).map(s => [s.name, s.pieces]), [['series', ['p9']], ['shared_scan', ['p9']], ['verified', ['p9']]]);
+  assert.deepEqual(plan(rows).map(s => [s.name, s.pieces]), [['series', ['p9']], ['shared_scan:p8', ['p9']], ['verified', ['p9']]]);
+  const two = [{piece: 'a', blockers: [{name: 'shared_scan:p8', advice: 'Release p8'}]}, {piece: 'b', blockers: [{name: 'shared_scan:p11', advice: 'Release p11'}]}];
+  assert.deepEqual(plan(two).map(s => [s.advice, s.pieces]), [['Release p8', ['a']], ['Release p11', ['b']]]);
 });
 
 test('renderHtml escapes text, is noindex, and loads nothing external', () => {
@@ -50,4 +58,8 @@ test('checkOutputPath refuses tracked destinations inside the repo and allows ou
   assert.equal(checkOutputPath(join(root, 'site/x.html'), root).ok, false);
   assert.equal(checkOutputPath(join(root, 'readiness-report/index.html'), root).ok, true);
   assert.equal(checkOutputPath(join(tmpdir(), 'elsewhere.html'), root).ok, true);
+  const outside = mkdtempSync(join(tmpdir(), 'rr-out-'));
+  symlinkSync(join(root, 'site'), join(outside, 'link'));
+  assert.equal(checkOutputPath(join(outside, 'link', 'x.html'), root).ok, false);
+  assert.equal(checkOutputPath(join(outside, 'link', 'new', 'x.html'), root).ok, false);
 });

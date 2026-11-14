@@ -34,8 +34,10 @@ export function reviewQueue(source, db, pid) {
       if (row.seen.has(l.id)) continue;
       row.seen.add(l.id); row.lines++;
       const r = db.reviews[l.id];
-      if (r?.status === 'confirmed') row.confirmed++;
-      else if (r?.status === 'corrected' && typeof r.text === 'string') row.corrected++;
+      // A review of text that has since changed no longer counts: the gate stops it as stale_transcript.
+      const fresh = r && r.original === (l.tx ?? '');
+      if (fresh && r.status === 'confirmed') row.confirmed++;
+      else if (fresh && r.status === 'corrected' && typeof r.text === 'string') row.corrected++;
       else if (row.next === null) { row.next = l.tx ?? ''; row.nextId = l.id; }
     }
   }
@@ -49,9 +51,9 @@ const stepRank = n => { const i = STEP_ORDER.indexOf(n.split(':')[0]); return i 
 export function plan(rows) {
   const steps = new Map();
   for (const r of rows) for (const b of r.blockers || []) {
-    const k = b.name.split(':')[0];
-    if (!steps.has(k)) steps.set(k, {name: k, advice: b.advice, pieces: []});
-    steps.get(k).pieces.push(r.piece);
+    // One step per complete blocker name: shared_scan:p8 and shared_scan:p11 need different actions.
+    if (!steps.has(b.name)) steps.set(b.name, {name: b.name, advice: b.advice, pieces: []});
+    steps.get(b.name).pieces.push(r.piece);
   }
   return [...steps.values()].sort((a, b) => stepRank(a.name) - stepRank(b.name));
 }
@@ -102,7 +104,13 @@ ${cards}
 
 // The page holds private line text. Refuse any destination inside the repository that git would track.
 export function checkOutputPath(out, repoRoot) {
-  const abs = resolve(out);
+  // Resolve symlinks through the deepest existing ancestor (and the file itself if it exists), because
+  // writeFileSync follows them: an outside path that links into the repository is a repository path.
+  const lexical = resolve(out), tail = [];
+  let probe = lexical;
+  while (!existsSync(probe) && dirname(probe) !== probe) { tail.unshift(basename(probe)); probe = dirname(probe); }
+  const abs = join(realpathSync(probe), ...tail);
+  repoRoot = realpathSync(repoRoot);
   const rel = relative(repoRoot, abs);
   if (rel.startsWith('..') || isAbsolute(rel)) return {ok: true};
   const ignored = spawnSync('git', ['-C', repoRoot, 'check-ignore', '-q', '--', abs]).status === 0;
