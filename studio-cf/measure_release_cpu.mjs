@@ -63,6 +63,7 @@ export async function serveCheck(rendered, dir) {
       const on = d => { log += d; if (log.includes(`Ready on http://127.0.0.1:${port}`)) { clearTimeout(t); res(); } };
       child.stdout.on('data', on); child.stderr.on('data', on);
       child.on('exit', c => { clearTimeout(t); rej(new Error('wrangler exited ' + c + '\n' + log)); });
+      child.on('error', e => { clearTimeout(t); rej(e); });
     });
     const results = [];
     for (const e of rendered.entries) {
@@ -81,12 +82,12 @@ export async function main(argv) {
     const k = argv[i], v = () => argv[++i];
     if (k === '--prepared') a.prepared = v(); else if (k === '--db') a.db = v();
     else if (k === '--pieces') a.pieces = v().split(',').filter(Boolean); else if (k === '--runs') a.runs = Number(v());
-    else if (k === '--force-gates') a.force = true; else if (k === '--serve-check') a.serve = true; else if (k === '--json') a.json = v();
+    else if (k === '--photos') a.photos = v(); else if (k === '--force-gates') a.force = true; else if (k === '--serve-check') a.serve = true; else if (k === '--json') a.json = v();
     else throw new Error('bad argument ' + k);
   }
   if (!a.prepared || !a.db || !a.pieces.length) { process.stderr.write('usage: measure_release_cpu.mjs --prepared DIR --db DIR --pieces p001 [--force-gates] [--runs N] [--serve-check] [--json FILE]\n'); return 2; }
   const {loadDb} = await import('../tools/release_readiness.mjs');
-  const {source, shell, readAsset} = await loadPrepared(a.prepared), db = loadDb(a.db);
+  const {source, shell, readAsset} = await loadPrepared(a.prepared, a.photos), db = loadDb(a.db);
   const compile = await timed(async () => { const c = await buildCandidate({source, db, shell, pieces: a.pieces, target: 'staging', force: !!a.force}); if (c.blocked) throw new Error('blocked: ' + [...c.stops, ...c.gates.filter(g => !g.ok && !g.overridden)].map(g => g.name)); }, 5);
   const candidate = await buildCandidate({source, db, shell, pieces: a.pieces, target: 'staging', force: !!a.force});
   if (candidate.blocked) { process.stderr.write('blocked (use --force-gates for measurement only)\n'); return 1; }
@@ -102,23 +103,25 @@ export async function main(argv) {
   }
   const etag = `"${id}:index.html"`;
   reader['304 revalidation'] = round(await timed(async () => { await readPublic(new Request(`https://x.invalid/_snapshot/${id}/`, {headers: {'if-none-match': etag}}), env); }, a.runs));
-  const out = join(mkdtempSync(join(tmpdir(), 'measure-')), 'site');
-  write(rendered, out);
-  const problems = await verifySite(out, rendered);
-  const report = {
-    note: 'Node process.cpuUsage proxy, in-memory R2 stub; not Workers CPU. Gates forced: ' + !!a.force,
-    budgetMs: BUDGET_MS, pieces: a.pieces, files: paths.length, totalBytes: rendered.entries.reduce((n, e) => n + e.size, 0),
-    studioServerCompileMs: round(compile),
-    readerWorkerMsPerRequest: reader,
-    readerOverBudget: Object.entries(reader).filter(([, v]) => v.max > BUDGET_MS || v.p95 > BUDGET_MS).map(([k]) => k),
-    prerendered: {workerInvocationsPerRequest: 0, workerCpuMs: 0, siteProblems: problems},
-  };
-  if (a.serve) {
-    const s = await serveCheck(rendered, out);
-    report.prerendered.served = {functionsBuilt: s.functionsBuilt, noFunctionsReported: s.noFunctionsReported, allOk: s.results.every(r => r.status === 200 && r.hashOk && r.noindex && r.nosniff && baseEq(r.contentType, r.expected)),
-      files: s.results.map(r => ({path: r.path, status: r.status, hashOk: r.hashOk, contentType: r.contentType, expected: r.expected})), log: s.log};
-  }
-  rmSync(join(out, '..'), {recursive: true, force: true});
+  const root = mkdtempSync(join(tmpdir(), 'measure-')), out = join(root, 'site');
+  let report;
+  try {
+    write(rendered, out);
+    const problems = await verifySite(out, rendered);
+    report = {
+      note: 'Node process.cpuUsage proxy, in-memory R2 stub; not Workers CPU. Gates forced: ' + !!a.force,
+      budgetMs: BUDGET_MS, pieces: a.pieces, files: paths.length, totalBytes: rendered.entries.reduce((n, e) => n + e.size, 0),
+      studioServerCompileMs: round(compile),
+      readerWorkerMsPerRequest: reader,
+      readerOverBudget: Object.entries(reader).filter(([, v]) => v.max > BUDGET_MS || v.p95 > BUDGET_MS).map(([k]) => k),
+      prerendered: {workerInvocationsPerRequest: 0, workerCpuMs: 0, siteProblems: problems},
+    };
+    if (a.serve) {
+      const s = await serveCheck(rendered, out);
+      report.prerendered.served = {functionsBuilt: s.functionsBuilt, noFunctionsReported: s.noFunctionsReported, allOk: s.results.every(r => r.status === 200 && r.hashOk && r.noindex && r.nosniff && baseEq(r.contentType, r.expected)),
+        files: s.results.map(r => ({path: r.path, status: r.status, hashOk: r.hashOk, contentType: r.contentType, expected: r.expected})), log: s.log};
+    }
+  } finally { rmSync(root, {recursive: true, force: true}); }
   const text = JSON.stringify(report, null, 2) + '\n';
   if (a.json) writeFileSync(a.json, text); else process.stdout.write(text);
   return 0;

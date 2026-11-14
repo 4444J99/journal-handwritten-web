@@ -97,3 +97,29 @@ test('every output path passes the reader allow-list and name leaks are refused'
   c.files.push({path: 'notes/secret.txt', text: 'x', sha256: await digest('x'), size: 1, contentType: 'text/plain'});
   await assert.rejects(render(c, p.readAsset), /unsafe_path/);
 });
+
+test('nothing is cached without revalidation, because asset URLs name different bytes in different releases', async () => {
+  const p = await prepared(), r = await render(await build(p, ['p001']), p.readAsset), q = await render(await build(p, ['p002']), p.readAsset);
+  const a = r.entries.find(e => e.path === 'img/a/t0.jpg'), b = q.entries.find(e => e.path === 'img/a/t0.jpg');
+  assert.notEqual(a.sha256, b.sha256, 'same URL, different bytes across releases');
+  for (const h of [r.headers, q.headers]) {
+    assert.match(h, /Cache-Control: public, max-age=0, must-revalidate/);
+    assert.doesNotMatch(h, /max-age=[1-9]/);
+  }
+});
+
+test('loadPrepared refuses a shell that differs from the recorded hash and resolves photos only from the photo directory', async () => {
+  const {loadPrepared} = await import('../prerender_release.mjs');
+  const dir = mkdtempSync(join(tmpdir(), 'prep-')), photos = mkdtempSync(join(tmpdir(), 'photos-'));
+  const shell = '<html>shell</html>';
+  writeFileSync(join(dir, 'shell.html'), shell);
+  writeFileSync(join(dir, 'source.json'), JSON.stringify({shellSha256: await digest(shell), assets: {}}));
+  writeFileSync(join(photos, 'asset1'), 'PHOTO');
+  const ok = await loadPrepared(dir, photos);
+  assert.equal(new TextDecoder().decode(await ok.readAsset('photos/asset1')), 'PHOTO');
+  await assert.rejects(ok.readAsset('photos/../source.json'), /unknown_asset/);
+  await assert.rejects(ok.readAsset('photos/.hidden'), /photo_input_missing/);
+  await assert.rejects((await loadPrepared(dir)).readAsset('photos/asset1'), /photo_input_missing/);
+  writeFileSync(join(dir, 'shell.html'), shell + ' changed');
+  await assert.rejects(loadPrepared(dir, photos), /shell_hash_mismatch/);
+});

@@ -32,7 +32,9 @@ const BASE_HEADERS = {
   'X-Robots-Tag': 'noindex',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'no-referrer',
-  'Cache-Control': 'public, max-age=60, must-revalidate',
+  // Asset URLs such as img/a/t0.jpg name different bytes in different releases, so nothing may be
+  // reused without revalidation. Pages revalidates static assets by ETag at no Worker cost.
+  'Cache-Control': 'public, max-age=0, must-revalidate',
 };
 
 function fail(code, detail = '') { const e = new Error(detail ? `${code}: ${detail}` : code); e.code = code; return e; }
@@ -134,10 +136,19 @@ export async function verifySite(outDir, rendered) {
   return problems;
 }
 
-export async function loadPrepared(prepared) {
+// photosDir holds uploaded photo bytes named by asset id (the Studio keeps them in R2 `photos/`).
+// Photographed composites cannot be pre-rendered without it; render() verifies each file's hash.
+export async function loadPrepared(prepared, photosDir = null) {
   const source = JSON.parse(readFileSync(join(prepared, 'source.json'), 'utf8'));
   const shell = readFileSync(join(prepared, 'shell.html'), 'utf8');
+  // The compiler's glyph-approval check trusts source.shellSha256; the bytes must match it.
+  if (await digest(shell) !== source.shellSha256) throw fail('shell_hash_mismatch');
   const readAsset = async p => {
+    const photo = /^photos\/([A-Za-z0-9_.-]+)$/.exec(p);
+    if (photo) {
+      if (!photosDir || photo[1].startsWith('.')) throw fail('photo_input_missing', p);
+      return new Uint8Array(readFileSync(join(photosDir, photo[1])));
+    }
     if (!source.assets[p] && !/^tiles\//.test(p)) throw fail('unknown_asset', p);
     return new Uint8Array(readFileSync(join(prepared, 'assets', p)));
   };
@@ -155,6 +166,7 @@ function parse(argv) {
     else if (k === '--all-versions') a.allVersions = list(v());
     else if (k === '--accept') a.accepted = list(v());
     else if (k === '--target') a.target = v();
+    else if (k === '--photos') a.photos = v();
     else if (k === '--out') a.out = v();
     else if (k === '--json') a.json = v();
     else if (k === '--help' || k === '-h') a.help = true;
@@ -166,11 +178,11 @@ function parse(argv) {
 export async function main(argv) {
   const a = parse(argv);
   if (a.help || !a.prepared || !a.db || !a.out || !a.pieces.length) {
-    process.stderr.write('usage: prerender_release.mjs --prepared DIR --db EXPORT_DIR --pieces p001[,p002] --out EMPTY_DIR [--target staging|production] [--all-versions p001] [--accept ID] [--json FILE]\n');
+    process.stderr.write('usage: prerender_release.mjs --prepared DIR --db EXPORT_DIR --pieces p001[,p002] --out EMPTY_DIR [--target staging|production] [--all-versions p001] [--photos DIR] [--accept ID] [--json FILE]\n');
     return a.help ? 0 : 2;
   }
   const {loadDb} = await import('../tools/release_readiness.mjs');
-  const {source, shell, readAsset} = await loadPrepared(a.prepared);
+  const {source, shell, readAsset} = await loadPrepared(a.prepared, a.photos);
   const db = loadDb(a.db);
   const candidate = await buildCandidate({source, db, shell, pieces: a.pieces, allVersions: a.allVersions, accepted: a.accepted, target: a.target});
   if (candidate.blocked) {
