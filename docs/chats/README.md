@@ -84,3 +84,4 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 | 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
 | 2026-11-13 | [Studio poll cadence](2026-11-13-studio-poll-cadence.md) | Studio polling 4 s to 15 s (issue 112); adapter unit tests 26 of 26; redeploy pending |
 | 2026-11-13 | [Release readiness report page](2026-11-13-release-report-page.md) | Private HTML report of the readiness gates with review queue; tests 4 of 4; nothing published |
+| 2026-11-14 | [Pre-rendered release](2026-11-14-prerender-release.md) | Static Pages pre-render of a release (no Worker) plus local CPU harness; 12 tests; nothing deployed |

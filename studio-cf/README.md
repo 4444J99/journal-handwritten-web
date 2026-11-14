@@ -451,6 +451,29 @@ The local integration test builds its own checkout assets in a unique scratch di
 
 The original hosted server-build spike used 24 ms CPU for one published page and 166 ms for 123 synthetic pages. The free fallback splits verification and image copying across requests. Synthetic worst-case bounded traces passed, with warm checks around 3-8 ms and occasional cold checks at 11 ms. This is measured evidence, not a guarantee against Cloudflare CPU exhaustion; no billing plan was changed. An interrupted operation is retried using the same candidate hash, or rebuilt when source revisions changed.
 
+### Pre-rendered release (no Worker per request)
+
+`prerender_release.mjs` removes the Worker from the serving path. It compiles the release exactly as the Publish tab does and writes a static Pages site: every public file at its public path, a `_headers` file, and nothing under `functions/` (no `_worker.js`, no `_routes.json`). Pages answers static asset requests without invoking Functions, so there is no per-request CPU to budget.
+
+```
+python3 studio-cf/prepare_publish.py --out /scratch/prepared
+node studio-cf/prerender_release.mjs --prepared /scratch/prepared --db exports/studio-db-2026-11-05 --pieces p001 --target staging --out /scratch/static-release
+```
+
+It refuses a blocked candidate (nothing written), an output directory that is not empty, a path outside the reader's allow-list, a byte that differs from its recorded hash, a name leak, a shell whose hash differs from the prepared record, a photographed composite without `--photos DIR` (uploaded photo bytes named by asset id, hash-verified like every other file), and a header file over Pages' 100 rules (the atlas tiles are PNG bytes under `.jpg` routes, so one splat rule `/img/a/*` sets their type). Every file is served with `Cache-Control: max-age=0, must-revalidate` because URLs such as `img/a/t0.jpg` name different bytes in different releases; Pages revalidates by ETag without a Worker. The release id is a digest of the file list, so rollback is redeploying an earlier output. The R2 reader and its pointer protocol are unchanged; this is an alternative serving path, and deploying it is an owner step (`wrangler pages deploy`, not run here).
+
+Measured locally with `measure_release_cpu.mjs` on real prepared data for p001 (9 files, 769,516 bytes; gates forced in memory for measurement only, nothing written or published). Node `process.cpuUsage` is a proxy for Workers CPU, with R2 as an in-memory stub:
+
+| Path | Reader Worker, CPU ms per request (300 runs, requests built outside the timer) | Pre-rendered |
+|---|---|---|
+| `index.html` (284,822 bytes: text read plus `<base>` rewrite) | first 3.3, p50 0.44, p95 1.36, max 8.7 | no Worker |
+| `data/j.json` | first 0.07, p50 0.04, p95 0.17, max 1.05 | no Worker |
+| largest image (200,203 bytes) | first 0.26, p50 0.08, p95 0.51, max 6.2 | no Worker |
+| `If-None-Match` hit | first 0.73, p50 0.03, p95 0.10, max 5.7 | no Worker |
+| server-side `buildCandidate`, 1 piece (5 runs, host load about 38) | first 52, p50 21 | not run per request |
+
+Node's own Request/Response initialisation is excluded from the timer. Every reader sample stayed below 10 ms on this machine, but that is one 285 KB page: `index.html` is read as text and rewritten per request, so its cost grows with the page, and a full release carries a larger one; these figures are not a hosted guarantee (the earlier hosted spike saw occasional cold 11 ms checks on the bounded path). The pre-rendered path runs the compile once at build time, and `--serve-check` (`wrangler pages dev`) reported "No Functions" and served all 9 files with matching hashes, the intended `Content-Type` and noindex/nosniff headers. This does not measure hosted Pages; real behaviour after `wrangler pages deploy` is unobserved.
+
 The first real p001 confirmation and physical iPhone/laptop acceptance remain author actions. The live source selects V[0]; five author corrections currently reside on unpublished versions. The preview reports that distinction.
 
 Final confirmation and rollback share a non-expiring D1 fence with Studio source writes. Recovery first changes the R2 pointer ETag before releasing an abandoned fence, preventing a delayed upload from publishing after a source edit. Source writes return 409 during that short final operation; opening Publication history completes recovery. Only committed publication receipts appear as rollback targets.
