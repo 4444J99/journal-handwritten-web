@@ -92,7 +92,10 @@ export async function render(candidate, readAsset) {
     if (bytes.length > LIMITS.fileBytes) throw fail('file_too_large', f.path);
     if (bytes.length !== f.size || await digest(bytes) !== f.sha256) throw fail('asset_hash_mismatch', f.path);
     // The compiler scans text files itself; binary files get the byte scan the Python path uses.
-    if (f.text !== undefined ? hasNameLeak(f.text) : hasByteNameLeak(bytes)) throw fail('name_leak', f.path);
+    // Same split as lib/publish-api.js checked(): text-like content gets the decoding scan (JavaScript
+    // escapes, entities, base64), only true binaries get the byte scan.
+    const textLike = f.text !== undefined || /^(?:text\/|application\/(?:json|javascript))/i.test(f.contentType || '');
+    if (textLike ? hasNameLeak(f.text !== undefined ? f.text : new TextDecoder().decode(bytes)) : hasByteNameLeak(bytes)) throw fail('name_leak', f.path);
     entries.push({path: f.path, bytes, sha256: f.sha256, size: f.size, contentType: f.contentType});
   }
   if (!entries.some(e => e.path === 'index.html')) throw fail('missing_index');

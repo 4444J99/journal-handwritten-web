@@ -123,3 +123,15 @@ test('loadPrepared refuses a shell that differs from the recorded hash and resol
   writeFileSync(join(dir, 'shell.html'), shell + ' changed');
   await assert.rejects(loadPrepared(dir, photos), /shell_hash_mismatch/);
 });
+
+test('encoded names in reader JavaScript are refused by the text scan, not only the byte scan', async () => {
+  const p = await prepared();
+  const js = new TextEncoder().encode('export const n="\\u0065tceter4";');
+  const path = 'reader-features.js';
+  p.source.assets[path] = {sha256: await digest(js), size: js.length, contentType: 'text/javascript; charset=utf-8'};
+  p.bytes[path] = js;
+  const c = await build(p);
+  assert.equal(c.blocked, false);
+  assert.ok(c.files.some(f => f.path === path));
+  await assert.rejects(render(c, async x => p.bytes[x]), /name_leak/);
+});

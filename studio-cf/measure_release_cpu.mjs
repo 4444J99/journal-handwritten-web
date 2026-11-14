@@ -32,9 +32,12 @@ export function summarize(xs) {
 }
 const round = o => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v * 1000) / 1000 : v]));
 
-async function timed(fn, runs) {
+// prep() builds the per-call input outside the timed section: a deployed Worker receives an
+// already-constructed Request, and Node's lazy Fetch initialisation must not be charged to it.
+async function timed(fn, runs, prep = () => undefined) {
+  new Request('https://x.invalid/'); new Response('');
   const xs = [];
-  for (let i = 0; i < runs; i++) { const t = process.cpuUsage(); await fn(); xs.push(cpuMs(t)); }
+  for (let i = 0; i < runs; i++) { const input = prep(); const t = process.cpuUsage(); await fn(input); xs.push(cpuMs(t)); }
   return summarize(xs);
 }
 
@@ -99,10 +102,10 @@ export async function main(argv) {
   for (const p of sample) {
     const url = `https://x.invalid/_snapshot/${id}/${p === 'index.html' ? '' : p}`;
     const size = rendered.entries.find(e => e.path === p).size;
-    reader[p] = {bytes: size, ...round(await timed(async () => { const r = await readPublic(new Request(url), env); await r.arrayBuffer(); }, a.runs))};
+    reader[p] = {bytes: size, ...round(await timed(async req => { const r = await readPublic(req, env); await r.arrayBuffer(); }, a.runs, () => new Request(url)))};
   }
   const etag = `"${id}:index.html"`;
-  reader['304 revalidation'] = round(await timed(async () => { await readPublic(new Request(`https://x.invalid/_snapshot/${id}/`, {headers: {'if-none-match': etag}}), env); }, a.runs));
+  reader['304 revalidation'] = round(await timed(async req => { await readPublic(req, env); }, a.runs, () => new Request(`https://x.invalid/_snapshot/${id}/`, {headers: {'if-none-match': etag}})));
   const root = mkdtempSync(join(tmpdir(), 'measure-')), out = join(root, 'site');
   let report;
   try {

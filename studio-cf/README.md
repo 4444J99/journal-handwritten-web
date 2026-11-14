@@ -464,15 +464,15 @@ It refuses a blocked candidate (nothing written), an output directory that is no
 
 Measured locally with `measure_release_cpu.mjs` on real prepared data for p001 (9 files, 769,516 bytes; gates forced in memory for measurement only, nothing written or published). Node `process.cpuUsage` is a proxy for Workers CPU, with R2 as an in-memory stub:
 
-| Path | Reader Worker, CPU ms per request (300 runs) | Pre-rendered |
+| Path | Reader Worker, CPU ms per request (300 runs, requests built outside the timer) | Pre-rendered |
 |---|---|---|
-| `index.html` (284,822 bytes: text read plus `<base>` rewrite) | first 17.4, p50 0.40, p95 1.05, max 17.4 | no Worker |
-| `data/j.json` | first 0.03, p50 0.02, p95 0.07, max 0.93 | no Worker |
-| largest image (200,203 bytes) | first 0.17, p50 0.07, p95 0.59, max 5.6 | no Worker |
-| `If-None-Match` hit | p50 0.01, p95 0.05 | no Worker |
-| server-side `buildCandidate`, 1 piece (5 runs) | first 26.1, p50 11.9 | not run per request |
+| `index.html` (284,822 bytes: text read plus `<base>` rewrite) | first 3.3, p50 0.44, p95 1.36, max 8.7 | no Worker |
+| `data/j.json` | first 0.07, p50 0.04, p95 0.17, max 1.05 | no Worker |
+| largest image (200,203 bytes) | first 0.26, p50 0.08, p95 0.51, max 6.2 | no Worker |
+| `If-None-Match` hit | first 0.73, p50 0.03, p95 0.10, max 5.7 | no Worker |
+| server-side `buildCandidate`, 1 piece (5 runs, host load about 38) | first 52, p50 21 | not run per request |
 
-The only reader figure above 10 ms is the first call in a fresh process (JIT warm-up); the cold path is exactly what a free-plan isolate sees, which matches the earlier hosted finding of occasional cold failures. The pre-rendered path runs the compile once at build time, and `--serve-check` (`wrangler pages dev`) reported "No Functions", served all 9 files with matching hashes, the intended `Content-Type` and noindex/nosniff headers. This does not measure hosted Pages; real behaviour after `wrangler pages deploy` is unobserved.
+Node's own Request/Response initialisation is excluded from the timer. Every reader sample stayed below 10 ms on this machine, but that is one 285 KB page: `index.html` is read as text and rewritten per request, so its cost grows with the page, and a full release carries a larger one; these figures are not a hosted guarantee (the earlier hosted spike saw occasional cold 11 ms checks on the bounded path). The pre-rendered path runs the compile once at build time, and `--serve-check` (`wrangler pages dev`) reported "No Functions" and served all 9 files with matching hashes, the intended `Content-Type` and noindex/nosniff headers. This does not measure hosted Pages; real behaviour after `wrangler pages deploy` is unobserved.
 
 The first real p001 confirmation and physical iPhone/laptop acceptance remain author actions. The live source selects V[0]; five author corrections currently reside on unpublished versions. The preview reports that distinction.
 
