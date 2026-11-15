@@ -23,6 +23,8 @@ class CheckManifestTest(unittest.TestCase):
         self.root = Path(self._tmp.name)
         (self.root / "tools").mkdir()
         shutil.copy2(REAL_CHECK, self.root / "tools" / "check.py")
+        # check.py also runs the silent-launch lint that sits beside it.
+        shutil.copy2(REAL_CHECK.parent / "silent_launch_lint.py", self.root / "tools" / "silent_launch_lint.py")
         (self.root / "site" / "data").mkdir(parents=True)
         (self.root / "studio" / "data").mkdir(parents=True)
         (self.root / "site" / "index.html").write_text("<html>site</html>")
