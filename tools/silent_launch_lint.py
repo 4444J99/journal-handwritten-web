@@ -82,10 +82,18 @@ def python_launches(source: str, name: str):
     return sorted(found)
 
 
-def _blank_comments(source: str) -> str:
-    """Blank out comments but keep every newline, so a commented launch is ignored and line numbers stay true.
-    String literals are walked, so ``" // "`` inside a string never hides the code after it."""
-    out, i, n, quote = [], 0, len(source), None
+# String contents that mean something to the lint: a launch method name (``chromium['launch']``) and a bare module
+# name (``require('playwright')``). Every other string is text, never a call.
+KEPT_STRING = re.compile(rf"^(?:{NAMES}|(?:@[\w.-]+/)?[\w.-]+)$")
+
+
+def _blank_comments(source: str, keep_text: bool = False) -> str:
+    """Blank out comments and the text of string literals, keeping every newline, so a commented or quoted launch is
+    ignored, line numbers stay true and ``" // "`` inside a string never hides the code after it. A launch method name
+    or module name used as a string stays (the lint reads ``chromium['launch']`` and ``require('playwright')``), and a
+    template literal with ``${...}`` stays whole (its expressions run). ``keep_text`` blanks comments only (the headless
+    spawn check reads the flags in the argument strings)."""
+    out, i, n, quote, start = [], 0, len(source), None, 0
     while i < n:
         c, pair = source[i], source[i:i + 2]
         if quote is None:
@@ -101,14 +109,21 @@ def _blank_comments(source: str) -> str:
                 continue
             if c in '"\'`':
                 quote = c
+                out.append(c); start = len(out)
+                i += 1
+                continue
             out.append(c)
         else:
-            out.append(c)
             if c == '\\' and i + 1 < n:
-                out.append(source[i + 1]); i += 2
+                out.append(c); out.append(source[i + 1]); i += 2
                 continue
             if c == quote or (c == '\n' and quote in '"\''):
+                text = ''.join(out[start:])
+                keep = keep_text or KEPT_STRING.match(text) or (quote == '`' and '${' in text)
+                if not keep:
+                    out[start:] = [re.sub(r'[^\n]', ' ', text)]
                 quote = None
+            out.append(c)
         i += 1
     return ''.join(out)
 
@@ -151,7 +166,7 @@ def bare_launches(source: str, python: bool = False) -> list[int]:
         except SyntaxError:
             return []
     found = set(node_launches(source))
-    lines = _blank_comments(source).splitlines()
+    lines = _blank_comments(source, keep_text=True).splitlines()
     for number, line in enumerate(lines, 1):
         if HEADLESS.search(line):
             # The argument array opens on this line or a few lines above it; the helper call must wrap it.

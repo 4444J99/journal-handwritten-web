@@ -38,6 +38,11 @@ class SilentLaunchLintTests(unittest.TestCase):
         self.assertEqual(lint.bare_launches("import playwright\nlaunch = getattr(pw.chromium, 'launch')\n", python=True), [2])
         self.assertEqual(lint.bare_launches("import playwright\nbt = pw.chromium\nrunner = bt\nrunner.launch()\n", python=True), [4])
         self.assertEqual(lint.bare_launches('const note = " // "; webkit.launch();'), [1])
+        self.assertEqual(lint.bare_launches('const note = "webkit.launch()";'), [])
+        self.assertEqual(lint.bare_launches("const note = 'chromium.launch()'; // not a call"), [])
+        self.assertEqual(lint.bare_launches('const note = `see webkit.launch() for the call`;'), [])
+        self.assertEqual(lint.bare_launches('const note = `${await webkit.launch()}`;'), [1])
+        self.assertEqual(lint.bare_launches('const s = "a\\" // b"; await webkit.launch();'), [1])
         self.assertEqual(lint.bare_launches("/* webkit.launch() */ const x = 1;"), [])
         self.assertEqual(lint.bare_launches("await engine.launch(id);"), [])
 
