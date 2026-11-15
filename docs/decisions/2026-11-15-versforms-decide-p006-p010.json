@@ -1,0 +1,776 @@
+{
+  "schema": "versforms-decisions/1",
+  "date": "2026-11-15",
+  "recorded_by": "Claude (orchestrator-delegated decisions; not the author's own choices)",
+  "reversible": true,
+  "visibility": "private (contains unpublished line text); repo is private",
+  "evidence_sources": [
+    "live D1 studio-documents-prod, read-only SELECT on vf_docs (release, decisions), 2026-11-15",
+    "source/canonical.json (pieces, studio.items catalogue, pages, lines, geometry)",
+    "scans site/img/p/diary4.jpg, diary4a.jpg, diary5.jpg, diary5a.jpg, diary7.jpg, diary46a.jpg viewed 2026-11-15",
+    "tools/post_poem.py shared_scan / spread_mates",
+    "docs/decisions/2026-11-14-versforms-decide.json (PR 159) and exports/studio-db-pre-series-order-2026-11-14 (PR 161)"
+  ],
+  "live_state_observed": {
+    "release": "p001 (series, order 0, num 1, exposed) and p002-p005 (series, orders 1-4, rev 4-7, written 2026-11-15, PR 161); no p006-p010 document"
+  },
+  "decisions": {
+    "issue_105_series_sort_p006_p010": {
+      "rule": "Order follows the source manuscript page order (canonical.json piece order = page sequence diary4, diary4a, diary5, diary5a, diary7; there is no diary6 page). Same rule and evidence class as PR 159: catalogue status complete for all five.",
+      "p006": {
+        "pool": "series",
+        "order": 5,
+        "confidence": "high",
+        "evidence": "kind poem, status complete; page diary4 blocks 0-2 ('Time drips'); three tercets, single version"
+      },
+      "p007": {
+        "pool": "series",
+        "order": 6,
+        "confidence": "high",
+        "evidence": "kind poem, status complete; page diary4a block 0 ('How are you not'), top version 0; struck/inserted words and four struck closing lines are on the scan as transcribed"
+      },
+      "p008": {
+        "pool": "series",
+        "order": 7,
+        "confidence": "high",
+        "evidence": "kind poem, status complete; page diary5 blocks 0-1 ('The trouble with'), two stanzas joined by the drawn arrow, single version"
+      },
+      "p009": {
+        "pool": "series",
+        "order": 8,
+        "confidence": "high",
+        "evidence": "catalogue kind is 'song lyric', status complete. Issue 105 is 'the first ten poems ... p001 to p010' and pool is not gated on kind (tools/post_poem.py has no kind test). The scan shows the author composing it: 'these' written above struck 'the', a struck 'I' before 'Dont', and an earlier shorter draft (block 0, 'Walk through the streets') above the full text; PR 159 already counts 'poems/lyrics' of the journal as the author's own works (issue_106_gruw outcome). Authorship is therefore the author's, genre does not bar Series.",
+        "kind_note": "song lyric"
+      },
+      "p010": {
+        "pool": "series",
+        "order": 9,
+        "confidence": "high",
+        "evidence": "kind poem, status complete; page diary7 block 0 ('It's always been easiest to fall'), single version"
+      },
+      "applied_to_d1": false,
+      "how_to_apply": "release docs {pool:'series', order:N} in one batch with one vf_revs bump per document, as PR 161; apply recorded in the following PR"
+    }
+  },
+  "posting_time_findings": {
+    "note": "Checked by running tools/post_poem.py Source.spread_mates and shared_scan on this tree (release db empty for the other pieces) on 2026-11-15. Corrected after Codex review on PR 163: the manuscript spreads (diary4/4a, diary5/5a, diary7/7a share one photographed spread) are NOT published as spreads, because each page has a crop box (sp.cb) and sp.f null, so the published scan holds only its own page. None of these stops was acted on here.",
+    "spreads": "p006/p007, p008/p009 and p010/p011: spread_mates is empty and shared_scan returns no finding for the default (top-version) post of p006-p010. No mutual --accept-shared-scan and no p011 sort is required to post p010.",
+    "p007_second_version": "Version p007-diary46a-1 is one line ('How are you not supposed to love her') on page diary46a, the notes page 'A Clockwork Orange' (p088, kind notes, unsorted), whose scan also shows lines about drugs. reader top is version 0 (diary4a), and the default post publishes the top version only: no finding. With --include-versions, shared_scan returns ('p088','stop') because p088's writing would show in the diary46a scan. Recommendation: do not include p007's versions unless the author approves that page showing. Not applied anywhere.",
+    "p002_comparison": "for contrast, p002 returns ('x-diary2','needs-accept') as PR 159 recorded"
+  },
+  "line_review": {
+    "pieces": {
+      "diary4": "p006",
+      "diary4a": "p007",
+      "diary5": "p008",
+      "diary5a": "p009",
+      "diary7": "p010"
+    },
+    "lines_without_recorded_box": [
+      "diary4-1-0",
+      "diary4-2-2",
+      "diary4a-0-13",
+      "diary4a-0-15",
+      "diary5-0-8",
+      "diary5-0-12",
+      "diary5-1-3",
+      "diary5a-1-2",
+      "diary5a-1-3",
+      "diary5a-1-4",
+      "diary5a-3-3"
+    ],
+    "method": "Each transcript line compared against the page scan by eye on 2026-11-15. Confidence is a machine reading judgement, not an author confirmation: no line is marked confirmed or corrected in D1.",
+    "summary": {
+      "lines": 76,
+      "high": 58,
+      "medium": 18,
+      "low": 0
+    },
+    "lines": [
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-0-0",
+        "transcript": "Time drips",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-0-1",
+        "transcript": "From a clock like sweat",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-0-2",
+        "transcript": "From the runners brow.",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scan shows an apostrophe mark above 'runners' (runner's); transcript has none."
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-1-0",
+        "transcript": "An hourglass",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-1-1",
+        "transcript": "With [[ins: only]] moments left",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-1-2",
+        "transcript": "With which to cherish.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-2-0",
+        "transcript": "Lifes rules",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scan shows an apostrophe above 'Lifes' (Life's); transcript has none."
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-2-1",
+        "transcript": "Only to be applicable",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p006",
+        "page": "diary4",
+        "line": "diary4-2-2",
+        "transcript": "Only after death.",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-0",
+        "transcript": "How are you not",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-1",
+        "transcript": "Supposed to love",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-2",
+        "transcript": "Her —",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-3",
+        "transcript": "The crook of your arm. Soft",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-4",
+        "transcript": "And silent. Or the way the",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-5",
+        "transcript": "Shadows paints across",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-6",
+        "transcript": "your collar bone",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-7",
+        "transcript": "Right as you lean across",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-8",
+        "transcript": "[[struck: Our]] bed — [[ins: ?]] [[struck: your]] bed, rather.",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "'Our' circled and struck, 'bed', a dash, a short word over struck 'your' (reads like 'her' or 'my'; transcript marks it ins: ?), 'bed, rather.'"
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-9",
+        "transcript": "Silly to call it mine",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-10",
+        "transcript": "when I call nothing",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-11",
+        "transcript": "At all. At All. Et Al.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-12",
+        "transcript": "[[struck: But, where was]]",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-13",
+        "transcript": "[[struck: I]]",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-14",
+        "transcript": "[[struck: Deserving you..]]",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Struck line, text read through the strike; 'Deserving you..' plausible."
+      },
+      {
+        "piece": "p007",
+        "page": "diary4a",
+        "line": "diary4a-0-15",
+        "transcript": "[[struck: your perfectness]]",
+        "scan_box_recorded": false,
+        "confidence": "medium",
+        "note": "Struck line, read through the strike; 'your perfectness'."
+      },
+      {
+        "piece": "p007",
+        "page": "diary46a",
+        "line": "diary46a-1-0",
+        "transcript": "How are you not supposed to love her",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-0",
+        "transcript": "The trouble with",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-1",
+        "transcript": "[[struck: The curve]] Corners",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Struck 'The curve' read through the strike; 'Corners' clear."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-2",
+        "transcript": "Is that there is no",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-3",
+        "transcript": "End in sight. These simple",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-4",
+        "transcript": "Repetitions allow for the ever-bending",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-5",
+        "transcript": "Body of the Snake to be",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-6",
+        "transcript": "Never-Ending. It's with",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scan reads 'Its with'; transcript has 'It's' (apostrophe not visible)."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-7",
+        "transcript": "Dissilusionment that a smooth ride",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Spelling as written ('Dissilusionment'); letter count after 'Dissi' is cramped."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-8",
+        "transcript": "Is under-way,",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-9",
+        "transcript": "And it seems so, seemingly,",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-10",
+        "transcript": "[[struck: The comfort of the seats,]]",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Struck line read through the strike."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-11",
+        "transcript": "In everyway [[struck: one]] [[ins: something]] can seem,.",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "'one' struck; 'Something' sits on the next line with a caret up to the gap; trailing punctuation reads ',.' ."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-12",
+        "transcript": "[[struck: Or be seen]].",
+        "scan_box_recorded": false,
+        "confidence": "medium",
+        "note": "Struck line; scan reads 'Or be seen'; 'Or to be seen' not excluded."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-13",
+        "transcript": "With the calm collection of a warm",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-14",
+        "transcript": "Familiar touch, realization",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scan 'realization' opens with a letter like a capital 'T'/'R'; transcript has lower-case r."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-15",
+        "transcript": "That the allowance [[struck: ?]] [[ins: for]] your mistakes",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Struck word before 'for' is illegible (possibly 'of'); transcript marks it ?."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-16",
+        "transcript": "Has run out. But,",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-17",
+        "transcript": "Pay no mind.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-18",
+        "transcript": "Another turn where two lines",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-0-19",
+        "transcript": "Meet forces possibilities forth.",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scan shows capital F in 'Forces'; transcript lower-case."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-0",
+        "transcript": "A wealth of opportunity",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-1",
+        "transcript": "Spills from the egg-shell",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-2",
+        "transcript": "Cracked against another",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-3",
+        "transcript": "Corner,",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-4",
+        "transcript": "And were urged to fasten",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "'were' written without apostrophe; could be 'we're' or 'wire'."
+      },
+      {
+        "piece": "p008",
+        "page": "diary5",
+        "line": "diary5-1-5",
+        "transcript": "Our seatbelts.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-0-0",
+        "transcript": "Walk through the streets,",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-0-1",
+        "transcript": "Valleys at your knees, and you",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-0-2",
+        "transcript": "Know, you know.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-1-0",
+        "transcript": "I walk through [[struck: the]] [[ins: these]] streets",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-1-1",
+        "transcript": "[[struck: I]] Dont feel",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Scribbled-over letter (probably 'I') precedes 'Dont', which is partly overwritten."
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-1-2",
+        "transcript": "My feet",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-1-3",
+        "transcript": "And you know",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-1-4",
+        "transcript": "And you know",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-2-0",
+        "transcript": "I run from these flees",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-2-1",
+        "transcript": "They just bite & tease",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "Symbol between 'bite' and 'tease' resembles an ampersand."
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-2-2",
+        "transcript": "And you know",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-2-3",
+        "transcript": "And you know",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-3-0",
+        "transcript": "I am what you breathe",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-3-1",
+        "transcript": "Despite my needs",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-3-2",
+        "transcript": "And I know",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p009",
+        "page": "diary5a",
+        "line": "diary5a-3-3",
+        "transcript": "And I know",
+        "scan_box_recorded": false,
+        "confidence": "high",
+        "note": "No recorded scan box; text compared to the scan by eye."
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-0",
+        "transcript": "It's always been easiest to fall —",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-1",
+        "transcript": "Fall through glass, fall in love,",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-2",
+        "transcript": "Fall down the deepest well",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-3",
+        "transcript": "And coming out less than so,",
+        "scan_box_recorded": true,
+        "confidence": "medium",
+        "note": "'than' written compressed; scan could read 'tha'."
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-4",
+        "transcript": "It's always been easiest. To stand ?",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-5",
+        "transcript": "Now that is a whole other thing",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-6",
+        "transcript": "To be weighed in a whole other",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      },
+      {
+        "piece": "p010",
+        "page": "diary7",
+        "line": "diary7-0-7",
+        "transcript": "Hand.",
+        "scan_box_recorded": true,
+        "confidence": "high",
+        "note": ""
+      }
+    ]
+  }
+}
