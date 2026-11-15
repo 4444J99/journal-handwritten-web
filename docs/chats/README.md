@@ -60,6 +60,14 @@ Conventions
 | 2026-11-06 | [Posting hardening completion](2026-11-06-posting-hardening-completion.md) | Follow-up repair for #123: tests, Git isolation, owned cleanup and accurate runbook; review PR, no publication |
 | 2026-11-06 | [Integration closeout](2026-11-06-integration-closeout.md) | T01–T10 source/reader/feature integration and exact-output verification in progress; private changes only |
 | 2026-11-06 | [Canonical source reconstruction](2026-11-06-t02-source-foundation.md) | Preserved originals, applied 38 reviews additively, deterministic rebuild and independent restore verified. |
+| 2026-11-10 | [Launch ledger reconciliation](2026-11-10-launch-ledger-reconciliation.md) | Ledger reconciled against GitHub, Cloudflare and disk evidence; stale handoff checklist superseded; first-release tranche recommendation written; nothing published by this session |
+| 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
+| 2026-11-13 | [Studio poll cadence](2026-11-13-studio-poll-cadence.md) | Studio polling 4 s to 15 s (issue 112); adapter unit tests 26 of 26; redeploy pending |
+| 2026-11-13 | [Release readiness report page](2026-11-13-release-report-page.md) | Private HTML report of the readiness gates with review queue; tests 4 of 4; nothing published |
+| 2026-11-14 | [Pre-rendered release](2026-11-14-prerender-release.md) | Static Pages pre-render of a release (no Worker) plus local CPU harness; 12 tests; nothing deployed |
+| 2026-11-14 | [Pre-rendered release at full scale](2026-11-14-prerender-full-release.md) | 126-piece, 518-file release measured: reader Worker vs static; serve check 518 of 518; nothing deployed |
+| 2026-11-14 | [versforms decisions p002-p005](2026-11-14-versforms-decide.md) | Decisions on issues 105/106, p002 shared scan, confidence for 70 unreviewed lines; data only, no D1 write |
+| 2026-11-14 | [versforms D1 write: Series orders](2026-11-14-versforms-d1-write.md) | Release docs p002-p005 written to D1 as Series 1-4 in one batch; read-back and checksums match; inverse SQL kept; no deploy |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
@@ -79,12 +87,3 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 5. [author] Decide GRUW: file one batch before posting, or post without (both views are on issue #106; no decision yet).
 6. [author] Pick poem 1 (`p001`, journal page order) and the first-post date (runbook: issue #113); [Claude] build the Instagram template from his material.
 7. [author] Post.
-
-| 2026-11-10 | [Launch ledger reconciliation](2026-11-10-launch-ledger-reconciliation.md) | Ledger reconciled against GitHub, Cloudflare and disk evidence; stale handoff checklist superseded; first-release tranche recommendation written; nothing published by this session |
-| 2026-11-06 | [Publication metadata and diary1 geometry](2026-11-06-publication-metadata-diary1.md) | All four fixes verified; 386 Python tests (one skip), 116 JS tests, private/public browser matrices; PR #136 |
-| 2026-11-13 | [Studio poll cadence](2026-11-13-studio-poll-cadence.md) | Studio polling 4 s to 15 s (issue 112); adapter unit tests 26 of 26; redeploy pending |
-| 2026-11-13 | [Release readiness report page](2026-11-13-release-report-page.md) | Private HTML report of the readiness gates with review queue; tests 4 of 4; nothing published |
-| 2026-11-14 | [Pre-rendered release](2026-11-14-prerender-release.md) | Static Pages pre-render of a release (no Worker) plus local CPU harness; 12 tests; nothing deployed |
-| 2026-11-14 | [Pre-rendered release at full scale](2026-11-14-prerender-full-release.md) | 126-piece, 518-file release measured: reader Worker vs static; serve check 518 of 518; nothing deployed |
-| 2026-11-14 | [versforms decisions p002-p005](2026-11-14-versforms-decide.md) | Decisions on issues 105/106, p002 shared scan, confidence for 70 unreviewed lines; data only, no D1 write |
-| 2026-11-14 | [versforms D1 write: Series orders](2026-11-14-versforms-d1-write.md) | Release docs p002-p005 written to D1 as Series 1-4 in one batch; read-back and checksums match; inverse SQL kept; no deploy |
