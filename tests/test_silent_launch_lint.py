@@ -26,11 +26,16 @@ class SilentLaunchLintTests(unittest.TestCase):
                              ("const runner = chromium;\nawait runner.launch();", 2),
                              ("const {chromium: runner} = require('playwright');\nawait runner.launch();", 2),
                              ("await chromium['launch']();", 1),
+                             ("const bt = playwright.webkit; const runner = bt; await runner.launch();", 1),
+                             ("const method = 'launch'; await chromium[method]();", 1),
+                             ("const pw = require('playwright'); await thing.launch();", 1),
                              ("import { chromium as chrome } from 'playwright';\nawait chrome.launch();", 2),
                              ("const {launch} = chromium;\nawait launch();", 1)):
             self.assertEqual(lint.bare_launches(source), [line], source)
         self.assertEqual(lint.bare_launches("runner = pw.chromium\nrunner.launch()\n", python=True), [2])
         self.assertEqual(lint.bare_launches("getattr(pw, name).launch()\n", python=True), [1])
+        self.assertEqual(lint.bare_launches("import playwright\nlaunch = getattr(pw.chromium, 'launch')\n", python=True), [2])
+        self.assertEqual(lint.bare_launches("import playwright\nbt = pw.chromium\nrunner = bt\nrunner.launch()\n", python=True), [4])
         self.assertEqual(lint.bare_launches("/* webkit.launch() */ const x = 1;"), [])
         self.assertEqual(lint.bare_launches("await engine.launch(id);"), [])
 
