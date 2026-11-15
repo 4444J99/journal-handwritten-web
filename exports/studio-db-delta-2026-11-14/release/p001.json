@@ -1,0 +1,28 @@
+{
+  "pool": "series",
+  "order": 0,
+  "at": "2026-11-07T03:04:15.586Z",
+  "exposures": [
+    {
+      "type": "site",
+      "date": "2026-11-06",
+      "at": "2026-11-07T01:57:41.478Z",
+      "where": "versforms-staging",
+      "url": "https://versforms-staging.pages.dev/",
+      "publishId": "event.e0b9ad4f-49f3-409a-9570-909c3dc294b5",
+      "snapshotId": "cab9d83ab82dae3cd54f7683a20fecc433e7aa71e9c7b14ac084a4f81883e24f",
+      "target": "staging"
+    },
+    {
+      "type": "site",
+      "date": "2026-11-06",
+      "at": "2026-11-07T03:04:15.586Z",
+      "where": "versforms",
+      "url": "https://versforms.pages.dev/",
+      "publishId": "event.d24acd15-b71e-4518-92f8-2a1fe628c562",
+      "snapshotId": "23d77dda3839b54c0e8f0493cd523e48188d3921f25fd4ba80c94e457c1a84ed",
+      "target": "production"
+    }
+  ],
+  "num": 1
+}
