@@ -68,6 +68,7 @@ Conventions
 | 2026-11-14 | [Pre-rendered release at full scale](2026-11-14-prerender-full-release.md) | 126-piece, 518-file release measured: reader Worker vs static; serve check 518 of 518; nothing deployed |
 | 2026-11-14 | [versforms decisions p002-p005](2026-11-14-versforms-decide.md) | Decisions on issues 105/106, p002 shared scan, confidence for 70 unreviewed lines; data only, no D1 write |
 | 2026-11-14 | [versforms D1 write: Series orders](2026-11-14-versforms-d1-write.md) | Release docs p002-p005 written to D1 as Series 1-4 in one batch; read-back and checksums match; inverse SQL kept; no deploy |
+| 2026-11-15 | [versforms decisions p006-p010](2026-11-15-versforms-decide-p006-p010.md) | Series orders 5-9 decided with evidence; per-line confidence for 76 lines; posting-time spread findings; data only, no D1 write |
 
 ## Repository state (checked 2026-11-05)
 - `main` at `038d01f` (chat records for #123/#124), with a `local-ci` status; every suite passes locally.
