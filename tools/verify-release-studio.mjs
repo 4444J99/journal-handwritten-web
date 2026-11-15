@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 // All application code and backend test helpers come from the immutable source root.
 // The caller provides installed tools; this runner installs nothing and contacts no account.
 const opts={};
@@ -49,7 +50,7 @@ const req=async(coll,id,body)=>{const r=await fetch(`${srv.base}/api/db/${coll}$
 const data=JSON.parse(fs.readFileSync(path.join(SOURCE,'studio/data/review.json'),'utf8'));const keys=data.items.filter(x=>x.g!==4).slice(0,2).map(x=>x.id);result.fixture_keys=keys;
 for(let i=0;i<keys.length;i++)await req('release',keys[i],{pool:'series',order:i,exposures:[],fixture:'T03 LOCAL ONLY; not author approval'});
 await req('decisions','release-numbering',{choice:'as-posted',fixture:'T03 LOCAL ONLY; not author decision'});
-browser=await chromium.launch({executablePath:path.resolve(opts['--chromium']),headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+browser=await silentLaunch(chromium, {executablePath:path.resolve(opts['--chromium']),headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 result.browser=browser.version();
 const makeContext=async(options={})=>{
   const ctx=await browser.newContext({extraHTTPHeaders:{'Cf-Access-Jwt-Assertion':token},...options});

@@ -9,6 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => { const i = process.argv.indexOf(name); return i < 0 ? null : process.argv[i + 1]; };
@@ -52,7 +53,7 @@ try {
     const r = await fetch(srv.base + '/api/db/' + coll + (id ? '/' + id : ''), { headers: { 'Cf-Access-Jwt-Assertion': token(), ...(data ? { 'content-type': 'application/json' } : {}) }, ...(data ? { method: 'PUT', body: JSON.stringify(data) } : {}) });
     assert.ok(r.ok, `API ${coll} ${r.status}`); return r.json();
   };
-  browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
+  browser = await silentLaunch(chromium, { executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
   async function pageFor(srv, viewport = { width: 1280, height: 900 }, colorScheme = 'light') {
     const context = await browser.newContext({ viewport, colorScheme, acceptDownloads: true, serviceWorkers: 'block', extraHTTPHeaders: { 'Cf-Access-Jwt-Assertion': token() } });
     await context.route('**/*', route => {

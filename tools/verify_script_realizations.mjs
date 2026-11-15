@@ -8,6 +8,7 @@ import http from 'node:http';
 import os from 'node:os';
 import {spawn} from 'node:child_process';
 import {CDP, withBrowser} from './cdp_client.mjs';
+import silentBrowser from './silent_browser.cjs'; const {silentChromeArgs} = silentBrowser;
 
 const args = process.argv.slice(2);
 const opt = name => args[args.indexOf(name) + 1];
@@ -38,7 +39,7 @@ await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const report = {fixture:true, origin:'loopback-only', generatedAt:new Date().toISOString(), cases:[], limitations:['Chromium only; touch emulation is not a physical iPhone.', 'Latin fixture only; other scripts need separate author input and shaping acceptance.']};
 async function launch() {
-  const proc = spawn(opt('--chrome'), ['--headless=new','--remote-debugging-port=0',`--user-data-dir=${profile}`,'--disable-background-networking','--no-first-run','--disable-extensions','about:blank'], {stdio:['ignore','ignore','pipe']});
+  const proc = spawn(opt('--chrome'), silentChromeArgs(['--headless=new','--remote-debugging-port=0',`--user-data-dir=${profile}`,'--disable-background-networking','--no-first-run','--disable-extensions','about:blank']), {stdio:['ignore','ignore','pipe']});
   const wsUrl = await new Promise((resolve,reject) => {
     const timer = setTimeout(() => {proc.kill();reject(new Error('Chrome startup timeout'));}, 15000);
     let text = '';

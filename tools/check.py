@@ -140,6 +140,14 @@ def main() -> int:
     else:
         print("no MANIFEST.sha256 yet (run --write)")
 
+    sys.path.insert(0, str(ROOT / "tools"))
+    from silent_launch_lint import scan  # no run may make a sound: every browser launch goes through the helper
+    bare = scan(ROOT)
+    for item in bare:
+        print(f"BARE LAUNCH  {item}  (use tools/silent_browser.cjs: silentLaunch / silentChromeArgs)")
+    problems += len(bare)
+    print(f"silent launches: {len(bare)} bare")
+
     print("OK" if problems == 0 else f"{problems} problem(s)")
     return 1 if problems else 0
 

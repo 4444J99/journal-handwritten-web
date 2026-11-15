@@ -9,6 +9,7 @@ import crypto from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { CDP, withBrowser, stopBrowser } from './cdp_client.mjs';
+import silentBrowser from './silent_browser.cjs'; const {silentChromeArgs} = silentBrowser;
 
 const args = process.argv.slice(2);
 function option(name, fallback) {
@@ -76,11 +77,11 @@ async function startLocalServer() {
 async function launch() {
   const profile = path.join(scratch, 'profile');
   await fs.mkdir(profile);
-  const proc = spawn(chrome, [
+  const proc = spawn(chrome, silentChromeArgs([
     '--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--remote-debugging-port=0',
     `--user-data-dir=${profile}`, '--no-first-run', '--disable-extensions',
-    '--disable-background-networking', '--mute-audio', 'about:blank'
-  ], { stdio: ['ignore', 'ignore', 'pipe'] });
+    '--disable-background-networking', 'about:blank'
+  ]), { stdio: ['ignore', 'ignore', 'pipe'] });
   let stderr = '', spawnError = null;
   proc.stderr.on('data', data => { stderr = (stderr + data).slice(-10000); });
   proc.on('error', error => { spawnError = error; });

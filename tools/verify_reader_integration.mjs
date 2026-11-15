@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : null; };
 const out = path.resolve(arg('--out') || path.join(root, 'reader-evidence'));
@@ -39,7 +40,7 @@ const base = 'http://127.0.0.1:' + server.address().port, checks = [], errors = 
 let browser;
 function pass(name, detail = true) { checks.push({name, pass:true, detail}); console.log('PASS ' + name); }
 try {
-  browser = await chromium.launch({executablePath:chrome, headless:true, args:['--no-sandbox','--disable-dev-shm-usage']});
+  browser = await silentLaunch(chromium, {executablePath:chrome, headless:true, args:['--no-sandbox','--disable-dev-shm-usage']});
   const context = await browser.newContext({viewport:{width:1280,height:900}, reducedMotion:'reduce'});
   await context.route('**/*', route => new URL(route.request().url()).origin === base ? route.continue() : route.abort());
   const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message));

@@ -9,6 +9,7 @@ import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => { const at = process.argv.indexOf(name); return at < 0 ? null : process.argv[at + 1]; };
@@ -150,7 +151,7 @@ try {
   assert.equal((await fetch(server.base+'/private-fixtures/t10/manifest.json')).status,403);
   for(const record of history)await api('artifacts',record.revisionId,record);
   assert.deepEqual((await api('artifacts')).docs.map(d=>d.data).sort((a,b)=>a.revisionId.localeCompare(b.revisionId)),[...history].sort((a,b)=>a.revisionId.localeCompare(b.revisionId)));
-  browser=await chromium.launch({executablePath:CHROME,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+  browser=await silentLaunch(chromium, {executablePath:CHROME,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
   const context=await browser.newContext({viewport:{width:1280,height:900},acceptDownloads:true,serviceWorkers:'block',extraHTTPHeaders:{'Cf-Access-Jwt-Assertion':token()}});contexts.push(context);
   await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.pathname.includes('network-trap')){networkTraps.push(url.href);return route.abort();}if(url.origin!==server.base){blockedRequests.push(url.href);return route.abort();}return route.continue();});
   const page=await context.newPage();activePage=page;page.on('pageerror',error=>errors.push(error.message));page.on('requestfailed',request=>expectedRequestFailures.push({url:request.url(),error:request.failure()?.errorText}));

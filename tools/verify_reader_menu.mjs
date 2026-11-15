@@ -8,6 +8,7 @@ import http from 'node:http';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => { const i = process.argv.indexOf(name); return i < 0 ? null : process.argv[i + 1]; };
@@ -155,7 +156,7 @@ async function checkPanel(page, touch, launcher, {trigger, panel, close, name}) 
 }
 
 try {
-  browser = await playwright[engine].launch({headless:true, ...(arg('--executable') ? {executablePath:arg('--executable')} : {})});
+  browser = await silentLaunch(playwright[engine], {headless:true, ...(arg('--executable') ? {executablePath:arg('--executable')} : {})});
   for (const size of viewportCases.filter(v => selectedViewports.includes(v.name))) {
     const context = await browser.newContext({viewport:{width:size.width, height:size.height}, hasTouch:size.touch, isMobile:size.touch, reducedMotion:'reduce', colorScheme:'light'});
     await context.route('**/*', route => new URL(route.request().url()).origin === base ? route.continue() : route.abort());

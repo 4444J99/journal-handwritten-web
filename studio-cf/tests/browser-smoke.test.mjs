@@ -9,6 +9,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { makeKey, signRS256, claims, startJwks } from './helpers/jwt.mjs';
 import { startPagesDev, freePort, SCRATCH } from './helpers/wrangler.mjs';
+import silentBrowser from '../../tools/silent_browser.cjs'; const {silentChromeArgs} = silentBrowser;
 
 const CHROME = process.env.CHROME_BIN || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const HAVE_CHROME = fs.existsSync(CHROME);
@@ -53,7 +54,7 @@ before(async () => {
   profile = path.join(SCRATCH, `chrome-profile-${process.pid}-${Date.now()}`);
   fs.mkdirSync(profile, { recursive: true });
   const port = await freePort();
-  chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--disable-extensions', '--window-size=420,900', 'about:blank'], { stdio: 'ignore' });
+  chrome = spawn(CHROME, silentChromeArgs(['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--disable-gpu', '--disable-extensions', '--window-size=420,900', 'about:blank']), { stdio: 'ignore' });
   for (let i = 0; i < 100 && !wsUrl; i++) {
     await sleep(200);
     try { wsUrl = (await (await fetch(`http://127.0.0.1:${port}/json/version`)).json()).webSocketDebuggerUrl; } catch { /* not up yet */ }
