@@ -21,6 +21,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { CDP, withBrowser } from "./cdp_client.mjs";
+import silentBrowser from './silent_browser.cjs'; const {silentChromeArgs} = silentBrowser;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "..");
@@ -58,10 +59,10 @@ async function startServer(repo) {
 async function launchChrome(profile) {
   await fsp.mkdir(profile, { recursive: true });
   await fsp.rm(path.join(profile, "DevToolsActivePort"), { force: true });
-  const args = [
+  const args = silentChromeArgs([
     "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profile}`,
     "--no-first-run", "--disable-extensions", "--disable-background-networking", "about:blank",
-  ];
+  ]);
   const proc = spawn(CHROME, args, { stdio: ["ignore", "ignore", "pipe"] });
   let stderr = "";
   proc.stderr.on("data", (d) => { stderr += d; });

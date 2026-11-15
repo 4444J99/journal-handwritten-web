@@ -9,6 +9,7 @@ const path = require('node:path');
 const http = require('node:http');
 const crypto = require('node:crypto');
 const { chromium } = require('playwright');
+const { silentLaunch } = require('./silent_browser.cjs');
 
 async function main() {
   const args = Object.fromEntries(process.argv.slice(2).reduce((r, x, i, all) => {
@@ -41,7 +42,7 @@ async function main() {
     preview_files: packet.preview.files, browser: null, physical_phone: 'not tested',
     remote_deployment: 'not performed', public_header_runtime: 'not tested; _headers checked as output bytes', viewports: [] };
   try {
-    browser = await chromium.launch({ executablePath: args.chrome, headless: true,
+    browser = await silentLaunch(chromium, { executablePath: args.chrome, headless: true,
       args: ['--no-sandbox', '--disable-dev-shm-usage', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
     result.browser = await browser.version();
     for (const spec of [{ name: 'desktop', width: 1280, height: 900, touch: false },

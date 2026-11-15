@@ -6,6 +6,7 @@ import http from 'node:http';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
+import silentBrowser from './silent_browser.cjs'; const {silentLaunch, silentChromeArgs} = silentBrowser;
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const origin={family:'composite',revisionId:'r.fixture',recordId:'c.fixture',versionId:'c.fixture',pieceId:'p001',text:'Technical fixture',verified:false,render:'typeset',lines:[{lineId:'composite-0-0',text:'Technical fixture',breakBefore:false}]};
 const promotion={family:'promotion',revisionId:'promotion.fixture',pieceId:'p127',originComposite:{recordId:'c.fixture',revisionId:'r.fixture',versionId:'c.fixture'}};
@@ -22,7 +23,7 @@ const server=http.createServer(async(req,res)=>{
 });
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const require=createRequire(import.meta.url),{chromium}=require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES||'','playwright'));
-const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const browser=await silentLaunch(chromium, {executablePath:process.env.CHROME_BIN||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
 try{
  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:'+server.address().port+'/studio/index.html');
