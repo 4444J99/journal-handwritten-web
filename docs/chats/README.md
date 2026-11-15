@@ -87,3 +87,4 @@ Owner in brackets. Order follows the 2026-11-05 advisory.
 | 2026-11-14 | [Pre-rendered release](2026-11-14-prerender-release.md) | Static Pages pre-render of a release (no Worker) plus local CPU harness; 12 tests; nothing deployed |
 | 2026-11-14 | [Pre-rendered release at full scale](2026-11-14-prerender-full-release.md) | 126-piece, 518-file release measured: reader Worker vs static; serve check 518 of 518; nothing deployed |
 | 2026-11-14 | [versforms decisions p002-p005](2026-11-14-versforms-decide.md) | Decisions on issues 105/106, p002 shared scan, confidence for 70 unreviewed lines; data only, no D1 write |
+| 2026-11-14 | [versforms D1 write: Series orders](2026-11-14-versforms-d1-write.md) | Release docs p002-p005 written to D1 as Series 1-4 in one batch; read-back and checksums match; inverse SQL kept; no deploy |
