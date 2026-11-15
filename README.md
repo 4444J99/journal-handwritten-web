@@ -59,6 +59,19 @@ missing it exits 2 and prints the setup command instead of failing deep inside a
 `bootstrap_env.py --check` reports what is missing without installing anything. `.venv` is
 untracked. `studio-cf/requirements-build.txt` keeps the exact pins for the approved tile build.
 
+### Local-green record
+
+Hosted `check` runs for this repository die in 2 to 4 seconds with zero steps (for example run 43679893533 on `00f0bfc`, run 43665976910 on `e1eaf1a`): nothing executes, so a red hosted check means only that hosted checks cannot start. It is not a code result, and a dead check is not a pass. The local gate of record is `python3 tools/ci_local.py`.
+
+Local-green, fresh clone, Python 3.15.2 venv from `tools/bootstrap_env.py`, Node 26.13.0, `wrangler` on PATH:
+
+| Base SHA | Result |
+|---|---|
+| `e1eaf1a4f97a51f8b53298aef75441bc79997075` | PASS: check OK; py-tests 407 tests, 1 skipped; node-tests 133 pass; studio-cf-py 68 tests, 1 skipped; studio-cf-node 178 pass |
+| `00f0bfc7fbebe3df8ab8f068470eddd02a023f80` | one full run failed in py-tests (a subprocess killed with signal -15 in `test_source_regions`); `--only py-tests` rerun PASS (407 tests, 1 skipped); other suites PASS in the full run |
+
+The SIGTERM failure was not reproduced on rerun; treat it as host-load interference, not a code defect.
+
 ## What blocks a release
 
 `tools/release_readiness.mjs` runs the Studio's own publish gates (`studio/publish-compiler.mjs`)
