@@ -21,6 +21,18 @@ class SilentLaunchLintTests(unittest.TestCase):
                      "p.chromium.launch()"):
             self.assertEqual(lint.bare_launches(line), [1], line)
 
+    def test_sees_aliased_split_and_destructured_launches(self):
+        for source, line in (("await chromium\n  .launch({headless:true});", 2),
+                             ("const runner = chromium;\nawait runner.launch();", 2),
+                             ("const {chromium: runner} = require('playwright');\nawait runner.launch();", 2),
+                             ("await chromium['launch']();", 1),
+                             ("const {launch} = chromium;\nawait launch();", 1)):
+            self.assertEqual(lint.bare_launches(source), [line], source)
+        self.assertEqual(lint.bare_launches("runner = pw.chromium\nrunner.launch()\n", python=True), [2])
+        self.assertEqual(lint.bare_launches("getattr(pw, name).launch()\n", python=True), [1])
+        self.assertEqual(lint.bare_launches("/* webkit.launch() */ const x = 1;"), [])
+        self.assertEqual(lint.bare_launches("await engine.launch(id);"), [])
+
     def test_sees_a_headless_chrome_spawn_that_skips_the_helper(self):
         self.assertEqual(lint.bare_launches("spawn(CHROME, ['--headless=new', '--no-first-run']);"), [1])
         self.assertEqual(lint.bare_launches('const args = [\n  "--headless=new",\n  "about:blank",\n];'), [2])
