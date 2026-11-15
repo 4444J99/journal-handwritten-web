@@ -53,25 +53,10 @@
     }
   },
   "posting_time_findings": {
-    "note": "These do not change the sort. They are the stops tools/post_poem.py will raise when each piece is posted; none was acted on here.",
-    "spreads": [
-      {
-        "pair": "p006 + p007",
-        "image": "diary4.jpg (diary4 left, diary4a right)",
-        "action": "each needs --accept-shared-scan of the other unless the other is already public; both are Series, so this is acceptance not a stop"
-      },
-      {
-        "pair": "p008 + p009",
-        "image": "diary5.jpg (diary5 left, diary5a right)",
-        "action": "same: mutual --accept-shared-scan; scan shows exactly the catalogued pieces"
-      },
-      {
-        "pair": "p010 + p011",
-        "image": "diary7.jpg (diary7 left, diary7a right)",
-        "action": "HARD STOP at posting p010 until p011 ('They always ask me:', facing page diary7a, outside this lane) is Series and accepted, or already public: today p011 has no release document (unsorted). p011 was not sorted here."
-      }
-    ],
-    "p007_second_version": "Version p007-diary46a-1 is one line ('How are you not supposed to love her') on page diary46a, the notes page 'A Clockwork Orange' (p088, kind notes, unsorted) whose scan also shows lines about drugs and the facing page diary46 (p081-p087). reader top is version 0 (diary4a); the default post publishes the top version only. --include-versions for p007 would stop on p088/p081-p087 not being Series. Recommendation: do not include versions of p007 unless the author approves that page showing. Not applied anywhere."
+    "note": "Checked by running tools/post_poem.py Source.spread_mates and shared_scan on this tree (release db empty for the other pieces) on 2026-11-15. Corrected after Codex review on PR 163: the manuscript spreads (diary4/4a, diary5/5a, diary7/7a share one photographed spread) are NOT published as spreads, because each page has a crop box (sp.cb) and sp.f null, so the published scan holds only its own page. None of these stops was acted on here.",
+    "spreads": "p006/p007, p008/p009 and p010/p011: spread_mates is empty and shared_scan returns no finding for the default (top-version) post of p006-p010. No mutual --accept-shared-scan and no p011 sort is required to post p010.",
+    "p007_second_version": "Version p007-diary46a-1 is one line ('How are you not supposed to love her') on page diary46a, the notes page 'A Clockwork Orange' (p088, kind notes, unsorted), whose scan also shows lines about drugs. reader top is version 0 (diary4a), and the default post publishes the top version only: no finding. With --include-versions, shared_scan returns ('p088','stop') because p088's writing would show in the diary46a scan. Recommendation: do not include p007's versions unless the author approves that page showing. Not applied anywhere.",
+    "p002_comparison": "for contrast, p002 returns ('x-diary2','needs-accept') as PR 159 recorded"
   },
   "line_review": {
     "pieces": {

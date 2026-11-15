@@ -9,7 +9,7 @@ None in this session. The decisions are the orchestrator's, on the author's dele
 ## Decisions
 - p006 5, p007 6, p008 7, p009 8, p010 9, all pool series, by source page order (same rule as PR 159). Every page high confidence on the pool/order question.
 - p009 is catalogued as a song lyric; kept in Series because the issue sorts p001-p010 and the scan shows the author's own drafting.
-- Not decided here, recorded for posting: p010 cannot be posted until its spread partner p011 is sorted; p007's second version sits on the notes page p088 and should not be published with the stack unless the author approves.
+- Posting-time findings (checked by running `tools/post_poem.py` `spread_mates`/`shared_scan`): no spread stops for p006-p010, because the published scans are cropped to their own page; only `--include-versions` on p007 stops, on the notes page p088 (diary46a). Recommendation: publish p007's top version only unless the author approves.
 
 ## Status
 Data-only PR. No D1 write in this PR (the write follows as its own PR), no deploy.
