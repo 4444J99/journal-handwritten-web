@@ -28,6 +28,7 @@ JS_DESTRUCTURED = re.compile(rf"\{{[^}}]*\b(?:{NAMES})\b[^}}]*\}}\s*=\s*[\w$.\]\
 # A Playwright engine under another name: const runner = chromium; const {chromium: runner} = require('playwright');
 JS_ALIAS_ASSIGN = re.compile(r"([\w$]+)\s*=\s*(?:[\w$.()'\"\[\]]*?\.)?(?:chromium|webkit|firefox)\b(?!\s*\.\s*launch)")
 JS_ALIAS_DESTRUCTURE = re.compile(r"\b(?:chromium|webkit|firefox)\s*:\s*([\w$]+)")
+JS_ALIAS_IMPORT = re.compile(r"\b(?:chromium|webkit|firefox)\s+as\s+([\w$]+)")  # import {chromium as chrome} from 'playwright'
 # Names such as ``engine`` are Playwright browser types only in a file that deals with a browser driver; application code
 # has its own ``engine.launch(...)``.
 DRIVER_FILE = re.compile(r"playwright|puppeteer|chromium|firefox|browserType|browser_type|\bwebkit\s*[.,)]", re.I)
@@ -63,7 +64,7 @@ def _blank_comments(source: str) -> str:
 def node_launches(source: str):
     code = _blank_comments(source)
     driver = bool(DRIVER_FILE.search(code))
-    names = set(ENGINE_NAMES if driver else PLAYWRIGHT_ENGINES) | {m.group(1) for m in JS_ALIAS_ASSIGN.finditer(code)} | {m.group(1) for m in JS_ALIAS_DESTRUCTURE.finditer(code)}
+    names = set(ENGINE_NAMES if driver else PLAYWRIGHT_ENGINES) | {m.group(1) for m in JS_ALIAS_ASSIGN.finditer(code)} | {m.group(1) for m in JS_ALIAS_DESTRUCTURE.finditer(code)} | {m.group(1) for m in JS_ALIAS_IMPORT.finditer(code)}
     found = set()
     for match in JS_CALL.finditer(code):
         owner = match.group('owner') or match.group('owner2')
@@ -76,7 +77,6 @@ def node_launches(source: str):
     if puppeteer:
         found.add(code.count('\n', 0, puppeteer.start()) + 1)
     return sorted(found)
-
 HEADLESS = re.compile(r"""['"`]--headless""")
 
 

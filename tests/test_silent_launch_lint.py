@@ -26,6 +26,7 @@ class SilentLaunchLintTests(unittest.TestCase):
                              ("const runner = chromium;\nawait runner.launch();", 2),
                              ("const {chromium: runner} = require('playwright');\nawait runner.launch();", 2),
                              ("await chromium['launch']();", 1),
+                             ("import { chromium as chrome } from 'playwright';\nawait chrome.launch();", 2),
                              ("const {launch} = chromium;\nawait launch();", 1)):
             self.assertEqual(lint.bare_launches(source), [line], source)
         self.assertEqual(lint.bare_launches("runner = pw.chromium\nrunner.launch()\n", python=True), [2])
