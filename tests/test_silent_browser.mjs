@@ -9,7 +9,7 @@ import {createRequire} from 'node:module';
 import silentBrowser from '../tools/silent_browser.cjs';
 
 const require = createRequire(import.meta.url);
-const {silentLaunch, silentLaunchPersistentContext, silentArgs, silentChromeArgs, INIT_SCRIPT_PATH, initScript} = silentBrowser;
+const {silentOptions, FIREFOX_MUTE_PREFS, silentLaunch, silentLaunchPersistentContext, silentArgs, silentChromeArgs, INIT_SCRIPT_PATH, initScript} = silentBrowser;
 
 function dependency(name) {
   try { return require(name); }
@@ -315,3 +315,15 @@ for (const engineName of ['chromium', 'webkit']) {
     } finally { await browser.close(); }
   });
 }
+
+test('firefox gets the volume pref merged with the caller prefs; other engines get none', async () => {
+  assert.deepEqual(FIREFOX_MUTE_PREFS, {'media.volume_scale': '0.0'});
+  const engine = fakeEngine('firefox');
+  await silentLaunch(engine, {firefoxUserPrefs: {'x.y': 1}});
+  assert.deepEqual(engine.launched.firefoxUserPrefs, {'x.y': 1, 'media.volume_scale': '0.0'});
+  const persistent = fakeEngine('firefox');
+  await silentLaunchPersistentContext(persistent, '/tmp/x', {});
+  assert.equal(persistent.launched.firefoxUserPrefs['media.volume_scale'], '0.0');
+  assert.equal(silentOptions('webkit', {}).firefoxUserPrefs, undefined);
+  assert.equal(silentOptions('chromium', {}).firefoxUserPrefs, undefined);
+});

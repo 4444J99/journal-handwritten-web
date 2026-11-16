@@ -1,7 +1,8 @@
 /* Launch every Playwright browser through here so no run can make a sound. Chromium gets --mute-audio merged into
  * the caller's arguments, and every context (newContext, and newPage, which makes its own) gets silent-init.js:
  * media elements pinned muted at volume 0 and a gain-0 sink in front of every realtime AudioContext destination.
- * The init script is engine-agnostic, so it is the mute for WebKit and Firefox, which have no flag. */
+ * The init script is engine-agnostic; Firefox also gets the media.volume_scale=0.0 pref (covers closed declarative shadow
+ * roots). WebKit has no equivalent, so a closed declarative shadow root stays a documented limit there. */
 'use strict';
 
 const fs = require('node:fs');
@@ -16,6 +17,15 @@ const engineName = engine => (typeof engine.name === 'function' ? engine.name() 
 function silentArgs(name, args = []) {
   const merged = [...args];
   if (name === 'chromium') for (const flag of MUTE_ARGS) if (!merged.includes(flag)) merged.push(flag);
+  return merged;
+}
+
+// Firefox has an engine-level volume pref: with it at 0 even media in a closed declarative shadow root is silent.
+const FIREFOX_MUTE_PREFS = {'media.volume_scale': '0.0'};
+
+function silentOptions(name, options = {}) {
+  const merged = {...options, args: silentArgs(name, options.args)};
+  if (name === 'firefox') merged.firefoxUserPrefs = {...(options.firefoxUserPrefs || {}), ...FIREFOX_MUTE_PREFS};
   return merged;
 }
 
@@ -41,13 +51,13 @@ function silenceBrowser(browser) {
 }
 
 async function silentLaunch(engine, options = {}) {
-  return silenceBrowser(await engine.launch({...options, args: silentArgs(engineName(engine), options.args)}));
+  return silenceBrowser(await engine.launch(silentOptions(engineName(engine), options)));
 }
 
 // A persistent context is created with its first page already open, so that page's document is silenced by running
 // the init script in it now; every later document and navigation gets it from the context.
 async function silentLaunchPersistentContext(engine, userDataDir, options = {}) {
-  const context = await silenceContext(await engine.launchPersistentContext(userDataDir, {...options, args: silentArgs(engineName(engine), options.args)}));
+  const context = await silenceContext(await engine.launchPersistentContext(userDataDir, silentOptions(engineName(engine), options)));
   for (const page of context.pages()) await page.evaluate(initScript());
   return context;
 }
@@ -59,4 +69,4 @@ function silentChromeArgs(args) {
   return merged;
 }
 
-module.exports = {silentChromeArgs, INIT_SCRIPT_PATH, MUTE_ARGS, initScript, silentArgs, silenceContext, silenceBrowser, silentLaunch, silentLaunchPersistentContext};
+module.exports = {silentChromeArgs, INIT_SCRIPT_PATH, MUTE_ARGS, FIREFOX_MUTE_PREFS, silentOptions, initScript, silentArgs, silenceContext, silenceBrowser, silentLaunch, silentLaunchPersistentContext};
