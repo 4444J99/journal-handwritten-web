@@ -30,6 +30,18 @@ An empty release list builds the engine with no pages.
 
 tools/post_poem.py imports build() from here to publish a single poem (final version only,
 with the author's corrections applied).
+
+Pool enforcement (issue #65): by default build() still publishes whatever the release list
+names, exactly as before. Pass a studio database export with --pool-db (or the pool_db
+argument) and every whitelisted piece must be in Series — reserve, archive or unknown
+pool is a hard stop, with the output directory left untouched — and the shared-scan rule
+from post_poem.py applies: a whitelisted piece that shares a scan page or spread with a
+non-Series piece refuses outright (a Reserve/Archive piece can never be accepted, the same
+as in post_poem.py), while a not-yet-public Series co-resident refuses unless named with
+--accept-shared-scan. The pool is read with post_poem.py's own pool_of() exact-value rule
+(imported, not re-implemented); the check reads the on-disk repository under site.parent,
+which is the authority for which pieces share a page. There is no --force for this gate:
+a Reserve refusal stays un-overridable, matching post_poem.py.
 """
 import argparse, base64, json, os, re, shutil, subprocess, sys
 from pathlib import Path
@@ -258,7 +270,7 @@ def load_release(path):
     return json.loads(p.read_text()) if p.exists() else {"pieces": []}
 
 
-def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True, source_data=None, publication_source=None, publication_db=None, target="production", photo_assets=None):
+def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True, source_data=None, publication_source=None, publication_db=None, target="production", photo_assets=None, pool_db=None, accept_shared_scan=None):
     """Write the public site for the pieces in `want` into `out`; returns a summary dict.
 
     select       {piece id: [indices into the piece's V]} versions to publish; default all
@@ -266,7 +278,17 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
     strip_prov   drop prov.repo / commit / path from data/j.json
     rename_fonts rename the embedded font file (needs the font venv); when it cannot run, the
                  summary says so under "font_error" and the font bytes stay as they are
+    pool_db      studio database export directory (COLLECTION/DOCID.json); when given, the
+                 pool gate runs (see the module docstring): every whitelisted piece must be
+                 in Series and shared scans are checked. When None (the default) the build
+                 behaves exactly as before. A pool_db that cannot be loaded, or a repository
+                 that cannot be read for the check, is a hard stop, not a silent pass.
+    accept_shared_scan  ids of Series pieces / other-line items whose writing may show in a
+                 shared scan (same parsing as post_poem.py: comma- or space-separated,
+                 repeatable). Only Series co-residents can be accepted; a Reserve/Archive
+                 co-resident is a stop no acceptance overrides.
     """
+    pools = None
     out, site = Path(out), Path(site)
     want = list(dict.fromkeys(want))
     select, corrections = select or {}, dict(corrections or {})
@@ -304,6 +326,50 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
             if vi not in pieces[k]["st"]:
                 sys.exit(f"selected version {version['id']} has no established reading order; output unchanged")
         chosen[k] = sel
+
+    # Pool gate (issue #65). Runs here, before any output is created or replaced,
+    # so a refusal leaves a previous output exactly as it was. An empty release
+    # list publishes nothing, so there is nothing to gate and the check is skipped.
+    if pool_db is not None and want:
+        # post_poem imports build_public, so this import is deferred (a top-level
+        # import would be circular). pool_of() and shared_scan() are imported,
+        # not re-implemented: the exact-value pool rule is the subtle part, and
+        # two copies of it would drift.
+        import post_poem
+        accepted = {x for chunk in (accept_shared_scan or []) for x in re.split(r"[,\s]+", chunk) if x}
+        try:
+            db = post_poem.load_db(pool_db)
+        except post_poem.Stop as e:
+            sys.exit(f"pool database cannot be loaded from {pool_db}: {e}; output unchanged")
+        try:
+            src = post_poem.Source(Path(site).parent)
+        except post_poem.Stop as e:
+            sys.exit(f"cannot read the private repository under {Path(site).parent} for the pool check: {e}; output unchanged")
+        pools = {}
+        for pid in want:
+            pool = post_poem.pool_of(db, pid)
+            pools[pid] = pool
+            if pool in ("reserve", "archive", "unknown"):
+                # The whitelist IS release/public.json, so every whitelisted piece
+                # is an already-public piece being rebuilt: the remediation is
+                # post_poem.py's own wording for that case. --force does not exist
+                # here and would not override this in any case.
+                note = post_poem.pool_note(db, pid) if pool == "unknown" else f"pool is {pool}"
+                sys.exit(f"{pid}: {note}; it is in release/public.json and would be rebuilt and published again. "
+                         "Take it out of release/public.json (and decide how to retire it publicly) first; output unchanged")
+        public_ids = set(want)
+        for pid in want:
+            try:
+                finds = post_poem.shared_scan(src, db, pid, chosen[pid], public_ids, accepted)
+            except post_poem.Stop as e:
+                sys.exit(f"{pid}: shared-scan check failed: {e}; output unchanged")
+            bad = [f for f in finds if f["status"] in ("stop", "needs-accept")]
+            if bad:
+                # A non-Series co-resident is status "stop" and no acceptance
+                # overrides it (post_poem.py: "accept never helps non-series");
+                # a Series co-resident is "needs-accept" until named.
+                detail = "; ".join(f"{f['id']} on {f['page']}: {f['reason']}" for f in bad)
+                sys.exit(f"{pid}: shared scan refused: {detail}; output unchanged")
 
     # Refuse a broken module closure before replacing a previous output. The
     # package verifier is loaded by the feature adapter, not directly by HTML.
@@ -519,18 +585,26 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
         (out / "_headers").write_text(HEADERS)
 
     return {"want": want, "pages": [p["id"] for p in pages], "shared": shared, "siblings": siblings,
-            "applied": applied, "published": sorted(owner), "chosen": chosen, "fonts": fonts, "font_error": font_error}
+            "applied": applied, "published": sorted(owner), "chosen": chosen, "fonts": fonts, "font_error": font_error,
+            "pools": pools}
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("out")
     ap.add_argument("--release", default=str(ROOT / "release" / "public.json"))
+    ap.add_argument("--pool-db", default=None, metavar="DIR",
+                    help="studio database export directory (COLLECTION/DOCID.json); when given, every whitelisted piece must be in Series and shared scans are checked (issue #65)")
+    ap.add_argument("--accept-shared-scan", action="append", default=[], metavar="IDS",
+                    help="ids of Series pieces / other-line items whose writing may show in a shared scan")
     a = ap.parse_args()
 
     want = list(dict.fromkeys(load_release(a.release).get("pieces", [])))
-    res = build(a.out, want)
+    res = build(a.out, want, pool_db=a.pool_db, accept_shared_scan=a.accept_shared_scan)
     print(f"released pieces: {len(want)}; pages: {len(res['pages'])}")
+    if res.get("pools") is not None:
+        for pid in want:
+            print(f"  pool: {pid}: {res['pools'][pid]}")
     for pg in sorted(res["shared"]):
         print(f"  note: {pg} also carries unreleased {sorted(res['shared'][pg])} — visible in the scan, text withheld")
     if res["font_error"]:
