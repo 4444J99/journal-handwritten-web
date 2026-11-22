@@ -1,0 +1,86 @@
+{
+  "issue": "4444J99/journal-handwritten-web#39",
+  "method": "kit.py ink_metrics (box geometry) + dark-pixel rows in the full-resolution line crop, both at 390 px page width",
+  "readability_rule_px_at_390": 8.0,
+  "inputs": {
+    "j_json": {
+      "path": "site/data/j.json",
+      "sha256": "70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966"
+    },
+    "web_scan": {
+      "path": "site/img/i/diary1.jpg",
+      "size_px": [
+        851,
+        1200
+      ],
+      "sha256": "0a648c681476d5689f052cc77abfad665ed04628f64250280e9051eb28391371"
+    },
+    "preserved_scan_for_reference": {
+      "path": "production/assets/diary1.jpg"
+    },
+    "kit_head": "main 447aad25"
+  },
+  "line": {
+    "page": "diary1",
+    "block": 0,
+    "line": 0,
+    "text": "The walls",
+    "box_norm": [
+      0.0416,
+      0.0137,
+      0.3278,
+      0.0467
+    ],
+    "box_px_web": [
+      35,
+      16,
+      279,
+      56
+    ],
+    "box_px_at_390": [
+      16,
+      8,
+      128,
+      26
+    ]
+  },
+  "box_geometry_ink_height_px_at_390": 18.15,
+  "pixel_ink_height_by_threshold": {
+    "96": {
+      "ink_height_px_web": 39,
+      "ink_height_px_at_390": 17.87,
+      "ink_rows_first_last": [
+        0,
+        38
+      ]
+    },
+    "128": {
+      "ink_height_px_web": 40,
+      "ink_height_px_at_390": 18.33,
+      "ink_rows_first_last": [
+        0,
+        39
+      ]
+    },
+    "160": {
+      "ink_height_px_web": 40,
+      "ink_height_px_at_390": 18.33,
+      "ink_rows_first_last": [
+        0,
+        39
+      ]
+    }
+  },
+  "geometry_readable_at_390": true,
+  "pixel_readable_at_390": true,
+  "existing_qa_for_context": {
+    "source": "production/exports/p001/qa/readability.json",
+    "note": "p001 kit renders (preserved source) min ink 13.6-25.52 px at 390, all geometry-readable; those are kit renders, not the web-sized scan \u2014 this check measures the web scan."
+  },
+  "evidence": [
+    "diary1-block0-line0-phone390.png",
+    "diary1-block0-line0-phone390-4x.png",
+    "diary1-block0-line0-fullres.png",
+    "diary1-phone390-page.png"
+  ]
+}
