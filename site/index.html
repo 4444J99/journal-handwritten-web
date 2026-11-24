@@ -1140,9 +1140,14 @@ function ensureLayout(c, a, sd = seed){ // -> Promise<Map>
   const key = layKey(c, a, sd);
   if (LAY.has(key)) return Promise.resolve(LAY.get(key));
   if (LAYP.has(key)) return LAYP.get(key);
-  if (!LW || a === "spiral"){ return Promise.resolve(layoutFor(c, a, sd)); }
+  // No worker: the synchronous compute is the only option, but it is counted
+  // (stats.workerFallbacks) so a worker-less switch can never look worker-made.
+  if (!LW){ stats.workerFallbacks = (stats.workerFallbacks || 0) + 1; stats.lastWorkerFallback = c + "-" + a; return Promise.resolve(layoutFor(c, a, sd)); }
+  // Every arrangement, spiral included, goes through the worker: the worker
+  // already dispatches spiral (see initLayoutWorker), so the old spiral
+  // special-case only bought a main-thread stall on every spiral switch.
   const p = new Promise((res, rej) => { const id = ++lwSeq; LWJ.set(id, {res, rej}); LW.postMessage({id, sp:layoutSpec(c, a, sd)}); })
-    .then(m => finishLayout(c, a, key, m), () => layoutFor(c, a, sd))
+    .then(m => finishLayout(c, a, key, m), () => { stats.workerFallbacks = (stats.workerFallbacks || 0) + 1; stats.lastWorkerFallback = c + "-" + a; return layoutFor(c, a, sd); })
     .finally(() => LAYP.delete(key));
   LAYP.set(key, p);
   return p;
@@ -1150,6 +1155,8 @@ function ensureLayout(c, a, sd = seed){ // -> Promise<Map>
 function prefetchLayouts(){
   if (!LW) return;
   for (const a of ["poem", "scatter"]){ if (!NEXT[a]) NEXT[a] = newSeed(); ensureLayout(content, a, NEXT[a]).catch(() => {}); }
+  // Spiral needs no seed (layKey ignores it), so it pre-rolls directly.
+  ensureLayout(content, "spiral").catch(() => {});
   for (const c of CONTENTS) if (c !== content) ensureLayout(c, arr, seed).catch(() => {});
 }
 /* a version's lines as a block: stacked in reading order, indents kept; positions relative to the block centre */
@@ -3402,7 +3409,9 @@ async function boot(){
   syncControls();
   setDirty(); interacted();
   if (h.side === "book" || h.unavailable) applyHash(h, false); else setHash();
-  later("prefetch", prefetchLayouts, 1200);
+  // Pre-roll eagerly now that the first layout is applied: the worker cost is
+  // off-thread, so the old 1200ms idle wait only made the first switch cold.
+  prefetchLayouts();
   if (MOTION && store.get("jc.hint") !== "1" && h.side === "canvas"){
     const el = document.createElement("div"); el.className = "hint"; body.appendChild(el);
     setTimeout(() => el.remove(), 4300); store.set("jc.hint", "1");
