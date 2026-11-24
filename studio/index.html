@@ -1253,7 +1253,7 @@ const EXPO = [
 const EXPO_LABEL = Object.fromEntries(EXPO.map(e => [e[0], e[1]]));
 const EXPO_PUB = Object.fromEntries(EXPO.map(e => [e[0], e[2]]));
 const SUB_ST = [['sent', 'Sent'], ['accepted', 'Accepted'], ['declined', 'Declined'], ['withdrawn', 'Withdrawn']];
-const RSUBS = [['sort', 'Sort'], ['calendar', 'Calendar'], ['copyright', 'Copyright'], ['exposure', 'Exposure'], ['subs', 'Submissions']];
+const RSUBS = [['sort', 'Sort'], ['calendar', 'Calendar'], ['tracker', 'Tracker'], ['copyright', 'Copyright'], ['exposure', 'Exposure'], ['subs', 'Submissions']];
 const RF = { sub: LS.get('rsub', 'sort'), filter: LS.get('rfilter', 'unsorted'), open: null, expoQ: '', expoKey: null, expo: { type: 'social', where: '', account: '', date: '', url: '', ver: '' }, subQ: '', subKey: null, sub: { journal: '', date: '' }, batchAdd: null, bf: {}, pd: {} };
 
 function cget(coll, id) { const p = S.pending[coll].get(id); if (p) return p.data; return S.server[coll].get(id) || null; }
@@ -1345,7 +1345,7 @@ function renderRelease() {
   for (const [k, l] of RSUBS) nav.append(h('button', { type: 'button', 'aria-selected': String(RF.sub === k), onclick: () => { RF.sub = k; LS.set('rsub', k); renderRelease(); } }, l));
   root.append(nav);
   const body = h('div', { class: 'rbody' }); root.append(body);
-  ({ sort: rSort, calendar: rCalendar, copyright: rCopyright, exposure: rExposure, subs: rSubs }[RF.sub] || rSort)(body);
+  ({ sort: rSort, calendar: rCalendar, tracker: rTracker, copyright: rCopyright, exposure: rExposure, subs: rSubs }[RF.sub] || rSort)(body);
 }
 function stat(label, val, tail) { return h('div', { class: 'rstat' }, h('span', null, label), h('b', null, val, tail ? h('small', null, tail) : null)); }
 function updateRelease() {
@@ -1442,6 +1442,65 @@ function rCalendar(body) {
   });
 }
 function swap(xs, i, j) { const a = xs[i], b = xs[j]; relSet(a.c.key, { order: j }); relSet(b.c.key, { order: i }); xs.forEach((x, k) => { if (k !== i && k !== j && x.r.order !== k) relSet(x.c.key, { order: k }); }); }
+/* tracker: the whole n/100 series at a glance (issue #62) */
+function rTracker(body) {
+  body.append(h('p', { class: 'note' }, 'Loading tracker…'));
+  import('./release-tracker.mjs').then(m => {
+    const mode = numberingMode();
+    const xs = seriesList();
+    const series = xs.map(({ c, r }) => {
+      const prep = r.prep || {};
+      return {
+        key: c.key, title: c.title, pool: r.pool, verified: c.verified,
+        num: typeof r.num === 'number' ? r.num : null,
+        exposures: r.exposures || [],
+        prepDone: PREP.filter(([k]) => prep[k]).length, prepTotal: PREP.length,
+        batchStatus: (batchOf(c.key) || {}).status || '',
+      };
+    });
+    const rows = m.trackerRows({ series, mode, start: cfg().start || '' });
+    const assigned = rows.filter(r => r.pieceId).length;
+    const cm = candMap();
+    body.textContent = '';
+    body.append(h('div', { class: 'rbar' },
+      h('span', { class: 'note' }, `${assigned} of 100 slots assigned · Numbering: `, mode === 'fixed' ? 'fixed in advance (queue order)' : mode === 'as-posted' ? 'assigned when posted' : 'not decided (see Decisions)'),
+      h('button', { type: 'button', class: 'btn small', onclick: () => {
+        const blob = new Blob([m.trackerCsv(rows)], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'release-tracker-100-slots.csv';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      } }, 'Download CSV')));
+    for (const row of rows) {
+      const c = row.pieceId ? cm.get(row.pieceId) : null;
+      const div = h('div', { class: 'rrow cal' + (row.status === 'posted' ? ' posted' : '') });
+      div.append(
+        h('div', { class: 'rnum' }, row.number ? h('b', null, `${row.number}`, h('small', null, '/100')) : h('span', null, '—'), h('small', null, row.dateLabel || '')),
+        h('div', { class: 'rmain' },
+          c ? titleEl(c) : h('span', { class: 'rmeta' }, 'Unassigned'),
+          h('div', { class: 'rgates' }, chip(row.status, row.status === 'posted' || row.status === 'ready' ? 'ok' : '')),
+          row.url ? h('div', { class: 'rmeta' }, h('a', { href: row.url, target: '_blank', rel: 'noopener noreferrer', class: 'rlink' }, 'post link')) : null),
+        h('div', { class: 'rside' }));
+      body.append(div);
+    }
+    const unsorted = m.unsortedPieces(candidates().map(c => ({ key: c.key, title: c.title, pool: rel(c.key).pool })));
+    if (unsorted.length) {
+      body.append(h('div', { class: 'dsec' }, 'Unsorted', h('small', null, ` ${unsorted.length}`)));
+      body.append(h('p', { class: 'note' }, 'No pool yet — sort into Series, Reserve or Archive to give a piece a slot.'));
+      for (const u of unsorted) {
+        const c = cm.get(u.key);
+        body.append(h('div', { class: 'rrow slim' },
+          h('div', { class: 'rmain' }, c ? titleEl(c) : h('span', null, u.title),
+            h('div', { class: 'rmeta' }, 'unsorted · no slot until it has a pool')),
+          h('div', { class: 'rside' }, chip('unsorted', 'warn'))));
+      }
+    }
+  }).catch(() => {
+    body.textContent = '';
+    body.append(h('p', { class: 'note' }, 'Tracker failed to load.'));
+  });
+}
 function calDetail(c, r, b, ready, posted) {
   const d = h('div', { class: 'rdetail' });
   const prep = r.prep || {};
