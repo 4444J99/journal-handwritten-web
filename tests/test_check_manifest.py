@@ -82,6 +82,26 @@ class CheckManifestTest(unittest.TestCase):
         self.run_check("--write")
         self.assertNotIn(".DS_Store", (self.root / "MANIFEST.sha256").read_text())
 
+    def test_referenced_font_and_worker_must_exist(self):
+        # JHW #29: a font file referenced from @font-face and a service worker
+        # registered by the page are load-bearing, so the check derives them
+        # from the page and fails while either file is missing.
+        html = (self.root / "site" / "index.html").read_text()
+        html = html.replace("</html>",
+                            '<style>@font-face{font-family:"x";src:url("fonts/handwriting.woff2") format("woff2")}</style>'
+                            "<script>navigator.serviceWorker.register('sw.js')</script></html>")
+        (self.root / "site" / "index.html").write_text(html)
+        r = self.run_check()
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("MISSING  site/fonts/handwriting.woff2", r.stdout)
+        self.assertIn("MISSING  site/sw.js", r.stdout)
+        (self.root / "site" / "fonts").mkdir()
+        (self.root / "site" / "fonts" / "handwriting.woff2").write_bytes(b"wOF2fake")
+        (self.root / "site" / "sw.js").write_text("// worker")
+        self.assertEqual(self.run_check("--write").returncode, 0)
+        r = self.run_check()
+        self.assertEqual(r.returncode, 0, r.stdout)
+
     def test_changed_file_still_fails(self):
         (self.root / "site" / "index.html").write_text("<html>edited</html>")
         r = self.run_check()

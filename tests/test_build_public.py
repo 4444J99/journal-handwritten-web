@@ -13,7 +13,9 @@ returns status "stop" for any non-Series co-resident and never consults the acce
 for it ("accept never helps non-series", test_post_poem.py). The imported rule wins:
 a Reserve co-resident is an unconditional stop.
 """
+import base64
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -21,14 +23,113 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 TESTS = Path(__file__).resolve().parent
 TOOLS = TESTS.parent / "tools"
 sys.path.insert(0, str(TOOLS))
 sys.path.insert(0, str(TESTS))
 import build_public  # noqa: E402
-from test_post_poem import make_private, ready_db  # noqa: E402
+from test_post_poem import FONT_BYTES, NO_VENV, make_private, ready_db  # noqa: E402
 from PIL import Image  # noqa: E402
+
+RENAMED_FONT_BYTES = b"renamed-font-bytes"
+FONT_DATA_URI_RE = re.compile(r"src:url\(data:font/woff2;base64,[A-Za-z0-9+/=]+\)")
+
+
+def _external_font_site(root):
+    """Swap the fixture's embedded @font-face data URI for a file reference,
+    and write the font bytes as site/fonts/handwriting.woff2 (the #29 shape)."""
+    site = Path(root) / "site"
+    html = (site / "index.html").read_text()
+    html, n = FONT_DATA_URI_RE.subn('src:url("fonts/handwriting.woff2")', html)
+    assert n == 1, "fixture @font-face data URI not found"
+    (site / "index.html").write_text(html)
+    (site / "fonts").mkdir(exist_ok=True)
+    (site / "fonts" / "handwriting.woff2").write_bytes(FONT_BYTES)
+
+
+def _fake_font_tool(mode, data, *args):
+    """Stand-in for the venv font tool: the fixture font carries the old name
+    and needs renaming; rename returns fixed bytes."""
+    if mode == "check":
+        return {"ok": False, "needs_public_scrub": True, "hits": ["name id1 platform3: old"]}
+    if mode == "rename":
+        return {"font_b64": base64.b64encode(RENAMED_FONT_BYTES).decode("ascii"),
+                "changed": ["name id1"], "hits_after": [], "glyphs": 12}
+    raise AssertionError(mode)
+
+
+class ExternalFontTests(unittest.TestCase):
+    """@font-face referencing a font file (journal-handwritten-web #29):
+    the publish build resolves it, renames it the same way, and re-embeds
+    it, so the published page stays standalone and the rename gate applies."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="bp-extfont-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = self.tmp / "private"
+        self.db = self.tmp / "db"
+        self.out = self.tmp / "out"
+
+    def prepare(self):
+        make_private(self.root, extra_public=("p001",))
+        ready_db(self.db, pids=("p001",), _root=self.root)
+        _external_font_site(self.root)
+
+    def build(self, **kw):
+        kw.setdefault("site", self.root / "site")
+        kw.setdefault("select", {"p001": [1]})
+        kw.setdefault("rename_fonts", True)
+        kw.setdefault("pool_db", None)
+        return build_public.build(self.out, ["p001"], **kw)
+
+    def test_external_font_is_renamed_and_reembedded(self):
+        self.prepare()
+        with mock.patch.object(build_public, "run_font_tool", side_effect=_fake_font_tool):
+            res = self.build()
+        self.assertIsNone(res["font_error"])
+        self.assertEqual(len(res["fonts"]), 1)
+        report = res["fonts"][0]
+        self.assertTrue(report["renamed"])
+        self.assertEqual(report["source"], "fonts/handwriting.woff2")
+        self.assertEqual(report["bytes"], len(FONT_BYTES))
+        self.assertEqual(report["bytes_out"], len(RENAMED_FONT_BYTES))
+        published = (self.out / "index.html").read_text()
+        self.assertIn("data:font/woff2;base64," + base64.b64encode(RENAMED_FONT_BYTES).decode("ascii"), published)
+        self.assertNotIn("fonts/handwriting.woff2", published)
+
+    def test_external_font_already_clean_is_reembedded_unchanged(self):
+        self.prepare()
+
+        def clean_tool(mode, data, *args):
+            if mode == "check":
+                return {"ok": True, "needs_public_scrub": False, "hits": []}
+            raise AssertionError(mode)
+
+        with mock.patch.object(build_public, "run_font_tool", side_effect=clean_tool):
+            res = self.build()
+        self.assertIsNone(res["font_error"])
+        self.assertEqual(len(res["fonts"]), 1)
+        self.assertFalse(res["fonts"][0]["renamed"])
+        self.assertEqual(res["fonts"][0]["source"], "fonts/handwriting.woff2")
+        published = (self.out / "index.html").read_text()
+        self.assertIn("data:font/woff2;base64," + base64.b64encode(FONT_BYTES).decode("ascii"), published)
+        self.assertNotIn("fonts/handwriting.woff2", published)
+
+    def test_external_font_file_missing_fails_loudly(self):
+        self.prepare()
+        (self.root / "site" / "fonts" / "handwriting.woff2").unlink()
+        with mock.patch.object(build_public, "run_font_tool", side_effect=_fake_font_tool):
+            with self.assertRaises(FileNotFoundError):
+                self.build()
+
+    def test_external_font_without_venv_blocks_the_build(self):
+        self.prepare()
+        with mock.patch.dict(os.environ, NO_VENV):
+            res = self.build()
+        self.assertIn("font python not found", res["font_error"])
+        self.assertEqual(res["fonts"], [])
 
 
 def _sentinel_out(root):

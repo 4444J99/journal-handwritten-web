@@ -23,8 +23,10 @@ A non-empty build also
   - renumbers the piece links of published blocks to the published piece list,
   - sets the page title to "versforms" and renames the handwriting font family to
     "ajp-scribbles" in index.html (CSS, canvas font strings, the font-load call, visible text)
-    and, through tools/font_rename.py run with the font venv python, inside the embedded
-    WOFF2 itself (name table and CFF strings). site/index.html in the source tree is not edited.
+    and, through tools/font_rename.py run with the font venv python, inside the font
+    itself (name table and CFF strings) — whether the font is embedded as a data URI
+    or referenced as a file (a referenced font is re-embedded, renamed, in the output).
+    site/index.html in the source tree is not edited.
 
 An empty release list builds the engine with no pages.
 
@@ -225,12 +227,40 @@ def is_font(mime, raw):
     return mime.lower().startswith("font/") or "font" in mime.lower() or raw[:4] in FONT_MAGIC
 
 
-def rename_embedded_fonts(html):
-    """Rename every embedded font that carries the old name; -> (html, [one report dict per font]).
+def rename_embedded_fonts(html, site=None):
+    """Rename every font the page carries, embedded or referenced as a file;
+    -> (html, [one report dict per font]).
+
+    Embedded (data: URI) fonts are renamed in place. A @font-face src that
+    references a font file under site/ (journal-handwritten-web #29: the
+    handwriting font is a separate cached file, not an embedded data URI)
+    is resolved against site/, renamed the same way, and re-embedded as a
+    data URI, so the published page stays a standalone file, the rename
+    gate still applies, and the reference cannot dangle. A referenced file
+    that is missing fails loudly.
 
     Raises FontToolError when there is such a font and the venv python cannot be used. Fonts that
     cannot be parsed are reported with error and left alone (the output check then decides)."""
     reports = []
+
+    def scrub(mime, raw, source=None):
+        """Check one font's bytes and rename them when they carry the old
+        name; -> (bytes to publish, True when the bytes changed)."""
+        if not is_font(mime, raw):
+            return raw, False
+        try:
+            info = run_font_tool("check", raw)
+        except FontDecodeError as e:
+            reports.append(dict(mime=mime, bytes=len(raw), error=str(e), **({"source": source} if source else {})))
+            return raw, False
+        needs_scrub = info.get("needs_public_scrub", False)
+        if info.get("ok") and not needs_scrub:
+            reports.append(dict(mime=mime, bytes=len(raw), renamed=False, **({"source": source} if source else {})))
+            return raw, False
+        doc = run_font_tool("rename", raw, "--family", PUBLIC_FONT_FAMILY, "--full", PUBLIC_FONT_FULL, "--postscript", PUBLIC_FONT_PS, "--strip-journal-metadata")
+        new = base64.b64decode(doc["font_b64"])
+        reports.append(dict(mime=mime, bytes=len(raw), renamed=True, bytes_out=len(new), changed=doc["changed"], hits_after=doc["hits_after"], glyphs=doc["glyphs"], **({"source": source} if source else {})))
+        return new, True
 
     def one(m):
         mime, b64 = m.group(1), m.group(2)
@@ -238,23 +268,39 @@ def rename_embedded_fonts(html):
             raw = base64.b64decode(b64, validate=True)
         except ValueError:
             return m.group(0)
-        if not is_font(mime, raw):
+        new, changed = scrub(mime, raw)
+        if not changed:
             return m.group(0)
-        try:
-            info = run_font_tool("check", raw)
-        except FontDecodeError as e:
-            reports.append(dict(mime=mime, bytes=len(raw), error=str(e)))
-            return m.group(0)
-        needs_scrub = info.get("needs_public_scrub", False)
-        if info.get("ok") and not needs_scrub:
-            reports.append(dict(mime=mime, bytes=len(raw), renamed=False))
-            return m.group(0)
-        doc = run_font_tool("rename", raw, "--family", PUBLIC_FONT_FAMILY, "--full", PUBLIC_FONT_FULL, "--postscript", PUBLIC_FONT_PS, "--strip-journal-metadata")
-        new = base64.b64decode(doc["font_b64"])
-        reports.append(dict(mime=mime, bytes=len(raw), renamed=True, bytes_out=len(new), changed=doc["changed"], hits_after=doc["hits_after"], glyphs=doc["glyphs"]))
-        return f"data:{mime};base64,{doc['font_b64']}"
+        return f"data:{mime};base64,{base64.b64encode(new).decode('ascii')}"
 
-    return DATA_URI_RE.sub(one, html), reports
+    html = DATA_URI_RE.sub(one, html)
+    if site is not None:
+        html = rename_referenced_fonts(html, Path(site), scrub)
+    return html, reports
+
+
+# A @font-face src pointing at a font file, not a data: URI and not remote.
+# Group 1 is the "@font-face{...src:" prefix, group 3 the relative path.
+EXTERNAL_FONT_RE = re.compile(
+    r"(@font-face\s*\{[^}]*?src\s*:\s*)url\(\s*([\"']?)(?!data:|https?:|/)([^\"')]+?\.(?:woff2|woff|otf|ttf))\2\s*\)",
+    re.I | re.S)
+FONT_EXT_MIME = {".woff2": "font/woff2", ".woff": "font/woff", ".otf": "font/otf", ".ttf": "font/ttf"}
+
+
+def rename_referenced_fonts(html, site, scrub):
+    """Resolve @font-face file references under site/, rename each font the
+    same way embedded fonts are renamed, and re-embed it as a data URI."""
+    def one(m):
+        prefix, path = m.group(1), m.group(3)
+        font_path = Path(site) / path
+        if not font_path.is_file():
+            raise FileNotFoundError("Referenced font file is missing: " + path)
+        raw = font_path.read_bytes()
+        mime = FONT_EXT_MIME[font_path.suffix.lower()]
+        new, _changed = scrub(mime, raw, source=path)
+        return prefix + f"url(data:{mime};base64,{base64.b64encode(new).decode('ascii')})"
+
+    return EXTERNAL_FONT_RE.sub(one, html)
 
 
 def remove_public_transcription_status(html):
@@ -573,7 +619,7 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 raise FileNotFoundError("Reader module is referenced but missing: " + asset)
         if rename_fonts:
             try:
-                html, fonts = rename_embedded_fonts(html)
+                html, fonts = rename_embedded_fonts(html, site=site)
             except FontToolError as e:
                 font_error = str(e)
         (out / "index.html").write_text(add_noindex(html), encoding="utf-8")
