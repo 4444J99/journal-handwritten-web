@@ -97,6 +97,70 @@ def studio_source(published_path: str) -> str:
     return "studio/" + p
 
 
+IMAGES_MANIFEST = "images-manifest.json"
+RECIPE_KEYS = ("color_mode", "deskew_deg", "background", "contrast", "denoise",
+               "sharpen", "jpeg_quality", "sr", "measurements")
+
+
+def verify_images_manifest(root: Path) -> list[str]:
+    """Verify the image-tier companion manifest (JHW #25).
+
+    Stdlib only, so CI needs no new dependencies. Checks per page: the
+    master exists, is checksummed in MANIFEST.sha256, and matches the
+    recorded hash; the cleaned file exists and matches its recorded hash;
+    the recipe is complete and records no super-resolution model in the
+    cleaned tier; a built display tier records its SR model + version.
+    Returns a list of problem strings (empty when clean). Absent manifest
+    means no trial pages yet, which is not a problem.
+    """
+    problems: list[str] = []
+    path = root / IMAGES_MANIFEST
+    if not path.is_file():
+        return problems
+    try:
+        manifest = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as e:
+        return [f"IMAGES-MANIFEST unreadable: {e}"]
+    recorded = {}
+    manifest_path = root / "MANIFEST.sha256"
+    if manifest_path.is_file():
+        for line in manifest_path.read_text().splitlines():
+            digest, _, rel = line.partition("  ")
+            recorded[rel] = digest
+    for page_id, entry in sorted((manifest.get("pages") or {}).items()):
+        tag = f"images-manifest[{page_id}]"
+        master_rel = entry.get("master", "")
+        master = root / master_rel
+        if not master.is_file():
+            problems.append(f"{tag} master missing: {master_rel}")
+        elif sha256(master) != entry.get("master_sha256"):
+            problems.append(f"{tag} master hash mismatch: {master_rel}")
+        elif recorded.get(master_rel) not in (None, entry.get("master_sha256")):
+            problems.append(f"{tag} master not the MANIFEST.sha256 master: {master_rel}")
+        cleaned_rel = entry.get("cleaned", "")
+        cleaned = root / cleaned_rel
+        if not cleaned.is_file():
+            problems.append(f"{tag} cleaned missing: {cleaned_rel}")
+        elif sha256(cleaned) != entry.get("cleaned_sha256"):
+            problems.append(f"{tag} cleaned hash mismatch: {cleaned_rel}")
+        recipe = entry.get("recipe") or {}
+        missing_keys = [k for k in RECIPE_KEYS if k not in recipe]
+        if missing_keys:
+            problems.append(f"{tag} recipe incomplete, missing: {','.join(missing_keys)}")
+        if recipe.get("sr") is not None:
+            problems.append(f"{tag} super-resolution recorded in the cleaned tier")
+        display = entry.get("display") or {}
+        if display.get("status") == "built":
+            if not display.get("file") or not display.get("sha256"):
+                problems.append(f"{tag} built display tier without file/hash")
+            sr = display.get("sr") or {}
+            if not sr.get("model") or not sr.get("version"):
+                problems.append(f"{tag} built display tier without sr model+version")
+        elif display.get("status") != "pending":
+            problems.append(f"{tag} display status is neither built nor pending")
+    return problems
+
+
 def main() -> int:
     conflicts = record_conflicts()
     if conflicts:
@@ -139,6 +203,12 @@ def main() -> int:
         print(f"checksums: {len(recorded)} recorded")
     else:
         print("no MANIFEST.sha256 yet (run --write)")
+
+    image_problems = verify_images_manifest(ROOT)
+    for p in image_problems:
+        print(f"IMAGES  {p}")
+    problems += len(image_problems)
+    print(f"image tiers: {len(image_problems)} problem(s)")
 
     sys.path.insert(0, str(ROOT / "tools"))
     from silent_launch_lint import scan  # no run may make a sound: every browser launch goes through the helper

@@ -1,0 +1,344 @@
+{
+ "version": 1,
+ "tool": "tools/image_tiers.py",
+ "tool_version": "1",
+ "pages": {
+  "diary55a": {
+   "master": "site/img/p/diary55a.jpg",
+   "master_sha256": "fe999ae5b2bf8da525cfbfa8523c2e396d0fb9de1886861fa17030e2f8f16075",
+   "cleaned": "images/cleaned/diary55a.jpg",
+   "cleaned_sha256": "2284e61ad0633f614bf24d936b532827bf22b7402860db91d2948d34fb985092",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": 0.0,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 220.8,
+      "std": 62.7,
+      "lap_var": 3566.8,
+      "dark_frac": 0.151
+     },
+     "after": {
+      "mean": 213.4,
+      "std": 82.0,
+      "lap_var": 5216.2,
+      "dark_frac": 0.163
+     },
+     "deskew_deg": 0.0,
+     "deskew_estimated_deg": 0.0,
+     "contrast_percentiles": [
+      49.9,
+      254.5
+     ],
+     "background_mean": 254.5
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  },
+  "diary56": {
+   "master": "site/img/p/diary56.jpg",
+   "master_sha256": "f5dc28e6f9ca68a5c2eef4767c5a85faeef297a7635df543de845e0552125522",
+   "cleaned": "images/cleaned/diary56.jpg",
+   "cleaned_sha256": "bd80b7aa7fcc7ee39863f9e9b36c7a4a538d0068f39f787abf623b03613ad5c0",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": -0.5,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 220.9,
+      "std": 63.7,
+      "lap_var": 3560.3,
+      "dark_frac": 0.1635
+     },
+     "after": {
+      "mean": 209.4,
+      "std": 87.9,
+      "lap_var": 3960.6,
+      "dark_frac": 0.1782
+     },
+     "deskew_deg": -0.5,
+     "deskew_estimated_deg": -0.5,
+     "contrast_percentiles": [
+      65.2,
+      255.0
+     ],
+     "background_mean": 255.0
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  },
+  "diary20": {
+   "master": "site/img/p/diary20.jpg",
+   "master_sha256": "4f320a3a4a473b1c041b5d7df3eaca9f2e798311176f41d12460314fa6ae5528",
+   "cleaned": "images/cleaned/diary20.jpg",
+   "cleaned_sha256": "929b6d4ca0e66025a0b12a70e61b069e7a315db6273ad16f8d762394574747dd",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": -0.25,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 231.7,
+      "std": 50.0,
+      "lap_var": 4234.5,
+      "dark_frac": 0.0934
+     },
+     "after": {
+      "mean": 222.3,
+      "std": 72.5,
+      "lap_var": 5169.6,
+      "dark_frac": 0.1244
+     },
+     "deskew_deg": -0.25,
+     "deskew_estimated_deg": -0.25,
+     "contrast_percentiles": [
+      79.2,
+      254.9
+     ],
+     "background_mean": 254.9
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  },
+  "diary23": {
+   "master": "site/img/p/diary23.jpg",
+   "master_sha256": "b55ba073af8f171d821995594ccc87d06e33fcf9a15062fd2ddc4fc4ccd43141",
+   "cleaned": "images/cleaned/diary23.jpg",
+   "cleaned_sha256": "484580b5b0cfd287a401ac7e958d9de2cf07d2bd0dbd29a9e69a7adf49e189fd",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": -0.25,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 246.2,
+      "std": 24.0,
+      "lap_var": 740.8,
+      "dark_frac": 0.0102
+     },
+     "after": {
+      "mean": 236.7,
+      "std": 50.1,
+      "lap_var": 2115.4,
+      "dark_frac": 0.061
+     },
+     "deskew_deg": -0.25,
+     "deskew_estimated_deg": -0.25,
+     "contrast_percentiles": [
+      138.4,
+      255.0
+     ],
+     "background_mean": 255.0
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  },
+  "diary29": {
+   "master": "site/img/p/diary29.jpg",
+   "master_sha256": "801e891587692f00251b30d31c72842496486d426d3c1b5b9b5e9463398f5081",
+   "cleaned": "images/cleaned/diary29.jpg",
+   "cleaned_sha256": "0369b5cf02ae5c7f6de4bd48871f2bb972115847de29f82c363ec3100d21c8ce",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": 0.0,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 246.1,
+      "std": 26.4,
+      "lap_var": 1335.1,
+      "dark_frac": 0.013
+     },
+     "after": {
+      "mean": 239.8,
+      "std": 48.1,
+      "lap_var": 3163.2,
+      "dark_frac": 0.0553
+     },
+     "deskew_deg": 0.0,
+     "deskew_estimated_deg": 0.0,
+     "contrast_percentiles": [
+      122.0,
+      255.0
+     ],
+     "background_mean": 255.0
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  },
+  "diary32": {
+   "master": "site/img/p/diary32.jpg",
+   "master_sha256": "fe5028d126658af62042a72c10751f854d3c30ed6f7d8a450ad61a58bbd929d1",
+   "cleaned": "images/cleaned/diary32.jpg",
+   "cleaned_sha256": "b76b2c5d0a775db31e639f4902e552a30ccb4c877a93a9557fb097cfa3c47b0d",
+   "recipe": {
+    "color_mode": "RGB",
+    "deskew_deg": -0.25,
+    "background": {
+     "method": "percentile-90",
+     "small_max_dim": 400,
+     "filter_size": 15
+    },
+    "contrast": {
+     "method": "percentile-stretch",
+     "lo": 1,
+     "hi": 99
+    },
+    "denoise": {
+     "method": "median",
+     "size": 3
+    },
+    "sharpen": {
+     "method": "unsharp",
+     "amount": 0.5,
+     "sigma": 2.0
+    },
+    "jpeg_quality": 92,
+    "sr": null,
+    "measurements": {
+     "before": {
+      "mean": 247.5,
+      "std": 29.0,
+      "lap_var": 1130.9,
+      "dark_frac": 0.0266
+     },
+     "after": {
+      "mean": 244.0,
+      "std": 43.2,
+      "lap_var": 1752.7,
+      "dark_frac": 0.0416
+     },
+     "deskew_deg": -0.25,
+     "deskew_estimated_deg": -0.25,
+     "contrast_percentiles": [
+      95.8,
+      255.0
+     ],
+     "background_mean": 255.0
+    }
+   },
+   "display": {
+    "status": "pending",
+    "reason": "no super-resolution model provisioned (Real-ESRGAN / SwinIR weights not available in this environment); a display tier must record its sr model + version when built"
+   }
+  }
+ },
+ "generated": "2026-11-24T17:34:32.041375+00:00"
+}
