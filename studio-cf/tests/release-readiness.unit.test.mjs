@@ -7,6 +7,7 @@ import {join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {fixture} from './helpers/publish-fixture.mjs';
 import {assess, advice, loadDb, summarize, format, reviewProgress} from '../../tools/release_readiness.mjs';
+import {normalizeLanes, laneEntries, lanesReadyCount, weekLanes} from '../../studio/release-lanes.mjs';
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), '../../tools/release_readiness.mjs');
 const names = r => r.blockers.map(b => b.name);
@@ -106,4 +107,71 @@ test('CLI reads a prepared directory and an export layout, writes only the reque
     assert.equal(spawnSync(process.execPath, [CLI], {encoding: 'utf8'}).status, 2);
     assert.equal(run('--target', 'nowhere').status, 2);
   } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+// Lanes (JHW #41): the week view model the Calendar renders, and the proof
+// that lane state never moves the poem's readiness. The DOM rendering itself
+// (one poem row plus five quiet lines, two lane rows when work exists) is
+// covered by the Playwright phone check in the plan's step 6; these tests
+// pin the view model that rendering consumes.
+test('a week with only the poem lane has five quiet lanes and 0/5 ready', () => {
+  const w = weekLanes({pool: 'series'});
+  assert.equal(w.total, 5);
+  assert.equal(w.readyCount, 0);
+  assert.deepEqual(w.lanes.map(l => [l.kind, l.state]), [['process', 'absent'], ['translation', 'absent'], ['audio', 'absent'], ['animation', 'absent'], ['reflection', 'absent']]);
+  assert.equal(lanesReadyCount({}), 0);
+});
+
+test('a week with translation and audio present shows those two lanes with their dates', () => {
+  const rec = {pool: 'series', lanes: {
+    translation: {state: 'ready', date: '2026-11-20'},
+    audio: {state: 'posted', url: 'https://example.test/audio', date: '2026-11-21'},
+  }};
+  const w = weekLanes(rec);
+  assert.equal(w.readyCount, 2);
+  const shown = w.lanes.filter(l => l.state !== 'absent');
+  assert.deepEqual(shown.map(l => l.kind), ['translation', 'audio']);
+  assert.equal(shown[0].date, '2026-11-20');
+  assert.equal(shown[1].url, 'https://example.test/audio');
+  assert.equal(shown[1].date, '2026-11-21');
+  assert.deepEqual(w.lanes.filter(l => l.state === 'absent').map(l => l.kind), ['process', 'animation', 'reflection']);
+});
+
+test('an old record with no lanes key reads as all absent, and stray lane data is sanitised', () => {
+  assert.deepEqual(Object.values(normalizeLanes({pool: 'series'})).map(e => e.state), ['absent', 'absent', 'absent', 'absent', 'absent', 'absent']);
+  const dirty = normalizeLanes({lanes: {
+    translation: {state: 'ready', url: 'javascript:alert(1)', date: 'not-a-date'},
+    audio: {state: 'bogus'},
+    nope: {state: 'ready'},
+    poem: {state: 'posted', url: 'https://example.test/poem'},
+  }});
+  assert.equal(dirty.translation.state, 'ready');
+  // Stored verbatim; the calendar only renders a link when checkPostUrl says
+  // the URL is http(s), the same guard as for posted URLs.
+  assert.equal(dirty.translation.url, 'javascript:alert(1)');
+  assert.equal(dirty.translation.date, undefined);
+  assert.equal(dirty.audio.state, 'absent');
+  assert.equal(dirty.nope, undefined);
+  // A stored poem entry is tolerated but never rendered from or counted.
+  assert.equal(dirty.poem.state, 'posted');
+  assert.equal(lanesReadyCount({lanes: {poem: {state: 'posted'}}}), 0);
+  assert.deepEqual(laneEntries(null).map(l => l.state), ['absent', 'absent', 'absent', 'absent', 'absent']);
+});
+
+test('lane state never moves the poem readiness computation', async () => {
+  const f = fixture();
+  const plain = await assess({...f, pieces: ['p001']});
+  assert.equal(plain[0].ready, true);
+  f.db.release.p001.lanes = {
+    translation: {state: 'posted', url: 'https://example.test/t', date: '2026-11-20'},
+    audio: {state: 'ready'},
+  };
+  assert.deepEqual(await assess({...f, pieces: ['p001']}), plain);
+  // And a blocked piece stays blocked with lanes present.
+  const g = fixture();
+  g.db.batches = {};
+  const blockedPlain = await assess({...g, pieces: ['p001']});
+  assert.equal(blockedPlain[0].ready, false);
+  g.db.release.p001.lanes = {audio: {state: 'posted', date: '2026-11-21'}};
+  assert.deepEqual(await assess({...g, pieces: ['p001']}), blockedPlain);
 });
