@@ -1,0 +1,29 @@
+{
+  "generated_from": "studio-db-pre-series-order-p006-p010-2026-11-15",
+  "generated_at": "2026-11-24T21:41:24Z",
+  "generated_by": "tools/pools.py (journal-handwritten-web #30)",
+  "note": "Pools are only as fresh as the export named in generated_from; regenerate from a fresh studio DB export when one lands. A piece absent from pools has unknown pool; the reader never refuses on unknown -- only an exact 'reserve' refuses.",
+  "pools": {
+    "p001": {
+      "pool": "series",
+      "num": 1,
+      "order": 0
+    },
+    "p002": {
+      "pool": "series",
+      "order": 1
+    },
+    "p003": {
+      "pool": "series",
+      "order": 2
+    },
+    "p004": {
+      "pool": "series",
+      "order": 3
+    },
+    "p005": {
+      "pool": "series",
+      "order": 4
+    }
+  }
+}

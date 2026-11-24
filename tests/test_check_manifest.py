@@ -102,6 +102,23 @@ class CheckManifestTest(unittest.TestCase):
         r = self.run_check()
         self.assertEqual(r.returncode, 0, r.stdout)
 
+    def test_referenced_data_file_must_exist(self):
+        # JHW #30: a data file the page fetches (the pool map) is load-bearing
+        # for the Reserve gate, so the check derives it from the page and
+        # fails while the file is missing.
+        html = (self.root / "site" / "index.html").read_text()
+        html = html.replace("</html>",
+                            "<script>fetch(\"data/pools.json\")</script></html>")
+        (self.root / "site" / "index.html").write_text(html)
+        r = self.run_check()
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertIn("MISSING  site/data/pools.json", r.stdout)
+        (self.root / "site" / "data").mkdir(exist_ok=True)
+        (self.root / "site" / "data" / "pools.json").write_text('{"pools": {}}')
+        self.assertEqual(self.run_check("--write").returncode, 0)
+        r = self.run_check()
+        self.assertEqual(r.returncode, 0, r.stdout)
+
     def test_changed_file_still_fails(self):
         (self.root / "site" / "index.html").write_text("<html>edited</html>")
         r = self.run_check()
