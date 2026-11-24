@@ -55,6 +55,20 @@ def site_references():
     """Files the merged piece (site/) loads, derived from site/data/j.json."""
     data = json.loads((ROOT / "site/data/j.json").read_text())
     refs = {"site/index.html", "site/data/j.json"}
+    # JHW #29: the handwriting font is a separate cached file referenced from
+    # @font-face, and the offline service worker is registered by the page.
+    # Both are load-bearing, so derive them from the page instead of assuming
+    # they exist in every tree that runs this check.
+    html = (ROOT / "site/index.html").read_text()
+    for block in re.finditer(r"@font-face\s*\{[^}]*\}", html):
+        for url in re.findall(r"url\(\s*[\"']?([^\"')]+)[\"']?\s*\)", block.group(0)):
+            if url.startswith(("data:", "http:", "https:", "/")):
+                continue
+            if url.lower().endswith((".woff2", ".woff", ".otf", ".ttf")):
+                refs.add("site/" + url)
+    for url in re.findall(r"serviceWorker\s*\.\s*register\(\s*[\"']([^\"']+)[\"']", html):
+        if not url.startswith(("http:", "https:", "/")):
+            refs.add("site/" + url.lstrip("./"))
     for page in data["pages"]:
         pid = page["id"]
         for tier in ("p", "i", "m"):
@@ -63,7 +77,6 @@ def site_references():
         if spread.get("f"):
             refs.add(f"site/img/s/{spread['f']}.jpg")
     # Hand<->Font plates: the page list is set in the page code (const HF = [...]).
-    html = (ROOT / "site/index.html").read_text()
     m = re.search(r"HF\s*=\s*\[([^\]]*)\]", html)
     for pid in re.findall(r'"([^"]+)"', m.group(1) if m else ""):
         refs.add(f"site/img/h/{pid}.jpg")

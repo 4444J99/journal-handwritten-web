@@ -96,26 +96,33 @@ class MetadataFiltering(unittest.TestCase):
     def test_public_font_blanks_journal_provenance_and_preserves_glyphs(self):
         root = Path(__file__).resolve().parents[1]
         source = (root / "site/index.html").read_text()
-        output, reports = rename_embedded_fonts(source)
+        output, reports = rename_embedded_fonts(source, site=root / "site")
         def fonts(html):
             return [base64.b64decode(m[2]) for m in DATA_URI_RE.finditer(html)
                     if is_font(m[1], base64.b64decode(m[2]))]
-        for original, public in zip(fonts(source), fonts(output)):
+        # The source font is a separate cached file (JHW #29); the build
+        # re-embeds it, renamed, in the published page. The comparison must
+        # run against that file, not against an embedded copy that no longer
+        # exists in the source page.
+        originals = [(root / "site" / r["source"]).read_bytes()
+                     for r in reports if r.get("source")]
+        self.assertEqual(len(originals), 1, reports)
+        for original, public in zip(originals, fonts(output)):
             before, after = run_font_tool("describe", original), run_font_tool("describe", public)
             for key, value in after["name_records"].items():
                 if key.split("/")[0] in ("0", "10"):
                     self.assertEqual(value, "")
             for key in ("glyph_order", "cmap", "hmtx", "tables", "head_modified"):
                 self.assertEqual(before[key], after[key])
-        self.assertEqual(rename_embedded_fonts(output)[0], output)
+        self.assertEqual(rename_embedded_fonts(output, site=root / "site")[0], output)
 
     def test_public_font_scrub_preserves_license_text_and_url(self):
         import subprocess
         from build_public import font_python, FONT_TOOL
         root = Path(__file__).resolve().parents[1]
-        html = (root / "site/index.html").read_text()
-        raw = next(base64.b64decode(m[2]) for m in DATA_URI_RE.finditer(html)
-                   if is_font(m[1], base64.b64decode(m[2])))
+        # The source font is a separate cached file (JHW #29), not an
+        # embedded data URI in the source page.
+        raw = (root / "site/fonts/handwriting.woff2").read_bytes()
         script = """import sys,io
 from fontTools.ttLib import TTFont
 f=TTFont(io.BytesIO(sys.stdin.buffer.read()),recalcTimestamp=False)
