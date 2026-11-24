@@ -268,6 +268,18 @@ details.tn ul{margin:4px 0;padding-left:18px}
 .rchip{font:11px/1 var(--mono);padding:4px 7px;border-radius:4px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
 .rchip.ok{color:var(--ok);background:var(--ok-soft);border-color:transparent}
 .rchip.warn{color:var(--warn);background:var(--warn-soft);border-color:transparent}
+/* lanes: one row per filler lane beneath the week's poem row (JHW #41). Lane
+   rows are not .rrow.cal rows: the calendar's existing selectors count only
+   poem rows. */
+.rlanes{display:grid;gap:2px;margin-top:8px}
+.rlane{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;font:12px/1.5 var(--mono);padding:4px 0}
+.rlane .rlab{color:var(--muted)}
+.rlane.quiet{color:var(--faint)}
+.rlane a{color:var(--ink)}
+.lane-edit{display:grid;grid-template-columns:120px 110px 1fr 150px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--rule-2)}
+.lane-edit label{font:12px/1.3 var(--mono);color:var(--muted)}
+.lane-edit select,.lane-edit input{padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);font-size:14px;min-width:0}
+@media (max-width:640px){.lane-edit{grid-template-columns:1fr 1fr}.lane-edit label{grid-column:1/-1}}
 .choices.tight{margin:0}
 .choices.tight .choice{min-height:36px;padding:4px 10px;font-size:13px}
 .rdetail{margin-top:10px;display:grid;gap:8px}
@@ -488,6 +500,7 @@ async function boot() {
   try { const r = await fetch('data/review.json'); data = await r.json(); }
   catch (e) { $('#piece-head').append(h('p', { class: 'err' }, 'Could not load data/review.json')); return; }
   S.data = data;
+  try { LANES_MOD = await import('./release-lanes.mjs'); } catch (e) { LANES_MOD = null; }
   for (const p of data.pages) {
     S.pages.set(p.id, p);
     p.blocks.forEach((b, bi) => b.lines.forEach((l, li) => { S.lines.set(l.id, { l, p, bi, li, b }); ALL_LINE_IDS.push(l.id); }));
@@ -1242,6 +1255,10 @@ function renderVersionsList() {
 }
 
 /* ------------------------------------------------------------ release */
+/* Lanes module (JHW #41), loaded in boot(). Null when the import fails: the
+   calendar then renders exactly as before lanes existed — poem rows only,
+   no lane rows, no lane editor — rather than crashing. */
+let LANES_MOD = null;
 // Collections: release/{pieceKey}, batches/{id}, rconfig/settings
 const POOLS = [['series', 'Series'], ['reserve', 'Reserve'], ['archive', 'Archive']];
 const PREP = [['edits', 'Edits final'], ['response', 'Response end note'], ['foot', 'Footnotes'], ['endn', 'Endnotes'], ['cite', 'Citations'], ['acad', 'Academic note'], ['social', 'Social post']];
@@ -1403,6 +1420,41 @@ async function studioPublishHistory() {
 }
 function isPublicAppearance(e) { return e.type === 'social' || (e.type === 'site' && e.target !== 'staging'); }
 /* calendar */
+/* lanes (JHW #41): the week's filler work beneath the poem row. One row per
+   filler lane: a lane row when work exists, a quiet "no work yet" line when
+   the lane is absent. The poem lane IS the poem row; its state comes from
+   the gates, never from a stored lanes.poem entry. Lane rows are not
+   .rrow.cal rows, so the calendar's existing poem-row selectors are
+   unaffected. */
+function laneBlock(r) {
+  if (!LANES_MOD) return null;
+  const box = h('div', { class: 'rlanes' });
+  for (const e of LANES_MOD.laneEntries(r)) {
+    if (e.state === 'absent') {
+      box.append(h('div', { class: 'rlane quiet' }, h('span', { class: 'rlab' }, e.label), 'no work yet'));
+    } else {
+      const row = h('div', { class: 'rlane' }, h('span', { class: 'rlab' }, e.label),
+        chip(e.state, e.state === 'posted' ? 'ok' : ''));
+      if (e.date) row.append(h('span', null, shortDate(e.date)));
+      if (e.url && checkPostUrl(e.url).ok) row.append(h('a', { href: e.url, target: '_blank', rel: 'noopener noreferrer' }, 'open'));
+      box.append(row);
+    }
+  }
+  return box;
+}
+
+// Lane state transitions reuse the release write path (relSet): same
+// canWrite() gate, same conflict handling, no new collection or channel.
+// A link/date written onto an absent lane marks it ready — the work exists
+// once there is something to point at.
+function setLane(key, kind, patch) {
+  if (!LANES_MOD || !canWrite()) return;
+  const cur = LANES_MOD.normalizeLanes(rel(key));
+  const merged = { ...cur[kind], ...patch };
+  if (patch.state === undefined && merged.state === 'absent' && (patch.url || patch.date)) merged.state = 'ready';
+  const next = { ...cur, [kind]: merged };
+  relSet(key, { lanes: LANES_MOD.normalizeLanes({ lanes: next }) });
+}
 function rCalendar(body) {
   const st = h('input', { type: 'date', id: 'r-start', value: cfg().start || '' });
   st.addEventListener('change', () => { if (canWrite()) write('rconfig', 'settings', { ...cfg(), start: st.value, at: nowISO() }); });
@@ -1429,9 +1481,11 @@ function rCalendar(body) {
         chip(c.verified ? 'verified' : 'not verified', c.verified ? 'ok' : 'warn'),
         chip(b ? `GRUW ${b.status}` : 'no GRUW batch', b && b.status !== 'draft' ? 'ok' : 'warn'),
         chip(`prep ${pdone}/${PREP.length}`, pdone === PREP.length ? 'ok' : ''),
-        posted ? chip('posted', 'ok') : ready ? chip('ready', 'ok') : null),
+        posted ? chip('posted', 'ok') : ready ? chip('ready', 'ok') : null,
+        LANES_MOD ? chip(`lanes ${LANES_MOD.lanesReadyCount(r)}/5 ready`) : null),
       posted && posted.url && checkPostUrl(posted.url).ok ? h('div', { class: 'rmeta' }, h('a', { href: posted.url, target: '_blank', rel: 'noopener noreferrer', class: 'rlink' }, 'post link')) : null,
-      open ? calDetail(c, r, b, ready, posted) : null));
+      open ? calDetail(c, r, b, ready, posted) : null,
+      laneBlock(r)));
     row.append(h('div', { class: 'rside col' },
       h('button', { type: 'button', class: 'btn primary small', disabled: !canWrite(), onclick: () => studioPublish(c.key) }, 'Publish'),
       h('button', { type: 'button', class: 'btn small', onclick: () => { RF.open = open ? null : c.key; renderRelease(); } }, open ? 'Close' : 'Open'),
@@ -1501,6 +1555,24 @@ function rTracker(body) {
     body.append(h('p', { class: 'note' }, 'Tracker failed to load.'));
   });
 }
+function laneEditor(c, r) {
+  const box = h('div', null);
+  box.append(h('div', { class: 'dsec' }, 'Lanes', h('small', null, ' weekly filler, opened only as work exists')));
+  const lanes = LANES_MOD.normalizeLanes(r);
+  for (const [kind, label] of LANES_MOD.FILLER_LANES) {
+    const e = lanes[kind];
+    const sel = h('select', { id: `ln-${c.key}-${kind}`, disabled: !canWrite(), 'aria-label': `${label} state` });
+    for (const s of LANES_MOD.LANE_STATES) sel.append(h('option', { value: s, selected: e.state === s }, s));
+    sel.addEventListener('change', () => setLane(c.key, kind, { state: sel.value }));
+    const url = h('input', { type: 'url', id: `lnu-${c.key}-${kind}`, value: e.url || '', placeholder: 'Link (optional)', 'aria-label': `${label} link`, disabled: !canWrite() });
+    url.addEventListener('change', () => setLane(c.key, kind, { url: url.value }));
+    const date = h('input', { type: 'date', id: `lnd-${c.key}-${kind}`, value: e.date || '', 'aria-label': `${label} date`, disabled: !canWrite() });
+    date.addEventListener('change', () => setLane(c.key, kind, { date: date.value }));
+    box.append(h('div', { class: 'lane-edit' },
+      h('label', { for: sel.id }, label), sel, url, date));
+  }
+  return box;
+}
 function calDetail(c, r, b, ready, posted) {
   const d = h('div', { class: 'rdetail' });
   const prep = r.prep || {};
@@ -1511,6 +1583,7 @@ function calDetail(c, r, b, ready, posted) {
     cl.append(h('label', { class: 'chk', for: cb.id }, cb, l));
   }
   d.append(cl);
+  if (LANES_MOD) d.append(laneEditor(c, r));
   if (!c.verified) d.append(h('p', { class: 'note' }, 'Verify every line in Review before posting.'));
   if (!b) d.append(h('p', { class: 'note' }, 'Add it to a GRUW batch (Copyright) and file before posting — once posted it may no longer qualify as unpublished.'));
   if (posted) d.append(h('p', { class: 'note' }, `Posted ${posted.date || ''}${posted.where ? ' · ' + posted.where : ''}${posted.account ? ' · ' + posted.account : ''}`));
