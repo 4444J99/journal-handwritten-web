@@ -71,6 +71,20 @@ body.xfer #cv{visibility:visible}
 .leaf rect.crop{fill:none;stroke:var(--amber);stroke-width:2;vector-effect:non-scaling-stroke}
 .leaf.tap svg{pointer-events:auto}
 .leaf.tap rect{cursor:pointer}
+/* read-progress (#16): a page held at readable size or turned past carries a
+   margin tick; a page holding draft lines carries a deeper tick. No text.
+   The strip (a hidden control until the menu opens) carries a fill ring and
+   a deeper label instead. Sheet text already renders at full ink, so the tick
+   carries the mark there. Hidden entirely while tracking is off. */
+.leaf.rd::after,.sheet.rd::after,.hfstage.rd::after{content:"";position:absolute;top:6px;right:6px;width:14px;height:3px;background:var(--ink);opacity:.55;border-radius:2px;pointer-events:none;z-index:2}
+.leaf.rd-draft::after,.sheet.rd-draft::after,.hfstage.rd-draft::after{opacity:.95;height:5px}
+#strip button.rd{position:relative;box-shadow:inset 0 0 0 1px var(--ui-2)}
+#strip button.rd .page-label{color:var(--ui)}
+#strip button.rd::after{content:"";position:absolute;top:3px;right:3px;width:10px;height:3px;background:var(--ui);opacity:.8;border-radius:2px;pointer-events:none}
+#strip button.rd-draft::after{opacity:1;height:4px}
+body.no-read .leaf.rd::after,body.no-read .sheet.rd::after,body.no-read .hfstage.rd::after,body.no-read #strip button.rd::after{display:none}
+body.no-read #strip button.rd{box-shadow:none}
+body.no-read #strip button.rd .page-label{color:var(--ui-2)}
 .edge{position:fixed;top:50%;width:44px;height:44px;margin-top:-22px;display:grid;place-items:center;color:var(--ui-2);opacity:0;transition:opacity .25s;pointer-events:none;z-index:4}
 .edge.l{left:max(10px,env(safe-area-inset-left))}.edge.r{right:max(10px,env(safe-area-inset-right))}
 @media (hover:hover) and (pointer:fine){.edge.show{opacity:.7}}
@@ -444,7 +458,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
     <h3>Controls</h3>
     <ul>
       <li>Select <strong>menu</strong> to open all controls. They stay open while you choose. Select Close, press Escape, or select outside the menu to dismiss it.</li>
-      <li>In the constellation, drag or use two-finger trackpad scrolling to move. Use a mouse wheel or pinch to zoom. Select a line or page to focus it; long-press to open it in the journal. Fit whole view shows the full arrangement.</li>
+      <li>In the constellation, drag or use two-finger trackpad scrolling to move. Use a mouse wheel or pinch to zoom. Select a line or page to focus it; long-press to open it in the journal. With a page focused, a horizontal swipe or ← → moves to the previous/next page. Fit whole view shows the full arrangement.</li>
       <li>In the journal's Read pages mode, swipe horizontally or use the page thumbnails to turn pages. Choose Scan, Text, or Scan &amp; text in Page view. Pinch inward to return to the constellation.</li>
       <li>Search finds words in the transcription. Choose a result to open it in your current view, or use its Journal or Constellation button to switch views.</li>
     </ul>
@@ -452,6 +466,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   <ul>
     <li><del>struck</del> = cancelled in the notebook; raised small text = insertion; dotted gap = illegible; dotted underline = uncertain reading.</li>
     <li>Short rule = passage copied from a published work, not reproduced.</li>
+    <li><label><input type="checkbox" id="readtrack" checked> Read tracking</label> — a page you have read carries a tick at its edge (a deeper tick for a page with draft lines); the page thumbnails carry the same tick. Turning it off stops recording and hides the marks; turning it back on keeps what was recorded.</li>
   </ul>
   <h3>Arrangements</h3>
   <ul><li>By poem and Scatter are generated anew on each visit; the link keeps the current one. Spiral is notebook order.</li></ul>
@@ -465,7 +480,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   <ul><li>Each located line crossfades to the same words set in Etceter4 Diary, a typeface built from letters on these pages, at the line's measured position and x-height.</li></ul>
     <h3>Keyboard</h3>
     <ul>
-      <li>While reading: arrows pan or turn pages; + and − zoom; 0 fits the whole view; Enter focuses a line or opens the focused work; [ and ] change versions; B switches between journal and constellation; / opens Search; Space opens the menu.</li>
+      <li>While reading: arrows pan or turn pages (with a page or line focused, ← → move to the previous/next page); + and − zoom; 0 fits the whole view; Enter focuses a line or opens the focused work; [ and ] change versions; B switches between journal and constellation; / opens Search; Space opens the menu.</li>
       <li>In menus and panels: Tab moves between controls, Enter or Space activates a button, and Escape closes the current panel or menu. Arrow keys adjust sliders and move through search results without moving the reader underneath.</li>
     </ul>
   </div>
@@ -555,6 +570,70 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const store = {get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }};
+
+/* ---------- read-progress (#16): one take, not a specification ---------- */
+/* The read unit is one journal page (its j.json id). A page counts as read
+   when held at readable size for a short dwell (frame loop) or when the
+   reader turns away from it (pageChanged / layoutHF). "Next" and "previous"
+   walk the notebook order in site/read-progress.mjs and stop at the ends.
+   The module is pure (no DOM, no studio-database access); this section is
+   the wiring. The off switch lives in the Help panel (#readtrack). */
+const READ_ENABLED_KEY = "jc.readtrack";
+let READ = null, READ_DRAFTS = new Set();
+async function initReadProgress(){
+  try {
+    const mod = await import("./read-progress.mjs");
+    const order = P.filter(p => !p.xv).map(p => p.id);
+    READ = mod.createReadProgress({store, order, enabledKey: READ_ENABLED_KEY});
+    READ_DRAFTS = mod.computeDraftPages(LN, P);
+    window.__jhwRead = READ; // test hook, cf. window.__noDrift
+    refreshReadMarks();
+    syncReadToggle();
+  } catch (e) { /* read tracking stays off; the reader works without it */ }
+}
+function wireReadToggle(){
+  const t = $("#readtrack");
+  if (!t) return;
+  t.addEventListener("change", () => {
+    const on = t.checked;
+    if (READ) READ.setEnabled(on); else store.set(READ_ENABLED_KEY, on ? "1" : "0");
+    refreshReadMarks();
+  });
+}
+function syncReadToggle(){
+  const t = $("#readtrack");
+  if (t) t.checked = READ ? READ.isEnabled() : store.get(READ_ENABLED_KEY) !== "0";
+}
+function refreshReadMarks(){
+  const on = !!READ && READ.isEnabled();
+  body.classList.toggle("no-read", !on);
+  if (!READ) return;
+  $$("#strip button").forEach(b => {
+    const v = B.views[+b.dataset.i]; if (!v) return;
+    const ids = v.pages.map(p => p.id);
+    b.classList.toggle("rd", on && ids.some(id => READ.isRead(id)));
+    b.classList.toggle("rd-draft", on && ids.some(id => READ.isRead(id) && READ_DRAFTS.has(id)));
+  });
+  $$(".leaf[data-pid], .sheet[data-pid]").forEach(el => {
+    const id = el.dataset.pid;
+    el.classList.toggle("rd", on && READ.isRead(id));
+    el.classList.toggle("rd-draft", on && READ.isRead(id) && READ_DRAFTS.has(id));
+  });
+  const hf = $("#hfstage");
+  if (hf && B.hfId){
+    hf.classList.toggle("rd", on && READ.isRead(B.hfId));
+    hf.classList.toggle("rd-draft", on && READ.isRead(B.hfId) && READ_DRAFTS.has(B.hfId));
+  }
+}
+function adjacentPageItem(d){
+  if (!focus || focus.out || !focus.it || !P[focus.it.pi]) return null;
+  const cur = P[focus.it.pi].id;
+  let nid = null;
+  if (READ) nid = d > 0 ? READ.nextId(cur) : READ.prevId(cur);
+  else { const ord = P.filter(p => !p.xv).map(p => p.id); const i = ord.indexOf(cur); const j = i + d; nid = (i >= 0 && j >= 0 && j < ord.length) ? ord[j] : null; }
+  if (!nid || !BYID[nid]) return null;
+  return BY["p" + BYID[nid].i] || null;
+}
 const root = document.documentElement, body = document.body;
 const TAU = Math.PI * 2, GOLD = Math.PI * (3 - Math.sqrt(5));
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -1395,6 +1474,29 @@ function frame(now){
     if (focus.stk){ const S = focus.stk; if (Math.abs(S.p - S.pt) > .002){ S.p += (S.pt - S.p) * (MOTION ? 1 - Math.exp(-dt * 9) : 1); anim = true; } else S.p = S.pt; }
     if (focus.out && (p >= 1 || !MOTION)){ focus = null; anim = true; verUI(); }
   }
+  // read-progress (#16): a focused item held at readable size counts its page
+  // as read after a short dwell. Held means the camera has arrived at the
+  // focus scale (clamped to maxS by animCam; focus.f settled, no tween
+  // running) and the item is on screen;
+  // panning or zooming away resets the hold. Stack layers carry no page
+  // index, so a focused stack marks nothing here; its pages mark on the turn.
+  if (focus && !focus.out && READ && READ.isEnabled()){
+    const it = focus.it, pid = it && P[it.pi] ? P[it.pi].id : null;
+    const S = cam.s * DPR;
+    const sx = it ? (it.dx - cam.x) * S + cv.width / 2 : -1, sy = it ? (it.dy - cam.y) * S + cv.height / 2 : -1;
+    // animCam clamps the focus scale to maxS() ("closest view"), so a page
+    // whose focusScale exceeds maxS arrives at maxS, not focusScale: compare
+    // against the clamped target, not the raw focus scale.
+    const targetS = Math.min(focusScale(it), maxS());
+    const held = pid && !camTw && focus.f >= 1 && cam.s >= targetS * .9 &&
+      sx > -VW * .1 && sx < VW * 1.1 && sy > -VH * .1 && sy < VH * 1.1;
+    if (held){
+      focus.heldMs = (focus.heldMs || 0) + dt * 1000;
+      if (!focus.readMarked && focus.heldMs >= READ.dwellMs && READ.noteHeld(pid, focus.heldMs)){
+        focus.readMarked = true; refreshReadMarks();
+      }
+    } else focus.heldMs = 0;
+  }
   sanitizeCam();
   if (tilePending) anim = true;
   const trans = now - swT0 < swDur + 300;
@@ -1410,7 +1512,11 @@ function frame(now){
   schedule();
   if (!WK && mq.length && pumpMain(PHONE ? 5 : 6)) anim = true;
   if (tilePending) anim = true;
-  if (anim || dirty) kick(); else lastT = 0;
+  // read-progress (#16): keep the loop ticking while an unread focus is held,
+  // so the dwell can complete; no draw runs unless dirty or animating.
+  const dwellPid = focus && !focus.out && focus.it && P[focus.it.pi] ? P[focus.it.pi].id : null;
+  const dwellPending = !!dwellPid && READ && READ.isEnabled() && !focus.readMarked && READ.isKnown(dwellPid) && !READ.isRead(dwellPid);
+  if (anim || dirty || dwellPending) kick(); else lastT = 0;
 }
 
 /* ---------- drawing ---------- */
@@ -1764,6 +1870,17 @@ function endPtr(e){
     const g = gesture; gesture = null;
     if (g.lp) return;
     if (g.type === "peel"){ const S = focus && focus.stk; if (S){ S.pt = 0; if (!MOTION) S.p = 0; verUI(); setDirty(); } return; } // the newest returns on release
+    // read-progress (#16): a fast horizontal swipe on a focused item moves to
+    // the previous/next page in notebook order instead of flinging the camera;
+    // at an end it stops (no fling, no wrap). Other drags fall through below.
+    if (g.type === "pan" && g.moved && focus && !focus.out && e.type === "pointerup" && performance.now() - p.t0 < 900){
+      const dx = p.x - p.x0, dy = p.y - p.y0;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > 1.6 * Math.abs(dy)){
+        const it = adjacentPageItem(dx < 0 ? 1 : -1);
+        if (it) focusOn(it);
+        return;
+      }
+    }
     if (g.type === "pan" && !g.moved && !g.multi && e.type === "pointerup" && performance.now() - p.t0 < 500) onTap(p.x, p.y);
     else if (g.type === "pan" && g.moved && MOTION){
       const h = g.hist, now = performance.now();
@@ -2101,10 +2218,14 @@ function swapView(el, dir){
 }
 function pageChanged(pages){
   sourceChanged();
+  // read-progress (#16): turning a page marks the page left behind as read.
+  if (READ && B._lastPid && B._lastPid !== B.pid) READ.noteTurned(B._lastPid);
+  B._lastPid = B.pid;
   markStrip(); verUI();
   $("#live").textContent = "Page " + pages.map(p => label(p.id)).join(", ");
   fillPageInfo(pages);
   setHash();
+  refreshReadMarks();
 }
 /* study: the facing-page view (scan | transcription, linked both ways) */
 function renderStudy(dir = 0){
@@ -2160,6 +2281,11 @@ function step(d){
     if (B.view === "study"){ const p = P[clamp(curPage().i + d, 0, NJP - 1)]; goPage(p.id, d); }
     else { const vi = clamp(viewOf(B.pid) + d, 0, B.views.length - 1); const v = B.views[vi]; if (v && !v.pages.some(p => p.id === B.pid)){ B.unavailableHash = null; B.pid = v.pages[0].id; B.focus = null; renderBook(d); } }
   } else if (B.mode === "rev"){ stopPlay(); goStep(B.palStep + d, d > 0); }
+  else if (B.mode === "hf"){
+    // read-progress (#16): arrows and swipes move between hand/font pages too.
+    const ids = HF.filter(id => BYID[id]), i = ids.indexOf(B.hfId), j = i + d;
+    if (i >= 0 && j >= 0 && j < ids.length){ B.hfId = ids[j]; layoutHF(); setHash(); }
+  }
 }
 /* strip */
 function buildStrip(){
@@ -2453,6 +2579,7 @@ function renderPal(anim){
     }
     $("svg", scanEl).innerHTML = r;
   }
+  refreshReadMarks();
 }
 function startPlay(){
   if (!B.pal) return;
@@ -2480,6 +2607,9 @@ function layoutHF(){
   stopHF(); B.hf = null;
   const id = B.hfId && HF.includes(B.hfId) && BYID[B.hfId] ? B.hfId : HF.find(id => BYID[id]), p = BYID[id];
   B.hfId = id;
+  // read-progress (#16): turning to another hand/font page marks the one left behind.
+  if (READ && B._lastHfId && B._lastHfId !== id) READ.noteTurned(B._lastHfId);
+  B._lastHfId = id;
   $("#hfrange").disabled = $("#hfplay").disabled = !p || !p.validBoxes.length;
   if (!p || !p.validBoxes.length){ bst.textContent = "Hand ↔ Font is unavailable for this source."; bst.setAttribute("role", "status"); return; }
   bst.removeAttribute("role");
@@ -2520,6 +2650,7 @@ function layoutHF(){
     setHF(B.hf.t);
   };
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(fit));
+  refreshReadMarks();
 }
 function setHF(t){
   if (!B.hf) return; B.hf.t = t;
@@ -3084,6 +3215,17 @@ document.addEventListener("keydown", e => {
       const S = stkTall(); if (S && dy) target.y = clamp(target.y, stkTop(S, target.s), Math.max(stkTop(S, target.s), stkBottom(S, target.s)));
       animCam(target, MOTION ? 220 : 0);
     };
+    // read-progress (#16): with an item focused, ← → move to the previous/next
+    // page in notebook order (the camera flies via focusOn) and stop at the
+    // ends instead of wrapping; without a focus the arrows pan, as before.
+    // Up/down still pan — they never peeled versions; versions peel with
+    // [ ] and with a vertical swipe on a focused stack.
+    if ((k === "ArrowLeft" || k === "ArrowRight") && focus && !focus.out){
+      const it = adjacentPageItem(k === "ArrowRight" ? 1 : -1);
+      if (it) focusOn(it);
+      e.preventDefault();
+      return;
+    }
     if (k === "ArrowLeft"){ pan(-stp, 0); e.preventDefault(); }
     else if (k === "ArrowRight"){ pan(stp, 0); e.preventDefault(); }
     else if (k === "ArrowUp"){ pan(0, -stp); e.preventDefault(); }
@@ -3251,6 +3393,7 @@ async function boot(){
   initWorker();
   buildItems(); initLayoutWorker(); buildIndex(); fillInfo(); buildRevDock(); buildHFDock();
   B.pid = P[0].id; B.wide = isWide(); buildViews();
+  initReadProgress(); wireReadToggle();
   const h = readHash();
   if (h.side === "canvas"){ content = h.c; arr = h.a; seed = h.seed || newSeed(); }
   else seed = newSeed();
@@ -3278,6 +3421,7 @@ window.__jc = {openVariorum, stats, cam, get state(){ return content + "-" + arr
   centerOn(k){ const it = BY[k]; if (it){ cam.x = it.tg.a > 0 ? it.tg.x : it.dx; cam.y = it.tg.a > 0 ? it.tg.y : it.dy; setDirty(); } },
   items(){ return ITEMS.filter(i => i.da > .5).length; }, quad(k){ const it = BY[k]; return it ? itemQuad(it) : null; },
   focusKey(){ return focus && !focus.out ? focus.it.k : null; }, book(){ return {mode:B.mode, view:B.view, pid:B.pid, focus:B.focus}; },
+  readDrafts(){ return [...READ_DRAFTS]; },
   layoutSig(){ const m = layoutFor(content, arr); let s = 0, n = 0; for (const [k, v] of m){ if (n++ > 40) break; s += Math.round(v.x) * 7 + Math.round(v.y); } return s; },
   mem(){ return {sprites:SP.size, sprPx, tiles:TILES.size, worker:!!(WK && wkReady), pend:PEND.size, dead:DEAD.size}; },
   ui(on){ on ? showUI() : hideUI(true); }, open(k){ openBookFrom(BY[k]); }, close(){ closeBook(); }, get xfer(){ return xfer; }, drawNow(){ draw(performance.now()); },
