@@ -417,6 +417,27 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 detail = "; ".join(f"{f['id']} on {f['page']}: {f['reason']}" for f in bad)
                 sys.exit(f"{pid}: shared scan refused: {detail}; output unchanged")
 
+        # Cut-up / erasure provenance gate (issue #55). A cut-up version's
+        # lines ARE its source lines' text, so a version reusing a Reserve
+        # (or Archive / unknown-pool) line would publish Reserve text even
+        # when the version's own piece is Series. The check is line-level:
+        # it names the exact source line, and no acceptance overrides it —
+        # the same "accept never helps non-series" rule as the shared scan.
+        # Runs here, before any output is created or replaced.
+        import cut_up
+        for pid in want:
+            for vi in chosen[pid]:
+                version = pieces[pid]["V"][vi]
+                bad = cut_up.reserve_sources(
+                    version, lambda p: post_poem.pool_of(db, p), source_pages)
+                if bad:
+                    detail = "; ".join(
+                        f"{b['src']['piece']} line {b['src']['line']} "
+                        f"(pool is {b['pool']})" for b in bad)
+                    sys.exit(f"{pid}: cut-up version {version['id']} reuses a withheld line: "
+                             f"{detail}; a Series piece must not publish Reserve text, "
+                             "including through a cut-up version's provenance; output unchanged")
+
     # Refuse a broken module closure before replacing a previous output. The
     # package verifier is loaded by the feature adapter, not directly by HTML.
     reader_assets = ("reader-features.js", "reader-packages.js")

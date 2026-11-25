@@ -477,10 +477,27 @@ def geometry_fingerprint(source, page_id):
 def build_outputs(source):
     reader, studio = render_data(source)
     data = dict(zip(SOURCE_FILES, (encoded(reader, compact=True), encoded(studio, compact=True))))
+    # The derived id-map carries the version's method/src (journal-handwritten-web
+    # #55) so a rebuild reproduces the checked-in map byte-for-byte: the map is
+    # an id-map, so it carries the fields without allocating new ids. Absent
+    # method means "original"; src/sourceVersion appear only on cut-up/erasure
+    # versions. This mirrors tools/notes_sources.py, which builds the same map.
+    pieces = []
+    for p in reader["pieces"]:
+        vs = []
+        for v in p["V"]:
+            entry = {"id": v["id"], "P": v["P"], "d": v.get("d"),
+                     "method": v.get("method", "original")}
+            if "src" in v:
+                entry["src"] = v["src"]
+            if "sourceVersion" in v:
+                entry["sourceVersion"] = v["sourceVersion"]
+            vs.append(entry)
+        pieces.append({"id": p["id"], "V": vs})
     notes = {"format": "versforms-notes-versions", "version": 1,
              "provenance": {"kind": "derived-id-map", "ids": "preserved; none allocated",
                             "sources": [{"path": name, "sha256": hashlib.sha256(data[name]).hexdigest()} for name in SOURCE_FILES]},
-             "pieces": [{"id": p["id"], "V": [{"id": v["id"], "P": v["P"], "d": v.get("d")} for v in p["V"]]} for p in reader["pieces"]]}
+             "pieces": pieces}
     data["studio/data/notes-versions.json"] = encoded(notes)
     return data
 

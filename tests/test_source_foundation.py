@@ -43,6 +43,42 @@ class PreservedSourceTests(unittest.TestCase):
         quotation = next(l for l in source["lines"] if l["id"] == "diary2-1-0")
         self.assertNotEqual(quotation["originalText"], quotation["readerOriginalText"])
 
+    def test_cut_up_version_method_and_src_survive_render_and_rebuild(self):
+        """JHW #55: a cut-up version recorded in the canonical snapshot renders
+        into j.json with method/src intact, and the derived notes-versions map
+        carries them too — so a rebuild reproduces the checked-in outputs
+        byte-for-byte instead of dropping the provenance (the drift that made
+        every private preview refuse with "canonical source and current
+        reader/studio outputs differ")."""
+        source = copy.deepcopy(self.source)
+        version = next(v for v in source["versions"] if v["id"] == "p001-diary1-0")
+        blocks = {b["id"]: b for b in source["blocks"]}
+        n = sum(len(blocks[bid]["lineIds"]) for m in version["members"] for bid in m["blockIds"])
+        version["reader"]["method"] = "cut-up"
+        version["reader"]["src"] = [{"piece": "p002", "line": "diary62a-0-0"}] + [None] * (n - 1)
+        version["reader"]["sourceVersion"] = "p001-diary62a-0"
+        reader, _studio = sf.render_data(source)
+        piece = next(p for p in reader["pieces"] if p["id"] == "p001")
+        rendered = next(v for v in piece["V"] if v["id"] == "p001-diary1-0")
+        self.assertEqual(rendered["method"], "cut-up")
+        self.assertEqual(rendered["src"], version["reader"]["src"])
+        self.assertEqual(rendered["sourceVersion"], "p001-diary62a-0")
+        self.assertEqual(list(rendered)[:5], ["id", "s", "P", "d", "method"])
+        outputs = sf.build_outputs(source)
+        notes = json.loads(outputs["studio/data/notes-versions.json"])
+        mapped = next(v for p in notes["pieces"] if p["id"] == "p001"
+                      for v in p["V"] if v["id"] == "p001-diary1-0")
+        self.assertEqual(mapped["method"], "cut-up")
+        self.assertEqual(mapped["src"], version["reader"]["src"])
+        self.assertEqual(mapped["sourceVersion"], "p001-diary62a-0")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name, data in outputs.items():
+                target = root / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+            self.assertEqual(sf.rebuild(source, root)["changed"], [])
+
     def test_all_38_reviews_are_validated_applied_and_idempotent_without_changing_originals(self):
         original_lines = copy.deepcopy(self.source["lines"])
         applied, report = sf.apply_reviews(self.source, ROOT / "exports/studio-db-2026-11-05")

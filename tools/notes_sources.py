@@ -20,10 +20,20 @@ def build(root=ROOT):
     site = json.loads(site_bytes)
     pieces = []
     for piece in site["pieces"]:
-        pieces.append({"id": piece["id"], "V": [
-            {"id": version["id"], "P": version["P"], "d": version.get("d")}
-            for version in piece["V"]
-        ]})
+        versions = []
+        for version in piece["V"]:
+            # method/src ride with the version record (JHW #55): the map is
+            # an id-map, so it carries the fields without allocating new ids.
+            # Absent method means "original"; src appears only on
+            # cut-up/erasure versions.
+            v = {"id": version["id"], "P": version["P"], "d": version.get("d"),
+                 "method": version.get("method", "original")}
+            if "src" in version:
+                v["src"] = version["src"]
+            if "sourceVersion" in version:
+                v["sourceVersion"] = version["sourceVersion"]
+            versions.append(v)
+        pieces.append({"id": piece["id"], "V": versions})
     return {
         "format": "versforms-notes-versions", "version": 1,
         "provenance": {
