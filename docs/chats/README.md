@@ -16,6 +16,7 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
+| 2026-11-25 | [Public-by-design README and multi-lane framing](2026-11-25-public-multilane-readme.md) | README now states public-by-design custody boundaries and the unbounded `C`/`N`/`P` Grand Chronology; witness tools documented; plan addenda added; checks green. |
 | 2026-11-24 | [E2E witness suite](2026-11-24-e2e-witness-suite.md) | Implemented and self-check verified (169 checks across Tiers 1–4 + Negative Controls, `tools/check.py` OK) on `test/e2e-witness-suite`. |
 | 2026-11-25 | [E2E witness suite remediation](2026-11-25-e2e-witness-remediation.md) | Hardened shared-surface isolation, fail-closed target env/python, traceback rejection and live-provider shims; 169/169 self-check, clean commit off `origin/main`. |
 | 2026-11-25 | [Witness chronology and Round 1 projection integration](2026-11-25-witness-chronology-integration.md) | Stage 3 chronology builder and metadata-free Round 1 projection helper added with unit tests; matcher gate re-verified; live harvest and link confirmation still author-gated. |
