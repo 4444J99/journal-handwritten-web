@@ -5,6 +5,6 @@ export function fixture() {
  for(const p of pages)for(const k of ['p','i','m']) source.assets['img/'+k+'/'+p.id+'.jpg']={sha256:'a'.repeat(64),size:4,contentType:'image/jpeg'};
  for(const p of pages)for(const k of ['t','k'])source.assets['tiles/'+k+'-'+p.id+'.jpg']={sha256:'b'.repeat(64),size:4,contentType:'image/jpeg'};
  const db={release:Object.fromEntries(pieces.map(p=>[p.id,{pool:'series'}])),reviews:Object.fromEntries(pages.map(p=>[p.id+'-0-0',{status:'confirmed',original:p.B[0].L[0]}])),batches:{b:{items:pieces.map(p=>p.id),status:'filed'}},decisions:{},versions:{},rconfig:{}};
- const shell='<!doctype html><html><head><title>versforms</title><meta name="robots" content="noindex"></head><body><script>const PAL = []; const HF = [];</script></body></html>';
+ const shell='<!doctype html><html><head><title>versforms</title><meta name="robots" content="noindex"></head><body><img src="img/p/pg1.jpg" alt="Page 1"><script>const PAL = []; const HF = [];</script></body></html>';
  return {source,db,shell};
 }

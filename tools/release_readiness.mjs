@@ -16,7 +16,7 @@ import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildCandidate} from '../studio/publish-compiler.mjs';
 
-const COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'parts', 'composites'];
+const COLLECTIONS = ['reviews', 'decisions', 'versions', 'release', 'batches', 'rconfig', 'parts', 'composites', 'notes'];
 const required = ['release', 'reviews', 'batches', 'decisions', 'versions', 'rconfig'];
 
 export function loadDb(dir) {
@@ -36,6 +36,9 @@ export function advice(name) {
   if (name === 'own_pool_not_series') return 'Its pool is not Series (Reserve/Archive stop a release); move it to Series or leave it out';
   if (name === 'verified') return 'Read each page and confirm or correct every line (Studio, Review tab)';
   if (name === 'filed') return 'File it in a GRUW batch, or record the gruw-policy decision "skip"';
+  if (name === 'alt_text') return 'Give every published page image an alt label (the reader derives it from the page id; a blank label or a shell without the alt template blocks the release)';
+  if (name === 'note_anchors') return 'Rebind the note anchor to a line in the chosen version (Studio, Notes)';
+  if (name === 'links') return 'Fix the link in the piece text or note (it must be a well-formed http(s) URL)';
   if (name.startsWith('shared_scan:')) {
     const id = name.slice(12);
     return /^p[0-9]+$/.test(id)

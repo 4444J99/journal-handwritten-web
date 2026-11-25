@@ -175,3 +175,60 @@ test('lane state never moves the poem readiness computation', async () => {
   g.db.release.p001.lanes = {audio: {state: 'posted', date: '2026-11-21'}};
   assert.deepEqual(await assess({...g, pieces: ['p001']}), blockedPlain);
 });
+
+test('the three Oct 27 gates pass on a ready piece and each has its own next step', async () => {
+  const f = fixture();
+  const [r] = await assess({...f, pieces: ['p001']});
+  assert.equal(r.ready, true);
+  for (const n of ['alt_text', 'note_anchors', 'links']) assert.notEqual(advice(n), n);
+});
+
+test('alt_text blocks when the reader shell has no page-image alt template', async () => {
+  const f = fixture();
+  f.shell = f.shell.replace('<img src="img/p/pg1.jpg" alt="Page 1">', '');
+  const [r] = await assess({...f, pieces: ['p001']});
+  assert.equal(r.ready, false);
+  const b = r.blockers.find(b => b.name === 'alt_text');
+  assert.match(b.detail, /no page-image alt template/);
+  assert.match(b.advice, /alt label/);
+});
+
+test('note_anchors blocks on an anchor to a line that is not in the version', async () => {
+  const f = fixture();
+  f.db.notes = {n1: {kind: 'footnote', anchor: {pieceId: 'p001', versionId: 'v0', lineId: 'pg1-0-9'}}};
+  const [r] = await assess({...f, pieces: ['p001']});
+  assert.equal(r.ready, false);
+  const b = r.blockers.find(b => b.name === 'note_anchors');
+  assert.match(b.detail, /unresolvable: pg1-0-9/);
+  assert.match(b.advice, /Rebind the note anchor/);
+});
+
+test('note_anchors passes when every anchor resolves, and ignores other pieces', async () => {
+  const f = fixture();
+  f.db.notes = {
+    n1: {kind: 'footnote', anchor: {pieceId: 'p001', versionId: 'v0', lineId: 'pg1-0-0'}},
+    n2: {kind: 'reflection', anchor: {pieceId: 'p002', versionId: 'v1', lineId: 'pg2-0-9'}},
+    n3: {kind: 'research-dossier', text: 'no anchor on this one'},
+  };
+  const [r] = await assess({...f, pieces: ['p001']});
+  assert.equal(r.ready, true);
+});
+
+test('links blocks on a malformed URL in the published text and passes a valid one', async () => {
+  const setLine = (f, text) => {
+    f.source.j.pages[0].B[0].L[0] = text;
+    f.source.review.pages[0].blocks[0].lines[0].tx = text;
+    f.db.reviews['pg1-0-0'].original = text;
+  };
+  const bad = fixture();
+  setLine(bad, 'see https://?x for the source');
+  const [rb] = await assess({...bad, pieces: ['p001']});
+  assert.equal(rb.ready, false);
+  const b = rb.blockers.find(b => b.name === 'links');
+  assert.match(b.detail, /invalid: https:\/\/\?x/);
+  assert.match(b.advice, /well-formed http/);
+  const good = fixture();
+  setLine(good, 'see https://example.com/notes for the source');
+  const [rg] = await assess({...good, pieces: ['p001']});
+  assert.equal(rg.ready, true);
+});
