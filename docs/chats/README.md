@@ -16,6 +16,7 @@ Conventions
 
 | Date | Chat | Status |
 |---|---|---|
+| 2026-11-25 | [Witness chronology and Round 1 projection integration](2026-11-25-witness-chronology-integration.md) | Stage 3 chronology builder and metadata-free Round 1 projection helper added with unit tests; matcher gate re-verified; live harvest and link confirmation still author-gated. |
 | 2026-11-07 | [Variorum and Builder](2026-11-07-variorum-builder.md) | Implemented and locally verified; housekeeping #143 repairs the historical timeout fixture. |
 | 2026-11-07 | [Repository housekeeping](2026-11-07-repository-housekeeping.md) | Merged and cleaned both repositories; runnable checks pass; hosted Actions remains billing-blocked. |
 | 2026-11-07 | [Playground](2026-11-07-playground.md) | Playground at /playground in the Studio, behind Access; claude.ai artifacts kept natively; shared design principles recorded. |

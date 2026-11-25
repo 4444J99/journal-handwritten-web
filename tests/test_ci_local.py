@@ -181,6 +181,36 @@ class InterpreterAndPreflight(unittest.TestCase):
             detail = json.loads(receipt.read_text())["suites"][0]["detail"]
             self.assertEqual(detail, "P3=" + os.path.realpath(sys.executable))
 
+    def test_pyvenv_cfg_prepends_bin_dir_when_invoked_with_same_venv_python(self):
+        import venv
+
+        with tempfile.TemporaryDirectory() as base:
+            repo = make_repo(
+                base,
+                "import shutil\nfrom pathlib import Path\nprint('P3DIR=' + str(Path(shutil.which('python3')).parent.resolve()))\n",
+            )
+            venv.EnvBuilder(with_pip=False).create(repo / ".venv")
+            venv_python = str(repo / ".venv" / "bin" / "python")
+
+            decoy_bin = Path(base) / "decoy_bin"
+            decoy_bin.mkdir()
+            decoy_py3 = decoy_bin / "python3"
+            decoy_py3.write_text("#!/bin/sh\nexit 1\n")
+            decoy_py3.chmod(0o755)
+
+            env = dict(os.environ, PATH=f"{decoy_bin}{os.pathsep}{os.environ.get('PATH', '')}")
+            env.pop("VIRTUAL_ENV", None)
+            receipt = Path(base) / "r.json"
+            p = subprocess.run(
+                [venv_python, str(TOOLS / "ci_local.py"), "--root", str(repo), "--only", "check", "--json", str(receipt)],
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+            detail = json.loads(receipt.read_text())["suites"][0]["detail"]
+            self.assertEqual(detail, f"P3DIR={(repo / '.venv' / 'bin').resolve()}")
+
     def test_without_a_venv_the_running_interpreter_is_used(self):
         with tempfile.TemporaryDirectory() as base:
             repo = make_repo(base, "")
