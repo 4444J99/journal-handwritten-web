@@ -142,6 +142,97 @@ class ScoringBehaviorTests(unittest.TestCase):
         if unrelated:
             self.assertLess(unrelated[0]["score"], 0.40)
 
+    def test_unrelated_stopwords_and_english_prose_stay_unmatched(self) -> None:
+        adversarial_probes = [
+            ("pure_stopwords_120w", ("the of a and in to you is are with for it that was were this be have not on my your " * 6).strip()),
+            ("pure_common_words_subset", "the of a and in to you is are with for it that was were this be have not on"),
+            ("medium_stopword_note_20w", "You are not supposed to be here in the middle of the night when all of us are asleep"),
+            ("natural_prose_stopwords", "In the morning I went to the store on a quiet street with all of my friends and you were there in the back of the room talking to a stranger about the way things are supposed to be when a day passes without any real news from the city or the coast."),
+            ("meeting_note_prose", "Had a long meeting with the team today about the project schedule and all of the things we need to finish before the end of the month. We are not sure if the client will be ready for the next release, so we should check in with them tomorrow morning and see how they are doing."),
+            ("diary_prose_unrelated", "I walked down to the bakery after breakfast to pick up some sourdough bread and a small jar of apricot jam. The weather was surprisingly warm for November and several neighbors were sitting outside on the porch reading newspapers and drinking tea while dogs chased leaves across the lawn."),
+            ("tech_todo_note", "Remember to update the nginx configuration file on the staging server, restart the postgres database service, rotate the expired TLS certificate before Friday, and verify that all background worker queues drain cleanly after deployment."),
+            ("short_stopword_note_10w", "I am going to the store for a bit"),
+            ("prose_hitting_p060_partial", "Thinking about the architecture of a whole system when you are designing interfaces from scratch in the morning with a cup of coffee and no clear requirements from anyone on the team yet."),
+            ("prose_hitting_p117_partial", "During the long review session we noticed that all the reports are partial and none of them explain why the shipment was delayed at the border last week."),
+            ("prose_hitting_p121_partial", "People always say you are what you eat when they want to give unsolicited nutrition advice at dinner parties."),
+            ("hitting_p060_exact_words_in_long_prose", "When taking high resolution screenshots on an external monitor you often forget that individual dots are merely pixels of a whole display surface and scaling changes everything you see on the glass panel."),
+            ("hitting_p117_exact_words_in_long_prose", "When you read the news carefully you realize that all perspectives are partial and nobody has the complete picture of what happened during the negotiations last winter in Geneva or Vienna."),
+            ("hitting_p068_short_ver_in_long_prose", "After sorting through three boxes of old tax paperwork on Tuesday afternoon I decided all day headlong i plunged into cleaning out the garage before dark."),
+        ]
+        for label, text in adversarial_probes:
+            cands = mw.score_query(text, self.corpus)
+            bucket = mw.classify_bucket(cands)
+            self.assertEqual(bucket, "unmatched", f"{label} misclassified as {bucket}: {cands}")
+            if cands:
+                self.assertLess(cands[0]["score"], 0.40, f"{label} exceeded 0.40: {cands}")
+
+    def test_ocr_corruptions_excerpts_and_self_retrieval_recall(self) -> None:
+        # 1. Edge OCR corruptions on 4-token p060 still rank p060 #1 above unmatched threshold
+        for noisy in ("Pixe1s 0f a wh01e", "pixelsof a whole", "Pix-\nels of awhole"):
+            cands = mw.score_query(noisy, self.corpus)
+            self.assertEqual(cands[0]["piece_id"], "p060", f"OCR variant {noisy!r}: {cands}")
+            self.assertGreaterEqual(cands[0]["score"], 0.40, f"OCR variant {noisy!r}: {cands}")
+
+        # 2. Intra-word [[ins: un]]finished on p003 & [[struck:...]] on p001
+        cands_p003 = mw.score_query("Against the Frame of a home unfinished", self.corpus)
+        self.assertEqual(cands_p003[0]["piece_id"], "p003")
+        self.assertEqual(mw.classify_bucket(cands_p003), "high_confidence")
+
+        cands_p001 = mw.score_query("Dying trees from seeds you've sown", self.corpus)
+        self.assertEqual(cands_p001[0]["piece_id"], "p001")
+        self.assertEqual(mw.classify_bucket(cands_p001), "high_confidence")
+
+        # 3. Multi-page head/middle/tail excerpts on p020 and p099
+        for pid in ("p020", "p099"):
+            ver = [v for v in self.corpus.versions if v.piece_id == pid][0]
+            toks = ver.clean_tokens
+            mid_idx = len(toks) // 2
+            for excerpt in (toks[:25], toks[mid_idx - 12 : mid_idx + 13], toks[-25:]):
+                cands = mw.score_query(" ".join(excerpt), self.corpus)
+                self.assertEqual(cands[0]["piece_id"], pid)
+                self.assertEqual(mw.classify_bucket(cands), "high_confidence")
+
+        # 4. All 156 versions self-retrieve #1 with high_confidence and unique piece_ids
+        for ver in self.corpus.versions:
+            cands = mw.score_query(" ".join(ver.clean_tokens), self.corpus)
+            self.assertEqual(cands[0]["piece_id"], ver.piece_id, f"self-retrieval failed for {ver.version_id}")
+            self.assertEqual(mw.classify_bucket(cands), "high_confidence", f"self-retrieval bucket for {ver.version_id}: {cands}")
+            self.assertEqual(len({c["piece_id"] for c in cands}), len(cands))
+
+    def test_shared_surface_full_pages_and_leaked_lines(self) -> None:
+        jdata = json.loads(J_JSON.read_text(encoding="utf-8"))
+        pages_by_id = {p["id"]: p for p in jdata["pages"]}
+
+        def _page_text(page_id: str) -> str:
+            lines: list[str] = []
+            for blk in pages_by_id[page_id]["B"]:
+                if blk.get("t") == 4:
+                    continue
+                for raw in blk.get("L", []):
+                    c, _ = mw.clean_and_auth_text(raw)
+                    if c:
+                        lines.append(c)
+            return " ".join(lines)
+
+        # Full-page diary46 (7 pieces) and diary62a (p001 + p126) both remain ambiguous
+        cands_46 = mw.score_query(_page_text("diary46"), self.corpus)
+        self.assertEqual(mw.classify_bucket(cands_46), "ambiguous", f"diary46: {cands_46}")
+        self.assertTrue({c["piece_id"] for c in cands_46} <= {f"p08{i}" for i in range(1, 8)})
+
+        cands_62a = mw.score_query(_page_text("diary62a"), self.corpus)
+        self.assertEqual(mw.classify_bucket(cands_62a), "ambiguous", f"diary62a: {cands_62a}")
+        self.assertEqual({cands_62a[0]["piece_id"], cands_62a[1]["piece_id"]}, {"p001", "p126"})
+
+        # Leaked line from p081 into p082 remains ambiguous
+        leaked_82 = mw.score_query(
+            "every day depression in a beautiful dress\n"
+            "this is just a signal in my head\n"
+            "watch the machinery crank in my head",
+            self.corpus,
+        )
+        self.assertEqual(mw.classify_bucket(leaked_82), "ambiguous", f"leaked_82: {leaked_82}")
+        self.assertEqual(leaked_82[0]["piece_id"], "p082")
+
 
 class DefensiveLoadingAndOcrHookTests(unittest.TestCase):
     def test_fails_when_both_witness_files_missing(self) -> None:
@@ -541,6 +632,171 @@ class RerunPreservationAndPrivacyTests(unittest.TestCase):
                 self.assertNotEqual(rc, 0)
                 self.assertIn("git working tree", err)
                 self.assertFalse(bad_report.exists())
+
+    def test_default_review_report_refuses_when_intake_dir_inside_git_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_dir = Path(tmp) / "git_repo"
+            intake = repo_dir / "intake"
+            intake.mkdir(parents=True)
+            (repo_dir / ".git").mkdir()
+            (intake / "photo_witnesses.json").write_text("[]", encoding="utf-8")
+            out_path = Path(tmp) / "witness_links.json"
+
+            rc, _, err = _run_cli(
+                ["--intake-dir", str(intake), "--out", str(out_path), "--j-json", str(J_JSON)]
+            )
+            self.assertEqual(rc, 2)
+            self.assertIn("git working tree", err)
+            self.assertFalse((intake / "witness_review_report.md").exists())
+            self.assertFalse(out_path.exists())
+
+    def test_nonzero_ocr_cmd_exits_1_and_leaves_out_untouched(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            intake = Path(tmp) / "intake"
+            intake.mkdir()
+            (intake / "photo_witnesses.json").write_text(
+                json.dumps([{"photo_uuid": "FAIL-OCR-1", "witnessed_at": "2015-04-03T08:00:00Z"}]),
+                encoding="utf-8",
+            )
+            out_path = Path(tmp) / "witness_links.json"
+            sentinel = '{"schema":"versforms.witness-links.v1","photo_links":[],"note_links":[]}\n'
+            out_path.write_text(sentinel, encoding="utf-8")
+
+            rc, _, err = _run_cli(
+                [
+                    "--intake-dir",
+                    str(intake),
+                    "--out",
+                    str(out_path),
+                    "--j-json",
+                    str(J_JSON),
+                    "--run-ocr",
+                    "--ocr-cmd",
+                    f"{sys.executable} -c 'import sys; sys.exit(7)'",
+                ]
+            )
+            self.assertEqual(rc, 1)
+            self.assertIn("failed with exit 7", err)
+            self.assertEqual(out_path.read_text(encoding="utf-8"), sentinel)
+
+    def test_reviewed_entry_refreshes_candidates_when_sha256_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            intake = Path(tmp) / "intake"
+            intake.mkdir()
+            out_path = Path(tmp) / "witness_links.json"
+            (intake / "photo_witnesses.json").write_text(
+                json.dumps(
+                    [
+                        {
+                            "photo_uuid": "REV-PHOTO-1",
+                            "witnessed_at": "2015-04-10T10:00:00Z",
+                            "photo_sha256": "sha256:old_photo",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (intake / "ocr_cache.json").write_text(
+                json.dumps({"REV-PHOTO-1": {"text": "pixels of a whole"}}),
+                encoding="utf-8",
+            )
+            (intake / "ios_notes.json").write_text(
+                json.dumps(
+                    [
+                        {
+                            "note_id": "rev-note-1",
+                            "created_at": "2015-04-10T11:00:00Z",
+                            "modified_at": "2015-04-10T11:05:00Z",
+                            "plaintext": "pixels of a whole",
+                            "text_sha256": "sha256:old_note",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            rc, _, stderr = _run_cli(
+                ["--intake-dir", str(intake), "--out", str(out_path), "--j-json", str(J_JSON)]
+            )
+            self.assertEqual(rc, 0, stderr)
+            data = json.loads(out_path.read_text(encoding="utf-8"))
+            data["photo_links"][0]["status"] = "confirmed"
+            data["photo_links"][0]["confirmed_piece_id"] = "p060"
+            data["photo_links"][0]["textual_state"] = "matches_scan"
+            data["note_links"][0]["status"] = "confirmed"
+            data["note_links"][0]["confirmed_piece_id"] = "p060"
+            data["note_links"][0]["relation"] = "parallel_draft"
+            out_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+            # Change photo_sha256 & text_sha256 with updated OCR/note text pointing to p117
+            (intake / "photo_witnesses.json").write_text(
+                json.dumps(
+                    [
+                        {
+                            "photo_uuid": "REV-PHOTO-1",
+                            "witnessed_at": "2015-04-10T10:00:00Z",
+                            "photo_sha256": "sha256:new_photo",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (intake / "ocr_cache.json").write_text(
+                json.dumps({"REV-PHOTO-1": {"text": "all perspectives are partial"}}),
+                encoding="utf-8",
+            )
+            (intake / "ios_notes.json").write_text(
+                json.dumps(
+                    [
+                        {
+                            "note_id": "rev-note-1",
+                            "created_at": "2015-04-10T11:00:00Z",
+                            "modified_at": "2015-04-10T12:00:00Z",
+                            "plaintext": "all perspectives are partial",
+                            "text_sha256": "sha256:new_note",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            rc, _, stderr = _run_cli(
+                ["--intake-dir", str(intake), "--out", str(out_path), "--j-json", str(J_JSON)]
+            )
+            self.assertEqual(rc, 0, stderr)
+            refreshed = json.loads(out_path.read_text(encoding="utf-8"))
+            p0 = refreshed["photo_links"][0]
+            n0 = refreshed["note_links"][0]
+            self.assertEqual(p0["status"], "confirmed")
+            self.assertEqual(p0["confirmed_piece_id"], "p060")
+            self.assertEqual(p0["textual_state"], "matches_scan")
+            self.assertEqual(p0["photo_sha256"], "sha256:new_photo")
+            self.assertEqual(p0["candidates"][0]["piece_id"], "p117")
+            self.assertEqual(n0["status"], "confirmed")
+            self.assertEqual(n0["confirmed_piece_id"], "p060")
+            self.assertEqual(n0["relation"], "parallel_draft")
+            self.assertEqual(n0["text_sha256"], "sha256:new_note")
+            self.assertEqual(n0["candidates"][0]["piece_id"], "p117")
+
+    def test_malformed_candidate_score_in_existing_out_exits_2(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            intake = Path(tmp) / "intake"
+            intake.mkdir()
+            (intake / "photo_witnesses.json").write_text("[]", encoding="utf-8")
+            out_path = Path(tmp) / "witness_links.json"
+
+            for bad_score in ('"bad_score"', "NaN", "true"):
+                payload = (
+                    '{"schema":"versforms.witness-links.v1","photo_links":[{"photo_uuid":"U1",'
+                    '"status":"confirmed","candidates":[{"piece_id":"p060","score":'
+                    + bad_score
+                    + ',"token_overlap":1.0,"fuzzy_score":1.0}]}],"note_links":[]}'
+                )
+                out_path.write_text(payload, encoding="utf-8")
+                rc, _, err = _run_cli(
+                    ["--intake-dir", str(intake), "--out", str(out_path), "--j-json", str(J_JSON)]
+                )
+                self.assertEqual(rc, 2, f"Expected exit 2 for score={bad_score}: {err}")
+                self.assertIn("failed to load inputs", err)
+                self.assertEqual(out_path.read_text(encoding="utf-8"), payload)
 
 
 if __name__ == "__main__":

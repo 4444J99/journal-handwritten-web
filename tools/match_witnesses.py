@@ -97,12 +97,15 @@ class VersionIndex:
     auth_tokens: tuple[str, ...]
     auth_set: frozenset[str]
     preview: str
+    clean_content: str = ""
+    auth_content: str = ""
 
 
 @dataclass(frozen=True)
 class CorpusIndex:
     versions: tuple[VersionIndex, ...]
     idf: dict[str, float]
+    df: dict[str, int]
     pieces_count: int
     versions_count: int
     piece_previews: dict[str, str]
@@ -278,53 +281,172 @@ def build_corpus_index(j_json_path: Path) -> CorpusIndex:
     for toks in piece_tokens_map.values():
         for tok in toks:
             df[tok] = df.get(tok, 0) + 1
-    idf = {tok: math.log((n_pieces + 1) / (count + 1)) + 1.0 for tok, count in df.items()}
+
+    idf = {tok: _compute_token_weight(count, n_pieces) for tok, count in df.items()}
+    indexed_versions = [
+        VersionIndex(
+            piece_id=v.piece_id,
+            version_id=v.version_id,
+            clean_norm=v.clean_norm,
+            clean_tokens=v.clean_tokens,
+            clean_set=v.clean_set,
+            clean_content=_content_string(v.clean_tokens, df, n_pieces),
+            auth_norm=v.auth_norm,
+            auth_tokens=v.auth_tokens,
+            auth_set=v.auth_set,
+            auth_content=_content_string(v.auth_tokens, df, n_pieces),
+            preview=v.preview,
+        )
+        for v in versions
+    ]
 
     return CorpusIndex(
-        versions=tuple(versions),
+        versions=tuple(indexed_versions),
         idf=idf,
+        df=df,
         pieces_count=n_pieces,
-        versions_count=len(versions),
+        versions_count=len(indexed_versions),
         piece_previews=piece_previews,
     )
+
+
+def _compute_token_weight(doc_freq: int, n_pieces: int) -> float:
+    """Corpus-derived IDF weight with steep high-DF stopword damping for N >= 10."""
+    if n_pieces < 10:
+        return math.log((n_pieces + 1) / (doc_freq + 1)) + 1.0
+    max_raw = math.log((n_pieces + 1) / 2.0)
+    if doc_freq <= 0:
+        # Moderate OOV weight: prevents unrelated prose OOV words from matching
+        # without unduly crushing queries that have 1-2 OCR character typos.
+        return (0.50 * max_raw) ** 2
+    raw = math.log((n_pieces + 1) / (doc_freq + 1))
+    damp = max(0.01, 1.0 - (doc_freq / (0.22 * n_pieces)))
+    return (raw ** 2) * damp
+
+
+def _token_specificity(tok: str, df: dict[str, int], n_pieces: int) -> float:
+    """Normalized [0, 1] rarity specificity for corpus tokens (0 for high-DF stopwords)."""
+    if n_pieces < 10:
+        return 1.0
+    doc_freq = df.get(tok, 0)
+    if doc_freq <= 0:
+        return 0.0
+    max_raw = math.log((n_pieces + 1) / 2.0)
+    ratio = math.log((n_pieces + 1) / (doc_freq + 1)) / max_raw
+    return max(0.0, (ratio - 0.45) / 0.55)
+
+
+def _content_string(tokens: tuple[str, ...] | list[str], df: dict[str, int], n_pieces: int) -> str:
+    """Join tokens excluding ubiquitous corpus stopwords (df/N >= 0.15 when N >= 10)."""
+    if n_pieces < 10:
+        return " ".join(tokens)
+    return " ".join(t for t in tokens if (df.get(t, 0) / n_pieces) < 0.15)
 
 
 def _score_variant(
     q_norm: str,
     q_tokens: list[str],
     q_set: frozenset[str],
+    q_content: str,
     d_norm: str,
     d_tokens: tuple[str, ...],
     d_set: frozenset[str],
+    d_content: str,
     idf: dict[str, float],
+    df: dict[str, int],
+    n_pieces: int,
 ) -> tuple[float, float, float]:
     if not q_tokens or not d_tokens:
         return 0.0, 0.0, 0.0
 
+    oov_weight = _compute_token_weight(0, n_pieces)
     inter = q_set & d_set
-    if not inter:
-        token_overlap = 0.0
-    else:
-        w_inter = sum(idf.get(t, 1.0) for t in inter)
-        w_q = sum(idf.get(t, 1.0) for t in q_set)
-        w_d = sum(idf.get(t, 1.0) for t in d_set)
-        dice = (2.0 * w_inter) / (w_q + w_d) if (w_q + w_d) > 0.0 else 0.0
-        conf = min(1.0, len(inter) / 4.0)
-        contain = conf * 0.85 * max(w_inter / w_q, w_inter / w_d)
-        token_overlap = min(1.0, max(dice, contain))
+    len_q = len(q_tokens)
+    len_d = len(d_tokens)
+    len_ratio = min(len_q, len_d) / max(len_q, len_d)
 
+    rt = fuzz.ratio(q_norm, d_norm) / 100.0
+    t_sort = fuzz.token_sort_ratio(q_norm, d_norm) / 100.0
     wr = fuzz.WRatio(q_norm, d_norm) / 100.0
     tsr = fuzz.token_set_ratio(q_norm, d_norm) / 100.0
     pr = fuzz.partial_ratio(q_norm, d_norm) / 100.0
-    rt = fuzz.ratio(q_norm, d_norm) / 100.0
 
-    min_len = min(len(q_tokens), len(d_tokens))
+    if q_content and d_content:
+        c_tsr = fuzz.token_set_ratio(q_content, d_content) / 100.0
+        c_rt = fuzz.ratio(q_content, d_content) / 100.0
+        c_pr = fuzz.partial_ratio(q_content, d_content) / 100.0
+    elif not q_content and not d_content:
+        c_tsr = c_rt = c_pr = rt
+    else:
+        c_tsr = c_rt = c_pr = 0.0
+
+    if not inter:
+        token_overlap = 0.0
+        spec_mass = 0.0
+        spec_gate = 0.0
+        d_in_q_gate = 0.0
+    else:
+        w_inter = sum(idf.get(t, oov_weight) for t in inter)
+        w_q = sum(idf.get(t, oov_weight) for t in q_set)
+        w_d = sum(idf.get(t, oov_weight) for t in d_set)
+        dice = (2.0 * w_inter) / (w_q + w_d) if (w_q + w_d) > 0.0 else 0.0
+
+        spec_mass = sum(_token_specificity(t, df, n_pieces) for t in inter)
+        spec_gate = min(1.0, spec_mass / 0.75) if n_pieces >= 10 else 1.0
+
+        # Excerpt containment rewards q inside a longer d; when len_q > len_d,
+        # only reward d-inside-q when d is a substantial verbatim piece (e.g. shared surface),
+        # never a tiny 4-5 token phrase inside unrelated long prose.
+        asym_q_in_d = min(1.0, (len_d / len_q) ** 1.5) if len_q > len_d else 1.0
+        conf = min(1.0, len(inter) / 3.0)
+        q_cov = w_inter / w_q if w_q > 0.0 else 0.0
+        d_cov = w_inter / w_d if w_d > 0.0 else 0.0
+        if len_q > len_d and n_pieces >= 10 and q_content and d_content:
+            d_in_q_mass = min(1.0, max(0.0, (spec_mass - 3.0) / 3.0))
+            d_in_q_cov = min(1.0, max(0.0, (d_cov - 0.45) / 0.40))
+            d_in_q_align = min(1.0, max(0.0, (c_pr - 0.55) / 0.40))
+            d_in_q_gate = d_in_q_mass * d_in_q_cov * d_in_q_align
+        else:
+            d_in_q_gate = 0.0
+        contain = conf * 0.92 * max(q_cov * asym_q_in_d, d_cov * d_in_q_gate) * spec_gate
+
+        dice_gated = dice * (0.25 + 0.75 * spec_gate)
+        token_overlap = min(1.0, max(dice_gated, contain))
+
+    if q_content and d_content:
+        c_asym = (len_d / len_q) ** 1.35 if len_q > len_d else 1.0
+        content_align = max(c_rt, (0.45 * c_tsr + 0.55 * c_pr) * max(c_asym, d_in_q_gate))
+    elif not q_content and not d_content:
+        content_align = rt
+    else:
+        content_align = 0.0
+
+    if n_pieces >= 10:
+        align_gate = min(1.0, (0.55 if len_q > len_d else 0.65) * content_align + 0.45 * token_overlap + 0.10 * rt)
+        if len_q > len_d:
+            sub_gate = min(max((len_d / len_q) ** 1.35, d_in_q_gate), align_gate) * spec_gate
+        else:
+            sub_gate = align_gate * spec_gate
+    else:
+        sub_gate = (len_d / len_q) if len_q > len_d else 1.0
+
+    full_sim = max(rt, 0.70 * rt + 0.30 * t_sort) * (len_ratio ** 0.5)
+    if n_pieces >= 10:
+        if not q_content and len_q > 6:
+            full_sim *= 0.30
+        elif spec_mass < 0.30 and len_q >= 7 and rt < 0.70:
+            full_sim *= 0.75
+        elif token_overlap < 0.05 and content_align < 0.45 and rt < 0.65:
+            full_sim *= 0.70
+
+    min_len = min(len_q, len_d)
     if min_len >= 4:
-        fuzzy_score = 0.50 * wr + 0.30 * tsr + 0.20 * pr
+        sub_sim = (0.45 * wr + 0.30 * tsr + 0.25 * pr) * sub_gate
     else:
         damping = min_len / 4.0
-        fuzzy_score = 0.55 * wr + 0.25 * rt + 0.20 * damping * max(tsr, pr)
+        sub_sim = damping * (0.50 * wr + 0.25 * tsr + 0.25 * pr) * sub_gate
 
+    fuzzy_score = max(full_sim, sub_sim)
     score = 0.45 * token_overlap + 0.55 * fuzzy_score
     return score, token_overlap, fuzzy_score
 
@@ -339,16 +461,37 @@ def score_query(query_text: str, corpus: CorpusIndex, top_k: int = 3) -> list[di
     if not q_tokens:
         return []
     q_set = frozenset(q_tokens)
+    q_content = _content_string(q_tokens, corpus.df, corpus.pieces_count)
 
     best_by_piece: dict[str, tuple[float, float, float]] = {}
     for ver in corpus.versions:
         c_scores = _score_variant(
-            q_norm, q_tokens, q_set, ver.clean_norm, ver.clean_tokens, ver.clean_set, corpus.idf
+            q_norm,
+            q_tokens,
+            q_set,
+            q_content,
+            ver.clean_norm,
+            ver.clean_tokens,
+            ver.clean_set,
+            ver.clean_content,
+            corpus.idf,
+            corpus.df,
+            corpus.pieces_count,
         )
         best_v = c_scores
         if ver.auth_norm != ver.clean_norm:
             a_scores = _score_variant(
-                q_norm, q_tokens, q_set, ver.auth_norm, ver.auth_tokens, ver.auth_set, corpus.idf
+                q_norm,
+                q_tokens,
+                q_set,
+                q_content,
+                ver.auth_norm,
+                ver.auth_tokens,
+                ver.auth_set,
+                ver.auth_content,
+                corpus.idf,
+                corpus.df,
+                corpus.pieces_count,
             )
             if a_scores > best_v:
                 best_v = a_scores
@@ -536,19 +679,33 @@ def run_external_ocr(ocr_cmd: str, intake_dir: Path, ocr_cache_path: Path) -> No
         raise RuntimeError(f"external OCR command failed with exit {proc.returncode}: {detail}")
 
 
+def _finite_float(value: Any, field: str) -> float:
+    if isinstance(value, bool):
+        raise ValueError(f"candidate {field} must be numeric, got bool")
+    try:
+        num = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"candidate {field} must be numeric, got {value!r}") from exc
+    if not math.isfinite(num):
+        raise ValueError(f"candidate {field} must be finite, got {value!r}")
+    return num
+
+
 def _sanitize_candidates(raw_candidates: Any) -> list[dict[str, Any]]:
-    if not isinstance(raw_candidates, list):
+    if raw_candidates is None:
         return []
+    if not isinstance(raw_candidates, list):
+        raise ValueError("candidates must be a JSON list")
     cleaned: list[dict[str, Any]] = []
-    for cand in raw_candidates:
+    for idx, cand in enumerate(raw_candidates):
         if not isinstance(cand, dict):
-            continue
+            raise ValueError(f"candidates[{idx}] must be a JSON object")
         cleaned.append(
             {
                 "piece_id": str(cand.get("piece_id") or ""),
-                "score": round(float(cand.get("score", 0.0)), 4),
-                "token_overlap": round(float(cand.get("token_overlap", 0.0)), 4),
-                "fuzzy_score": round(float(cand.get("fuzzy_score", 0.0)), 4),
+                "score": round(_finite_float(cand.get("score", 0.0), "score"), 4),
+                "token_overlap": round(_finite_float(cand.get("token_overlap", 0.0), "token_overlap"), 4),
+                "fuzzy_score": round(_finite_float(cand.get("fuzzy_score", 0.0), "fuzzy_score"), 4),
             }
         )
     return cleaned
@@ -662,10 +819,12 @@ def load_existing_links(out_path: Path) -> tuple[dict[str, dict[str, Any]], dict
     photos_by_uuid: dict[str, dict[str, Any]] = {}
     for entry in photo_list:
         if isinstance(entry, dict) and isinstance(entry.get("photo_uuid"), str):
+            _sanitize_candidates(entry.get("candidates"))
             photos_by_uuid[entry["photo_uuid"]] = entry
     notes_by_id: dict[str, dict[str, Any]] = {}
     for entry in note_list:
         if isinstance(entry, dict) and isinstance(entry.get("note_id"), str):
+            _sanitize_candidates(entry.get("candidates"))
             notes_by_id[entry["note_id"]] = entry
     return photos_by_uuid, notes_by_id
 
