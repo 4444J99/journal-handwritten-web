@@ -1,7 +1,7 @@
 {
   "generated_from": {
-    "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-    "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+    "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+    "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
     "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
   },
   "pieces": [
@@ -311,8 +311,8 @@
       "release_number": 1,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The walls",
@@ -434,8 +434,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "She never knew a good thing",
@@ -580,8 +580,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "A Flower is a Flower, or",
@@ -748,8 +748,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Even without the slightest intent, or",
@@ -923,8 +923,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "What is a road",
@@ -1020,8 +1020,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Time drips",
@@ -1186,8 +1186,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "How are you not",
@@ -1401,8 +1401,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The trouble with",
@@ -1545,8 +1545,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I walk through these streets",
@@ -1632,8 +1632,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "It's always been easiest to fall —",
@@ -1788,8 +1788,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "They always ask me:",
@@ -2072,8 +2072,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "My hands to the stone",
@@ -2264,8 +2264,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Your pose is sporadic,",
@@ -2408,8 +2408,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Quite the imagination,",
@@ -2676,8 +2676,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "There are certain questions",
@@ -2856,8 +2856,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Some days I can't write",
@@ -3002,8 +3002,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Is it even worth it to try and skip",
@@ -3176,8 +3176,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "A few rules on how to disappear.",
@@ -3296,8 +3296,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "So we thought it, and so it was.",
@@ -3871,8 +3871,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I've spent quite a few seasons in Hell...",
@@ -4047,8 +4047,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The Earth provides",
@@ -4240,8 +4240,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Why on some mornings do I",
@@ -4321,8 +4321,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "If it heals",
@@ -4503,8 +4503,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Those in \"power\" hold",
@@ -4888,8 +4888,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The eager on lookers",
@@ -5000,8 +5000,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Written upon",
@@ -5159,8 +5159,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I rang you yesterday,",
@@ -5460,8 +5460,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "She had a history",
@@ -5698,8 +5698,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "To Collapse under the weight of your",
@@ -5831,8 +5831,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "My mind is working double time",
@@ -5881,8 +5881,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "He never cried when it rained,",
@@ -5968,8 +5968,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "All of the eyes watched",
@@ -6088,8 +6088,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I must erect a home large enough",
@@ -6308,8 +6308,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "You Never Forget Your First:",
@@ -6488,8 +6488,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Whats for dinner?",
@@ -6638,8 +6638,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I broke a case of wine,",
@@ -6777,8 +6777,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "This is the game we play:",
@@ -6922,8 +6922,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I need to be more prolific.",
@@ -7367,8 +7367,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I don't like it when",
@@ -7455,8 +7455,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Nothing quenches my thirst",
@@ -7617,8 +7617,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "My heart feels like its breaking —",
@@ -7797,8 +7797,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Is my wound a front door to you?",
@@ -8013,8 +8013,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Does our dust ever",
@@ -8140,8 +8140,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Just when you thought that She",
@@ -8312,8 +8312,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "It still walks and talks,",
@@ -8406,8 +8406,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I wish God would send me a Word —",
@@ -8615,8 +8615,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "This is the part of the story",
@@ -8922,8 +8922,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Unless Accompanied",
@@ -9121,8 +9121,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "There is more than to be believed",
@@ -9165,8 +9165,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "She barks up a storm",
@@ -9215,8 +9215,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Life is a constant",
@@ -9454,8 +9454,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "It takes sometime for one's childhood",
@@ -9505,8 +9505,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "A writer who can only write",
@@ -9662,8 +9662,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I'm in love with my distractions",
@@ -9876,8 +9876,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "It can all disappear",
@@ -9927,8 +9927,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Keep Wide",
@@ -9984,8 +9984,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "A coin endlessly",
@@ -10041,8 +10041,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "What were those words you thought of?",
@@ -10086,8 +10086,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Through age we change",
@@ -10125,8 +10125,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Pixels of a whole",
@@ -10307,8 +10307,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Cough Cough",
@@ -10374,8 +10374,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Ego",
@@ -10483,8 +10483,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "No one will feel the same weight,",
@@ -10827,8 +10827,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "This maze / it knows",
@@ -10938,8 +10938,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "And I can't be",
@@ -11352,8 +11352,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "We've met before, haven't we?",
@@ -11416,8 +11416,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "She was",
@@ -11915,8 +11915,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "All day, headlong,",
@@ -11974,8 +11974,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Maximize pay",
@@ -12189,8 +12189,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "From go",
@@ -12238,8 +12238,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "pp. 37 Under the Volcano",
@@ -12376,8 +12376,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "As I sit under the blonde sky —",
@@ -12431,8 +12431,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "nothing is really going to change -",
@@ -12498,8 +12498,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Can you be",
@@ -12565,8 +12565,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "One thing",
@@ -12668,8 +12668,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Forced Progress",
@@ -12717,8 +12717,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "god with a lower-case 'g'",
@@ -12778,8 +12778,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "long speeches Libations",
@@ -12905,8 +12905,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "inward debate",
@@ -12998,8 +12998,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Son of Zeus",
@@ -13047,8 +13047,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "every day depression in a beautiful dress",
@@ -13102,8 +13102,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "this is just a signal in my head",
@@ -13169,8 +13169,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The sheets have been wrapped around your",
@@ -13230,8 +13230,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "You thought that this would make me human?",
@@ -13285,8 +13285,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "you don't create",
@@ -13364,8 +13364,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Entr'acte",
@@ -13419,8 +13419,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "this moment has never happened before",
@@ -13563,8 +13563,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "A Clockwork Orange",
@@ -13684,8 +13684,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "trochee = / U / U / U",
@@ -13757,8 +13757,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Homeric last-first (144)",
@@ -13860,8 +13860,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "not born for death",
@@ -13910,8 +13910,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The smell of flowers forever",
@@ -14004,8 +14004,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Odyssey pp. 241, 264, fight scene",
@@ -14094,8 +14094,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "choral odes",
@@ -14145,8 +14145,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "youre like a kitten",
@@ -14761,8 +14761,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Nothing shines quite as brightly,",
@@ -14842,8 +14842,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "distracted prophet",
@@ -14963,8 +14963,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Hello,",
@@ -15451,8 +15451,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Dare I say I don't quite believe",
@@ -15524,8 +15524,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I can't tell",
@@ -15663,8 +15663,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I can only stand myself in",
@@ -15761,8 +15761,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Different day. Different mirror.",
@@ -15851,8 +15851,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "700 BC Homer",
@@ -15929,8 +15929,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I bet",
@@ -16037,8 +16037,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Ride Your",
@@ -16097,8 +16097,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Trying to keep my head on",
@@ -16151,8 +16151,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Bastard in a basket",
@@ -16205,8 +16205,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "You can kill them by smiling",
@@ -16388,8 +16388,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Justice requires time travel",
@@ -16536,8 +16536,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "lovely limbs",
@@ -16606,8 +16606,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "you miss the moment",
@@ -16670,8 +16670,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Kiss & kill ME SWeetly",
@@ -16725,8 +16725,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Constantly living in dulusion",
@@ -16786,8 +16786,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I thought she'd look",
@@ -16853,8 +16853,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "• Short story in the form of",
@@ -16908,8 +16908,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "In order to change you must",
@@ -16957,8 +16957,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "All perspectives are partial",
@@ -17066,8 +17066,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "Learning is behavior change",
@@ -17234,8 +17234,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "The token / from your hand",
@@ -17279,8 +17279,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "I don't want to kiss",
@@ -17330,8 +17330,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "You are",
@@ -17387,8 +17387,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "are we:",
@@ -17595,8 +17595,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "She stepped over bounds,",
@@ -17923,8 +17923,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "why DO",
@@ -18104,8 +18104,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "In JUST",
@@ -18181,8 +18181,8 @@
       "release_number": null,
       "schema": "versforms.poem-record.v1",
       "sources": {
-        "site/data/j.json": "sha256:70124f9b8ec0a0749d64bbf15b2ea1a30eb5a4389bb2738076fff57ad9c94966",
-        "studio/data/notes-versions.json": "sha256:36572f6159cac530f83eae8dcda5e16e2cd1622a5357e5b202eb59a53293d32e",
+        "site/data/j.json": "sha256:52ffba25ae850374a25049bdca880a2c5c19b000d4adb3108ba523a78b7178e9",
+        "studio/data/notes-versions.json": "sha256:f2c8f0939e20bd8bfc84c08914ffaece334c94746e9aa3d02af4ee76e6f74fb5",
         "studio/data/review.json": "sha256:2787492e2bece7fe2e3a4c526c357b0904da9c97a465dabcd3eb137b79ec0e23"
       },
       "title": "MYTHOLOGIZED FACT",

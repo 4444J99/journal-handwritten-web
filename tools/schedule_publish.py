@@ -28,12 +28,17 @@ and writes nothing. With no due pieces, both forms exit 0 and publish nothing.
 Already-published memory and cadence. A due piece is skipped as
 "already-published" when it is in release/public.json, in the scheduler's own
 ledger release/schedule-log.json, or has a production exposure in the Studio
-release document. The ledger ({"published": {piece: date}}) is written after
-each real publish (never for --dry-run) and is what the one-per-week rule
-reads: at most one piece is attempted per run (the earliest-dated due piece
-that is not yet published; later ones are "deferred" and never skipped ahead of
-it), and none within 7 days of a recorded publish date. A catch-up after a
-missed week therefore publishes one piece, not several.
+release document. The ledger is a TRACKED file ({"published": {piece:
+{"due_date": ..., "published_on": ...}}}, empty at first): it is written after
+each real publish (never for --dry-run) and a publish run must commit it, or a
+fresh checkout forgets the one-per-week memory. due_date is the --due date the
+run was given; published_on is the actual run date (in the schedule's zone, UTC
+when none is recorded), which cannot be set by hand. The one-per-week rule
+reads published_on: at most one piece is attempted per run (the earliest-dated
+due piece that is not yet published; later ones are "deferred" and never
+skipped ahead of it), and none when the actual run date is within 7 days of a
+recorded published_on. A catch-up after a missed week therefore publishes one
+piece, not several, and back-dating --due does not reopen the window.
 
 Exit codes: 0 all due pieces were handled or skipped (published, listed,
 already-published, deferred); 1 a publish failed; 2 usage or schedule error;
@@ -88,18 +93,41 @@ def read_public_ids(root):
     return set(ids)
 
 
+def run_date(tz_name, now=None):
+    """The actual calendar date of this run (the date a publish really
+    happened), in the schedule's zone (UTC when none is recorded). Unlike --due,
+    it cannot be set from the command line."""
+    return today_in(tz_name or "UTC", now)
+
+
 def read_ledger(root):
-    """release/schedule-log.json -> {piece_id: 'YYYY-MM-DD'} (empty when absent)."""
+    """release/schedule-log.json -> {piece_id: {"due_date", "published_on"}}
+    (empty when absent or when it holds no entries).
+
+    The file is tracked in git: {"published": {piece_id: {"due_date":
+    'YYYY-MM-DD', "published_on": 'YYYY-MM-DD'}}}. due_date is the --due date
+    the run was given; published_on is the actual run date and is what the
+    one-per-week window reads. A legacy entry (a bare 'YYYY-MM-DD' string, from
+    before the two were recorded apart) reads as both."""
     path = Path(root) / LEDGER
     if not path.is_file():
         return {}
     data = json.loads(path.read_text(encoding="utf-8"))
     published = data.get("published") if isinstance(data, dict) else None
     if not isinstance(published, dict):
-        raise ValueError(f"{LEDGER} must be an object {{\"published\": {{piece_id: 'YYYY-MM-DD'}}}}")
-    for pid, date in published.items():
-        poem_record.parse_date(date, f"{LEDGER}: bad date for {pid}")
-    return dict(published)
+        raise ValueError(f"{LEDGER} must be an object {{\"published\": {{piece_id: {{\"due_date\", \"published_on\"}}}}}}")
+    out = {}
+    for pid, entry in published.items():
+        if isinstance(entry, str):
+            poem_record.parse_date(entry, f"{LEDGER}: bad date for {pid}")
+            out[pid] = {"due_date": entry, "published_on": entry}
+        elif isinstance(entry, dict) and set(entry) == {"due_date", "published_on"}:
+            for field in ("due_date", "published_on"):
+                poem_record.parse_date(entry[field], f"{LEDGER}: bad {field} for {pid}")
+            out[pid] = dict(entry)
+        else:
+            raise ValueError(f"{LEDGER}: entry for {pid} must be {{\"due_date\", \"published_on\"}}")
+    return out
 
 
 def write_ledger(root, ledger):
@@ -123,12 +151,14 @@ def production_exposure(record):
     return any(isinstance(e, dict) and e.get("target") == "production" for e in record.get("exposures") or [])
 
 
-def recent_publication(ledger, due_date):
-    """(piece, date) of a ledgered publish within WEEK_DAYS of due_date, else None."""
+def recent_publication(ledger, today):
+    """(piece, date) of a ledgered publish within WEEK_DAYS of `today`, the
+    actual run date, else None. The window reads the actual publish dates
+    (published_on), never the --due dates."""
     best = None
-    for pid, date in ledger.items():
-        d = poem_record.parse_date(date)
-        if abs((due_date - d).days) < WEEK_DAYS and (best is None or d > best[1]):
+    for pid, entry in ledger.items():
+        d = poem_record.parse_date(entry["published_on"])
+        if abs((today - d).days) < WEEK_DAYS and (best is None or d > best[1]):
             best = (pid, d)
     return best
 
@@ -248,7 +278,8 @@ def main(argv=None):
         ready, blockers = verdicts.get(pid, (False, ["not-assessed"]))
         entry = {"piece": pid, "publish_at": schedule[pid], "pool": record["pool"],
                  "ready": ready, "blockers": blockers, "action": None, "reason": None}
-        recent = recent_publication(ledger, poem_record.parse_date(due))
+        today = run_date(tz_name)
+        recent = recent_publication(ledger, poem_record.parse_date(today))
         if record["pool"] != "series":
             entry["action"], entry["reason"] = "refused", f"pool is {record['pool']} (the #65 gate: only Series publishes)"
         elif not ready:
@@ -277,7 +308,8 @@ def main(argv=None):
             else:
                 entry["action"], entry["reason"] = "published", "publish succeeded"
                 try:
-                    write_ledger(root, {**ledger, pid: due})
+                    write_ledger(root, {**ledger, pid: {"due_date": due, "published_on": today}})
+                    entry["reason"] = f"publish succeeded; commit {LEDGER} so the one-per-week memory survives a fresh checkout"
                 except OSError as e:
                     entry["action"] = "failed"
                     entry["reason"] = f"published, but {LEDGER} could not be written ({e}); record it by hand before the next run"

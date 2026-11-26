@@ -319,6 +319,7 @@ details.tn ul{margin:4px 0;padding-left:18px}
     <button role="tab" data-view="review" aria-selected="true">Review</button>
     <button role="tab" data-view="decisions" aria-selected="false">Decisions</button>
     <button role="tab" data-view="versions" aria-selected="false">New versions</button>
+    <button role="tab" data-view="cut" aria-selected="false">Cut</button>
     <button role="tab" data-view="release" aria-selected="false">Release</button>
     <button role="tab" data-view="search" aria-selected="false">Search</button>
   </nav>
@@ -332,6 +333,7 @@ details.tn ul{margin:4px 0;padding-left:18px}
   </section>
   <section id="v-decisions" class="view" hidden></section>
   <section id="v-versions" class="view" hidden></section>
+  <section id="v-cut" class="view" hidden></section>
   <section id="v-release" class="view" hidden></section>
   <section id="v-search" class="view" hidden>
     <div class="search-bar">
@@ -1074,6 +1076,10 @@ function renderDecisions() {
   root.append(h('div', { class: 'dsec' }, 'Release'));
   root.append(dcard('release-numbering', 'Release numbering', [], [['fixed', 'Fixed in advance'], ['as-posted', 'Assigned as each posts']]));
   root.append(dcard('participation', 'Participation', [], [['counts', 'Counts toward the 100'], ['around', 'Sits around it'], ['undecided', 'Undecided']]));
+  // JHW #30: the two offered questions from the Oct 27 review-feedback
+  // exchange. The cards record the author's answers; they do not decide them.
+  root.append(dcard('release-cadence', 'Release cadence', [], [['chronological', 'Chronological'], ['alternating', 'Alternating'], ['paired-10', 'Paired batches of 10']]));
+  root.append(dcard('release-reserve-count', 'Journal-reserve poems and the 100', [], [['counts', 'Counts toward the 100'], ['excluded', 'Does not count'], ['undecided', 'Undecided']]));
   updateDecisions();
 }
 
@@ -1254,6 +1260,96 @@ function renderVersionsList() {
   box.append(g);
 }
 
+/* ------------------------------------------------------------ cut (JHW #55) */
+// Cut tab: make a cut-up version from a piece's own lines. Shuffle is a
+// random reorder (Fisher-Yates); no language model anywhere in this path.
+// Saving writes a new version with method 'cut-up' and per-line src
+// provenance through the same versions collection the New-versions view
+// uses (write('versions', ...)). Own lines carry src null; a line drawn
+// from another piece would carry {piece, line} instead (see tools/cut_up.py).
+const CUT = { pieceId: null, order: [], struck: new Set(), msg: '', method: 'cut-up' };
+// Top version id per piece, from the derived notes-versions.json (same order
+// as j.json; the piece's `top` index into V, which is NOT always the last
+// record). Cached; a failed
+// fetch leaves sourceVersion null and the save still works — the field is
+// optional, used by the reader to list an erasure's dropped lines.
+let CUT_VERSIONS = null;
+async function cutTopVersionId(pieceId) {
+  if (CUT_VERSIONS === null) {
+    try { CUT_VERSIONS = await (await fetch('data/notes-versions.json')).json(); }
+    catch (e) { CUT_VERSIONS = {}; }
+  }
+  const rec = (CUT_VERSIONS.pieces || []).find(p => p.id === pieceId);
+  const vs = rec ? rec.V : null;
+  if (!vs || !vs.length) return null;
+  // `top` indexes V; the last entry is only the newest. Without a usable `top`
+  // (an older map) name nothing rather than guess the wrong version.
+  const v = Number.isInteger(rec.top) ? vs[rec.top] : null;
+  return v ? v.id : null;
+}
+function renderCut() {
+  const root = $('#v-cut'); root.textContent = '';
+  const items = S.items.filter(it => it.g !== 4);
+  if (!items.length) { root.append(h('p', { class: 'empty-note' }, 'No pieces to cut from.')); return; }
+  if (!CUT.pieceId || !items.some(it => it.id === CUT.pieceId)) {
+    CUT.pieceId = (S.items[S.idx] && S.items[S.idx].g !== 4) ? S.items[S.idx].id : items[0].id;
+    CUT.order = []; CUT.struck = new Set();
+  }
+  const it = items.find(x => x.id === CUT.pieceId);
+  if (!CUT.order.length) CUT.order = itemLineIds(it);
+  const pick = h('select', { 'aria-label': 'Piece to cut' });
+  for (const x of items) pick.append(h('option', { value: x.id }, x.id + ' — ' + x.first));
+  pick.value = it.id;
+  pick.onchange = () => { CUT.pieceId = pick.value; CUT.order = []; CUT.struck = new Set(); CUT.msg = ''; renderCut(); };
+  const saved = versionsList().filter(v => v.pieceId === it.id && (v.method === 'cut-up' || v.method === 'erasure'));
+  const methodPick = h('select', { 'aria-label': 'Version method' });
+  for (const m of ['cut-up', 'erasure']) methodPick.append(h('option', { value: m }, m));
+  methodPick.value = CUT.method;
+  methodPick.onchange = () => { CUT.method = methodPick.value; CUT.msg = ''; renderCut(); };
+  root.append(h('h2', { class: 'sub' }, 'Cut up'),
+    h('p', { class: 'note' }, 'Shuffle, strike, and keep this piece\u2019s own lines into a new ' + CUT.method + ' version. Shuffling reorders; striking drops a line from the version. No language model anywhere in this path.'),
+    h('div', { class: 'up-row' }, pick, methodPick,
+      h('button', { class: 'btn', type: 'button', onclick: () => { for (let i = CUT.order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [CUT.order[i], CUT.order[j]] = [CUT.order[j], CUT.order[i]]; } renderCut(); } }, 'Shuffle'),
+      h('button', { class: 'btn primary', type: 'button', disabled: !canWrite(), onclick: saveCut }, 'Save ' + CUT.method + ' version')),
+    CUT.msg ? h('p', { class: 'note' }, CUT.msg) : null,
+    saved.length ? h('p', { class: 'note' }, saved.length + ' cut-up or erasure version' + (saved.length > 1 ? 's' : '') + ' saved for this piece' + (saved[0].at ? ' (newest ' + fmtDate(saved[0].at) + ')' : '') + '.') : null);
+  const list = h('div', { class: 'cut-list' });
+  CUT.order.forEach((id, n) => {
+    const { l, p } = S.lines.get(id) || {};
+    if (!l) return;
+    const struck = CUT.struck.has(id);
+    const row = h('div', { class: 'cut-line' + (struck ? ' struck' : '') });
+    if (l.box) {
+      const c = h('div', { class: 'crop', role: 'button', tabindex: '0', 'aria-label': 'Scan of line, open page' });
+      c.dataset.box = l.box.join(','); c.dataset.page = p.id;
+      c.append(h('img', { src: p.img, alt: '', loading: 'lazy', draggable: 'false' }));
+      c.addEventListener('click', ev => { ev.stopPropagation(); openViewer(p.id, l.box); });
+      row.append(c);
+    }
+    row.append(h('div', { class: 'tx-row' }, h('span', { class: 'ln' }, String(n + 1)), h('div', { class: 'txslot' }, h('span', null, l.tx || ''))));
+    row.append(h('div', { class: 'up-row' },
+      h('button', { class: 'btn small', type: 'button', onclick: () => { struck ? CUT.struck.delete(id) : CUT.struck.add(id); renderCut(); } }, struck ? 'Keep' : 'Strike'),
+      h('button', { class: 'btn small', type: 'button', disabled: n === 0, 'aria-label': 'Move earlier', onclick: () => { [CUT.order[n - 1], CUT.order[n]] = [CUT.order[n], CUT.order[n - 1]]; renderCut(); } }, '↑'),
+      h('button', { class: 'btn small', type: 'button', disabled: n === CUT.order.length - 1, 'aria-label': 'Move later', onclick: () => { [CUT.order[n], CUT.order[n + 1]] = [CUT.order[n + 1], CUT.order[n]]; renderCut(); } }, '↓')));
+    list.append(row);
+  });
+  root.append(list);
+}
+async function saveCut() {
+  const it = S.items.find(x => x.id === CUT.pieceId);
+  if (!it || !canWrite()) return;
+  const kept = CUT.order.filter(id => !CUT.struck.has(id));
+  if (!kept.length) { CUT.msg = 'Strike everything and there is nothing to save.'; renderCut(); return; }
+  const id = 'cut-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  // Own lines carry src null: the provenance list parallels the kept lines.
+  // sourceVersion names the top version this cut was made from, so the
+  // reader can list an erasure's dropped lines; null when unknowable.
+  const sourceVersion = await cutTopVersionId(it.id);
+  write('versions', id, cutUpRecord(it.id, kept, kept.map(() => null), nowISO(), { method: CUT.method, sourceVersion }));
+  CUT.msg = 'Saved ' + CUT.method + ' version with ' + kept.length + ' line' + (kept.length > 1 ? 's' : '') + ' (' + (CUT.order.length - kept.length) + ' struck).';
+  renderCut();
+}
+
 /* ------------------------------------------------------------ release */
 /* Lanes module (JHW #41), loaded in boot(). Null when the import fails: the
    calendar then renders exactly as before lanes existed — poem rows only,
@@ -1331,6 +1427,83 @@ function exposureEntry(e, today, at) {
   return o;
 }
 /* mark-posted helpers end */
+/* cut-up helpers begin */
+// Cut-up versions (journal-handwritten-web #55). Pure helpers: no DOM, no
+// studio state, so tests/test_cut_up.mjs slices this block and runs it in
+// a vm — the same pattern as the mark-posted helpers above. They mirror
+// tools/cut_up.py; the two must agree on the model (method enum, src as a
+// list parallel to the version's flattened line list, entries null for own
+// lines or {piece, line} naming the source line).
+//
+// The Reserve rule is never re-implemented here: callers pass poolOf, a
+// piece id -> exact pool string. Only the studio's exact values count —
+// pool_of() in tools/post_poem.py maps a missing document to 'unsorted'
+// and any non-exact value ('Reserve', ' reserve', a list, ...) to
+// 'unknown', and this module only compares the returned value.
+const CUT_UP_METHODS = ['original', 'cut-up', 'erasure'];
+// All four non-Series pools, the same definition #65's shared-scan rule
+// uses: a source piece with no release document ('unsorted') is not Series
+// either — letting it through would launder unclassified text into the
+// public site through a cut-up, bypassing the release process.
+const CUT_UP_WITHHELD_POOLS = ['reserve', 'archive', 'unsorted', 'unknown'];
+function cutUpMethod(v) {
+  const m = v.method === undefined ? 'original' : v.method;
+  if (!CUT_UP_METHODS.includes(m)) throw new Error('unknown version method ' + JSON.stringify(m) + ' on ' + v.id);
+  return m;
+}
+function cutUpValidate(v, pages) {
+  const method = cutUpMethod(v);
+  const src = v.src;
+  if (src === undefined || src === null) return method;
+  if (method === 'original') throw new Error('version ' + JSON.stringify(v.id) + " is 'original' but carries src provenance; only cut-up/erasure versions carry src");
+  if (!Array.isArray(src)) throw new Error('version ' + JSON.stringify(v.id) + ' src is not a list');
+  for (const e of src) {
+    if (e === null) continue;
+    if (!e || typeof e !== 'object' || Object.keys(e).sort().join(',') !== 'line,piece' || typeof e.piece !== 'string' || typeof e.line !== 'string')
+      throw new Error('version ' + JSON.stringify(v.id) + ' bad src entry ' + JSON.stringify(e));
+  }
+  if (pages) {
+    let n = 0;
+    for (const [pid, blocks] of v.P || []) for (const bi of blocks) n += (pages[pid] && pages[pid].B[bi] ? pages[pid].B[bi].L.length : 0);
+    if (src.length !== n) throw new Error('version ' + JSON.stringify(v.id) + ' src has ' + src.length + ' entries for ' + n + ' lines; src must parallel the flattened line list');
+  }
+  return method;
+}
+function cutUpReserveSources(version, poolOf, pages) {
+  cutUpValidate(version, pages);
+  const bad = [];
+  for (const e of version.src || []) {
+    if (e === null) continue;
+    const pool = poolOf(e.piece);
+    if (CUT_UP_WITHHELD_POOLS.includes(pool)) bad.push({ src: e, pool });
+  }
+  return bad;
+}
+function cutUpRecord(pieceId, lines, src, at, opts = {}) {
+  if (lines.length !== src.length) throw new Error('lines and src must parallel each other');
+  const rec = { pieceId, method: opts.method || 'cut-up', lines: [...lines], src: [...src], at, status: 'new' };
+  if (opts.sourceVersion) rec.sourceVersion = opts.sourceVersion;
+  return rec;
+}
+function cutUpWarningText(pieceId, bad) {
+  const detail = bad.map(b => b.src.piece + ' line ' + b.src.line + ' (pool is ' + b.pool + ')').join('; ');
+  return 'Cut-up version reuses a withheld line: ' + detail + '. A Series piece must not publish Reserve text — re-cut the line, move the source, or accept explicitly. Mark posted is refused until this is resolved.';
+}
+// The Release-warning trigger, pure: the cut-up/erasure versions of one
+// piece whose src reuses a withheld-pool line. The page calls it through
+// cutUpBadForPiece (which supplies the studio's versions list and pool
+// lookup); the test exercises this function directly with synthetic
+// versions, which is exactly the warning firing or not firing.
+function cutUpBadVersions(versions, poolOf, pieceId) {
+  const bad = [];
+  for (const v of versions) {
+    if (v.pieceId !== pieceId) continue;
+    if (v.method !== 'cut-up' && v.method !== 'erasure') continue;
+    for (const b of cutUpReserveSources(v, poolOf)) bad.push(b);
+  }
+  return bad;
+}
+/* cut-up helpers end */
 function seriesList() {
   const cm = candMap();
   const xs = [];
@@ -1481,6 +1654,7 @@ function rCalendar(body) {
         chip(c.verified ? 'verified' : 'not verified', c.verified ? 'ok' : 'warn'),
         chip(b ? `GRUW ${b.status}` : 'no GRUW batch', b && b.status !== 'draft' ? 'ok' : 'warn'),
         chip(`prep ${pdone}/${PREP.length}`, pdone === PREP.length ? 'ok' : ''),
+        cutUpBadForPiece(c.key).length ? chip('cut-up reuses Reserve', 'warn') : null,
         posted ? chip('posted', 'ok') : ready ? chip('ready', 'ok') : null,
         LANES_MOD ? chip(`lanes ${LANES_MOD.lanesReadyCount(r)}/5 ready`) : null),
       posted && posted.url && checkPostUrl(posted.url).ok ? h('div', { class: 'rmeta' }, h('a', { href: posted.url, target: '_blank', rel: 'noopener noreferrer', class: 'rlink' }, 'post link')) : null,
@@ -1573,6 +1747,20 @@ function laneEditor(c, r) {
   }
   return box;
 }
+// Cut-up Reserve-reuse check (JHW #55 step 3). The studio does not load
+// j.json, so this sees the cut-up versions saved in the versions
+// collection (the Cut tab's save path); the public build covers promoted
+// versions in j.json. cutUpPool mirrors pool_of() in tools/post_poem.py
+// exactly: no release document -> 'unsorted'; only the exact values
+// 'series', 'reserve', 'archive' count; anything else -> 'unknown'.
+function cutUpPool(pid) {
+  const raw = rel(pid).pool;
+  if (raw === undefined || raw === null) return 'unsorted';
+  return ['series', 'reserve', 'archive'].includes(raw) ? raw : 'unknown';
+}
+function cutUpBadForPiece(key) {
+  return cutUpBadVersions(versionsList(), cutUpPool, key);
+}
 function calDetail(c, r, b, ready, posted) {
   const d = h('div', { class: 'rdetail' });
   const prep = r.prep || {};
@@ -1586,6 +1774,8 @@ function calDetail(c, r, b, ready, posted) {
   if (LANES_MOD) d.append(laneEditor(c, r));
   if (!c.verified) d.append(h('p', { class: 'note' }, 'Verify every line in Review before posting.'));
   if (!b) d.append(h('p', { class: 'note' }, 'Add it to a GRUW batch (Copyright) and file before posting — once posted it may no longer qualify as unpublished.'));
+  const cutBad = cutUpBadForPiece(c.key);
+  if (cutBad.length) d.append(h('p', { class: 'err' }, cutUpWarningText(c.key, cutBad)));
   if (posted) d.append(h('p', { class: 'note' }, `Posted ${posted.date || ''}${posted.where ? ' · ' + posted.where : ''}${posted.account ? ' · ' + posted.account : ''}`));
   else {
     const dr = RF.pd[c.key] || (RF.pd[c.key] = { where: POST_DEFAULTS.where, account: POST_DEFAULTS.account, url: '' });
@@ -1597,7 +1787,11 @@ function calDetail(c, r, b, ready, posted) {
     acct.addEventListener('input', () => { dr.account = acct.value; });
     purl.addEventListener('input', () => { dr.url = purl.value; perr.hidden = true; });
     const armed = RF.arm === c.key;
-    const go = h('button', { type: 'button', class: 'btn primary small' + (armed ? ' arm' : ''), disabled: !canWrite() }, ready ? 'Mark posted' : armed ? 'Not ready — tap again to confirm' : 'Mark posted anyway');
+    // A cut-up version reusing a Reserve line refuses Mark posted outright:
+    // the two-tap arm does not override it, and the warning above names
+    // the exact source line. Resolve it (re-cut, move the source, or
+    // accept explicitly) and the button comes back.
+    const go = h('button', { type: 'button', class: 'btn primary small' + (armed ? ' arm' : ''), disabled: !canWrite() || cutBad.length > 0 }, ready ? 'Mark posted' : armed ? 'Not ready — tap again to confirm' : 'Mark posted anyway');
     go.addEventListener('click', () => {
       const chk = checkPostUrl(purl.value);
       if (!chk.ok) { perr.textContent = 'Post URL must start with http:// or https://'; perr.hidden = false; return; }
@@ -1827,6 +2021,7 @@ function showView(v) {
   for (const s of $$('.view')) s.hidden = s.id !== 'v-' + v;
   if (v === 'decisions') renderDecisions();
   if (v === 'versions') renderVersions();
+  if (v === 'cut') renderCut();
   if (v === 'release') renderRelease();
   if (v === 'search') { renderPageGrid(); doSearch(); }
   if (v === 'review') requestAnimationFrame(layoutCrops);

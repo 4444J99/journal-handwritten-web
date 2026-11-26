@@ -1,12 +1,34 @@
 # journal-handwritten-web
 
-Private source of record for **versforms**, its reader, review studio and release tools.
-The public output lives in the separate `4444J99/versforms` repository. The earlier
-working-name discussion is retained in the dated plan; the current identity is
+Public source of record for **versforms**, its reader, review studio and release tools.
+This repository is intentionally public on GitHub. Its safety comes from custody boundaries:
+device-level macOS capture lives only in the private `4444J99/tool-notes-docs-capture`, raw
+personal Photos/Notes exports stay outside every git working tree under
+`/Volumes/Archive4T/Media/intake/versforms-witnesses/`, and only public-safe metadata enters
+here through `tools/match_witnesses.py` (no raw note text, raw OCR text, private titles/folders
+or local paths). The published site lives in the separate `4444J99/versforms` repository. The
+earlier working-name discussion is retained in the dated plan; the current identity is
 `vers.forms` / `versforms`. This does not establish account or domain ownership.
 
 This is not ETCETER4. Scans originate from `4444J99/etceter4` (commit `dfcbf0f`,
 `img/photos/diary/`), recorded in `site/data/j.json` → `prov`.
+
+## Corpus lanes and the Grand Chronology
+
+The physical notebook is one lane in a growing, unbounded corpus. Piece identities are not
+a fixed `001..100` slot list:
+
+- `C` — Codex: the handwritten journal pages (`diary1`…`diary63a`).
+- `N` — standalone original-era Apple Notes drafts.
+- `P` — photographic witnesses with no matched handwritten page.
+- Further lanes can be added without renumbering existing pieces.
+
+`source/chronology.json` is the **Grand Chronology** across all lanes: `physical_codex_order`
+keeps the unbroken notebook sequence and `amalgamated_chronological_order` interleaves confirmed
+witnesses from every lane. Curated arrangements and editions — including any 100-poem selection
+or an Instagram Round 1 schedule — are downstream projections of that chronology, not identities
+baked into the corpus. `digitized_at` is scan provenance only and never a composition-date
+bound. Candidate links stay `pending_review` until the author confirms them.
 
 ## Current engineering state — November 6, 2026
 
@@ -47,7 +69,7 @@ local test results are recorded separately; no billing or security setting is ch
 
 GitHub Actions does not run for this repository, so `tools/ci_local.py` is the gate of record.
 It needs Python 3.12+, Node 22+ and `wrangler` on PATH (for the studio-cf suites), plus the
-Python packages in `requirements.txt` (Pillow, fonttools, brotli, Markdown, numpy).
+Python packages in `requirements.txt` (Pillow, fonttools, brotli, Markdown, numpy, rapidfuzz).
 
 ```
 python3 tools/bootstrap_env.py     # once per checkout: creates .venv and installs requirements.txt
@@ -100,6 +122,11 @@ claude/                   the claude.ai Project's text documents: plan.md (the P
 tools/check.py            integrity check: every referenced file present + checksums
 tools/source_foundation.py canonical source, reviews, rebuild, photo staging, backup/restore
 source/canonical.json     preserved identities, raw readings, reviews and asset lineage
+tools/match_witnesses.py  scores external OCR/Notes candidates into public-safe witness links
+tools/build_chronology.py confirmed links + codex order -> Grand Chronology across lanes
+tools/export_round1_projection.py metadata-free Round 1 JPEGs with shared-surface isolation
+source/witness_links.json generated candidate links (pending_review until author confirmation)
+source/chronology.json    generated Grand Chronology (confirmed witnesses only)
 tools/studio_files.py     file map for republishing the studio artifact
 tools/build_public.py     builds the public site (released pieces only) for 4444J99/versforms
 release/public.json       the released pieces — the only content that leaves this repository
@@ -240,9 +267,23 @@ Quoted reading notes in the journal belong to their authors and are recorded by 
 
 ## Public and private
 
-This repository is **private** and holds everything: all scans, transcripts, the studio,
-plans and chat records. The public site lives in **`4444J99/versforms`** and is deployed by
-Cloudflare Pages. Only pieces listed in `release/public.json` go there:
+This repository is **public by design**. Privacy is enforced by separation, not by hiding the
+repository:
+
+- **`4444J99/tool-notes-docs-capture`** (private) is the only place with device-level capture:
+  Photos via `osxphotos`, Notes via `osascript -l JavaScript` against `Application("Notes")`
+  (skipping password-protected notes), and OCR via the native Vision framework. None of that
+  code, or any raw Photos/Notes dump, is in this repository.
+- **`/Volumes/Archive4T/Media/intake/versforms-witnesses/`** (outside every git repository)
+  holds unmodified photo originals, `photo_witnesses.json`, `ios_notes.json`, `ocr_cache.json`
+  and verbose review reports.
+- **`source/witness_links.json` and `source/chronology.json`** in this repository contain only
+  public-safe metadata: witness IDs/UUIDs, SHA-256 digests, timestamps, camera model, scores,
+  statuses and piece IDs. Raw note text, raw OCR text, private titles/folders and `local_path`
+  never cross into them.
+
+The published site lives in **`4444J99/versforms`** and is deployed by Cloudflare Pages. Only
+pieces listed in `release/public.json` go there:
 
 ```
 python3 tools/build_public.py ../versforms/site     # then commit and push versforms

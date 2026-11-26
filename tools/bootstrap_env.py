@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 # import name -> pip name; the single list ci_local.py preflights against.
-MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy"}
+MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy", "rapidfuzz": "rapidfuzz"}
 
 
 def venv_python(venv_dir):

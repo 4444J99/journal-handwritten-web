@@ -227,9 +227,11 @@ def publishable_note_heads(notes):
     release: the single head revision of a record (no superseded revision, no
     forked or unparseable chain), visibility 'public-candidate' (the default is
     'private'), editorial status 'accepted' and release status 'cleared' or
-    'released'. A document that does not meet every rule is left out: private,
-    draft, held and legacy documents without the revision fields never reach
-    the file. Returns the surviving documents in id order."""
+    'released', each backed by its approval object (editorial.approval and
+    release.clearance, see approval_evidence). A document that does not meet
+    every rule is left out: private, draft, held and legacy documents without
+    the revision fields or without clearance evidence never reach the file.
+    Returns the surviving documents in id order."""
     groups = {}
     for key in sorted(notes or {}):
         doc = notes[key]
@@ -260,9 +262,33 @@ def publishable_note_heads(notes):
         release = head.get("release") if isinstance(head.get("release"), dict) else {}
         if (head.get("visibility") == "public-candidate"
                 and editorial.get("status") == "accepted"
-                and release.get("status") in ("cleared", "released")):
+                and release.get("status") in ("cleared", "released")
+                and approval_evidence(editorial.get("approval"), ids)
+                and approval_evidence(release.get("clearance"), ids)):
             out.append(head)
     return out
+
+
+def approval_evidence(approval, revision_ids):
+    """True when `approval` is a real approval object, the evidence the Studio
+    rule needs (studio/notes-model.mjs: 'clearance is required' and
+    verifiedApproval): an object naming a revision of this record's own chain,
+    who approved it and when, and the content digest it covers. A status string
+    alone ('accepted', 'cleared') is not evidence. This is a structural check:
+    the digest itself is bound and verified by the Studio (projectRecords), so
+    a hand-edited status without a matching approval object never reaches the
+    tracked file."""
+    if not isinstance(approval, dict):
+        return False
+    revision = approval.get("revisionId")
+    if not isinstance(revision, str) or revision not in revision_ids:
+        return False
+    for field in ("by", "at"):
+        value = approval.get(field)
+        if not isinstance(value, str) or not value.strip():
+            return False
+    digest_value = approval.get("contentDigest")
+    return isinstance(digest_value, str) and bool(SHA_RE.match(digest_value))
 
 
 def build_record(root, db, schedule, pid):

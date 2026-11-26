@@ -185,11 +185,18 @@ class SchedulePublishTest(unittest.TestCase):
             schedule_publish.today_in = real
 
     # --- F1: already-published memory and one piece per week
-    def run_inprocess(self, *args, post_poem=None):
+    def run_inprocess(self, *args, post_poem=None, today=None):
         """main() in this process; post_poem.py is replaced by `post_poem(cmd)`
-        (returns an exit code) so a real publish needs no public repository."""
+        (returns an exit code) so a real publish needs no public repository.
+        `today` pins the actual run date (default: the --due value, a run made
+        on the due date), which the real tool reads from the clock."""
         real_run = subprocess.run
+        real_run_date = schedule_publish.run_date
         calls = []
+        if today is None and "--due" in args:
+            today = args[args.index("--due") + 1]
+        if today is not None:
+            schedule_publish.run_date = lambda tz, now=None: today
 
         def fake_run(cmd, *a, **kw):
             if len(cmd) > 1 and str(cmd[1]).endswith("post_poem.py"):
@@ -204,6 +211,7 @@ class SchedulePublishTest(unittest.TestCase):
                 code = schedule_publish.main(["--root", str(self.root), *args])
         finally:
             subprocess.run = real_run
+            schedule_publish.run_date = real_run_date
         self.calls = calls
         return code, out.getvalue(), err.getvalue()
 
@@ -247,7 +255,7 @@ class SchedulePublishTest(unittest.TestCase):
         self.assertEqual(len(self.calls), 1)
         self.assertIn("p001", self.calls[0])
         self.assertIn("deferred", out)
-        self.assertEqual(self.ledger(), {"published": {"p001": "2026-11-24"}})
+        self.assertEqual(self.ledger(), {"published": {"p001": {"due_date": "2026-11-24", "published_on": "2026-11-24"}}})
         # Two days later: p001 is remembered; p002 waits out the week.
         code, out, _ = self.run_inprocess("--due", "2026-11-26", *common)
         self.assertEqual(code, 0, out)
@@ -259,7 +267,9 @@ class SchedulePublishTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertEqual(len(self.calls), 1)
         self.assertIn("p002", self.calls[0])
-        self.assertEqual(self.ledger(), {"published": {"p001": "2026-11-24", "p002": "2026-12-01"}})
+        self.assertEqual(self.ledger(), {"published": {
+            "p001": {"due_date": "2026-11-24", "published_on": "2026-11-24"},
+            "p002": {"due_date": "2026-12-01", "published_on": "2026-12-01"}}})
 
     def test_dry_run_and_failed_publish_do_not_write_the_ledger(self):
         self.set_schedule({"p001": "2026-11-20"})
@@ -272,6 +282,63 @@ class SchedulePublishTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         self.assertIn("failed", out)
         self.assertIsNone(self.ledger())
+
+    # --- the ledger records the actual run date; the window reads it
+    def test_ledger_records_actual_run_date_apart_from_due_date(self):
+        self.set_schedule({"p001": "2026-11-10"})
+        code, out, _ = self.run_inprocess("--due", "2026-11-10", "--publish", "--public-repo", "X",
+                                          "--db", str(self.db), "--prepared", str(self.prepared),
+                                          today="2026-11-24")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.ledger(), {"published": {"p001": {"due_date": "2026-11-10",
+                                                                 "published_on": "2026-11-24"}}})
+
+    def test_back_dated_due_does_not_reopen_the_week(self):
+        db = self.series_pair_db()
+        self.set_schedule({"p001": "2026-11-10", "p002": "2026-11-11"})
+        common = ("--publish", "--public-repo", "X", "--db", str(db), "--prepared", str(self.prepared))
+        code, out, _ = self.run_inprocess("--due", "2026-11-10", *common, today="2026-11-24")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(len(self.calls), 1)
+        # p001 really went out on 2026-11-24. Re-running the next day with a back-dated
+        # --due that is far from 2026-11-24 must still be held by the one-per-week rule.
+        code, out, _ = self.run_inprocess("--due", "2026-11-11", *common, today="2026-11-25")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.calls, [])
+        self.assertIn("one piece per week", out)
+        self.assertIn("2026-11-24", out)
+        # A full week of actual dates later, p002 goes out.
+        code, out, _ = self.run_inprocess("--due", "2026-11-11", *common, today="2026-12-01")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(len(self.calls), 1)
+        self.assertIn("p002", self.calls[0])
+
+    def test_legacy_string_ledger_entries_still_read(self):
+        (self.root / "release" / "schedule-log.json").write_text(
+            json.dumps({"published": {"p001": "2026-11-24"}}), encoding="utf-8")
+        self.assertEqual(schedule_publish.read_ledger(self.root),
+                         {"p001": {"due_date": "2026-11-24", "published_on": "2026-11-24"}})
+        (self.root / "release" / "schedule-log.json").write_text(
+            json.dumps({"published": {"p001": {"due_date": "2026-11-24"}}}), encoding="utf-8")
+        with self.assertRaises(ValueError):
+            schedule_publish.read_ledger(self.root)
+
+    def test_run_date_is_the_clock_in_the_schedule_zone(self):
+        now = dt.datetime(2026, 12, 1, 0, 30, tzinfo=dt.timezone.utc)
+        self.assertEqual(schedule_publish.run_date("America/New_York", now), "2026-11-30")
+        self.assertEqual(schedule_publish.run_date(None, now), "2026-12-01")
+
+    # --- the ledger ships in the repository, so a fresh checkout has the memory
+    def test_repository_ledger_is_tracked_and_empty(self):
+        path = ROOT / "release" / "schedule-log.json"
+        self.assertTrue(path.is_file(), "release/schedule-log.json must be committed")
+        self.assertEqual(schedule_publish.read_ledger(ROOT), {})
+        ignored = subprocess.run(["git", "check-ignore", "-q", "release/schedule-log.json"], cwd=str(ROOT))
+        self.assertEqual(ignored.returncode, 1, "release/schedule-log.json must not be git-ignored")
+        tracked = subprocess.run(["git", "ls-files", "--error-unmatch", "release/schedule-log.json"],
+                                 cwd=str(ROOT), capture_output=True, text=True)
+        self.assertEqual(tracked.returncode, 0,
+                         "release/schedule-log.json must be tracked (git add it)")
 
     def test_a_blocked_earliest_piece_holds_later_ones(self):
         # p001 (earliest) is blocked on the gate; p002 must not jump the queue.

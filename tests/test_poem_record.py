@@ -171,11 +171,16 @@ class PoemRecordSyntheticTest(unittest.TestCase):
 
     # --- F5: notes.author reaches a tracked file in a PUBLIC repository
     def note(self, rec, rev, parents=(), kind="reflection", text="TEXT", visibility="public-candidate",
-             editorial="accepted", release="cleared", pid="p001"):
+             editorial="accepted", release="cleared", pid="p001", evidence=True):
+        def approval():
+            return ({"revisionId": rev, "by": "author", "at": "2026-11-20T12:00:00Z",
+                     "contentDigest": "sha256:" + "c" * 64} if evidence else None)
         return {"recordId": rec, "revisionId": rev, "parents": list(parents), "kind": kind, "text": text,
                 "anchor": {"pieceId": pid, "versionId": "v0", "lineId": "pg1-0-0"},
-                "visibility": visibility, "editorial": {"status": editorial},
-                "release": {"status": release}}
+                "visibility": visibility,
+                "editorial": {"status": editorial, "approval": approval() if editorial == "accepted" else None},
+                "release": {"status": release, "clearance": approval() if release in ("cleared", "released") else None,
+                            "publication": None, "revocation": None}}
 
     def author_notes(self, notes):
         db = copy.deepcopy(self.db)
@@ -195,6 +200,29 @@ class PoemRecordSyntheticTest(unittest.TestCase):
             {"kind": "reflection", "text": "LEGACY", "anchor": {"pieceId": "p001"}},
         ])
         self.assertEqual([n["text"] for n in got], ["RELEASED"])
+
+    def test_status_strings_without_clearance_evidence_are_not_released(self):
+        # 'accepted' + 'cleared' written by hand, with no approval objects behind them.
+        bare = self.note("r-bare", "r-bare-1", text="NOEVIDENCE", evidence=False)
+        self.assertEqual(self.author_notes([bare]), [])
+        # Either approval missing is enough to keep the note out.
+        no_clear = self.note("r-nc", "r-nc-1", text="NOCLEARANCE")
+        no_clear["release"]["clearance"] = None
+        no_edit = self.note("r-ne", "r-ne-1", text="NOACCEPTANCE")
+        no_edit["editorial"]["approval"] = None
+        self.assertEqual(self.author_notes([no_clear, no_edit]), [])
+        # An approval that names a revision outside the record's own chain, or has
+        # no approver, instant or digest, is not evidence either.
+        foreign = self.note("r-fo", "r-fo-1", text="FOREIGN")
+        foreign["release"]["clearance"]["revisionId"] = "somebody-elses-1"
+        nobody = self.note("r-nb", "r-nb-1", text="NOBODY")
+        nobody["editorial"]["approval"]["by"] = " "
+        baddigest = self.note("r-bd", "r-bd-1", text="BADDIGEST")
+        baddigest["release"]["clearance"]["contentDigest"] = "sha256:xyz"
+        self.assertEqual(self.author_notes([foreign, nobody, baddigest]), [])
+        # The same note with its evidence is released.
+        ok = self.note("r-ok", "r-ok-1", text="CLEARED")
+        self.assertEqual([n["text"] for n in self.author_notes([ok])], ["CLEARED"])
 
     def test_author_notes_drop_a_forked_record(self):
         fork = [self.note("r-f", "r-f-1", text="ROOT"),

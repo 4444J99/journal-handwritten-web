@@ -69,6 +69,11 @@ def site_references():
     for url in re.findall(r"serviceWorker\s*\.\s*register\(\s*[\"']([^\"']+)[\"']", html):
         if not url.startswith(("http:", "https:", "/")):
             refs.add("site/" + url.lstrip("./"))
+    # JHW #30: data files the page fetches (the pool map is load-bearing for
+    # the Reserve gate, so a missing pools.json must fail the check, not the
+    # reader at runtime). j.json itself is added above; this covers the rest.
+    for url in re.findall(r"fetch\(\s*[\"'](data/[^\"']+)[\"']", html):
+        refs.add("site/" + url)
     for page in data["pages"]:
         pid = page["id"]
         for tier in ("p", "i", "m"):

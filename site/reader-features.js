@@ -1,4 +1,4 @@
-import {assertSourceBinding, assertPackageReference, sameOriginAsset, loadRealizationPackage, loadRegionPackage} from './reader-packages.js';
+import {assertSourceBinding, assertPackageReference, sameOriginAsset, loadRealizationPackage, loadRegionPackage, sourceRevealAllowed} from './reader-packages.js';
 
 /**
  * Shared lifetime for explicitly invoked reader features. This module does not
@@ -220,4 +220,97 @@ export function mountPrivateFeaturePreview(host, {enabled = false, source, notes
     },
     destroy() { doc.removeEventListener('reader:sourcechange', invalidate); lifecycle.destroy(); host.replaceChildren(); },
   };
+}
+
+/**
+ * Fold-in view for cut-up / erasure versions (journal-handwritten-web #55).
+ *
+ * A cut-up version's lines can fold back to show their source page and
+ * line; an erasure version's dropped lines are the source version's lines
+ * the erasure did not keep. The model is pure data — no DOM — so the node
+ * tests exercise it without a browser.
+ *
+ * version: a j.json V record {id, method, P, src?, sourceVersion?}.
+ *   P is [[pageId, [block indices]], ...]; src, when present, parallels
+ *   the flattened line list with null (own line) or {piece, line} entries
+ *   naming the source line's stable "<page>-<block>-<line>" id.
+ * pieces: the reader's pieces [{id, V: [...]}]; pages: {pageId: page}
+ *   with B blocks of L lines, for expanding P to line ids.
+ * poolOf: piece id -> exact pool string ('series', 'reserve', ...).
+ *
+ * A source is revealed only when its pool is exactly 'series'
+ * (sourceRevealAllowed, the same exact-value rule pool_of() uses). Any
+ * other pool — reserve, archive, unknown, unsorted — renders as withheld:
+ * the line is listed but its source is never surfaced in public output.
+ * The private studio may show all sources; this model is the public side.
+ */
+export function foldInModel(version, {pieces = [], pages = {}} = {}, poolOf = () => 'unsorted') {
+  if (!version || typeof version !== 'object') throw new TypeError('A version record is required.');
+  const method = version.method === undefined ? 'original' : version.method;
+  if (!['original', 'cut-up', 'erasure'].includes(method)) throw new Error('unknown version method ' + JSON.stringify(method));
+  const flat = [];
+  for (const [pageId, blocks] of version.P || []) {
+    for (const bi of blocks) {
+      const count = pages[pageId] && pages[pageId].B[bi] ? pages[pageId].B[bi].L.length : 0;
+      for (let li = 0; li < count; li++) flat.push({page: pageId, block: bi, line: li, id: pageId + '-' + bi + '-' + li});
+    }
+  }
+  const lines = flat.map((entry, i) => {
+    const src = Array.isArray(version.src) ? version.src[i] ?? null : null;
+    const revealed = src ? sourceRevealAllowed(poolOf(src.piece)) : false;
+    return {...entry, index: i, src, revealed, withheld: !!src && !revealed};
+  });
+  let dropped = [];
+  if (method === 'erasure' && version.sourceVersion) {
+    const piece = pieces.find(p => p.V && p.V.some(v => v.id === version.id));
+    const source = piece && piece.V.find(v => v.id === version.sourceVersion);
+    if (source) {
+      const kept = new Set(lines.map(l => l.id));
+      const sourceFlat = [];
+      for (const [pageId, blocks] of source.P || []) {
+        for (const bi of blocks) {
+          const count = pages[pageId] && pages[pageId].B[bi] ? pages[pageId].B[bi].L.length : 0;
+          for (let li = 0; li < count; li++) sourceFlat.push({page: pageId, block: bi, line: li, id: pageId + '-' + bi + '-' + li});
+        }
+      }
+      dropped = sourceFlat.filter(l => !kept.has(l.id));
+    }
+  }
+  return {versionId: version.id, method, lines, dropped};
+}
+
+/**
+ * Render a fold-in panel for a cut-up / erasure version into host.
+ * Kept lines list their source when revealed; withheld sources render as
+ * "source withheld" with no piece, page, or line named. Dropped lines of
+ * an erasure render struck through. Returns the model.
+ */
+export function renderFoldIn(host, version, {pieces = [], pages = {}} = {}, poolOf = () => 'unsorted') {
+  if (!host?.ownerDocument) throw new TypeError('A dedicated host is required.');
+  const doc = host.ownerDocument;
+  const model = foldInModel(version, {pieces, pages}, poolOf);
+  host.replaceChildren();
+  host.append(node(doc, 'h3', model.method === 'erasure' ? 'Erasure — fold-in' : 'Cut-up — fold-in'));
+  if (!model.lines.length) { host.append(node(doc, 'p', 'This version has no lines.')); return model; }
+  const list = node(doc, 'ul');
+  for (const l of model.lines) {
+    const item = node(doc, 'li', 'line ' + l.id + ' — ');
+    if (!l.src) item.append(node(doc, 'span', 'own line'));
+    else if (l.revealed) item.append(node(doc, 'span', 'from ' + l.src.piece + ' line ' + l.src.line));
+    else item.append(node(doc, 'span', 'source withheld'));
+    list.append(item);
+  }
+  host.append(list);
+  if (model.dropped.length) {
+    host.append(node(doc, 'p', 'Erased from the source version:'));
+    const struck = node(doc, 'ul');
+    for (const l of model.dropped) {
+      const item = node(doc, 'li', 'line ' + l.id);
+      const del = node(doc, 'del', 'line ' + l.id);
+      item.replaceChildren(del);
+      struck.append(item);
+    }
+    host.append(struck);
+  }
+  return model;
 }
