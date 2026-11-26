@@ -232,3 +232,34 @@ test('links blocks on a malformed URL in the published text and passes a valid o
   const [rg] = await assess({...good, pieces: ['p001']});
   assert.equal(rg.ready, true);
 });
+
+test('note gates judge head revisions: a rebound anchor clears the block its old revision caused', async () => {
+  const f = fixture();
+  const anchor = lineId => ({pieceId: 'p001', versionId: 'v0', lineId});
+  f.db.notes = {
+    r1: {recordId: 'rec', revisionId: 'r1', parents: [], kind: 'footnote', anchor: anchor('pg1-0-9')},
+    r2: {recordId: 'rec', revisionId: 'r2', parents: ['r1'], kind: 'footnote', anchor: anchor('pg1-0-0')},
+  };
+  const [r] = await assess({...f, pieces: ['p001']});
+  assert.equal(r.ready, true);
+  // The head itself still blocks when it is the one that is broken.
+  f.db.notes.r3 = {recordId: 'rec', revisionId: 'r3', parents: ['r2'], kind: 'footnote', anchor: anchor('pg1-0-9')};
+  const [b] = await assess({...f, pieces: ['p001']});
+  assert.equal(b.ready, false);
+  assert.match(b.blockers.find(x => x.name === 'note_anchors').detail, /1 anchor\(s\) checked; unresolvable: pg1-0-9/);
+});
+
+test('links gate ignores private notes and the research dossier, and still checks a public note', async () => {
+  const f = fixture();
+  const base = {recordId: 'a', revisionId: 'a1', parents: [], anchor: {pieceId: 'p001', versionId: 'v0', lineId: 'pg1-0-0'}};
+  f.db.notes = {
+    a: {...base, kind: 'reflection', visibility: 'private', text: 'see https://?x'},
+    b: {...base, recordId: 'b', revisionId: 'b1', kind: 'research-dossier', text: 'see https://?y'},
+  };
+  const [ok] = await assess({...f, pieces: ['p001']});
+  assert.equal(ok.ready, true);
+  f.db.notes.c = {...base, recordId: 'c', revisionId: 'c1', kind: 'footnote', visibility: 'public-candidate', text: 'see https://?z'};
+  const [bad] = await assess({...f, pieces: ['p001']});
+  assert.equal(bad.ready, false);
+  assert.match(bad.blockers.find(x => x.name === 'links').detail, /invalid: https:\/\/\?z/);
+});

@@ -11,7 +11,10 @@ or a sha mismatch (the same fail-loud pattern as tools/release_contract.py).
 The record is private: it lives under studio/data/ and is never emitted into
 build_public.py output, because its notes.textual field is the per-poem private
 factual source dossier (transcription-derived notes, kept apart from the
-author's explanatory notes).
+author's explanatory notes). The file is tracked in a public repository, so
+notes.author takes only Studio notes that are releasable heads (see
+publishable_note_heads): private, draft, held, superseded and forked revisions
+are never copied into it.
 
 Field names are compatible with the #62 tracker packet schema: the tracker
 consumes title, pool, verified, batch_status (filed/registered) and exposures.
@@ -25,12 +28,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import re
 import sys
 import tempfile
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
@@ -45,7 +50,10 @@ EXPORT_FRAGMENTS = ["exports/studio-db-2026-11-05",
                     "exports/studio-db-pre-series-order-2026-11-14",
                     "exports/studio-db-pre-series-order-p006-p010-2026-11-15"]
 SCHEMA_PATH = ROOT / "schemas" / "poem-record.schema.json"
-DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+# ASCII digits only, and \Z (not $) so a trailing newline is not a date.
+DATE_RE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z")
+PIECE_ID_RE = re.compile(r"p[0-9]+\Z")
+TIMEZONE_KEY = "_timezone"
 SHA_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 NOTE_KINDS = ("footnote", "endnote", "reflection", "research-dossier",
               "critical-note", "factual-citation")
@@ -120,18 +128,62 @@ def merge_export_fragments(root, out_dir=None):
     return dest, used
 
 
-def load_schedule(root):
-    """release/schedule.json: {piece_id: 'YYYY-MM-DD'}; empty when nothing is scheduled."""
+def parse_date(value, what="date"):
+    """Strict calendar parse of 'YYYY-MM-DD': ASCII digits, no trailing text, a
+    real day (2026-02-31 and 2026-13-01 are errors). Returns a datetime.date;
+    raises ValueError naming `what` so a malformed date fails loudly."""
+    if not isinstance(value, str) or not DATE_RE.match(value):
+        raise ValueError(f"{what}: not a YYYY-MM-DD date: {value!r}")
+    try:
+        return dt.date.fromisoformat(value)
+    except ValueError:
+        raise ValueError(f"{what}: not a real calendar date: {value!r}")
+
+
+def parse_timezone(name, what="timezone"):
+    """An IANA zone name ('America/New_York'); raises ValueError when unknown."""
+    if not isinstance(name, str) or not name.strip() or name != name.strip():
+        raise ValueError(f"{what}: not an IANA timezone name: {name!r}")
+    try:
+        return ZoneInfo(name)
+    except Exception:  # ZoneInfoNotFoundError, or ValueError for a malformed key
+        raise ValueError(f"{what}: unknown IANA timezone: {name!r}")
+
+
+def read_schedule(root):
+    """release/schedule.json -> ({piece_id: 'YYYY-MM-DD'}, timezone name or None).
+
+    The file is {piece_id: 'YYYY-MM-DD', ...} plus an optional "_timezone":
+    "Area/City" naming the zone the dates are calendar dates in. Empty ({})
+    when nothing is scheduled. Every date is calendar-validated (fail loudly)."""
     path = Path(root) / "release" / "schedule.json"
     if not path.is_file():
         raise ValueError(f"missing source: release/schedule.json ({path})")
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError("release/schedule.json must be an object {piece_id: 'YYYY-MM-DD'}")
-    for pid, date in data.items():
-        if not isinstance(date, str) or not DATE_RE.match(date):
-            raise ValueError(f"release/schedule.json: bad publish_at for {pid}: {date!r}")
-    return data
+    tz = None
+    dates = {}
+    for key, value in data.items():
+        if key == TIMEZONE_KEY:
+            parse_timezone(value, f"release/schedule.json {TIMEZONE_KEY}")
+            tz = value
+            continue
+        if not isinstance(key, str) or not PIECE_ID_RE.match(key):
+            raise ValueError(f"release/schedule.json: bad piece id {key!r}")
+        parse_date(value, f"release/schedule.json: bad publish_at for {key}")
+        dates[key] = value
+    return dates, tz
+
+
+def load_schedule(root):
+    """release/schedule.json dates: {piece_id: 'YYYY-MM-DD'}; empty when nothing is scheduled."""
+    return read_schedule(root)[0]
+
+
+def load_schedule_timezone(root):
+    """The IANA zone the schedule's dates are in, or None when none is recorded."""
+    return read_schedule(root)[1]
 
 
 def line_set(j, review, pid):
@@ -165,6 +217,52 @@ def line_set(j, review, pid):
             for li in range(len(page["B"][b]["L"])):
                 lines.append((pg, b, f"{pg}-{b}-{li}"))
     return lines, "top-version", ""
+
+
+def publishable_note_heads(notes):
+    """The Studio note documents that may be copied into the tracked record.
+
+    studio/data/poem-records.json is committed to a PUBLIC repository, so
+    notes.author takes only what studio/notes-model.mjs projectRecords would
+    release: the single head revision of a record (no superseded revision, no
+    forked or unparseable chain), visibility 'public-candidate' (the default is
+    'private'), editorial status 'accepted' and release status 'cleared' or
+    'released'. A document that does not meet every rule is left out: private,
+    draft, held and legacy documents without the revision fields never reach
+    the file. Returns the surviving documents in id order."""
+    groups = {}
+    for key in sorted(notes or {}):
+        doc = notes[key]
+        if not isinstance(doc, dict):
+            continue
+        record_id, revision_id = doc.get("recordId"), doc.get("revisionId")
+        if not isinstance(record_id, str) or not record_id or not isinstance(revision_id, str) or not revision_id:
+            continue
+        groups.setdefault(record_id, []).append(doc)
+    out = []
+    for record_id in sorted(groups):
+        revisions = groups[record_id]
+        ids = [d["revisionId"] for d in revisions]
+        parents = set()
+        for d in revisions:
+            ps = d.get("parents")
+            if not isinstance(ps, list):
+                parents = None
+                break
+            parents.update(p for p in ps if isinstance(p, str))
+        if parents is None or len(set(ids)) != len(ids):
+            continue  # malformed chain: fail closed
+        heads = [d for d in revisions if d["revisionId"] not in parents]
+        if len(heads) != 1:
+            continue  # unresolved fork: not releasable
+        head = heads[0]
+        editorial = head.get("editorial") if isinstance(head.get("editorial"), dict) else {}
+        release = head.get("release") if isinstance(head.get("release"), dict) else {}
+        if (head.get("visibility") == "public-candidate"
+                and editorial.get("status") == "accepted"
+                and release.get("status") in ("cleared", "released")):
+            out.append(head)
+    return out
 
 
 def build_record(root, db, schedule, pid):
@@ -263,9 +361,7 @@ def build_record(root, db, schedule, pid):
                                 "page": pg, "text": line["text"]})
     author = []
     if db is not None:
-        for doc in (db.get("notes") or {}).values():
-            if not isinstance(doc, dict):
-                continue
+        for doc in publishable_note_heads(db.get("notes")):
             anchor = doc.get("anchor") or {}
             if (anchor.get("pieceId") or doc.get("pieceId")) != pid:
                 continue
@@ -322,8 +418,8 @@ def validate_record(record, schema=None):
         raise ValueError(f"record {record['id']}: verified/gruw_filed must be booleans")
     if record["batch_status"] not in ("filed", "registered", "skip", "none"):
         raise ValueError(f"record {record['id']}: bad batch_status")
-    if record["publish_at"] is not None and not DATE_RE.match(record["publish_at"]):
-        raise ValueError(f"record {record['id']}: bad publish_at")
+    if record["publish_at"] is not None:
+        parse_date(record["publish_at"], f"record {record['id']}: bad publish_at")
     notes = record["notes"]
     if set(notes) != {"textual", "author"}:
         raise ValueError(f"record {record['id']}: notes must have textual + author")

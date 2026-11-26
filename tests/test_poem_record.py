@@ -169,5 +169,70 @@ class PoemRecordSyntheticTest(unittest.TestCase):
             poem_record.build_record(self.root, self.db, self.schedule, "p001")
 
 
+    # --- F5: notes.author reaches a tracked file in a PUBLIC repository
+    def note(self, rec, rev, parents=(), kind="reflection", text="TEXT", visibility="public-candidate",
+             editorial="accepted", release="cleared", pid="p001"):
+        return {"recordId": rec, "revisionId": rev, "parents": list(parents), "kind": kind, "text": text,
+                "anchor": {"pieceId": pid, "versionId": "v0", "lineId": "pg1-0-0"},
+                "visibility": visibility, "editorial": {"status": editorial},
+                "release": {"status": release}}
+
+    def author_notes(self, notes):
+        db = copy.deepcopy(self.db)
+        db["notes"] = {f"n{i}": n for i, n in enumerate(notes)}
+        return poem_record.build_record(self.root, db, self.schedule, "p001")["notes"]["author"]
+
+    def test_author_notes_take_only_the_releasable_head(self):
+        ok = self.note("r-ok", "r-ok-2", parents=["r-ok-1"], text="RELEASED")
+        old = self.note("r-ok", "r-ok-1", text="SUPERSEDED", release="held", editorial="draft")
+        got = self.author_notes([
+            old, ok,
+            self.note("r-priv", "r-priv-1", visibility="private", text="PRIVATE"),
+            self.note("r-draft", "r-draft-1", editorial="draft", text="DRAFT"),
+            self.note("r-held", "r-held-1", release="held", text="HELD"),
+            self.note("r-rev", "r-rev-1", release="revoked", text="REVOKED"),
+            self.note("r-other", "r-other-1", pid="p002", text="OTHERPIECE"),
+            {"kind": "reflection", "text": "LEGACY", "anchor": {"pieceId": "p001"}},
+        ])
+        self.assertEqual([n["text"] for n in got], ["RELEASED"])
+
+    def test_author_notes_drop_a_forked_record(self):
+        fork = [self.note("r-f", "r-f-1", text="ROOT"),
+                self.note("r-f", "r-f-2", parents=["r-f-1"], text="A"),
+                self.note("r-f", "r-f-3", parents=["r-f-1"], text="B")]
+        self.assertEqual(self.author_notes(fork), [])
+
+    def test_private_note_text_never_reaches_the_record_file(self):
+        db = copy.deepcopy(self.db)
+        db["notes"] = {"n": self.note("r", "r-1", visibility="private", text="SECRETREFLECTION")}
+        data = poem_record.build_all(self.root, db, self.schedule)
+        self.assertNotIn("SECRETREFLECTION", json.dumps(data))
+
+    # --- F4 / F3: strict dates and a recorded timezone
+    def test_strict_date_parse(self):
+        for bad in ("2026-02-31", "2026-13-01", "2026-00-10", "2026-03-01\n", "2026-3-1", "\u0662\u0660\u0662\u0666-03-01", "", None, 20260301):
+            with self.assertRaises(ValueError, msg=repr(bad)):
+                poem_record.parse_date(bad)
+        self.assertEqual(poem_record.parse_date("2024-02-29").isoformat(), "2024-02-29")
+
+    def test_validate_record_rejects_impossible_publish_at(self):
+        record = poem_record.build_record(self.root, self.db, self.schedule, "p001")
+        record["publish_at"] = "2026-02-31"
+        with self.assertRaises(ValueError):
+            poem_record.validate_record(record)
+
+    def test_schedule_reads_dates_and_timezone(self):
+        path = self.root / "release" / "schedule.json"
+        path.write_text(json.dumps({"p001": "2026-11-20", "_timezone": "America/New_York"}), encoding="utf-8")
+        self.assertEqual(poem_record.load_schedule(self.root), {"p001": "2026-11-20"})
+        self.assertEqual(poem_record.load_schedule_timezone(self.root), "America/New_York")
+        path.write_text("{}", encoding="utf-8")
+        self.assertIsNone(poem_record.load_schedule_timezone(self.root))
+        for bad in ({"_timezone": "Nowhere/Land"}, {"_timezone": 5}, {"p001": "2026-02-31"}, {"notapiece": "2026-11-20"}):
+            path.write_text(json.dumps(bad), encoding="utf-8")
+            with self.assertRaises(ValueError, msg=repr(bad)):
+                poem_record.load_schedule(self.root)
+
+
 if __name__ == "__main__":
     unittest.main()

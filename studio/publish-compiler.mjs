@@ -167,6 +167,27 @@ function facing(source, direct) {
   return [...mates].filter(p=>!direct.includes(p));
 }
 
+// Studio notes are an append-only revision chain (studio/notes-store.mjs): an
+// edit adds a document whose `parents` name the previous revision, and the old
+// document stays in the collection. The note gates must judge the live head of
+// each record, not every revision ever written, or a rebound anchor could never
+// clear the gate that blocked it. A document without recordId/revisionId (no
+// chain) is its own head; a forked record keeps every head (all still live).
+function noteHeads(notes) {
+  const docs = notes && typeof notes === 'object' ? Object.values(notes).filter(d => d && typeof d === 'object') : [];
+  const chained = new Map(), heads = [];
+  for (const d of docs) {
+    if (typeof d.recordId !== 'string' || typeof d.revisionId !== 'string') { heads.push(d); continue; }
+    if (!chained.has(d.recordId)) chained.set(d.recordId, []);
+    chained.get(d.recordId).push(d);
+  }
+  for (const revisions of chained.values()) {
+    const parents = new Set(revisions.flatMap(d => Array.isArray(d.parents) ? d.parents.filter(p => typeof p === 'string') : []));
+    heads.push(...revisions.filter(d => !parents.has(d.revisionId)));
+  }
+  return heads;
+}
+
 // Gates buildCandidate reports per piece, in order. The free-plan browser
 // path (studio-cf/lib/publish-browser.js) checks the count against this list,
 // and tools/release_readiness.mjs documents the same names in advice(); keep
@@ -192,8 +213,12 @@ function extraGates({pid, pc, sel, pages, db, shell}) {
   // piece and a line of that version. Docs without an anchor are not anchors
   // and are skipped; when the export has no notes collection there is nothing
   // to check and the gate passes with that detail (never a silent pass: the
-  // detail says what was checked).
-  const notes = db.notes && typeof db.notes === 'object' ? Object.values(db.notes) : [];
+  // detail says what was checked). Only head revisions count (noteHeads).
+  // Known limit: the Worker and browser publish paths (studio-cf/lib/publish-api.js
+  // and publish-browser.js) do not load the notes collection into `db` yet, so
+  // there these two gates see no notes; they bite on the offline path
+  // (tools/release_readiness.mjs, tools/release_gate.py), which does.
+  const notes = noteHeads(db.notes);
   const anchors = [];
   for (const doc of notes) {
     if (!doc || typeof doc !== 'object') continue;
@@ -219,7 +244,9 @@ function extraGates({pid, pc, sel, pages, db, shell}) {
   out.push({name: 'note_anchors', ok: !badAnchors.length,
     detail: anchors.length ? `${anchors.length} anchor(s) checked${badAnchors.length ? `; unresolvable: ${badAnchors.slice(0, 3).map(a => a.lineId ?? a.versionId).join(', ')}` : ''}` : 'no note anchors to check'});
   // links: every http(s) URL in the published text (corrected lines) and in
-  // this piece's note docs must be a well-formed absolute URL. Today the tree
+  // this piece's note heads must be a well-formed absolute URL. Notes are never
+  // published by the compiler, so private notes and the research dossier do not
+  // block a release over their private text. Today the tree
   // carries no links in piece text, so the gate passes with '0 links' and
   // guards the day a note carries one.
   const urls = [];
@@ -235,6 +262,7 @@ function extraGates({pid, pc, sel, pages, db, shell}) {
   for (const doc of notes) {
     if (!doc || typeof doc !== 'object') continue;
     const a = doc.anchor;
+    if (doc.visibility === 'private' || doc.kind === 'research-dossier') continue;
     if (a && typeof a === 'object' && (a.pieceId ?? doc.pieceId) === pid) scan(JSON.stringify(doc));
   }
   const badUrls = urls.filter(u => { try { const x = new URL(u); return (x.protocol !== 'http:' && x.protocol !== 'https:') || !x.hostname; } catch { return true; } });
