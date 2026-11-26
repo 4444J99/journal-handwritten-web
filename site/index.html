@@ -262,6 +262,12 @@ body.side-book.m-rev #dock-rev,body.side-book.m-hf #dock-hf,body.side-canvas.stk
 #vdots{overflow-x:auto;min-width:0;max-width:100%;flex-wrap:nowrap;padding:2px}
 #vdots .chip{display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 auto}
 #vdots .vn{font-size:11px;line-height:1;color:var(--ui-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+#vdots .vm{font-size:9px;line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber);border-radius:3px;padding:2px 4px;white-space:nowrap}
+#vsrc{font-size:12px;line-height:1.5;color:var(--ui-2);padding:4px 0}
+#vfold{font-size:13px;line-height:1.6;color:var(--ui-2);max-height:40vh;overflow:auto}
+#vfold h3{font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ui-3);margin:8px 0 4px}
+#vfold ul{margin:0 0 4px;padding-left:1rem}
+#vfold del{opacity:.6}
 #vdots .chip[aria-current="true"] .vn{color:var(--ui)}
 .chip{border:1px solid transparent;background:none;color:var(--ui-2);padding:5px;min-width:48px;min-height:48px;border-radius:8px;cursor:pointer;display:grid;place-items:center;gap:4px;transition:background-color .2s}
 .chip:hover{background:var(--ui-line)}
@@ -398,6 +404,8 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;bac
   <section class="dock menu-group" id="dock-ver" aria-labelledby="versions-heading">
     <h3 id="versions-heading">Versions</h3>
     <div class="row" id="vdots" role="group" aria-label="Version"></div>
+    <div class="row" id="vsrc" role="status" aria-live="polite"></div>
+    <div id="vfold" hidden></div>
     <div class="control-grid">
       <button class="b" type="button" id="v-old" aria-label="Earlier version"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><rect x="9.5" y="4.5" width="10" height="13" rx="1"/><path d="M7 7.5v12.5h9.5"/><path d="M5.5 10.5L3 13l2.5 2.5"/></svg><span class="control-label">Earlier version</span></button>
       <button class="b" type="button" id="v-new" aria-label="Later version"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><rect x="4.5" y="6.5" width="10" height="13" rx="1"/><path d="M7 4.5h10.5v12.5"/><path d="M19 10.5l2.5 2.5-2.5 2.5"/></svg><span class="control-label">Later version</span></button>
@@ -3333,6 +3341,9 @@ function verUI(){
   if (g === null || g === undefined){ verKey = ""; return; }
   const pc = PIECES[g];
   const cur = S ? pc.st[S.layers[clamp(Math.round(S.pt), 0, S.layers.length - 1)].v] : bookCurVer(g);
+  const curV = pc.V[cur], curMethod = curV.method === undefined ? 'original' : curV.method;
+  body.classList.toggle('ver-cut-up', curMethod === 'cut-up');
+  body.classList.toggle('ver-erasure', curMethod === 'erasure');
   const avail = S ? new Set(S.layers.map(ly => pc.st[ly.v])) : null;
   const key = side + ":" + g + ":" + (avail ? [...avail].join(",") : "");
   if (key !== verKey){
@@ -3341,12 +3352,46 @@ function verUI(){
       if (avail && !avail.has(vi)) return "";
       const pg = BYID[V.s === "j" ? V.P?.[0]?.[0] : V.pg];
       const lab = V.d ? String(V.d) : `${vi + 1}/${pc.n}`; // a date when the version has one, otherwise its place in order (1 = earliest)
-      return `<button type="button" class="chip" data-vi="${vi}" aria-label="Version ${vi + 1} of ${pc.n}${V.d ? ", " + esc(V.d) : ""}${vi === pc.n - 1 ? ", newest" : ""}">${pg ? `<i class="th" style="${thumbStyle(pg, 34)}"></i>` : ""}<span class="vn">${esc(lab)}</span></button>`;
+      const method = V.method === undefined ? 'original' : V.method; // absent = original (pre-cut-up records)
+      return `<button type="button" class="chip" data-vi="${vi}" aria-label="Version ${vi + 1} of ${pc.n}${V.d ? ", " + esc(V.d) : ""}${method !== 'original' ? ", " + method : ""}${vi === pc.n - 1 ? ", newest" : ""}">${pg ? `<i class="th" style="${thumbStyle(pg, 34)}"></i>` : ""}<span class="vn">${esc(lab)}</span>${method !== 'original' ? `<span class="vm">${esc(method)}</span>` : ""}</button>`;
     }).join("");
   }
   $$("#vdots button").forEach(b => b.setAttribute("aria-current", +b.dataset.vi === cur ? "true" : "false"));
   const order = S ? S.layers.map(ly => pc.st[ly.v]).sort((a, b) => a - b) : pc.V.map((_, i) => i);
   $("#v-old").disabled = cur <= order[0]; $("#v-new").disabled = cur >= order[order.length - 1];
+  // Cut-up / erasure tap-to-source (journal-handwritten-web #55): when the
+  // focused line of a cut-up or erasure version has a source, name it here.
+  // The reveal rule is presence in the public data: the public build only
+  // ships Series pieces, so a source piece present here is Series; a source
+  // naming a piece absent from this build is withheld, never surfaced.
+  const vsrc = $("#vsrc"), foldBtn = $("#v-fold-btn"), foldHost = $("#vfold");
+  const isDerived = curMethod === 'cut-up' || curMethod === 'erasure';
+  if (foldBtn) foldBtn.hidden = !isDerived;
+  // The panel is for the focused version; a focus or version change makes
+  // its content stale, so it closes here and re-opens on an explicit tap.
+  if (foldHost) foldHost.hidden = true;
+  if (vsrc){
+    let text = "";
+    const L = S && focus && focus.it ? focus.it.L : null;
+    if (isDerived && L && Array.isArray(curV.src)){
+      const lineId = PAGES[L.pi].id + "-" + L.b + "-" + L.l;
+      let idx = -1;
+      outer: for (const [pageId, blocks] of curV.P || []){
+        for (const bi of blocks){
+          const pg = BYID[pageId];
+          for (let li = 0; li < (pg ? pg.B[bi].L.length : 0); li++){
+            idx++;
+            if (pageId + "-" + bi + "-" + li === lineId) break outer;
+          }
+        }
+      }
+      const src = idx >= 0 ? curV.src[idx] ?? null : null;
+      if (src) text = PIECES.some(p => p.id === src.piece)
+        ? "Source: " + src.piece + " line " + src.line
+        : "Source withheld";
+    }
+    vsrc.textContent = text;
+  }
 }
 $("#dock-ver").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return; poke();
@@ -3602,6 +3647,13 @@ function openVariorum(pieceId, initialVersionId, single=false){
  if(document.fonts)document.fonts.ready.then(()=>{if(dialog.isConnected)draw();});
 }
 const variorumButton=document.createElement('button');variorumButton.type='button';variorumButton.className='b';variorumButton.textContent='Variorum';variorumButton.id='v-variorum';variorumButton.onclick=()=>{const source=variorumSource();if(source)openVariorum(source.pieceId,source.versionId);};document.querySelector('#dock-ver').append(variorumButton);
+// Cut-up / erasure fold-in (journal-handwritten-web #55): for the focused
+// cut-up or erasure version, list each line with its source — revealed only
+// when the source piece is present in this public build (Series by
+// construction); any other source renders as withheld, never surfaced.
+const foldButton=document.createElement('button');foldButton.type='button';foldButton.className='b';foldButton.textContent='Fold to source';foldButton.id='v-fold-btn';foldButton.hidden=true;
+foldButton.onclick=async()=>{const source=variorumSource();if(!source)return;const host=document.querySelector('#vfold');if(!host)return;const pc=PIECES.find(p=>p.id===source.pieceId);if(!pc)return;const version=pc.V.find(v=>v.id===source.versionId);if(!version)return;const {renderFoldIn}=await import('./reader-features.js');renderFoldIn(host,version,{pieces:PIECES,pages:BYID},pid=>PIECES.some(p=>p.id===pid)?'series':'unknown');host.hidden=false;};
+document.querySelector('#dock-ver').append(foldButton);
 document.addEventListener('keydown',e=>{if(variorumClose||e.repeat)return;if(e.key?.toLowerCase()==='v'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!e.target.closest?.('input,textarea,select,[contenteditable]')){const source=variorumSource();if(source){e.preventDefault();openVariorum(source.pieceId,source.versionId);}}});
 
 function selectedSourceBinding(){

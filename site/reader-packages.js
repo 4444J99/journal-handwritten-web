@@ -37,6 +37,15 @@ function policy(value) {
   if (!['unsorted','series','reserve','archive'].includes(value.pool) || !['private','public','withheld'].includes(value.visibility)) fail('Unknown current source policy.');
   return value;
 }
+// Cut-up source reveal (journal-handwritten-web #55 step 4): a source line
+// may be surfaced in public output only when its piece's pool is exactly
+// 'series'. The comparison is the same exact-value rule pool_of() in
+// tools/post_poem.py uses — 'Series', ' series', null, and every other
+// value are withheld, never revealed. The private studio may show all
+// sources; this gate is the public side.
+export function sourceRevealAllowed(pool) {
+  return pool === 'series';
+}
 function contextGuard(options, scope) {
   if (typeof options.getCurrentSource !== 'function' || typeof options.getCurrentPolicy !== 'function') fail('Package previews require current source and policy providers.');
   assertSourceBinding(options.source);
