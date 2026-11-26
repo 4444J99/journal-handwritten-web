@@ -36,7 +36,7 @@ import sys
 import time
 from pathlib import Path
 
-SUITES = ["check", "py-tests", "node-tests", "studio-cf-py", "studio-cf-node"]
+SUITES = ["check", "py-tests", "node-tests", "studio-cf-py", "studio-cf-node", "release-gate"]
 # import name -> pip name; keep in step with requirements.txt and tools/bootstrap_env.py
 REQUIRED_MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy", "rapidfuzz": "rapidfuzz"}
 INFO = chr(0x2139)  # the information mark node's test reporter prints before counts
@@ -132,6 +132,8 @@ def plan(root, python=None):
     cf_node = sorted(glob.glob(str(root / "studio-cf" / "tests" / "*.test.mjs")))
     if cf_node:
         out.append(("studio-cf-node", ["node", "--test", "--test-concurrency=1", *cf_node], "node"))
+    if (root / "tools" / "release_gate.py").exists():
+        out.append(("release-gate", [python, str(root / "tools" / "release_gate.py")], None))
     return out
 
 
@@ -216,6 +218,8 @@ def main():
             if bad:
                 code = code or 1
         elif name == "check":
+            detail = out.strip().splitlines()[-1] if out.strip() else ""
+        elif name == "release-gate":
             detail = out.strip().splitlines()[-1] if out.strip() else ""
         if skipped:
             detail += f", {skipped} skipped"

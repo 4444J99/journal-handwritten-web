@@ -1,14 +1,14 @@
 // Free-plan path: the browser compiles the whole candidate. Each request here
 // independently checks ONE piece or page against a pinned private source slice.
 // Untrusted browser output never advances the public pointer by itself.
-import {buildCandidate,selection,filterMetadata,canonical,digest,encode,BLANK,assembleEffectiveSource,publicVersion,projectPublicVariorum} from './publish.js';
+import {buildCandidate,selection,filterMetadata,canonical,digest,encode,BLANK,assembleEffectiveSource,publicVersion,projectPublicVariorum,GATE_NAMES} from './publish.js';
 import {json} from './api.js';
 import {revisionStatement,revisionValues} from './publish-fence.js';
 import {target,pointer,condition,immutable,candidate,progress,setProgress,summary,bytesOf,checked,recoverCurrent,movePointer,publicManifest,fail,check,fileKey,stateKey,draftKey,doc,wasPublished} from './publish-api.js';
 
 const COLLECTIONS=['reviews','decisions','versions','release','batches','rconfig','parts','composites'];
 const ID=/^[a-f0-9]{64}$/;
-const STUB='<!doctype html><html><head><title>versforms</title><meta name="robots" content="noindex"></head><body><script>const PAL = []; const HF = [];</script></body></html>';
+const STUB='<!doctype html><html><head><title>versforms</title><meta name="robots" content="noindex"></head><body><img src="img/p/pg1.jpg" alt="Page 1"><script>const PAL = []; const HF = [];</script></body></html>';
 const object=x=>x!==null && typeof x==='object' && !Array.isArray(x);
 async function staticText(env,path,limit=4*1024*1024) {
   const r=await env.ASSETS.fetch(new Request('https://studio.invalid/publish/'+(path==='shell.html'?'shell':path)));
@@ -190,7 +190,7 @@ function compareHeader(c,data) {
   for(const k of ['v','groups','atlas','prov'])check(canonical(data[k])===canonical(c.header[k]),'output_header_mismatch');
   check(canonical(Object.keys(data.sourceBindings || {}).sort())===canonical([...c.header.bindingKeys].sort()),'source_binding_keys_mismatch');
   check(canonical(data.sourceAnchors || {})===canonical(c.header.anchors),'source_anchor_mismatch');
-  check(c.gates.length===c.pieces.length*3,'gate_list_mismatch');
+  check(c.gates.length===c.pieces.length*GATE_NAMES.length,'gate_list_mismatch');
 }
 async function verifyPiece(env,id,c,pid,data) {
   const db=await capturedDb(env),source=(await hydratedPiece(env,c.fragmentHashes,pid,db)).source;

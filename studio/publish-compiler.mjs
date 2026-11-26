@@ -167,6 +167,110 @@ function facing(source, direct) {
   return [...mates].filter(p=>!direct.includes(p));
 }
 
+// Studio notes are an append-only revision chain (studio/notes-store.mjs): an
+// edit adds a document whose `parents` name the previous revision, and the old
+// document stays in the collection. The note gates must judge the live head of
+// each record, not every revision ever written, or a rebound anchor could never
+// clear the gate that blocked it. A document without recordId/revisionId (no
+// chain) is its own head; a forked record keeps every head (all still live).
+function noteHeads(notes) {
+  const docs = notes && typeof notes === 'object' ? Object.values(notes).filter(d => d && typeof d === 'object') : [];
+  const chained = new Map(), heads = [];
+  for (const d of docs) {
+    if (typeof d.recordId !== 'string' || typeof d.revisionId !== 'string') { heads.push(d); continue; }
+    if (!chained.has(d.recordId)) chained.set(d.recordId, []);
+    chained.get(d.recordId).push(d);
+  }
+  for (const revisions of chained.values()) {
+    const parents = new Set(revisions.flatMap(d => Array.isArray(d.parents) ? d.parents.filter(p => typeof p === 'string') : []));
+    heads.push(...revisions.filter(d => !parents.has(d.revisionId)));
+  }
+  return heads;
+}
+
+// Gates buildCandidate reports per piece, in order. The free-plan browser
+// path (studio-cf/lib/publish-browser.js) checks the count against this list,
+// and tools/release_readiness.mjs documents the same names in advice(); keep
+// all three in step when a gate is added or removed.
+export const GATE_NAMES = ['series', 'verified', 'filed', 'alt_text', 'note_anchors', 'links'];
+// alt text on every published page image, note anchors resolving to a real
+// line, and links validating. They run here, per piece, on the chosen
+// versions only, so a piece blocked on another gate still reports them.
+function extraGates({pid, pc, sel, pages, db, shell}) {
+  const out = [];
+  // alt_text: the reader renders each page image as <img alt="Page <label>">
+  // with label = page id minus a leading 'diary' (site/index.html). No stored
+  // alt text exists in the tree, so the gate guards the derivation: it fails
+  // when the prepared shell has no such alt template (a reader change dropped
+  // alt attributes) or when a selected page yields a blank label.
+  const direct = unique(sel.indices.flatMap(i => pc.V[i].P.map(([pg]) => pg)));
+  const altOk = typeof shell === 'string' && shell.includes('alt="Page');
+  const blank = direct.filter(pg => pg.replace(/^diary/, '') === '');
+  out.push({name: 'alt_text', ok: altOk && !blank.length,
+    detail: !altOk ? 'reader shell has no page-image alt template'
+      : blank.length ? `blank alt label for ${blank.join(', ')}` : `${direct.length} page image(s)`});
+  // note_anchors: every note anchor for this piece must name a version of the
+  // piece and a line of that version. Docs without an anchor are not anchors
+  // and are skipped; when the export has no notes collection there is nothing
+  // to check and the gate passes with that detail (never a silent pass: the
+  // detail says what was checked). Only head revisions count (noteHeads).
+  // Known limit: the Worker and browser publish paths (studio-cf/lib/publish-api.js
+  // and publish-browser.js) do not load the notes collection into `db` yet, so
+  // there these two gates see no notes; they bite on the offline path
+  // (tools/release_readiness.mjs, tools/release_gate.py), which does.
+  const notes = noteHeads(db.notes);
+  const anchors = [];
+  for (const doc of notes) {
+    if (!doc || typeof doc !== 'object') continue;
+    const a = doc.anchor;
+    if (!a || typeof a !== 'object') continue;
+    if ((a.pieceId ?? doc.pieceId) !== pid) continue;
+    anchors.push(a);
+  }
+  const lineIds = new Map(); // versionId -> Set(lineId)
+  for (const vi of sel.indices) {
+    const ids = new Set();
+    for (const [pg, bs] of pc.V[vi].P) {
+      const p = pages.get(pg);
+      if (!p) continue;
+      for (const bi of bs) for (let li = 0; li < (p.B[bi]?.L?.length ?? 0); li++) ids.add(`${pg}-${bi}-${li}`);
+    }
+    lineIds.set(pc.V[vi].id, ids);
+  }
+  const badAnchors = anchors.filter(a => {
+    if (!lineIds.has(a.versionId)) return true;
+    return a.lineId != null && !lineIds.get(a.versionId).has(a.lineId);
+  });
+  out.push({name: 'note_anchors', ok: !badAnchors.length,
+    detail: anchors.length ? `${anchors.length} anchor(s) checked${badAnchors.length ? `; unresolvable: ${badAnchors.slice(0, 3).map(a => a.lineId ?? a.versionId).join(', ')}` : ''}` : 'no note anchors to check'});
+  // links: every http(s) URL in the published text (corrected lines) and in
+  // this piece's note heads must be a well-formed absolute URL. Notes are never
+  // published by the compiler, so private notes and the research dossier do not
+  // block a release over their private text. Today the tree
+  // carries no links in piece text, so the gate passes with '0 links' and
+  // guards the day a note carries one.
+  const urls = [];
+  const scan = text => { if (typeof text !== 'string') return; for (const m of text.matchAll(/https?:\/\/[^\s"'<>`]+/g)) urls.push(m[0]); };
+  for (const vi of sel.indices) for (const [pg, bs] of pc.V[vi].P) {
+    const p = pages.get(pg);
+    if (!p) continue;
+    for (const bi of bs) (p.B[bi]?.L ?? []).forEach((text, li) => {
+      const lid = `${pg}-${bi}-${li}`, review = db.reviews[lid];
+      scan(review?.status === 'corrected' && typeof review.text === 'string' ? review.text : text);
+    });
+  }
+  for (const doc of notes) {
+    if (!doc || typeof doc !== 'object') continue;
+    const a = doc.anchor;
+    if (doc.visibility === 'private' || doc.kind === 'research-dossier') continue;
+    if (a && typeof a === 'object' && (a.pieceId ?? doc.pieceId) === pid) scan(JSON.stringify(doc));
+  }
+  const badUrls = urls.filter(u => { try { const x = new URL(u); return (x.protocol !== 'http:' && x.protocol !== 'https:') || !x.hostname; } catch { return true; } });
+  out.push({name: 'links', ok: !badUrls.length,
+    detail: urls.length ? `${urls.length} link(s)${badUrls.length ? `; invalid: ${badUrls.slice(0, 3).join(', ')}` : ', all valid'}` : '0 links'});
+  return out;
+}
+
 // A stopped candidate returns diagnostic IDs and gate results but no files or
 // public data. This prevents an accidental preview route bypassing the stops.
 export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],accepted=[],force=false,publicPieces=pieces,target='production'}) {
@@ -180,6 +284,7 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
       if (!object(db[c])) throw new Error('invalid_collection_'+c);
       if (Object.values(db[c]).some(d=>!object(d))) throw new Error('malformed_document_'+c);
     }
+    if (db.notes !== undefined && !object(db.notes)) throw new Error('invalid_collection_notes');
     source=assembleEffectiveSource(source,db,{pieces});
     const pcs = new Map(source.j.pieces.map(p=>[p.id,p]));
     const pages = new Map(source.j.pages.map(p=>[p.id,p]));
@@ -202,6 +307,7 @@ export async function buildCandidate({source,db,shell,pieces=[],allVersions=[],a
       gate(pid,'filed',db.decisions['gruw-policy']?.choice === 'skip' || Object.values(db.batches).some(b=>Array.isArray(b.items) && b.items.includes(pid) && ['filed','registered'].includes(b.status)));
       if (!sel.indices.length || sel.indices.some(i=>!Number.isInteger(i) || !pc.V[i] || !pc.st.includes(i))) throw new Error('invalid_version_selection');
       chosen.set(pid,sel.indices); versions[pid]={...sel,total:pc.V.length,newest:pc.V.length-1,top:pc.top,unpublishedCorrected:0};
+      for (const g of extraGates({pid, pc, sel, pages, db, shell})) gate(pid, g.name, g.ok, g.detail);
       const newv = new Map(sel.indices.map((i,n)=>[i,n]));
       const st=pc.st.filter(i=>newv.has(i)).map(i=>newv.get(i));
       for (const vi of sel.indices) {

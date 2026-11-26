@@ -53,6 +53,9 @@ def index_html(font_b64=FONT_B64, extra=""):
         '<style>@font-face{font-family:"' + OLD + ' Diary";src:url(data:font/woff2;base64,' + font_b64 + ') format("woff2")}'
         'p{font-family:' + OLD + 'Diary,serif}</style>'
         '</head><body><canvas id="cv" aria-label="Fixture canvas"></canvas><p>set in ' + OLD + ' Diary</p>'
+        # The reader renders page images from a template with alt="Page <label>"; the
+        # release gate's alt_text check reads the shell for it (#183), so the fixture keeps one.
+        '<template id="page-img"><img alt="Page {label}"></template>'
         '<script>ctx.font = `34px "' + OLD + ' Diary"`; document.fonts.load(\'34px "' + OLD.lower() + ' diary"\');</script>' + extra +
         '</body></html>\n')
 
