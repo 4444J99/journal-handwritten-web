@@ -316,7 +316,7 @@ def load_release(path):
     return json.loads(p.read_text()) if p.exists() else {"pieces": []}
 
 
-def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True, source_data=None, publication_source=None, publication_db=None, target="production", photo_assets=None, pool_db=None, accept_shared_scan=None):
+def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, rename_fonts=True, source_data=None, publication_source=None, publication_db=None, target="production", photo_assets=None, pool_db=None, accept_shared_scan=None, cut_up_pool_of=None):
     """Write the public site for the pieces in `want` into `out`; returns a summary dict.
 
     select       {piece id: [indices into the piece's V]} versions to publish; default all
@@ -333,6 +333,12 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                  shared scan (same parsing as post_poem.py: comma- or space-separated,
                  repeatable). Only Series co-residents can be accepted; a Reserve/Archive
                  co-resident is a stop no acceptance overrides.
+    cut_up_pool_of  callable piece id -> pool ('series', 'reserve', ...), the caller's
+                 exact-value pool rule. The cut-up provenance gate (issue #55) needs a
+                 pool for every source piece: it comes from pool_db when that is given,
+                 else from this callable (post_poem.py passes its own, so the real
+                 publish path is gated). A selected version that names source lines
+                 while neither is available is a hard stop, never a silent pass.
     """
     pools = None
     out, site = Path(out), Path(site)
@@ -417,19 +423,31 @@ def build(out, want, site=SITE, select=None, corrections=None, strip_prov=True, 
                 detail = "; ".join(f"{f['id']} on {f['page']}: {f['reason']}" for f in bad)
                 sys.exit(f"{pid}: shared scan refused: {detail}; output unchanged")
 
-        # Cut-up / erasure provenance gate (issue #55). A cut-up version's
-        # lines ARE its source lines' text, so a version reusing a Reserve
-        # (or Archive / unknown-pool) line would publish Reserve text even
-        # when the version's own piece is Series. The check is line-level:
-        # it names the exact source line, and no acceptance overrides it —
-        # the same "accept never helps non-series" rule as the shared scan.
-        # Runs here, before any output is created or replaced.
-        import cut_up
+    # Cut-up / erasure provenance gate (issue #55). A cut-up version's lines ARE
+    # its source lines' text, so a version reusing a Reserve (or Archive /
+    # unknown-pool) line would publish Reserve text even when the version's own
+    # piece is Series. The check is line-level: it names the exact source line,
+    # and no acceptance overrides it (the same "accept never helps non-series"
+    # rule as the shared scan). It is NOT tied to pool_db: the real publish path
+    # (post_poem.py) supplies cut_up_pool_of instead, and with neither source of
+    # pools a version that names source lines is refused (fail closed). Runs
+    # before any output is created or replaced.
+    if want:
+        pool_of = cut_up_pool_of
+        if pool_of is None and pool_db is not None:
+            import post_poem
+            pool_of = lambda p: post_poem.pool_of(db, p)
         for pid in want:
             for vi in chosen[pid]:
                 version = pieces[pid]["V"][vi]
-                bad = cut_up.reserve_sources(
-                    version, lambda p: post_poem.pool_of(db, p), source_pages)
+                import cut_up
+                if pool_of is None:
+                    if not any(e is not None for e in (version.get("src") or [])):
+                        continue
+                    sys.exit(f"{pid}: cut-up version {version['id']} names source lines but no pool data is "
+                             "available to check them (pass pool_db or cut_up_pool_of); "
+                             "a withheld line could not be ruled out; output unchanged")
+                bad = cut_up.reserve_sources(version, pool_of, source_pages)
                 if bad:
                     detail = "; ".join(
                         f"{b['src']['piece']} line {b['src']['line']} "

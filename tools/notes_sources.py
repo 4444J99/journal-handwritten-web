@@ -33,7 +33,13 @@ def build(root=ROOT):
             if "sourceVersion" in version:
                 v["sourceVersion"] = version["sourceVersion"]
             versions.append(v)
-        pieces.append({"id": piece["id"], "V": versions})
+        entry = {"id": piece["id"], "V": versions}
+        # `top` is the index of the top version in V. It is NOT always the last
+        # entry (the last entry is only the "newest"): a cut made "from the
+        # top version" must name V[top], so the Studio needs the field.
+        if isinstance(piece.get("top"), int):
+            entry["top"] = piece["top"]
+        pieces.append(entry)
     return {
         "format": "versforms-notes-versions", "version": 1,
         "provenance": {

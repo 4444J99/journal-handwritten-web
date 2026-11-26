@@ -493,7 +493,11 @@ def build_outputs(source):
             if "sourceVersion" in v:
                 entry["sourceVersion"] = v["sourceVersion"]
             vs.append(entry)
-        pieces.append({"id": p["id"], "V": vs})
+        entry = {"id": p["id"], "V": vs}
+        # index of the top version in V (not always the last entry); see tools/notes_sources.py
+        if isinstance(p.get("top"), int):
+            entry["top"] = p["top"]
+        pieces.append(entry)
     notes = {"format": "versforms-notes-versions", "version": 1,
              "provenance": {"kind": "derived-id-map", "ids": "preserved; none allocated",
                             "sources": [{"path": name, "sha256": hashlib.sha256(data[name]).hexdigest()} for name in SOURCE_FILES]},

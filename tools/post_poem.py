@@ -247,6 +247,25 @@ def gate_series(db, pid):
     return pool == "series", f"pool is {pool!r}" if pool != "series" else "pool is 'series'"
 
 
+def gate_cut_up(src, db, pid, indices):
+    """Hard stop (issue #55): a selected cut-up / erasure version whose source lines sit in a
+    withheld pool. A version's lines ARE its source lines' text, so the version's own piece being
+    Series proves nothing. Fail closed: a source piece with no release document reads 'unsorted'
+    and is refused, and a malformed version is refused rather than skipped."""
+    import cut_up
+    bad = []
+    try:
+        for i in indices:
+            v = src.pieces[pid]["V"][i]
+            for b in cut_up.reserve_sources(v, lambda q: pool_of(db, q), src.jpages):
+                bad.append(f"{v['id']} reuses {b['src']['piece']} line {b['src']['line']} (pool is {b['pool']})")
+    except ValueError as e:
+        return False, f"cut-up version cannot be checked: {e}"
+    if bad:
+        return False, "; ".join(bad) + "; a Series piece must not publish withheld text through a cut-up version's provenance"
+    return True, ""
+
+
 def gate_verified(src, db, pid):
     ids = src.item_line_ids(pid)
     if ids is None:
@@ -1126,6 +1145,11 @@ def run(a):
                     warning = f"{f['id']} (already public) has unpublished version(s) written on {', '.join(hidden)}, whose scan is in this site"
                     warnings.append(warning)
                     public_warnings[warning] = f"{f['id']} has unpublished version(s) visible in a published scan; page details are in the private console log"
+    # the cut-up provenance stop runs over EVERY piece in the rebuilt list, like the shared scan
+    for pid in effective:
+        ok, detail = gate_cut_up(src, db, pid, select[pid])
+        if not ok or pid in pids:
+            record("stop", pid, "(iii) cut-up sources are not withheld" + ("" if pid in pids else " (already public, rebuilt)"), ok, detail)
     extra = sorted(accepted - used_ids)
     if extra:
         # ids of pieces that are not posted yet stay out of the pull request text: console only
@@ -1185,7 +1209,7 @@ def run(a):
     (workdir / WORKDIR_MARK).write_text("made by tools/post_poem.py; build/ here is replaced by every run\n")
     out = workdir / "build"
     try:
-        res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True)
+        res = build_public.build(out, effective, site=src.site, select=select, corrections=corrections, strip_prov=True, cut_up_pool_of=lambda q: pool_of(db, q))
     except SystemExit as e:
         say(f"FAIL  stop the build was refused: {e.code if isinstance(e.code, str) else 'exit status ' + str(e.code)}")
         return EXIT_STOP

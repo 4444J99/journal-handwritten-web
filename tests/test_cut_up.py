@@ -24,7 +24,9 @@ sys.path.insert(0, str(TOOLS))
 sys.path.insert(0, str(TESTS))
 import build_public  # noqa: E402
 import cut_up  # noqa: E402
-from test_post_poem import make_private, ready_db  # noqa: E402
+import post_poem  # noqa: E402
+from unittest import mock  # noqa: E402
+from test_post_poem import Base, make_private, ready_db  # noqa: E402
 
 
 def _sentinel_out(root):
@@ -103,6 +105,29 @@ class CutUpModelTests(unittest.TestCase):
                          cut_up.cut_up_record("p001", ["pg2-0-0"], [None]))
 
 
+class NotesVersionMapTopTests(unittest.TestCase):
+    """F13: the derived map carries each piece's `top` index (not always the last V entry)."""
+
+    def test_checked_in_map_top_matches_j_json_for_every_piece(self):
+        repo = TESTS.parent
+        j = json.loads((repo / "site" / "data" / "j.json").read_text())
+        m = json.loads((repo / "studio" / "data" / "notes-versions.json").read_text())
+        mapped = {p["id"]: p for p in m["pieces"]}
+        self.assertEqual(set(mapped), {p["id"] for p in j["pieces"]})
+        differs = 0
+        for p in j["pieces"]:
+            self.assertEqual(mapped[p["id"]]["top"], p["top"], p["id"])
+            differs += p["top"] != len(p["V"]) - 1
+        self.assertEqual(differs, 7)  # the pieces where V[-1] is not the top
+
+    def test_build_emits_top_and_stays_in_sync_with_the_checked_in_file(self):
+        import notes_sources
+        built = notes_sources.build()
+        self.assertTrue(all(isinstance(p.get("top"), int) for p in built["pieces"]))
+        self.assertEqual(json.dumps(built, ensure_ascii=False, indent=2) + "\n",
+                         (TESTS.parent / "studio" / "data" / "notes-versions.json").read_text())
+
+
 class CutUpGateTests(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="cutup-test-"))
@@ -159,3 +184,69 @@ class CutUpGateTests(unittest.TestCase):
         top = pc["V"][pc["top"]]
         self.assertEqual(top["method"], "cut-up")
         self.assertEqual(top["src"], [{"piece": "p003", "line": "pg3-0-0"}, None, None])
+
+    def test_build_without_pool_data_refuses_a_version_that_names_sources(self):
+        # fail closed: no pool_db and no cut_up_pool_of cannot show the source is not withheld
+        self.prepare(release={"p002": {"pool": "series"}, "p003": {"pool": "series"}})
+        self.make_cut_up([{"piece": "p003", "line": "pg3-0-0"}, None, None])
+        out = _sentinel_out(self.tmp)
+        with self.assertRaises(SystemExit) as cm:
+            self.build(pool_db=None, accept_shared_scan=None)
+        self.assertRegex(str(cm.exception.code), r"no pool data is available.*output unchanged")
+        self.assertEqual([p.name for p in out.iterdir()], ["previous-output"])
+
+    def test_build_gate_runs_from_cut_up_pool_of_without_pool_db(self):
+        self.prepare(release={"p002": {"pool": "series"}, "p003": {"pool": "series"}})
+        self.make_cut_up([{"piece": "p003", "line": "pg3-0-0"}, None, None])
+        with self.assertRaises(SystemExit) as cm:
+            self.build(pool_db=None, accept_shared_scan=None,
+                       cut_up_pool_of=lambda q: "reserve")
+        self.assertRegex(str(cm.exception.code), r"reuses a withheld line: p003 line pg3-0-0 \(pool is reserve\)")
+        res = self.build(pool_db=None, accept_shared_scan=None,
+                         cut_up_pool_of=lambda q: "series")
+        self.assertTrue((self.out / "data" / "j.json").is_file())
+        self.assertEqual(res["pools"], None)
+
+
+class CutUpPublishPathTests(Base):
+    """post_poem.py is the real publish path (and the scheduler's): it builds without pool_db."""
+
+    def make_cut_up(self, src):
+        jpath = self.root / "site" / "data" / "j.json"
+        j = json.loads(jpath.read_text())
+        pc = next(p for p in j["pieces"] if p["id"] == "p001")
+        top = pc["V"][pc["top"]]
+        top["method"] = "cut-up"
+        top["src"] = src
+        jpath.write_text(json.dumps(j))
+
+    def test_publish_path_refuses_a_reserve_sourced_cut_up(self):
+        self.prepare(release={"p006": {"pool": "reserve"}})
+        self.make_cut_up([{"piece": "p006", "line": "diary54-0-0"}, None, None])
+        code = self.go("p001", "--accept-embedded-font")
+        self.assertEqual(code, post_poem.EXIT_STOP, self.out)
+        self.assertIn("REFUSED", self.out)
+        self.assertRegex(self.out, r"cut-up sources are not withheld")
+        self.assertRegex(self.out, r"p006 line diary54-0-0 \(pool is reserve\)")
+        self.assertFalse((self.work / "build").exists())
+
+    def test_publish_path_refuses_an_unsorted_source_fail_closed(self):
+        self.prepare()  # p006 has no release document: pool 'unsorted'
+        self.make_cut_up([{"piece": "p006", "line": "diary54-0-0"}, None, None])
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), post_poem.EXIT_STOP, self.out)
+        self.assertRegex(self.out, r"p006 line diary54-0-0 \(pool is unsorted\)")
+
+    def test_build_call_is_gated_even_if_the_post_poem_stop_is_bypassed(self):
+        # defence in depth: build_public.build must itself get the pool rule from post_poem
+        self.prepare(release={"p006": {"pool": "reserve"}})
+        self.make_cut_up([{"piece": "p006", "line": "diary54-0-0"}, None, None])
+        with mock.patch.object(post_poem, "gate_cut_up", lambda *a, **k: (True, "")):
+            code = self.go("p001", "--accept-embedded-font")
+        self.assertEqual(code, post_poem.EXIT_STOP, self.out)
+        self.assertIn("the build was refused", self.out)
+        self.assertIn("reuses a withheld line", self.out)
+
+    def test_publish_path_accepts_a_series_sourced_cut_up(self):
+        self.prepare(release={"p003": {"pool": "series"}})
+        self.make_cut_up([{"piece": "p003", "line": "pg3-0-0"}, None, None])
+        self.assertEqual(self.go("p001", "--accept-embedded-font"), 0, self.out)

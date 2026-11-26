@@ -1265,7 +1265,8 @@ function renderVersionsList() {
 // from another piece would carry {piece, line} instead (see tools/cut_up.py).
 const CUT = { pieceId: null, order: [], struck: new Set(), msg: '', method: 'cut-up' };
 // Top version id per piece, from the derived notes-versions.json (same order
-// as j.json; last V record is the current top version). Cached; a failed
+// as j.json; the piece's `top` index into V, which is NOT always the last
+// record). Cached; a failed
 // fetch leaves sourceVersion null and the save still works — the field is
 // optional, used by the reader to list an erasure's dropped lines.
 let CUT_VERSIONS = null;
@@ -1276,7 +1277,11 @@ async function cutTopVersionId(pieceId) {
   }
   const rec = (CUT_VERSIONS.pieces || []).find(p => p.id === pieceId);
   const vs = rec ? rec.V : null;
-  return vs && vs.length ? vs[vs.length - 1].id : null;
+  if (!vs || !vs.length) return null;
+  // `top` indexes V; the last entry is only the newest. Without a usable `top`
+  // (an older map) name nothing rather than guess the wrong version.
+  const v = Number.isInteger(rec.top) ? vs[rec.top] : null;
+  return v ? v.id : null;
 }
 function renderCut() {
   const root = $('#v-cut'); root.textContent = '';

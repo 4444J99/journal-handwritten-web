@@ -95,3 +95,30 @@ test('release warning trigger: a Series piece reusing a Reserve line', () => {
   assert.equal(cutUpBadVersions(versions, () => 'series', 'p001').length, 0);
   assert.equal(cutUpBadVersions(versions, poolOf, 'p002').length, 1);
 });
+
+// F13: the Cut tab's sourceVersion must be the piece's TOP version (V[top]),
+// not the last entry of V (the newest), which differs for 7 of 126 pieces.
+function loadCutTopVersionId(map) {
+  const a = html.indexOf('let CUT_VERSIONS = null;'), b = html.indexOf('function renderCut()');
+  assert.ok(a >= 0 && b > a, 'cutTopVersionId block not found in studio/index.html');
+  const c = vm.createContext({ fetch: async () => ({ json: async () => map }) });
+  vm.runInContext(html.slice(a, b) + '\nthis.cutTopVersionId = cutTopVersionId;', c);
+  return c.cutTopVersionId;
+}
+
+test('cutTopVersionId names V[top], not the last V entry', async () => {
+  const map = { pieces: [
+    { id: 'p001', top: 0, V: [{ id: 'p001-top' }, { id: 'p001-newest' }] },
+    { id: 'p002', top: 1, V: [{ id: 'a' }, { id: 'p002-top' }, { id: 'p002-newest' }] },
+    { id: 'p003', top: 0, V: [{ id: 'p003-only' }] },
+    { id: 'p004', V: [{ id: 'x' }, { id: 'y' }] },
+    { id: 'p005', top: 9, V: [{ id: 'x' }] },
+  ] };
+  const f = loadCutTopVersionId(map);
+  assert.equal(await f('p001'), 'p001-top');
+  assert.equal(await f('p002'), 'p002-top');
+  assert.equal(await f('p003'), 'p003-only');
+  assert.equal(await f('p004'), null, 'no top field: name nothing rather than guess');
+  assert.equal(await f('p005'), null, 'top out of range');
+  assert.equal(await f('p999'), null);
+});
