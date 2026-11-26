@@ -3,7 +3,8 @@
 The pool map is the reader's only pool source, so the generator must apply
 post_poem.pool_of()'s exact-value rule and fail loudly on a damaged export:
 a document that merely looks like Reserve must never read as Reserve, and a
-piece absent from the map stays unknown (the reader never refuses on unknown).
+piece absent from the map is unsorted and passes, while any named non-series
+pool (reserve, archive, unknown) is refused by the reader.
 """
 import json
 import subprocess
@@ -70,7 +71,7 @@ class TestPools(unittest.TestCase):
             with self.assertRaises(Exception):
                 pools.build(tmp)
 
-    def test_absent_piece_is_unknown_not_refused(self):
+    def test_absent_piece_is_unsorted_not_named(self):
         # The map only names what the export knows; absence is not a pool.
         out = pools.build(ROOT / "exports/studio-db-pre-series-order-p006-p010-2026-11-15")
         self.assertNotIn("p006", out["pools"])

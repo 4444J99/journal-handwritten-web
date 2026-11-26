@@ -5,10 +5,14 @@ The reader (site/index.html) has no database access, so the Reserve gate in
 journal-handwritten-web #30 reads a generated map instead of the live pool.
 The map is built with post_poem.py's own pool_of() exact-value rule, imported
 not re-implemented: only the studio's exact 'series' / 'reserve' / 'archive'
-values count; anything else reads as 'unknown', and a piece absent from the
-map has unknown pool. The reader never refuses a deep link, a ghost slot, a
-line card or a reel export on an unknown pool -- refusal needs positive
-evidence of Reserve (see the pool gate in site/index.html).
+values count; anything else reads as 'unknown'. A piece absent from the map
+has no release document, i.e. pool 'unsorted'. The reader applies
+post_poem's publish rule: a piece the map names with any pool other than
+'series' ('reserve', 'archive' or 'unknown') is refused for deep links, line
+cards, ghost slots and the reel; an absent ('unsorted') piece passes (see the
+pool gate in site/index.html). tools/build_public.py deliberately does not
+ship this file: it names Reserve ids, and the public output holds only
+published Series pieces, so the reader there runs with no map.
 
 The map is only as fresh as the export it was generated from. A fresh export
 needs `wrangler d1 execute --remote`, which is the author's Cloudflare
@@ -54,8 +58,9 @@ def build(pool_db):
         "generated_by": "tools/pools.py (journal-handwritten-web #30)",
         "note": ("Pools are only as fresh as the export named in generated_from; "
                  "regenerate from a fresh studio DB export when one lands. "
-                 "A piece absent from pools has unknown pool; the reader never "
-                 "refuses on unknown -- only an exact 'reserve' refuses."),
+                 "A piece absent from pools is unsorted (no release document) and "
+                 "passes; a piece named with any pool other than 'series' "
+                 "(reserve, archive, unknown) is refused by the reader."),
         "pools": pools,
     }
 

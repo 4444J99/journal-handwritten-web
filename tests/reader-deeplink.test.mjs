@@ -34,7 +34,7 @@ test('reader deep links #pNNN resolve, refuse Reserve, and never crash on unknow
   const source = await fs.readFile(new URL('../site/index.html', import.meta.url), 'utf8');
   // The pool helpers, itemForPiece and readHash, sliced out of the live page
   // (same technique as reader-permalink.test.mjs slices setHash).
-  const poolHelpers = slice(source, 'function poolEntry(id){', 'function itemForPiece(pc){');
+  const poolHelpers = slice(source, 'let POOLS = ', 'function itemForPiece(pc){');
   const itemForPiece = slice(source, 'function itemForPiece(pc){', 'function prepData(d){');
   const readHash = slice(source, 'function readHash(){', 'function applyHash(h, animate){');
   const page = '<!doctype html><script>'
@@ -49,9 +49,10 @@ test('reader deep links #pNNN resolve, refuse Reserve, and never crash on unknow
     + 'const SCANS = [], FONTS = [], PAL = [], HF = [];'
     + 'const CONTENTS = ["lines","pages","unfold","type"], ARRS = ["poem","scatter","spiral"];'
     + 'const LNK = {};'
-    + 'let POOLS = {pools:{p001:{pool:"series", num:1, order:0}, p002:{pool:"reserve"}, p003:{pool:"series"}, p200:{pool:"series"}}};'
     + poolHelpers + itemForPiece + readHash
-    + 'window.__t = {readHash, poolOfId, isReserve, pieceStamp, pieceNum, itemForPiece};'
+    + 'POOLS = {pools:{p001:{pool:"series", num:1, order:0}, p002:{pool:"reserve"}, p003:{pool:"series"}, p200:{pool:"series"}, p300:{pool:"archive"}, p301:{pool:"unknown"}, p302:{pool:["series"]}}};'
+    + 'window.__t = {readHash, poolOfId, isReserve, isWithheld, pieceStamp, pieceNum, itemForPiece, idForNumber, loadPools};'
+    + 'function setPools(p){ POOLS = p; } function getPools(){ return POOLS; }'
     + '</script>';
   const server = http.createServer((req, res) => { res.setHeader('content-type', 'text/html'); res.end(page); });
   await new Promise(r => server.listen(0, '127.0.0.1', r));
@@ -95,14 +96,54 @@ test('reader deep links #pNNN resolve, refuse Reserve, and never crash on unknow
       assert.equal(await ev(`poolOfId("p200")`), 'series');
       // The pool gate is the exact-value rule: only 'reserve' refuses.
       assert.equal(await ev(`poolOfId("p001")`), 'series');
-      assert.equal(await ev(`poolOfId("p999")`), 'unknown');
+      // A piece the map does not name is 'unsorted' (no release document),
+      // which passes exactly as in tools/post_poem.py; a piece the map names
+      // with a malformed pool is 'unknown' and is withheld.
+      assert.equal(await ev(`poolOfId("p999")`), 'unsorted');
+      assert.equal(await ev(`poolOfId("p301")`), 'unknown');
+      assert.equal(await ev(`poolOfId("p302")`), 'unknown');
       assert.equal(await ev(`isReserve("p002")`), true);
       assert.equal(await ev(`isReserve("p001")`), false);
+      // The gate fails closed for Reserve, Archive and malformed pools, and
+      // open for Series and unnamed (unsorted) pieces.
+      assert.deepEqual(await ev(`["p001","p002","p300","p301","p302","p999"].map(isWithheld)`), [false, true, true, true, true, false]);
+      for (const n of ['300', '301', '302'])
+        assert.equal(await ev(`location.hash = "#p${n}"; readHash().unavailable`), true);
       // The n/100 stamp takes the release number from the map when it
       // knows one, else the piece-model number.
       assert.equal(await ev(`pieceStamp("p001")`), '1/100');
       assert.equal(await ev(`pieceStamp("p003")`), '3/100');
       assert.equal(await ev(`pieceNum("p999")`), 999);
+      // #pNNN resolves the number the piece is stamped with, not the id
+      // number: p007 carries release number 3, so #p3 opens p007 (the
+      // stamp's piece), never p003; and a number two pieces share refuses.
+      await ev(`setPools({pools:{p007:{pool:"series", num:3}}})`);
+      assert.equal(await ev(`pieceStamp("p007")`), '3/100');
+      // p003 (stamped 3/100 by its id) and p007 (release num 3) now share 3.
+      assert.deepEqual(await ev(`idForNumber(3)`), {ambiguous: true});
+      assert.equal(await ev(`location.hash = "#p3"; readHash().unavailable`), true);
+      await ev(`setPools({pools:{p003:{pool:"series", num:9}, p007:{pool:"series", num:3}}})`);
+      assert.deepEqual(await ev(`idForNumber(3)`), {id: 'p007'});
+      assert.deepEqual(await ev(`idForNumber(9)`), {id: 'p003'});
+      // p003 is stamped 9/100, so #p3 must not open it: it names p007, a
+      // ghost slot (named by the map, no piece model), which refuses.
+      assert.equal(await ev(`location.hash = "#p3"; (() => { const h = readHash(); return h.pid === undefined && h.unavailable === true; })()`), true);
+      assert.equal(await ev(`location.hash = "#p9"; readHash().pid`), 'diary3');
+      // A missing pool map is a definitive 404: loadPools gives up at once
+      // (no 350 ms / 1050 ms retry stall) and leaves the gates open. A 5xx
+      // is transient and is retried.
+      await ev(`setPools({pools:{}}); window.__calls = 0; window.fetch = async () => { window.__calls++; return {ok:false, status:404}; };`);
+      const ms404 = await ev(`(async () => { const t = performance.now(); await loadPools(); return performance.now() - t; })()`);
+      assert.equal(await ev(`window.__calls`), 1);
+      assert.ok(ms404 < 300, 'a 404 must not stall on retries: ' + ms404);
+      assert.deepEqual(await ev(`getPools().pools`), {});
+      await ev(`window.__calls = 0; window.fetch = async () => { window.__calls++; return {ok:false, status:503}; };`);
+      await ev(`loadPools()`);
+      assert.equal(await ev(`window.__calls`), 3);
+      // An SPA-fallback HTML 200 (not JSON) is also final, not retried.
+      await ev(`window.__calls = 0; window.fetch = async () => { window.__calls++; return {ok:true, status:200, json: async () => { throw new SyntaxError('x'); }}; };`);
+      await ev(`loadPools()`);
+      assert.equal(await ev(`window.__calls`), 1);
     });
   } finally {
     await new Promise(r => server.close(r));
