@@ -23,7 +23,14 @@ except ImportError:
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 import check as checkmod  # noqa: E402
-import image_tiers as tiers  # noqa: E402
+
+# image_tiers imports scipy at module scope; importing it unconditionally here
+# breaks discovery on machines without the optional local-tooling dependency.
+# The tests that need it are already decorated with skipUnless(HAVE_STACK).
+if HAVE_STACK:
+    import image_tiers as tiers  # noqa: E402
+else:
+    tiers = None  # type: ignore[assignment]
 
 
 def synthetic_page(path: Path, faint: bool = False, size=(320, 240)) -> None:

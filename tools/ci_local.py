@@ -38,7 +38,7 @@ from pathlib import Path
 
 SUITES = ["check", "py-tests", "node-tests", "studio-cf-py", "studio-cf-node"]
 # import name -> pip name; keep in step with requirements.txt and tools/bootstrap_env.py
-REQUIRED_MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy"}
+REQUIRED_MODULES = {"PIL": "Pillow", "fontTools": "fonttools", "brotli": "brotli", "markdown": "Markdown", "numpy": "numpy", "rapidfuzz": "rapidfuzz"}
 INFO = chr(0x2139)  # the information mark node's test reporter prints before counts
 
 
@@ -184,9 +184,12 @@ def main():
         env["TMPDIR"] = str(tmpdir)
 
     python = pick_python(root, a.python)
-    if python != sys.executable:
+    bin_dir = str(Path(python).parent)
+    if python != sys.executable or (Path(python).parent.parent / "pyvenv.cfg").exists():
         # Suites also spawn a bare `python3` (build_dist.py, build_reader.py, ...); it must be the same environment.
-        env["PATH"] = str(Path(python).parent) + os.pathsep + env.get("PATH", "")
+        path_parts = env.get("PATH", "").split(os.pathsep) if env.get("PATH") else []
+        if not path_parts or path_parts[0] != bin_dir:
+            env["PATH"] = bin_dir + os.pathsep + env.get("PATH", "")
         env["VIRTUAL_ENV"] = str(Path(python).parent.parent)
     if not a.no_preflight:
         miss = preflight(root, python)

@@ -688,7 +688,7 @@ class HardStopTests(Base):
     @needs_venv
     def test_old_name_inside_a_font_that_is_left_unrenamed_is_a_hard_stop(self):
         self.prepare()
-        with mock.patch.object(build_public, "rename_embedded_fonts", lambda html: (html, [])):
+        with mock.patch.object(build_public, "rename_embedded_fonts", lambda html, site=None: (html, [])):
             self.assertEqual(self.go("p001", "--force"), 3, self.out)
         self.assertIn("font name id1", self.out)
         self.assertIn("data URI 1", self.out)

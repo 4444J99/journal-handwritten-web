@@ -1,5 +1,21 @@
 # Handwritten journal: plan and state
 
+## Public-by-design repository and multi-lane corpus — 2026-11-25
+
+The author has locked two architectural decisions. `journal-handwritten-web` is public by design;
+safety comes from custody separation: device capture stays in the private
+`tool-notes-docs-capture`, raw exports stay outside all git repositories at
+`/Volumes/Archive4T/Media/intake/versforms-witnesses/`, and only public-safe metadata enters this
+repository. The corpus is multi-lane and unbounded: `C` is the physical notebook, `N` standalone
+original-era Apple Notes, `P` unmatched photo witnesses, with further lanes possible.
+`source/chronology.json` is the Grand Chronology across lanes; curated 100-piece arrangements and
+Instagram Round 1 schedules are downstream projections, not a fixed `001..100` ceiling.
+`digitized_at` remains scan provenance and never a composition-date bound.
+
+This supersedes the older "private repository" and "100 full poems, numbered n/100" framing in
+earlier sections without rewriting their history. See the
+[session record](../docs/chats/2026-11-25-public-multilane-readme.md).
+
 ## Repository closeout (7 November 2026)
 
 Source housekeeping/Variorum PRs143–148 and readerPR4 are merged. All runnable tests pass; the previous timeout fixture is corrected. Original branch histories are preserved, completed branches retired, and the active playground branch synchronized with main. [Closeout evidence](../docs/verification/repository-housekeeping-2026-11-07/README.md) records exact tested/integrated OIDs and recovery. GitHub Actions runner startup remains account-billing-blocked (#111); no checks are suppressed. No source verification, filing, physical-device acceptance or new poem release is inferred.

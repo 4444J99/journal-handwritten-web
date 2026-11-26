@@ -1076,6 +1076,10 @@ function renderDecisions() {
   root.append(h('div', { class: 'dsec' }, 'Release'));
   root.append(dcard('release-numbering', 'Release numbering', [], [['fixed', 'Fixed in advance'], ['as-posted', 'Assigned as each posts']]));
   root.append(dcard('participation', 'Participation', [], [['counts', 'Counts toward the 100'], ['around', 'Sits around it'], ['undecided', 'Undecided']]));
+  // JHW #30: the two offered questions from the Oct 27 review-feedback
+  // exchange. The cards record the author's answers; they do not decide them.
+  root.append(dcard('release-cadence', 'Release cadence', [], [['chronological', 'Chronological'], ['alternating', 'Alternating'], ['paired-10', 'Paired batches of 10']]));
+  root.append(dcard('release-reserve-count', 'Journal-reserve poems and the 100', [], [['counts', 'Counts toward the 100'], ['excluded', 'Does not count'], ['undecided', 'Undecided']]));
   updateDecisions();
 }
 
