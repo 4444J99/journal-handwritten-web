@@ -232,3 +232,18 @@ in the [T05 verification receipt](verification/t05-2026-11-05/README.md).
 The [integration handoff](integration/t05-handoff.md) names the remaining owners
 and interfaces. A passing fixture is implementation evidence,
 not the author's acceptance of a real note or contribution.
+
+### Addendum — 2026-11-27 (journal-handwritten-web #17 build)
+
+The #17 layer is built: the private reference file
+(`studio/data/reading-notes.json`, an empty schema-valid backup envelope —
+no transcribed reading notes exist in-repo to copy into it, see
+`docs/chats/2026-10-26-footnotes-and-endnotes/reading-notes.md`), the
+public sidecar (`site/data/notes.json`, validated by
+`tools/notes_sidecar.py --check`), the Notes tab in the review studio
+shell (loads the `studio/notes.html` workbench), tap-to-reveal marks on
+canvas and book (`site/notes-layer.mjs`), and the critical-apparatus
+section in the Study view. The sidecar is empty until the author clears
+a note for release review; the reader renders exactly as before with no
+records. Residual, unchanged: the author supplies the notes and decides
+critical-layer authorship.
