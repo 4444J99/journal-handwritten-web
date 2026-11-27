@@ -70,12 +70,12 @@
    {
     "text": "Count the journal's vocabulary for the idea 2 constraint",
     "who": "Claude suggestion",
-    "done": false
+    "done": true
    },
    {
     "text": "Exclude Reserve poems from any reader-cut pool if reader cut-ups are built",
     "who": "Claude suggestion",
-    "done": false
+    "done": true
    }
   ],
   "close": false,
