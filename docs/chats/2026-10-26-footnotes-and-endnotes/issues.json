@@ -33,22 +33,26 @@
    {
     "text": "Dual-date every note (poem date + note date), visible on tap",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "note": "Delivered 2026-11-27 (loop PR, journal-handwritten-web #18): the sidecar already carried poemDate + noteDate; the public reader now shows both on tap (site/notes-layer.mjs dualDateText, used by the reveal panel and the apparatus meta) — recorded as the value, 'c. <value>' for approximate, 'undated' for unknown, never a guessed year. Finding: no poem dates are recoverable from the repo (site/data/j.json: 156/156 'd': null; no date keys in j.json or review.json; poem-records.json dates are publish exposures), so every poemDate stays {unknown, null} until the author supplies one."
    },
    {
     "text": "Version notes so reflections can accrue over time",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "note": "Delivered 2026-11-27 (loop PR, journal-handwritten-web #18): accrual is the model's append-only parents chain (a later reflection is a new revision whose parents lists the prior revisionId; the first revision stays byte-identical), proven by new tests in tests/test_notes_model.mjs; the workbench already shows a reflection's revision history. No reflection content was seeded — no author reflection text exists in-repo."
    },
    {
     "text": "Place reflections in endnotes; keep footnotes short and word/line-anchored",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "note": "Delivered 2026-11-27 (loop PR, journal-handwritten-web #18): a cleared reflection (private kind 'reflection') now projects to the public sidecar as kind 'endnote' (studio/notes-model.mjs — the sidecar carries only footnote/endnote/critical-note, so a verbatim 'reflection' kind was rejected by both sidecar validators and could never reach the reader), numbered across the series at render and shown in the reveal panel; footnotes stay short and anchored. Proven end to end by new tests in tests/test_notes_layer.mjs. No reflection content was seeded."
    },
    {
     "text": "Decide whether reflections on new poems are written immediately or after a deliberate gap",
     "who": "author",
-    "done": false
+    "done": false,
+    "note": "Default recorded 2026-11-27 (loop PR, journal-handwritten-web #18, author-overridable): new-poem reflections are written after a deliberate gap, not same-day; old-poem (retrospective) reflections come first. The decision itself is still the author's."
    }
   ],
   "close": false,

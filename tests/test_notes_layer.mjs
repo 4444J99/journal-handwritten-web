@@ -4,11 +4,11 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import {
   validateSidecar, indexSidecar, numberEndnotes, marksForLine,
-  apparatusForPiece, markHTML, markGlyph, recordLabel,
+  apparatusForPiece, markHTML, markGlyph, recordLabel, dualDateText,
 } from '../site/notes-layer.mjs';
 import {
   buildSourceCatalog, createAnchor, validateAnchor, createRevision,
-  validateRevision, restoreEnvelope,
+  validateRevision, restoreEnvelope, transitionRevision, projectPreview,
 } from '../studio/notes-model.mjs';
 
 // journal-handwritten-web #17: the public notes layer. All authored bodies
@@ -249,4 +249,71 @@ test('reader wiring: no invitation or submission UI in the apparatus', () => {
   // disclaimer sentence itself names invitations/submissions to say there
   // are none, so the check is on controls, not words.)
   assert.doesNotMatch(block, /<form|<input|<button|<a href|<select|<textarea/);
+});
+
+test('dual dates: recorded, approximate and unknown poem dates (JHW #18)', () => {
+  assert.equal(
+    dualDateText({ poemDate: { certainty: 'recorded', value: '2015-03' }, noteDate: '2026-11-05' }),
+    'Poem 2015-03 · Note 2026-11-05');
+  assert.equal(
+    dualDateText({ poemDate: { certainty: 'approximate', value: '2015' }, noteDate: '2026-11-05' }),
+    'Poem c. 2015 · Note 2026-11-05');
+  assert.equal(
+    dualDateText({ poemDate: { certainty: 'unknown', value: null }, noteDate: '2026-11-05' }),
+    'Poem undated · Note 2026-11-05');
+  // An unknown poem date never renders as a guessed year.
+  assert.doesNotMatch(
+    dualDateText({ poemDate: { certainty: 'unknown', value: null }, noteDate: '2026-11-05' }),
+    /2015|2016/);
+  // A malformed poem date degrades to undated instead of throwing.
+  assert.equal(dualDateText({ noteDate: '2026-11-05' }), 'Poem undated · Note 2026-11-05');
+  assert.equal(dualDateText({ poemDate: { certainty: 'recorded', value: '' }, noteDate: '2026-11-05' }),
+    'Poem undated · Note 2026-11-05');
+});
+
+test('a cleared reflection reaches the sidecar as a numbered endnote (JHW #18)', () => {
+  // Build the reflection through the model (private kind 'reflection'),
+  // clear it, and project: the public record must arrive as kind
+  // 'endnote' with both dates, or the sidecar validator drops it.
+  const draft = createRevision({
+    family: 'note', recordId: 'fixture-refl-layer', revisionId: 'rev-fixture-refl-layer',
+    author: { id: 'private-fixture-identity', credit: 'Technical fixture author', provenance: 'technical-fixture', sourceIds: ['tests/test_notes_layer.mjs'] },
+    poemDate: { certainty: 'recorded', value: '2015-03' }, noteDate: '2026-11-05', anchor,
+    kind: 'reflection', visibility: 'public-candidate',
+    text: '[TECHNICAL FIXTURE — not author text] Retrospective reflection fixture.',
+    fixture: true,
+  }, { at: AT });
+  const accepted = transitionRevision(draft, 'accept', { actor: 'fixture-reviewer', at: AT, revisionId: 'event-fixture-refl-accept' });
+  const cleared = transitionRevision(accepted, 'clear', { actor: 'fixture-reviewer', at: AT, revisionId: 'event-fixture-refl-clear' });
+  const projected = projectPreview([draft, accepted, cleared], catalog,
+    { versions: [{ pieceId: 'p001', versionId: 'p001-diary1-0' }], allowFixtures: true });
+  assert.equal(projected.records.length, 1);
+  assert.equal(projected.records[0].kind, 'endnote');
+  // The boundary, pinned: a record that still says kind 'reflection'
+  // is not a sidecar kind and is dropped.
+  const unmapped = validateSidecar(sidecar([{ ...projected.records[0], kind: 'reflection', fixture: false }]));
+  assert.equal(unmapped.records.length, 0);
+  assert.match(unmapped.errors.join('; '), /kind must be one of/);
+  // The mapped record validates and numbers as an endnote.
+  const { records, errors } = validateSidecar(sidecar([{ ...projected.records[0], fixture: false }]));
+  assert.deepEqual(errors, []);
+  assert.equal(records.length, 1);
+  const numbers = numberEndnotes(records, ['p001', 'p002']);
+  assert.equal(numbers.get(records[0].id), 1);
+  assert.equal(recordLabel(records[0], numbers), 'Endnote 1');
+  assert.equal(markGlyph(records[0], numbers), '1');
+  assert.equal(dualDateText(records[0]), 'Poem 2015-03 · Note 2026-11-05');
+});
+
+test('reader wiring: reveal panel and apparatus show both dates on tap (JHW #18)', () => {
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  // Both meta sites format through the shared dual-date helper, not
+  // through a bare noteDate: the poem date must be visible on tap.
+  assert.match(html, /NOTES_LAYER\.dualDateText\(rec\)/);
+  const apparatus = html.slice(html.indexOf('function apparatusHTML(p)'), html.indexOf('function applyFocus', html.indexOf('function apparatusHTML(p)')));
+  assert.match(apparatus, /dualDateText\(rec\)/);
+  assert.doesNotMatch(apparatus, /rec\.noteDate/);
+  const panel = html.slice(html.indexOf('function openNotesPanel'), html.indexOf('function closeNotesPanel'));
+  assert.match(panel, /dualDateText\(rec\)/);
+  assert.doesNotMatch(panel, /rec\.noteDate/);
 });

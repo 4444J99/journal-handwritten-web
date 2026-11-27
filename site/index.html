@@ -2666,7 +2666,7 @@ function apparatusHTML(p){
   const {piece, series} = NOTES_LAYER.apparatusForPiece(NOTES.index, PIECES[g].id);
   if (!piece.length && !series.length) return "";
   const render = rec => {
-    const meta = [rec.credit, rec.noteDate].filter(Boolean).join(" · ");
+    const meta = [rec.credit, NOTES_LAYER.dualDateText(rec)].filter(Boolean).join(" · ");
     return `<article><h3>${esc(NOTES_LAYER.recordLabel(rec, NOTES.numbers))}</h3><p>${esc(rec.text)}</p>` +
       (meta ? `<p class="apparatus-meta">${esc(meta)}</p>` : "") + `</article>`;
   };
@@ -3590,7 +3590,7 @@ function openNotesPanel(recordId, trigger){
   text.textContent = rec.text; text.style.whiteSpace = "pre-wrap"; body.append(text);
   const meta = document.createElement("p"); meta.className = "notes-meta";
   const src = `${rec.pieceId} · ${rec.versionId}` + (rec.lineId ? ` · ${rec.lineId}` : "");
-  meta.textContent = [rec.credit, rec.noteDate, src].filter(Boolean).join(" · ");
+  meta.textContent = [rec.credit, NOTES_LAYER.dualDateText(rec), src].filter(Boolean).join(" · ");
   body.append(meta);
   if (rec.citations.length){
     const h = document.createElement("h3"); h.textContent = "Citations"; body.append(h);

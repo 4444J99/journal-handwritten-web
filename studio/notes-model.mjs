@@ -402,7 +402,16 @@ export function projectRecords(value, catalog, {mode='preview',versions,allowFix
       }
     }
     if (reasons.length || !doc) { excluded.push({recordId:group.recordId,reasons:[...new Set(reasons)]}); continue; }
-    records.push({id:doc.recordId,revisionId:doc.revisionId,family:doc.family,kind:doc.family === 'note' ? doc.kind : doc.type,
+    // journal-handwritten-web #18: a personal reflection is a private
+    // kind; its public form is an endnote. The sidecar only carries
+    // footnote / endnote / critical-note, so projecting 'reflection'
+    // verbatim would be rejected by the sidecar validators and a cleared
+    // reflection could never reach the reader. The private revision keeps
+    // kind 'reflection' (schema, workbench, history); only the projected
+    // public record renames it. poemDate/noteDate travel unchanged, so
+    // the dual dates survive the projection.
+    const projectedKind = doc.family === 'note' && doc.kind === 'reflection' ? 'endnote' : (doc.family === 'note' ? doc.kind : doc.type);
+    records.push({id:doc.recordId,revisionId:doc.revisionId,family:doc.family,kind:projectedKind,
       pieceId:doc.anchor.pieceId,versionId:doc.anchor.versionId,lineId:doc.anchor.lineId,word:clone(doc.anchor.word),
       text:doc.text,citations:clone(doc.citations),credit:doc.author.credit,poemDate:clone(doc.poemDate),noteDate:doc.noteDate,fixture:doc.fixture});
   }
