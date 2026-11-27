@@ -178,6 +178,43 @@ test('projection whitelists display fields and excludes identity, permission evi
   assert.ok(!JSON.stringify(withheld).includes(privateRecord.recordId));
 });
 
+test('a cleared reflection projects as an endnote with its dual dates (JHW #18)', () => {
+  // The private history still calls it a reflection; only the projected
+  // public record renames it, because the sidecar only carries
+  // footnote / endnote / critical-note.
+  const history = cleared(note({kind:'reflection',visibility:'public-candidate',
+    poemDate:{certainty:'recorded',value:'2015-03'},noteDate:'2026-11-05',
+    text:'[TECHNICAL FIXTURE — not author text] Retrospective reflection fixture.'}));
+  assert.equal(history.at(-1).kind, 'reflection');
+  const projected = preview(history);
+  assert.equal(projected.records.length, 1);
+  const rec = projected.records[0];
+  assert.equal(rec.kind, 'endnote');
+  assert.deepEqual(rec.poemDate, {certainty:'recorded',value:'2015-03'});
+  assert.equal(rec.noteDate, '2026-11-05');
+  assert.equal(rec.revisionId, history.at(-1).revisionId);
+  // An uncleared reflection never projects, like any uncleared note.
+  const draft = note({kind:'reflection',visibility:'public-candidate'});
+  assert.equal(preview([draft]).records.length, 0);
+});
+
+test('a later reflection accrues as a new revision; the first stays byte-identical (JHW #18)', () => {
+  const first = cleared(note({kind:'reflection',visibility:'public-candidate',
+    poemDate:{certainty:'unknown',value:null},noteDate:'2026-11-05',
+    text:'[TECHNICAL FIXTURE — not author text] First reflection fixture.'}));
+  const before = JSON.stringify(first.at(-1));
+  const second = cleared(note({kind:'reflection',visibility:'public-candidate',text:'[TECHNICAL FIXTURE — not author text] Ten years on: revisits the 2026 note.',
+    noteDate:'2036-11-05',changeReason:'ten years on: revisits the 2026 note'}, first.at(-1)));
+  assert.deepEqual(second[0].parents, [first.at(-1).revisionId]);
+  assert.equal(JSON.stringify(first.at(-1)), before);
+  const projected = preview([...first, ...second]);
+  assert.equal(projected.records.length, 1);
+  assert.equal(projected.records[0].kind, 'endnote');
+  assert.equal(projected.records[0].text, second[0].text);
+  assert.equal(projected.records[0].noteDate, '2036-11-05');
+  assert.deepEqual(projected.records[0].poemDate, {certainty:'unknown',value:null});
+});
+
 test('fixture provenance cannot be removed through edits or imported descendants', () => {
   const fixture=note();
   assert.throws(()=>note({fixture:false,author:{id:'test',credit:'test',provenance:'author-supplied'}},fixture),/cannot be removed/);

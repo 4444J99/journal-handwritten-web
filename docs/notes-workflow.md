@@ -247,3 +247,47 @@ section in the Study view. The sidecar is empty until the author clears
 a note for release review; the reader renders exactly as before with no
 records. Residual, unchanged: the author supplies the notes and decides
 critical-layer authorship.
+
+### Addendum — 2026-11-27 (journal-handwritten-web #18 build)
+
+The #18 reflection path is built end to end. A cleared personal
+reflection (private kind `reflection`, authored in the studio Notes
+tab) projects to the public sidecar as kind `endnote`
+(`studio/notes-model.mjs`: the sidecar carries only footnote /
+endnote / critical-note, so a verbatim `reflection` kind was rejected
+by both sidecar validators and could never reach the reader); the
+private revision keeps kind `reflection`. The reveal panel and the
+apparatus meta now show both dates on tap
+(`site/notes-layer.mjs` `dualDateText`, used by `site/index.html`):
+poem date with its certainty (`2015-03`, `c. 2015` for approximate,
+`undated` for unknown — never a guessed year) plus the note date. The
+studio reader component already showed both dates; the public reader
+did not. Accrual is append-only through the model's `parents` chain
+(a later reflection is a new revision; the first stays byte-identical)
+and the workbench already shows a reflection's revision history.
+
+Two findings from the build head (`1eaa0253`):
+
+- **No poem dates are recoverable from the repository.** Every version
+  entry in `site/data/j.json` carries `"d": null` (156 of 156), and
+  there are no date keys anywhere in `j.json` or
+  `studio/data/review.json`. The date fields in
+  `studio/data/poem-records.json` are publish exposures, not poem
+  composition dates. Every `poemDate` therefore stays
+  `{certainty: "unknown", value: null}` until the author supplies one;
+  the reader renders that as `undated`. `j.json` is byte-identical.
+- **No reflection has been generated.** No author reflection text
+  exists anywhere in the repository (the 2026-10-26 exchange produced
+  no files), so nothing was seeded: the sidecar and the reference file
+  stay empty until the author writes a reflection in the studio Notes
+  tab and clears it. The pipeline is proven with explicit technical
+  fixtures in the tests only, never emitted to `site/`.
+
+Defaults recorded, author-overridable: reflections on new poems are
+written after a deliberate gap, not same-day, so a reflection is a
+reflection and not a caption; old-poem (retrospective) reflections
+come first. The open author decision (immediate vs delayed) is
+unchanged. Follow-up, not built: the reader ships no handwritten-vs-
+Etceter4 Diary font switch (all reader text is already set in
+Etceter4 Diary), so no layer is set in a distinct face; no font stack
+was invented for this build.

@@ -186,6 +186,23 @@ export function recordLabel(record, numbers) {
   return KIND_LABELS[record.kind] || record.kind;
 }
 
+// Dual dates for one projected record (journal-handwritten-web #18):
+// the poem date with its certainty, plus the note date. An unknown poem
+// date renders as undated -- never as a guessed year. An approximate
+// poem date is marked circa. This matches the studio reader component's
+// wording (studio/notes-reader.mjs renders the same two dates as a
+// definition list); this is the compact one-line form for the public
+// reader's reveal panel and apparatus meta. Pure, so node --test covers
+// it and the reader only formats what the sidecar already validated.
+export function dualDateText(record) {
+  const poem = isObject(record?.poemDate) ? record.poemDate : null;
+  const value = typeof poem?.value === 'string' && poem.value.trim() ? poem.value : null;
+  const poemText = !poem || poem.certainty === 'unknown' || !value
+    ? 'undated'
+    : poem.certainty === 'approximate' ? `c. ${value}` : value;
+  return isRealDate(record?.noteDate) ? `Poem ${poemText} · Note ${record.noteDate}` : `Poem ${poemText}`;
+}
+
 // The mark glyph for a line: a number for endnotes, a dagger for
 // footnotes, a section sign for critical notes. Marks add no text to the
 // poem itself; the note text lives in the reveal panel only.
