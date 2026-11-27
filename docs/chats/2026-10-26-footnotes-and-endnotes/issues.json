@@ -7,12 +7,14 @@
    {
     "text": "Build private, interpretation-free reference file of copied reading notes and citations",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "note": "Delivered 2026-11-27 (loop PR, journal-handwritten-web #17): studio/data/reading-notes.json exists as a schema-valid notes-v1 backup envelope. It holds zero records: no transcribed reading notes exist in the repository to copy into it (the author's copied reading notes live in the handwritten journal pages, which are not transcribed as text anywhere in the repo; \"possible echoes (open item 6)\" is the borrowed-line credit decision from #55, not citations). Nothing invented. The author fills it by writing notes in the studio Notes tab and exporting; see reading-notes.md."
    },
    {
     "text": "Add notes layer to piece catalog (anchor version/line/word, type, author), review-studio authoring tab, tap-to-reveal marks",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "note": "Delivered 2026-11-27 (loop PR, journal-handwritten-web #17): public sidecar site/data/notes.json (validated by tools/notes_sidecar.py --check), Notes tab in the review studio shell (loads studio/notes.html workbench), tap-to-reveal marks on canvas and book from site/notes-layer.mjs, critical-apparatus section in the Study view. Sidecar is empty until the author clears a note for release review; the reader renders exactly as before with no records."
    },
    {
     "text": "Decide whether the critical layer is author-only or open to invited writers",

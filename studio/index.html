@@ -320,6 +320,7 @@ details.tn ul{margin:4px 0;padding-left:18px}
     <button role="tab" data-view="decisions" aria-selected="false">Decisions</button>
     <button role="tab" data-view="versions" aria-selected="false">New versions</button>
     <button role="tab" data-view="cut" aria-selected="false">Cut</button>
+    <button role="tab" data-view="notes" aria-selected="false">Notes</button>
     <button role="tab" data-view="release" aria-selected="false">Release</button>
     <button role="tab" data-view="search" aria-selected="false">Search</button>
   </nav>
@@ -334,6 +335,7 @@ details.tn ul{margin:4px 0;padding-left:18px}
   <section id="v-decisions" class="view" hidden></section>
   <section id="v-versions" class="view" hidden></section>
   <section id="v-cut" class="view" hidden></section>
+  <section id="v-notes" class="view" hidden></section>
   <section id="v-release" class="view" hidden></section>
   <section id="v-search" class="view" hidden>
     <div class="search-bar">
@@ -1335,6 +1337,35 @@ function renderCut() {
   });
   root.append(list);
 }
+/* ------------------------------------------------------------ notes (JHW #17) */
+// Notes tab: the T05 workbench (studio/notes.html) inside the studio shell.
+// The workbench is a standalone page with its own connection and store, so
+// the tab loads it in an iframe on first show and keeps the standalone
+// page working as the direct link (the .notes-entry link above stays).
+// Lazy src: the workbench must not connect, and must not spend a D1
+// session, until the author opens the tab. The iframe is same-origin, so
+// it shares the studio's Cloudflare Access session; nothing here re-implements
+// the workbench, and the tab adds no second authoring path. Anchor display
+// (version/line/word) lives in the workbench itself, which refuses a note
+// against a line that does not exist.
+let NOTES_TAB_LOADED = false;
+function renderNotesTab() {
+  const root = $('#v-notes');
+  if (!NOTES_TAB_LOADED) {
+    NOTES_TAB_LOADED = true;
+    root.textContent = '';
+    root.append(
+      h('h2', { class: 'sub' }, 'Notes & contributions'),
+      h('p', { class: 'note' }, 'Footnotes, endnotes, reflections and critical notes, anchored to an exact version, line and word. Notes stay private until the author clears one for release review; only cleared notes reach the public reader.'),
+      h('p', { class: 'note' }, h('a', { href: 'notes.html' }, 'Open the Notes workbench in its own page')),
+    );
+    const frame = document.createElement('iframe');
+    frame.src = 'notes.html';
+    frame.title = 'Notes and contributions workbench';
+    frame.style.cssText = 'width:100%;min-height:78vh;border:1px solid var(--rule);border-radius:10px;background:var(--surface)';
+    root.append(frame);
+  }
+}
 async function saveCut() {
   const it = S.items.find(x => x.id === CUT.pieceId);
   if (!it || !canWrite()) return;
@@ -2022,6 +2053,7 @@ function showView(v) {
   if (v === 'decisions') renderDecisions();
   if (v === 'versions') renderVersions();
   if (v === 'cut') renderCut();
+  if (v === 'notes') renderNotesTab();
   if (v === 'release') renderRelease();
   if (v === 'search') { renderPageGrid(); doSearch(); }
   if (v === 'review') requestAnimationFrame(layoutCrops);
