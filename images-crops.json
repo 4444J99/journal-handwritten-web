@@ -1,0 +1,3698 @@
+{
+ "generated": "2026-11-27T19:58:35.007392+00:00",
+ "pages": {
+  "diary1": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0111,
+     0.0,
+     0.6271,
+     0.1479
+    ],
+    "file": "site/img/crop/diary1.jpg",
+    "height": 1350,
+    "sha256": "9edceee0e84b5e06a69ef9b573dc8d71c0f5ac3f396da970708b9ada84dfdffa",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary1.jpg",
+   "master_sha256": "78c4d85b8a2bd3aad0c68fe6f55f066d854af61485cd233c3fcc25f027ec23b5",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1135,
+    1600
+   ]
+  },
+  "diary10": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9119,
+     0.4982
+    ],
+    "file": "site/img/crop/diary10.jpg",
+    "height": 1350,
+    "sha256": "68423b51fb1a8fb9b2d9c1b8c7f47bf4e4407ff1455ea166e7fd6e7fa8e6783f",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary10.jpg",
+   "master_sha256": "d4c271a4f4e16c6415aee6914f9493795f24bf5de9334fd09ac3bf5969e5b9fa",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1361,
+    1381
+   ]
+  },
+  "diary10a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9095,
+     0.4012
+    ],
+    "file": "site/img/crop/diary10a.jpg",
+    "height": 1350,
+    "sha256": "a43bfc8ebf9580063942b750543c7e91ee390124a0b093886b460128b80f089c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary10a.jpg",
+   "master_sha256": "5b4857b185143e177e741474de7fc275ba871d2c2a84af52fd7bacf4157aec2b",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1255,
+    1391
+   ]
+  },
+  "diary11": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0111,
+     0.0034,
+     0.9749,
+     0.0914
+    ],
+    "file": "site/img/crop/diary11.jpg",
+    "height": 1350,
+    "sha256": "5550a6136679d727b1b1e04a232619b200cd6f5759550cc06491a4507476f48f",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary11.jpg",
+   "master_sha256": "9c108dcc37350f2f99de8feb50bfa1a284ad4955cc60028de9142fc3a267a4a1",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1115,
+    1600
+   ]
+  },
+  "diary11a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0052,
+     1.0,
+     0.9848
+    ],
+    "file": "site/img/crop/diary11a.jpg",
+    "height": 1350,
+    "sha256": "693ba5ac70823da6af2019a93ad7d88ee19fdf6a0407b62771b355c2e4e6fd07",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary11a.jpg",
+   "master_sha256": "a1d9122faed67499c52ecaff22304474414f9a2b2280b0b9f1480727d2d0ae24",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1503,
+    990
+   ]
+  },
+  "diary12": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.2904
+    ],
+    "file": "site/img/crop/diary12.jpg",
+    "height": 1350,
+    "sha256": "22d701737cc6d9995cc4d5d785c382ef32b77e4f968ded7f5e24571916fa822c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary12.jpg",
+   "master_sha256": "1b3da26a32ab13ec5c04e7a2d8368e031a46d1ff785ffb538df6878303b8f449",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1474,
+    1600
+   ]
+  },
+  "diary12a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8471,
+     0.1887
+    ],
+    "file": "site/img/crop/diary12a.jpg",
+    "height": 1350,
+    "sha256": "36c899edac049a939dced54571051e4a785d3c26cbc14638bcb7d82ec496a2d4",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary12a.jpg",
+   "master_sha256": "b0a13fdc710728f2a35f3ca08d83bc20ecf77270f981a3ef0e45593af07e8e73",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1425,
+    1011
+   ]
+  },
+  "diary13": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9577,
+     0.2718
+    ],
+    "file": "site/img/crop/diary13.jpg",
+    "height": 1350,
+    "sha256": "670bf0e046d1d3d135989457f814d132513081df43d973fdd42c33ff7d2fde3d",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary13.jpg",
+   "master_sha256": "45833f6f36e38bb16def045678f0637625ce7a0ea007e3cdba3be9eada99cfe5",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1325,
+    1600
+   ]
+  },
+  "diary13a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0133,
+     0.0,
+     0.9798,
+     0.2164
+    ],
+    "file": "site/img/crop/diary13a.jpg",
+    "height": 1350,
+    "sha256": "34056da9d9279e026391edb5ae39e44bb6bf63c4bf685f8a4efc7b97d7a5104a",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary13a.jpg",
+   "master_sha256": "b7bbf22c8815295cde0af3b7a153be09492b038fb3dcf3575b106e3cc8af2928",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1105,
+    1600
+   ]
+  },
+  "diary14": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0075,
+     1.0,
+     0.2531
+    ],
+    "file": "site/img/crop/diary14.jpg",
+    "height": 1350,
+    "sha256": "71a10079994489b34aa4910f4b3560b9c4771146b8391c212deccc241d4d121e",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary14.jpg",
+   "master_sha256": "f6ae431912390f251da3a9d269091db5958a192ba4acdebd6eb6131329505544",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1190,
+    1600
+   ]
+  },
+  "diary14a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0592,
+     1.0,
+     0.9261
+    ],
+    "file": "site/img/crop/diary14a.jpg",
+    "height": 1350,
+    "sha256": "a979b82957b6ffbe66db197808e9d84294cc3d4a80fa74155d9e24626dd3e5ee",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary14a.jpg",
+   "master_sha256": "b9f06b8b2f43e555b7a94adb4110e6ee98321f5470ce47b34866518c6916dcb8",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1468,
+    409
+   ]
+  },
+  "diary15": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0234,
+     0.0,
+     0.7129,
+     0.1491
+    ],
+    "file": "site/img/crop/diary15.jpg",
+    "height": 1350,
+    "sha256": "f3af011b947a7fba48b21836fe46415102fdbc33b950b5fb03c284d01b30f78d",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary15.jpg",
+   "master_sha256": "8cf438b8d2d4f56961dd6293e325d0deecebc50da530a2f40be68d03fe9b936a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    885,
+    1600
+   ]
+  },
+  "diary15a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8164,
+     0.17
+    ],
+    "file": "site/img/crop/diary15a.jpg",
+    "height": 1350,
+    "sha256": "6d88fda9ae562640b73c747d3854356014a3bfe8ea3843a15327c237318121fe",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary15a.jpg",
+   "master_sha256": "e9437b591229d21b801601bbb14f5afcde3141d1b4010333a674b86234c1faeb",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1030,
+    1600
+   ]
+  },
+  "diary16": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0083,
+     0.7673,
+     0.4495
+    ],
+    "file": "site/img/crop/diary16.jpg",
+    "height": 1350,
+    "sha256": "e64ebeac4430fc4342c5e0cb481fa66e9009784f275116e938f9b3feb48e8f08",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary16.jpg",
+   "master_sha256": "569c73eae9c2282bdadd6d2c859157de8ccb1654c0b8fbcda984efc381d6edbd",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    544,
+    691
+   ]
+  },
+  "diary16a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.3322
+    ],
+    "file": "site/img/crop/diary16a.jpg",
+    "height": 1350,
+    "sha256": "a8dcd6f1d6008d84be16893a2cef8a4e3ebc2a63398350b303392039b8b58f5d",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary16a.jpg",
+   "master_sha256": "7d0caad03f1ac50c3f713fd27a34875b3231b86e666ba37a7c2b697470fea91a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1249,
+    1600
+   ]
+  },
+  "diary17": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9198,
+     0.077
+    ],
+    "file": "site/img/crop/diary17.jpg",
+    "height": 1350,
+    "sha256": "fd8af13be76f6c15f2b3909f32e9e9ae42f72526c74d27a6097e31d0ad57f90c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary17.jpg",
+   "master_sha256": "bceedae61ecd2333989c02400e78fb080b8c8545fe752abe9bd9d07c5847fdb5",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    873,
+    1591
+   ]
+  },
+  "diary17a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.2988
+    ],
+    "file": "site/img/crop/diary17a.jpg",
+    "height": 1350,
+    "sha256": "9c3c66bff9ec98083148b2ec660dca55dc6129a5258e92b3aa7292998e5b5895",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary17a.jpg",
+   "master_sha256": "ba42bca0e48b067485aa1d0ae3e93088d53249cd9c5431551c01ec4fdde5d9cc",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    984,
+    1600
+   ]
+  },
+  "diary18": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0303,
+     0.0602,
+     0.9677,
+     0.1986
+    ],
+    "file": "site/img/crop/diary18.jpg",
+    "height": 1350,
+    "sha256": "d7d2ddd38aebcab9825ea17b8bccd6a2fb1d2e4b016823fcb6a17b72a828311e",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary18.jpg",
+   "master_sha256": "45bdc360aefd7f3f1e311bdbe31170dcc4a9cf6df944df808c80c0b7aa48b300",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    683,
+    1600
+   ]
+  },
+  "diary18a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0026,
+     0.8718,
+     0.3249
+    ],
+    "file": "site/img/crop/diary18a.jpg",
+    "height": 1350,
+    "sha256": "8399f6b69d8aede4531726304a12b733994c862b97782da02ecc61179f574084",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary18a.jpg",
+   "master_sha256": "365c3413a96d2f1559ce615e568ca9c49f1fe5b6380bfa965a5c43771bc09273",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    873,
+    1600
+   ]
+  },
+  "diary19": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0013,
+     0.0,
+     0.8985,
+     0.1431
+    ],
+    "file": "site/img/crop/diary19.jpg",
+    "height": 1350,
+    "sha256": "76d555506532b6450982a02d455479b16e44e18c9d43ee8f8a7f033329bc5ef4",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary19.jpg",
+   "master_sha256": "f8333fb2c6fffa8fb8531b669847121abea2cdc469143d379252bb1606ecc581",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    639,
+    1600
+   ]
+  },
+  "diary19a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0104,
+     0.0,
+     0.7716,
+     0.1325
+    ],
+    "file": "site/img/crop/diary19a.jpg",
+    "height": 1350,
+    "sha256": "514f3ebea11755a66716d7ba5faef4798357796a9acccf8e680a8e7c300a6d4f",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary19a.jpg",
+   "master_sha256": "d2765ce6dc70505c09217cde50ca899ce9c83ea4a85d1dbd8adee14b369f89a0",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    819,
+    1600
+   ]
+  },
+  "diary2": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.5811,
+     0.1494
+    ],
+    "file": "site/img/crop/diary2.jpg",
+    "height": 1350,
+    "sha256": "8aaf31826e4bfb07c49fcafb918b87ed1afc1f776a367a0611792896df89ca5e",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary2.jpg",
+   "master_sha256": "60a0d0832f2b098e6f3b96b9993ea0f1e8018f29d951ae4ff0f495a21e816057",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1313,
+    1600
+   ]
+  },
+  "diary20": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.5223
+    ],
+    "file": "site/img/crop/diary20.jpg",
+    "height": 1350,
+    "sha256": "c6206cb0e3c76cf5c1e43f48327e6e4f9b4c3ff5558a8f9f5d9ec845432ad574",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary20.jpg",
+   "master_sha256": "4f320a3a4a473b1c041b5d7df3eaca9f2e798311176f41d12460314fa6ae5528",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1103,
+    1600
+   ]
+  },
+  "diary20a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0044,
+     0.0,
+     0.9344,
+     0.2932
+    ],
+    "file": "site/img/crop/diary20a.jpg",
+    "height": 1350,
+    "sha256": "644fdda77ad27b3d0b6709e9881ec2d3468aee80ef739734c01e5cac23e42873",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary20a.jpg",
+   "master_sha256": "58e5fd380a847bb310b21c6d9aa58b1e343844da14722aa113e8794346eea13c",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1095,
+    1600
+   ]
+  },
+  "diary21": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary21.jpg",
+    "height": 1350,
+    "sha256": "aa86be169c34477e5b3cb3293d4cff9ae95287bddad13585d93d89288e35a4af",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary21.jpg",
+   "master_sha256": "ba0b2d3afe6c38015583ae73d01c3f641d697c89a837a8e7d276519cc64e740d",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1131,
+    1600
+   ]
+  },
+  "diary21a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9744,
+     0.5085
+    ],
+    "file": "site/img/crop/diary21a.jpg",
+    "height": 1350,
+    "sha256": "94c67aabb9d53c108940785df0d792342e99ef3a002e7b7d27abec04632d06aa",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary21a.jpg",
+   "master_sha256": "1a717c680cdb902bb8648ff44416719c046893d651534392077800fc44ed13cf",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    986,
+    773
+   ]
+  },
+  "diary22": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0016,
+     0.991,
+     1.0
+    ],
+    "file": "site/img/crop/diary22.jpg",
+    "height": 1350,
+    "sha256": "7c336b99b21e9d4378fe693c1585d719658a0d0191c850d742c481315d4292ed",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary22.jpg",
+   "master_sha256": "0b4ce92634d225e167e12bff51b22178d9ac4678a24c5b82520a7ff54db96b98",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1485,
+    886
+   ]
+  },
+  "diary22a": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0144,
+     0.0579,
+     0.9548,
+     0.2379
+    ],
+    "file": "site/img/crop/diary22a.jpg",
+    "height": 1350,
+    "sha256": "f417ce86da085169e40e242e8acf2cd70678fac48ea8d7557fc4dbe37b70c4bc",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary22a.jpg",
+   "master_sha256": "4bcebf482c53dc715de12d2ba3e74e9e21fe7ac3be85d8fce7c935e44d7e20af",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    990,
+    1600
+   ]
+  },
+  "diary23": {
+   "cover": {
+    "block": 2,
+    "cover_box_norm": [
+     0.0,
+     0.0622,
+     0.9658,
+     0.7059
+    ],
+    "file": "site/img/crop/diary23.jpg",
+    "height": 1350,
+    "sha256": "dc049e0ac1a37e7a10c708e9e3dbcd5cb80d503d75ac6e843eb126e53617b330",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary23.jpg",
+   "master_sha256": "b55ba073af8f171d821995594ccc87d06e33fcf9a15062fd2ddc4fc4ccd43141",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1463,
+    1600
+   ]
+  },
+  "diary23a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9425,
+     0.9941
+    ],
+    "file": "site/img/crop/diary23a.jpg",
+    "height": 1350,
+    "sha256": "ad7f36c83ab88ce9f26757c75ce4868f90699f2ead4d663c2231da3a33964790",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary23a.jpg",
+   "master_sha256": "f8e101f55f9fb397bcbeb27683adedb2e2cfad398652392d580273b7088e8bdc",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1441,
+    1263
+   ]
+  },
+  "diary24": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8854,
+     0.9924
+    ],
+    "file": "site/img/crop/diary24.jpg",
+    "height": 1350,
+    "sha256": "6f8ca53116ef7f0f54f88015d3fae4ee70390c41b075752cad3e4c74ae576915",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary24.jpg",
+   "master_sha256": "dd5ce98dd3e81bc8d4cf01717c2afa7f98e1a19e1d502b3a6a7a3e24e712d3ed",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1477,
+    1188
+   ]
+  },
+  "diary24a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0032,
+     0.0,
+     0.7966,
+     0.0923
+    ],
+    "file": "site/img/crop/diary24a.jpg",
+    "height": 1350,
+    "sha256": "aa5553b446cb6065f76870f183d02973f7a48c954761a323dc2021340e59cc42",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary24a.jpg",
+   "master_sha256": "bc2ea8f207af6596ec2be032195bffae9c3ce8c61cb79198cb6b52f65554d0ee",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1444,
+    1399
+   ]
+  },
+  "diary25": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.6719,
+     0.0,
+     1.0,
+     0.966
+    ],
+    "file": "site/img/crop/diary25.jpg",
+    "height": 1350,
+    "sha256": "341697074291edcd403633d7377df98a27539771dc08e8cbc6982292e334f83f",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary25.jpg",
+   "master_sha256": "2a32ae9946a8be279636f4bb46926ac3bd8cb63741146ee1c6a8fde6def75077",
+   "paper_box_norm": [
+    0.6719,
+    0.0,
+    1.0,
+    0.966
+   ],
+   "paper_box_px": [
+    1075,
+    0,
+    1600,
+    1194
+   ]
+  },
+  "diary25a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.6719,
+     0.0,
+     1.0,
+     0.966
+    ],
+    "file": "site/img/crop/diary25a.jpg",
+    "height": 1350,
+    "sha256": "341697074291edcd403633d7377df98a27539771dc08e8cbc6982292e334f83f",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary25a.jpg",
+   "master_sha256": "2a32ae9946a8be279636f4bb46926ac3bd8cb63741146ee1c6a8fde6def75077",
+   "paper_box_norm": [
+    0.6719,
+    0.0,
+    1.0,
+    0.966
+   ],
+   "paper_box_px": [
+    1075,
+    0,
+    1600,
+    1194
+   ]
+  },
+  "diary26": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0065,
+     0.0038,
+     0.9791,
+     0.9932
+    ],
+    "file": "site/img/crop/diary26.jpg",
+    "height": 1350,
+    "sha256": "f9c4804df6cca5572c1b8aa416d9ad2d56c86142496dbcd155ed20f942122267",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary26.jpg",
+   "master_sha256": "7de61d3544d54b56c9065e16d57ef5d6bf4ff8dfb6d450ac5c30ce90f51c2afd",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1400,
+    588
+   ]
+  },
+  "diary26a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9607,
+     0.976
+    ],
+    "file": "site/img/crop/diary26a.jpg",
+    "height": 1350,
+    "sha256": "aaea5936acbc24f520e6a2642c8dfa8d72144d1b51243d87ac22dc906bb6e23d",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary26a.jpg",
+   "master_sha256": "4a86cce482028a70a5d3fba924f8e7d1e11264b127e4b79ef0398a24ceee3b4b",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1411,
+    1499
+   ]
+  },
+  "diary27": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.7169
+    ],
+    "file": "site/img/crop/diary27.jpg",
+    "height": 1350,
+    "sha256": "ac7810c82c7c478db6b3761ca3732bfdf4f8834611012c8d5c91de5c8ee17d1d",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary27.jpg",
+   "master_sha256": "b2f6833397c6b64e654555cbff5727e62304850706cc4378f0131e66b99d11a9",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1283,
+    1600
+   ]
+  },
+  "diary27a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0098,
+     0.0,
+     1.0,
+     0.7346
+    ],
+    "file": "site/img/crop/diary27a.jpg",
+    "height": 1350,
+    "sha256": "13ac7c5d640d0774e7460dad5cc1bae85e16e4cb8634ddc421e2752fe1e99403",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary27a.jpg",
+   "master_sha256": "17812712d00f9a6d2ec340915ad3a266d8d20b35a52f0787de821a85ad510fce",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1083,
+    1600
+   ]
+  },
+  "diary28": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0021,
+     0.5899,
+     0.2595
+    ],
+    "file": "site/img/crop/diary28.jpg",
+    "height": 1350,
+    "sha256": "addd32329b474945535779482904bf7fd2f5e3683f30f1f1b36a74564dc94cd8",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary28.jpg",
+   "master_sha256": "5f9e2bec13e9387210c076c58a89230dff5fcf15d0fc9e10d9b2e92898cfc1cd",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1027,
+    1600
+   ]
+  },
+  "diary28a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0011,
+     0.0,
+     1.0,
+     0.4099
+    ],
+    "file": "site/img/crop/diary28a.jpg",
+    "height": 1350,
+    "sha256": "713448a8fa926208725f60c5806d97e107a7ac56dc77019fe858ac0c98490069",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary28a.jpg",
+   "master_sha256": "a1d0299e055e4bc5fb4c7030870e7b6a4d4d9baa7836af3d272016b62aea0007",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1448,
+    1161
+   ]
+  },
+  "diary29": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9762,
+     0.6517
+    ],
+    "file": "site/img/crop/diary29.jpg",
+    "height": 1350,
+    "sha256": "f1445c656fb0460260bcb8c6b0ee054c29d3b17215fc61307682b5d95dff49b1",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary29.jpg",
+   "master_sha256": "801e891587692f00251b30d31c72842496486d426d3c1b5b9b5e9463398f5081",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1094,
+    1600
+   ]
+  },
+  "diary29a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0066,
+     0.0204,
+     1.0,
+     0.851
+    ],
+    "file": "site/img/crop/diary29a.jpg",
+    "height": 1350,
+    "sha256": "3610c105d159c9dbc9953d30f435ff6544bb4d09ec5439d7b6aa6d7d56d73977",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary29a.jpg",
+   "master_sha256": "01c16108aa13cff27430fb6c5e9803853288212e20d1c72d604604d7a6395356",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1104,
+    1600
+   ]
+  },
+  "diary2a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0578,
+     1.0,
+     0.9961
+    ],
+    "file": "site/img/crop/diary2a.jpg",
+    "height": 1350,
+    "sha256": "2eaf9294497a002cc417b72c3638ff63e205ad51a26fafa831df3df712d2c150",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary2a.jpg",
+   "master_sha256": "8848e2765e65516cf3f0058af7a9203c06de120d17b40b4e74fb19c3898ce8bd",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1496,
+    1166
+   ]
+  },
+  "diary3": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.237
+    ],
+    "file": "site/img/crop/diary3.jpg",
+    "height": 1350,
+    "sha256": "9ff1b3ff6a4c69794619b23be67f0a43db5f2f3478dbee776041d6582a4066ba",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary3.jpg",
+   "master_sha256": "f13c8e7412d691efc92543913d54ce867fb9164fbf3352d8eaa23d46572b66c3",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1356,
+    1600
+   ]
+  },
+  "diary30": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.4704,
+     0.2041
+    ],
+    "file": "site/img/crop/diary30.jpg",
+    "height": 1350,
+    "sha256": "21ca151be2fbb4a9b9e57cc3c093ce3298448bfb4e482cdb001200bfdcf070a6",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary30.jpg",
+   "master_sha256": "ae6af67a8ba61ee423881f4774ae575caabc640cd7de7ed55f5b4272e0417ac0",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1063,
+    1600
+   ]
+  },
+  "diary30a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.4397
+    ],
+    "file": "site/img/crop/diary30a.jpg",
+    "height": 1350,
+    "sha256": "46c11cf1922569d91a0768bde16b311677aaa1430319825d81aa9950adffbea4",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary30a.jpg",
+   "master_sha256": "72a78ed5cf7b316e0dd501e1349ed465fc02983617633256bb3aff636bd7c89a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1247,
+    1600
+   ]
+  },
+  "diary31": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0419,
+     0.7147,
+     0.2519
+    ],
+    "file": "site/img/crop/diary31.jpg",
+    "height": 1350,
+    "sha256": "af9de9a7ff2ef6d7dfb2f018a9aa25c6be20970a36a714fb87ceab3a70595390",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary31.jpg",
+   "master_sha256": "717faccf8e1976cf8a0fa9e0bfe587a99b4f2da0bfbc579fb439dffd0c21dc0d",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1109,
+    467
+   ]
+  },
+  "diary31a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9359,
+     0.1259
+    ],
+    "file": "site/img/crop/diary31a.jpg",
+    "height": 1350,
+    "sha256": "6c42fe8ac7208d7291b67e5fff545ca4801b7bd9f2f2bf60b334dc93a1f46b78",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary31a.jpg",
+   "master_sha256": "caa74dac376ec6aae245e86d3479b6d5f94f3a29a69949e0f9797f00404c83d7",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1061,
+    1600
+   ]
+  },
+  "diary32": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0079,
+     0.0211,
+     1.0,
+     0.2243
+    ],
+    "file": "site/img/crop/diary32.jpg",
+    "height": 1350,
+    "sha256": "22ddf2143ce143c1a00faa2ba93ed4504007d1a611d528e5256cf2455d7947a8",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary32.jpg",
+   "master_sha256": "fe5028d126658af62042a72c10751f854d3c30ed6f7d8a450ad61a58bbd929d1",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1371,
+    1283
+   ]
+  },
+  "diary32a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0155,
+     0.969,
+     0.9793
+    ],
+    "file": "site/img/crop/diary32a.jpg",
+    "height": 1350,
+    "sha256": "8f58e6796bb1051f563af71a523a25dca3436276815f0723ce3c6da9a554b4fa",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary32a.jpg",
+   "master_sha256": "16338eea0cb0d6033223e0d4f6e43ce8e62f06d4cbe5ea215cbb4ccd914f9131",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1368,
+    1475
+   ]
+  },
+  "diary33": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.9954
+    ],
+    "file": "site/img/crop/diary33.jpg",
+    "height": 1350,
+    "sha256": "62593b830c8e4800900bcfee9c0aae055b8725a86985b606132d81c20a1371bb",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary33.jpg",
+   "master_sha256": "e8b48f3e4f5dc7b4b7f81cf9838cc700451089c46f2cd00880ba2e89a8aba4d3",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1201,
+    1600
+   ]
+  },
+  "diary33a": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0221,
+     0.1081,
+     0.6222,
+     0.278
+    ],
+    "file": "site/img/crop/diary33a.jpg",
+    "height": 1350,
+    "sha256": "bceac2e876c0cf8bbf73d4ab73e1f02f244d29a18e1f74727880291f2c9c166c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary33a.jpg",
+   "master_sha256": "930f91b105553555853df7d8a5fe84bd6562a541c1333e1b4e1e5232a390efb9",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1209,
+    1600
+   ]
+  },
+  "diary34": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9925,
+     0.9936
+    ],
+    "file": "site/img/crop/diary34.jpg",
+    "height": 1350,
+    "sha256": "007c1e1153c8ecde3018ddaac7b547d10e6a03f00ec90a75f035fdaec7388772",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary34.jpg",
+   "master_sha256": "bf38581f0686eb59ea5e624410d287e51cc99ad226667be41c52451186a842a1",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    902,
+    1600
+   ]
+  },
+  "diary34a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0554,
+     0.3415,
+     0.2453
+    ],
+    "file": "site/img/crop/diary34a.jpg",
+    "height": 1350,
+    "sha256": "9ec1058145e93a7618d21753069eecb959714a311a9a386c4c07db7a360a025c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary34a.jpg",
+   "master_sha256": "45e2ceb74fe85843c10dac55152c8d2eb695ba26c970e29303e5c98a667fd932",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1429,
+    1431
+   ]
+  },
+  "diary35": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0,
+     0.0199,
+     0.6379,
+     0.1378
+    ],
+    "file": "site/img/crop/diary35.jpg",
+    "height": 1350,
+    "sha256": "db90e0d3d4d41748e3fbe48ae094cdbdfdfb365d47f6c5cb5609ae738f678299",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary35.jpg",
+   "master_sha256": "6467918282262a231ac33193ada21b8c95ddb6993fda154db3c8d8dd52299c84",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1010,
+    1600
+   ]
+  },
+  "diary35a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0112,
+     0.273,
+     0.9451,
+     1.0
+    ],
+    "file": "site/img/crop/diary35a.jpg",
+    "height": 1350,
+    "sha256": "ca7b91e520118644bdcc8b1ac6de3b4a2ebafb74812fcd4238104c78b3bd667c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary35a.jpg",
+   "master_sha256": "9ceb1cd34cc2e74ca3438eda247c372b999017ee21aa6a24617770c0632e8ee0",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1398,
+    642
+   ]
+  },
+  "diary36": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0,
+     0.115,
+     0.4488,
+     0.2052
+    ],
+    "file": "site/img/crop/diary36.jpg",
+    "height": 1350,
+    "sha256": "308b4a9218e73d12b494d1ba6c762022f0cd084d99593c918647577993472f73",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary36.jpg",
+   "master_sha256": "a34472c688ea10482f14906ca02f0b1c6a6eec84ab4e0095ed82ecff93dbd144",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1307,
+    1443
+   ]
+  },
+  "diary36a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0114,
+     0.0,
+     0.8589,
+     0.1035
+    ],
+    "file": "site/img/crop/diary36a.jpg",
+    "height": 1350,
+    "sha256": "713e377aa04a09f17239f1216163c0b7e565ed83cb4fa377206b76383234dcdb",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary36a.jpg",
+   "master_sha256": "fcb5b5c3250420e902ca0a73c6bf061c869e6ffa469415bf6f20165458e4c93e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1339,
+    1409
+   ]
+  },
+  "diary37": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary37.jpg",
+    "height": 1350,
+    "sha256": "499cc99932f5b4de0cbddee9b6fd2f542882e26d8b709e1b6d85fc02064f8687",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary37.jpg",
+   "master_sha256": "e805cba4f37549f7d370a9c5467806114dc862546e8ed094a89cf1f1f693c1e0",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1411,
+    388
+   ]
+  },
+  "diary37a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary37a.jpg",
+    "height": 1350,
+    "sha256": "f714d932e65958a472c2745cdaf815b29bd33363558f677818434f4352327d98",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary37a.jpg",
+   "master_sha256": "07afb0077d4f8d5c06ceee251e864957dd843fcc8ecac4b7c2ad7e59ab75ea1c",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    959,
+    147
+   ]
+  },
+  "diary38": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0,
+     0.0632,
+     0.8811,
+     0.1827
+    ],
+    "file": "site/img/crop/diary38.jpg",
+    "height": 1350,
+    "sha256": "9e868f58c3b1e52692e77d2cb9e3c47a2dab7a1996cbea180b0218a14f6be0f8",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary38.jpg",
+   "master_sha256": "98b7a7f1a06d83c785c1c45e58925c90ba12cc2d5895aaea64804974a103bb68",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1041,
+    1600
+   ]
+  },
+  "diary38a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.4548,
+     0.1392
+    ],
+    "file": "site/img/crop/diary38a.jpg",
+    "height": 1350,
+    "sha256": "dbf9a55359e822a9eb82384bbb53daf6bd787a6b6d68620880692be766e78bd6",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary38a.jpg",
+   "master_sha256": "9ffbc625038a3c5b3e8ff2f9d6327fe8d542455510a1de81811317560fb7c6b0",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1066,
+    1600
+   ]
+  },
+  "diary39": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.3549
+    ],
+    "file": "site/img/crop/diary39.jpg",
+    "height": 1350,
+    "sha256": "433061d33eb2077cad06d7cfde4ba59a7a2e15a23c598f941e9611d94a8e0bba",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary39.jpg",
+   "master_sha256": "5c40f7cb0591434dcbbf1e887a03c33f4af98ab59fdd516816d6c3b9239dcf8f",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    921,
+    1600
+   ]
+  },
+  "diary39a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary39a.jpg",
+    "height": 1350,
+    "sha256": "19b94dda12dd8cf02ec7a1d862fb4a466c06ee15e918310d0d87087c66a1e675",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary39a.jpg",
+   "master_sha256": "74a841e2cb1db0851246eebbed21918b3dfce597e91174d541527eaa60af7a54",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1072,
+    1600
+   ]
+  },
+  "diary3a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.9521
+    ],
+    "file": "site/img/crop/diary3a.jpg",
+    "height": 1350,
+    "sha256": "fe1cb22fc59636ed7045f26a90fa0291bf064fe020a3103409d7cc9572619c37",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary3a.jpg",
+   "master_sha256": "991c5c772479ad827b2b617c4924260674154ae53c13331ecaddce197812af9e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1449,
+    1507
+   ]
+  },
+  "diary4": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9324,
+     0.345
+    ],
+    "file": "site/img/crop/diary4.jpg",
+    "height": 1350,
+    "sha256": "9a8f027dec15c69aef068433607c12089fe3cce6da1b69777991fe54710c2757",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary4.jpg",
+   "master_sha256": "585f93970a13392ad142cc14565e0f94c83d0c8d54993c6f50ee106e544781ea",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1459,
+    669
+   ]
+  },
+  "diary40": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary40.jpg",
+    "height": 1350,
+    "sha256": "1ae25ca1620a82814c03246ffe222c57180ccb0706077fe7ba2651261d21429f",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary40.jpg",
+   "master_sha256": "77838dbfab8d53cbb3f615150e723c590cb7e8a7ada022dd870e87feaa9139b9",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1091,
+    1600
+   ]
+  },
+  "diary40a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary40a.jpg",
+    "height": 1350,
+    "sha256": "4ebfee71c0b583d2a28e0923e1bd1f0d66ce075ecbf33fa00b8894fd36e403bb",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary40a.jpg",
+   "master_sha256": "6a5641ae1ac70e2a61ed7d874c6c7217d0a570c0fc01ef4caa2d615830946aeb",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1085,
+    1600
+   ]
+  },
+  "diary41": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary41.jpg",
+    "height": 1350,
+    "sha256": "1e232eba3831bc79a985b36b1138cc6a10370a084ae54f090376c6f584ed50f7",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary41.jpg",
+   "master_sha256": "b7c7a938ee59c77aacc6ed5a3cf4d3b0f405d278ecce1818f37ec263e12ef15e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1129,
+    1600
+   ]
+  },
+  "diary41a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary41a.jpg",
+    "height": 1350,
+    "sha256": "995a0d813f220e8e5a5be68603014811c034ca8a730c4b8a14861ae2a07ab512",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary41a.jpg",
+   "master_sha256": "b241f82e3b11f55db3907aa7f936c639c3a1cd2a677720aeb188557682b57097",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1243,
+    1600
+   ]
+  },
+  "diary42": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9785,
+     0.6896
+    ],
+    "file": "site/img/crop/diary42.jpg",
+    "height": 1350,
+    "sha256": "133335bf9fe176cfafd05e4fa4e89c6b9b356512526d9f7fadc8134b08136dfe",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary42.jpg",
+   "master_sha256": "c0229fd1bbd319b27f1a5e7274be2f1d0a32f8eb6b9d4a9324110710ea31fbcb",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1347,
+    1083
+   ]
+  },
+  "diary42a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.0924
+    ],
+    "file": "site/img/crop/diary42a.jpg",
+    "height": 1350,
+    "sha256": "a12959c1aaf4ab559d95215c69dd7805303cfeba5375fd385248c825820e24cd",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary42a.jpg",
+   "master_sha256": "342c74c529ac8415fbf069bd6b4aededb0fb2a431c1410cc5c15287f7ad1fc85",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1113,
+    1600
+   ]
+  },
+  "diary43": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary43.jpg",
+    "height": 1350,
+    "sha256": "3f23d154be0e8c6869db16e43691473fa78f25a9ae2d0f806bc10e568d65548b",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary43.jpg",
+   "master_sha256": "eb768f862097c60feeaeb784c6600c3e30cd8368cbe56db98f9daef587ad4391",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1061,
+    179
+   ]
+  },
+  "diary43a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0052,
+     0.9847,
+     0.9899
+    ],
+    "file": "site/img/crop/diary43a.jpg",
+    "height": 1350,
+    "sha256": "b2311d5cc64e10c04fbbf1ac42b2902c6b3801d9682f65857804a22bcc9f39c0",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary43a.jpg",
+   "master_sha256": "85eff82ea9b9a6928a84fecc94be2d825b17b9e27a71e69954af130ff1707d79",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1205,
+    1264
+   ]
+  },
+  "diary44": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.9853
+    ],
+    "file": "site/img/crop/diary44.jpg",
+    "height": 1350,
+    "sha256": "3d05f102b46fb6a3b7c70352888787dadefd6c150a9f329f56c15be3976c75c7",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary44.jpg",
+   "master_sha256": "75956fb7a6537f2ddb1109b4415788246d320af69312e084ea88aed0a5a278bf",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1320,
+    1272
+   ]
+  },
+  "diary44a": {
+   "cover": {
+    "block": 2,
+    "cover_box_norm": [
+     0.0287,
+     0.0959,
+     0.4569,
+     0.1657
+    ],
+    "file": "site/img/crop/diary44a.jpg",
+    "height": 1350,
+    "sha256": "8c8ada330066f28ce04cb624fbbf496aca5dd12984ea7c4ab39a32f8cb583594",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary44a.jpg",
+   "master_sha256": "af5d1ccf04372284da7577b96939cf5ecc8e5e24093661f191512d2eb21076b1",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    984,
+    1600
+   ]
+  },
+  "diary45": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary45.jpg",
+    "height": 1350,
+    "sha256": "8bc98424f1e71796d8b322fccd234d43acb08a612d6af8f4b20aba571df06c75",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary45.jpg",
+   "master_sha256": "c1b7d22dd39e872716744cba5bb9a316f15ae2c38590ac98b5edc6073c0104e5",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    981,
+    1600
+   ]
+  },
+  "diary45a": {
+   "cover": {
+    "block": 6,
+    "cover_box_norm": [
+     0.0288,
+     0.4878,
+     1.0,
+     0.564
+    ],
+    "file": "site/img/crop/diary45a.jpg",
+    "height": 1350,
+    "sha256": "355eb2522383a5e6f0b958b93369aa01f7a8e7f689ef3de9483548059fe01f46",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary45a.jpg",
+   "master_sha256": "a3c25b7e4df8cc619bd7541e1f4aef8a85280c6548a2edd65e386705a351ef51",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1000,
+    1600
+   ]
+  },
+  "diary46": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0471,
+     0.9921,
+     0.1228
+    ],
+    "file": "site/img/crop/diary46.jpg",
+    "height": 1350,
+    "sha256": "01d70b5cc5fa6f7d5f45ed91494957347793bbf5f64786ce8e733eb862dccc96",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary46.jpg",
+   "master_sha256": "4c3ca7504c448dbad232ce6d54a44e5ac1e9069c58ea0849886a5e23a589ec8c",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1034,
+    1600
+   ]
+  },
+  "diary46a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.021,
+     0.0517,
+     0.6529,
+     0.1254
+    ],
+    "file": "site/img/crop/diary46a.jpg",
+    "height": 1350,
+    "sha256": "60bdce5a2b51954fd23447fab311dbe224f3bdcfe86b9a1cdf5b677d4fe61978",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary46a.jpg",
+   "master_sha256": "97373d9a28bab7c71e62fa1196efd7b9af05231110de90814ecd6e1e7db6a37e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1032,
+    1600
+   ]
+  },
+  "diary47": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary47.jpg",
+    "height": 1350,
+    "sha256": "c57fed5c7456b5a82b43a2c5ba3a4a532e3079056ce9c98b8334ed3bf7c33288",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary47.jpg",
+   "master_sha256": "40814e19157f05cc45db441cd109f442d26c45bd9f5ba98dbd57428743f31c2c",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1022,
+    1600
+   ]
+  },
+  "diary47a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary47a.jpg",
+    "height": 1350,
+    "sha256": "ba162a279990d0bdb2efab5b54304130f92712ecce9c62c256cb847e233bad00",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary47a.jpg",
+   "master_sha256": "74d11bcbc4d56bcaba682637343161f22e3f9007207963c52d7d2547ff302162",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1055,
+    1600
+   ]
+  },
+  "diary48": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0089,
+     0.9189,
+     0.098
+    ],
+    "file": "site/img/crop/diary48.jpg",
+    "height": 1350,
+    "sha256": "17a8337779a4c046cf5965a1db4b493c9f57f4eab2b912cdcda4ad79f8df0ef3",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary48.jpg",
+   "master_sha256": "19ac61b5bbc37a10a871c9ec109c5176b6ae937ed8db73b2f3357e360c19e0a5",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1344,
+    1600
+   ]
+  },
+  "diary48a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary48a.jpg",
+    "height": 1350,
+    "sha256": "e8a1756eeb6964a61facc01959b55a3e2698087b6471bb5d079e2181beef92f8",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary48a.jpg",
+   "master_sha256": "e5428f1fa1fe818d06bd08076dd8b27ad0e047b5d73460ccef1546c33cc69685",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    991,
+    1600
+   ]
+  },
+  "diary49": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0094,
+     0.7833,
+     0.9756,
+     0.859
+    ],
+    "file": "site/img/crop/diary49.jpg",
+    "height": 1350,
+    "sha256": "78a6ebbe92c2f86bb6774180a6046671f7da8051c7290dcaaac52957b64a6b81",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary49.jpg",
+   "master_sha256": "5c2c5453ad6cc4d717801c2700813b3c47ccd72fb3657a7b1d4f6cfa2e334c14",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1012,
+    1600
+   ]
+  },
+  "diary49a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary49a.jpg",
+    "height": 1350,
+    "sha256": "7d42da1318f421b8048a127c2c5927702f346608fb4109051173c2b3fb5b6c23",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary49a.jpg",
+   "master_sha256": "3f4618962cc2d05ef523e77777221d83bf2b72dcdd0dff8eb67e7cd25449a08f",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1024,
+    1600
+   ]
+  },
+  "diary4a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9308,
+     0.8869
+    ],
+    "file": "site/img/crop/diary4a.jpg",
+    "height": 1350,
+    "sha256": "f34d2c5212f3e568bcc77a292ff434cb1a2397535495c44a29543ebdace88dd0",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary4a.jpg",
+   "master_sha256": "44f3f4219c855dad53a4a14f359317b2916205ac8c5ccdc1773fd00b7f7728dc",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1429,
+    1216
+   ]
+  },
+  "diary5": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9965,
+     0.792
+    ],
+    "file": "site/img/crop/diary5.jpg",
+    "height": 1350,
+    "sha256": "31f171f531fc684f7f158da473d7571865b6b92cac0b1b22879144dad4907999",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary5.jpg",
+   "master_sha256": "2cedcf18c1ecfb25ec09540a1140cce83b7e0cd427a3cd273cbdadb38414fd96",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1210,
+    1600
+   ]
+  },
+  "diary50": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary50.jpg",
+    "height": 1350,
+    "sha256": "c54a58697bf566b57e5000240ffbe2f64543bd1b0c78be8878cc35b6b8224650",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary50.jpg",
+   "master_sha256": "eb66b706016c013b1461b3664d726aae0dab95aed8ae57b5f70e965f720d6c87",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1027,
+    1600
+   ]
+  },
+  "diary50a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary50a.jpg",
+    "height": 1350,
+    "sha256": "b9e16d2c03d046d1408d7d323208a6f6a0d7efb4d750512e3ca8ade5ff55b715",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary50a.jpg",
+   "master_sha256": "d1cbfb8957b377ba69ede6049e519daf474fd010446ac6345f5f8278f2d171db",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1023,
+    1600
+   ]
+  },
+  "diary51": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary51.jpg",
+    "height": 1350,
+    "sha256": "4d9cab32361eeb92776ef272910f794e32aafa4890065072732ee4a32f9ee17b",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary51.jpg",
+   "master_sha256": "4c9e526febc9c207ab0dcac946ccc1edb8d7420a2aa96b079b254e3671d8004b",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1006,
+    1600
+   ]
+  },
+  "diary51a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary51a.jpg",
+    "height": 1350,
+    "sha256": "8fb17b90974d93fb0f9ecf68311191b4ba9d2b49e09ac3096722be0bd7e4728a",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary51a.jpg",
+   "master_sha256": "56a471f2091a56f529ce2ae503a8f14e5d1964c54620310e70e6d9a541c4d151",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    997,
+    1600
+   ]
+  },
+  "diary52": {
+   "cover": {
+    "block": 5,
+    "cover_box_norm": [
+     0.0011,
+     0.6859,
+     0.8356,
+     0.7549
+    ],
+    "file": "site/img/crop/diary52.jpg",
+    "height": 1350,
+    "sha256": "7591dd69d3049931a6b986115e47d29d4463594ebd5c26fb46990a47b05f0bd8",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary52.jpg",
+   "master_sha256": "57064ed6cd8e697888a4724be30a7c3dba10fb8b608bc5ab3b9282cbc9c6a068",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1015,
+    1600
+   ]
+  },
+  "diary52a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.1411,
+     0.2081,
+     0.9895,
+     0.362
+    ],
+    "file": "site/img/crop/diary52a.jpg",
+    "height": 1350,
+    "sha256": "41f1720787e23402185321c4d46f6fb659208168b991a7650e042b844eb16bb5",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary52a.jpg",
+   "master_sha256": "1f0b4cc573763506cf8bb070fa94407028222868652bed5528b875ebd008a01a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    988,
+    1600
+   ]
+  },
+  "diary53": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0027,
+     0.0,
+     0.8465,
+     0.1215
+    ],
+    "file": "site/img/crop/diary53.jpg",
+    "height": 1350,
+    "sha256": "26a994ab3361edd3e91e3b3b46a3e875e8dbf1232de9d6a7be418f9100d24d39",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary53.jpg",
+   "master_sha256": "238757ca1c4b8507b06209be3e8a5e89b9c50ab2f456632474c9cd7af631d64e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1051,
+    1600
+   ]
+  },
+  "diary53a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0084,
+     0.0,
+     0.6967,
+     0.116
+    ],
+    "file": "site/img/crop/diary53a.jpg",
+    "height": 1350,
+    "sha256": "e649c4471d099429226bf98dfb85dd8d92e935f8ded13137be80ef2ddf3fd47a",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary53a.jpg",
+   "master_sha256": "590e4d21196112d0a635b09860c04b2e9c9fdc9c0ec1cbfa6469ad0e26c69435",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1258,
+    1600
+   ]
+  },
+  "diary54": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.5509
+    ],
+    "file": "site/img/crop/diary54.jpg",
+    "height": 1350,
+    "sha256": "9fa160c25b26e43ee21b05455da986daefca396c6dc2962221c3d299c4221e02",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary54.jpg",
+   "master_sha256": "33303741eb089a323ed59224604fda860ab3e1ab83fd776a8fd6dd188235d48a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1237,
+    1600
+   ]
+  },
+  "diary54a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.1686,
+     0.0,
+     0.7908,
+     0.3269
+    ],
+    "file": "site/img/crop/diary54a.jpg",
+    "height": 1350,
+    "sha256": "9454f922aa6b9a11751fd333969ee44546975e4b2d56db5a4414709a3cf2570c",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary54a.jpg",
+   "master_sha256": "5602ee37552094daf7a7420a0c916bb645c83eada46cef6792ee05daffee382e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1037,
+    1600
+   ]
+  },
+  "diary55": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.1438,
+     0.0731,
+     0.863,
+     0.521
+    ],
+    "file": "site/img/crop/diary55.jpg",
+    "height": 1350,
+    "sha256": "7157b9f414d9f63f7819cb5baad9b3512b98c067243e9517d936abbbd0d67356",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary55.jpg",
+   "master_sha256": "eb197eba11f26b6ddf00f88d11c43939a855fc01f06322582c9cfec4baa3cc45",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1323,
+    1600
+   ]
+  },
+  "diary55a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary55a.jpg",
+    "height": 1350,
+    "sha256": "c958942dfddaa2fc169e3d99d1cb599455da6e4cd9d0ee90fb18f4e2e6e11f5b",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary55a.jpg",
+   "master_sha256": "fe999ae5b2bf8da525cfbfa8523c2e396d0fb9de1886861fa17030e2f8f16075",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1088,
+    1600
+   ]
+  },
+  "diary56": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary56.jpg",
+    "height": 1350,
+    "sha256": "48602d1ac193d7bd806ecbe20a3a9a3c7c4c63067040e18f17c1b30f7abf3ef1",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary56.jpg",
+   "master_sha256": "f5dc28e6f9ca68a5c2eef4767c5a85faeef297a7635df543de845e0552125522",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1086,
+    1600
+   ]
+  },
+  "diary56a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0041,
+     0.0,
+     1.0,
+     0.1606
+    ],
+    "file": "site/img/crop/diary56a.jpg",
+    "height": 1350,
+    "sha256": "7624d31d662eab1bf906c81fc800ec8a5ee585d1e2076a04fae721e612788e17",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary56a.jpg",
+   "master_sha256": "4d55311a78c97e0976fc7cfccd5e772bf4a19a2f005fd30c0269b645009862c7",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1103,
+    1600
+   ]
+  },
+  "diary57": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.4677
+    ],
+    "file": "site/img/crop/diary57.jpg",
+    "height": 1350,
+    "sha256": "963182ef05d2b6b21d7ffdedd8436bf059487f9743c284f1173d2c8fd5d57096",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary57.jpg",
+   "master_sha256": "4e32fa9b3642e72406d95bfad1722add3c70e82bec4e445fc0978b78b7559931",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1304,
+    1600
+   ]
+  },
+  "diary57a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0117,
+     0.0612,
+     1.0,
+     0.2599
+    ],
+    "file": "site/img/crop/diary57a.jpg",
+    "height": 1350,
+    "sha256": "e801977eb28bab03706ff7f2b6f35cf820019f4eb31a2f5441b5bdd981fb50d3",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary57a.jpg",
+   "master_sha256": "b8b74cae0f348e890ff801e7a8226dd61f3359f61fbd9660e2663584f4d5255c",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1015,
+    1600
+   ]
+  },
+  "diary58": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0116,
+     0.0498,
+     0.8733,
+     0.1326
+    ],
+    "file": "site/img/crop/diary58.jpg",
+    "height": 1350,
+    "sha256": "bd4eabbdb03dc60d149e6b2dbddcfa6dc36e255bbed79def2109d8c5a38426ac",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary58.jpg",
+   "master_sha256": "1e0eec5d7c4104f92d93bb53a7998d82c951c57f27250cf8f6798b81cf1cbe00",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    950,
+    1600
+   ]
+  },
+  "diary58a": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0619,
+     0.0636,
+     0.7647,
+     0.1406
+    ],
+    "file": "site/img/crop/diary58a.jpg",
+    "height": 1350,
+    "sha256": "6ce1a4f4c0f7a5e9558ffaab3cba8089ada1972e3d3d9b704f59562f3a225283",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary58a.jpg",
+   "master_sha256": "995653c02e02386ed61e42f71ed981f4105150a010f9932a71335c40cdd74dcf",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    984,
+    1600
+   ]
+  },
+  "diary59": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary59.jpg",
+    "height": 1350,
+    "sha256": "40875fe8e7b5220613b8abc5139be55c2563dc098843a7a0ca0ee80a2b196ff3",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary59.jpg",
+   "master_sha256": "f6916215bee86e70330bd495b028bc79354c630b28a25e5341137f4dffd68d9a",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1447,
+    403
+   ]
+  },
+  "diary59a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary59a.jpg",
+    "height": 1350,
+    "sha256": "935a7d8bd7b2da8a7d37c0285364d93fa33b33068d19bfdce17c299da858c8a8",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary59a.jpg",
+   "master_sha256": "822f093a2bded084405caaf5d40ae50de9b5910ae24324eff21c5d2e9bf43998",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1333,
+    358
+   ]
+  },
+  "diary5a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.2598
+    ],
+    "file": "site/img/crop/diary5a.jpg",
+    "height": 1350,
+    "sha256": "353760fa0b1ec42bbad74e1e0e273af682572c8fd2fcaa03c44af3d6df3031f7",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary5a.jpg",
+   "master_sha256": "cf728556d902916b312a989ac0d30c5a0c606544b0ae45db1e18a9b6182eabae",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1423,
+    1474
+   ]
+  },
+  "diary60": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9841,
+     0.5018
+    ],
+    "file": "site/img/crop/diary60.jpg",
+    "height": 1350,
+    "sha256": "cc89b33172424138f7b53d255e47318bdfbd50fd4852ee411e85fba41493499f",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary60.jpg",
+   "master_sha256": "a5eed4717722658b6a84db8a108b199a3d7060effdae819c8243e27bb1cc718e",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1287,
+    1537
+   ]
+  },
+  "diary60a": {
+   "cover": {
+    "block": null,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     1.0
+    ],
+    "file": "site/img/crop/diary60a.jpg",
+    "height": 1350,
+    "sha256": "bfd6f15d1ebaa66de951979332f32ea70e73a8aa798d9b8cbd3987c141388139",
+    "source": "whole-paper",
+    "width": 1080
+   },
+   "master": "site/img/p/diary60a.jpg",
+   "master_sha256": "f158fd9922baa09761961b3352337ae8ad8f3308ff310f921d7054ffc41e9d5b",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1378,
+    255
+   ]
+  },
+  "diary61": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.1857
+    ],
+    "file": "site/img/crop/diary61.jpg",
+    "height": 1350,
+    "sha256": "c4c70648c864bdb5041c595939716353545e95dd6d6cb685d60b24e4f801bb90",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary61.jpg",
+   "master_sha256": "9b1748b8f91838882cd6894ea26421eabcbfbdf34589d5129b4102088f582826",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1298,
+    1600
+   ]
+  },
+  "diary61a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0082,
+     0.0,
+     1.0,
+     0.065
+    ],
+    "file": "site/img/crop/diary61a.jpg",
+    "height": 1350,
+    "sha256": "aa0b55789dc5063478f31c063c62a5cab954dc93fab89987f24e7e4bef69536e",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary61a.jpg",
+   "master_sha256": "b69c423cda2a381c36c305588ed1e36ba6ac64b1d1f48a9989bc2ab9116c7431",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1020,
+    1600
+   ]
+  },
+  "diary62": {
+   "cover": {
+    "block": 1,
+    "cover_box_norm": [
+     0.0,
+     0.492,
+     0.9603,
+     0.5961
+    ],
+    "file": "site/img/crop/diary62.jpg",
+    "height": 1350,
+    "sha256": "877986c9eabd464dca234123cdc46670958af0ff13133fcb0870bacabfe10ee1",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary62.jpg",
+   "master_sha256": "070d489f65daf90a40b544db03fe92869845556d7d74ff99619e5fce2a62004f",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1236,
+    1369
+   ]
+  },
+  "diary62a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8322,
+     0.2546
+    ],
+    "file": "site/img/crop/diary62a.jpg",
+    "height": 1350,
+    "sha256": "b80276a12fa3f5c8101bc0b2bc99bdae2c1946a18d8588cb5769b3a49e7578e8",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary62a.jpg",
+   "master_sha256": "082bcffa12b4be68510d055b6e0a2e9ffaba87983578aadfe1a1ff0a7dfb5dff",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1310,
+    1600
+   ]
+  },
+  "diary63": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.01,
+     0.9971,
+     0.962
+    ],
+    "file": "site/img/crop/diary63.jpg",
+    "height": 1350,
+    "sha256": "bb7f40c930bb047f363f6b6b25992e54458f1784680a3fc7750b43f88eaa47f2",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary63.jpg",
+   "master_sha256": "2a7eeaf6e0b0a2b467b163ac0bb72a0ef41ba7d7f33660bcd9a5bbcfe3e60c90",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1039,
+    1317
+   ]
+  },
+  "diary63a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0051,
+     0.0054,
+     0.7463,
+     0.2407
+    ],
+    "file": "site/img/crop/diary63a.jpg",
+    "height": 1350,
+    "sha256": "c56a3ff589404ab189448ae28e104ebc1c67f375fd847a71e2032475830e4925",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary63a.jpg",
+   "master_sha256": "14905eb95f449a8b1e7198821c7751571126a306a3c8883e815530d96fdb6e51",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1048,
+    1550
+   ]
+  },
+  "diary7": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0081,
+     1.0,
+     0.943
+    ],
+    "file": "site/img/crop/diary7.jpg",
+    "height": 1350,
+    "sha256": "009d94309103ff01d2eef2baed63d383f2f007c7a3e76ad211bdbd4b7ba452c6",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary7.jpg",
+   "master_sha256": "ba934b73db8cbad3f4fdfa493e1238e78f10fc472f4b43fb67654326c1565904",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1340,
+    622
+   ]
+  },
+  "diary7a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8352,
+     0.5538
+    ],
+    "file": "site/img/crop/diary7a.jpg",
+    "height": 1350,
+    "sha256": "13650dc045c8aa6064632008a0033cb3301eadf7b18548fdbdd2fadfc4878a62",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary7a.jpg",
+   "master_sha256": "efd96b427d5e6a505c708ba4df0d265bd68aff360f647811d289cd62c7635b84",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1428,
+    1359
+   ]
+  },
+  "diary8": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.8739,
+     0.337
+    ],
+    "file": "site/img/crop/diary8.jpg",
+    "height": 1350,
+    "sha256": "310b62414d6c29f267af80278c9a0aa5b520c1dacf1a003c63b9d583905ade7a",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary8.jpg",
+   "master_sha256": "47a6016656fd1ab8347ab000c8869cbce08833337079502d08a9c321868c2ffe",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1497,
+    1365
+   ]
+  },
+  "diary8a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     1.0,
+     0.3792
+    ],
+    "file": "site/img/crop/diary8a.jpg",
+    "height": 1350,
+    "sha256": "502cecb0906ee176818231868b941dc8e05a62ef5225cc71d142b351f85370da",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary8a.jpg",
+   "master_sha256": "57778bf515f01c80b1d11751beb6ecc31c219960784537e0d568aa4c2fba5dc7",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1344,
+    1588
+   ]
+  },
+  "diary9": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0111,
+     0.0,
+     1.0,
+     0.359
+    ],
+    "file": "site/img/crop/diary9.jpg",
+    "height": 1350,
+    "sha256": "7463932521e8ab87985b4fc86012d99632a100e96ac1b7269203c680939ee935",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary9.jpg",
+   "master_sha256": "a0bf23fc58f4bb07ab6f42c00bee169259efacb1df66afe1f4a46c6045d299d6",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1395,
+    1600
+   ]
+  },
+  "diary9a": {
+   "cover": {
+    "block": 0,
+    "cover_box_norm": [
+     0.0,
+     0.0,
+     0.9164,
+     0.3638
+    ],
+    "file": "site/img/crop/diary9a.jpg",
+    "height": 1350,
+    "sha256": "c4ef906d05e5f48874bb54faf2e7e5080e5b1b8677018761006ed26c5a4dc812",
+    "source": "opening-block",
+    "width": 1080
+   },
+   "master": "site/img/p/diary9a.jpg",
+   "master_sha256": "bfd29b59d394ccb332492db3b4f530a1a24e7c9719c3112e674738139c071570",
+   "paper_box_norm": [
+    0.0,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "paper_box_px": [
+    0,
+    0,
+    1312,
+    1315
+   ]
+  }
+ },
+ "tool": "tools/image_tiers.py",
+ "tool_version": "2",
+ "version": 1
+}

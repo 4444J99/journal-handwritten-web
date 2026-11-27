@@ -11,16 +11,30 @@ master or cleaned. HTR (Transkribus / TrOCR) is likewise not run here: it
 needs the author's Transkribus account or TrOCR model weights.
 
 Cleanup (all deterministic, parameters recorded in the per-page recipe):
-  deskew (projection-profile search on a downscaled copy), lighting
-  flattening by division against an estimated background (which also
-  suppresses faint show-through), percentile contrast stretch, median
-  denoise, unsharp mask. The master is only ever read, never written;
-  the tool refuses an output path equal to the master path.
+deskew (projection-profile search on a downscaled copy), lighting
+flattening by division against an estimated background (which also
+suppresses faint show-through), percentile contrast stretch, median
+denoise, unsharp mask. The master is only ever read, never written;
+the tool refuses an output path equal to the master path.
+
+JHW #48 (2026-11-27) adds the crop tier: `crop` measures every p/ master
+for its paper box (two-pass border-darkness measurement; the exchange doc's
+"black bars" exist on only diary25/diary25a, and j.json already records
+their box in each page's `c`), then derives one 4:5 cover per page from the
+opening block's j.json line boxes (kit.py render_line rule: opening-block
+crop contained on a 1080x1350 paper canvas, upper third; pages with no line
+boxes fall back to the whole paper box, kit.py render_page rule) and writes
+it to site/img/crop/<page>.jpg, recorded in images-crops.json. The crop
+tier is a separate manifest from images-manifest.json so the #25 trial
+entries keep their own verifier; tools/check.py verifies the crops manifest
+with the standard library alone.
 
     python3 tools/image_tiers.py measure site/img/p/diary55a.jpg
     python3 tools/image_tiers.py clean site/img/p/diary55a.jpg images/cleaned/diary55a.jpg
     python3 tools/image_tiers.py trial [--out-dir images/cleaned]
     python3 tools/image_tiers.py verify-manifest [images-manifest.json]
+    python3 tools/image_tiers.py crop [--out-dir site/img/crop]
+    python3 tools/image_tiers.py verify-crops
 
 Requires Pillow, numpy, scipy (local tooling only; tools/check.py verifies
 the manifest with the standard library alone, so CI needs no new deps).
@@ -37,7 +51,28 @@ from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "images-manifest.json"
-TOOL_VERSION = "1"
+CROPS_MANIFEST = ROOT / "images-crops.json"
+TOOL_VERSION = "2"  # v2 (JHW #48) adds the crop subcommand; v1 built the cleaned tier
+
+# Crop tier (JHW #48). Values mirror production/kit/kit.py (W4/H4, MARGIN,
+# PAPER_RGB, JPEG_QUALITY) so the per-page cover rule is the kit's
+# render_line/render_page rule, not a second geometry. The kit pastes its
+# cards with a shadow; the crop tier does not — the cover is a plain
+# derivative the reader/template loads in place of a CSS crop, and a shadow
+# would be baked into the image rather than chosen by the surface.
+COVER_W, COVER_H = 1080, 1350
+COVER_MARGIN = 72
+COVER_PAD = (0.030, 0.020)  # kit.py render_line pad on the selection box
+COVER_TOP_FRAC = 0.20  # kit.py render_line: cover sits in the upper third
+PAPER_RGB = (247, 245, 239)
+CROP_DIR = "site/img/crop"
+# Paper-box measurement: a border is a "black bar" only when its rows/columns
+# are almost entirely dark (value < 60). A paper row/column is mostly bright
+# even with ink. Two passes because a vertical dark band (diary25: the dark
+# surface left of the paper) defeats row-wise detection on its own.
+CROP_DARK = 60
+CROP_PAPER_FRAC = 0.5
+CROP_SMALL_MAX = 500
 
 # Trial pages, chosen 2026-11-24 from measured stats on the p/ tier
 # (full page scans, 1086-1463 px wide): clean = high Laplacian variance +
@@ -218,6 +253,225 @@ def load_manifest() -> dict:
     return {"version": 1, "tool": "tools/image_tiers.py", "tool_version": TOOL_VERSION, "pages": {}}
 
 
+# ---------------------------------------------------------------------------
+# Crop tier (JHW #48)
+# ---------------------------------------------------------------------------
+
+def _edge_inset(frac, from_start=True) -> int:
+    """First row/column from one side whose dark fraction drops below paper.
+
+    A row/column counts as paper when it and the next two (a run of three)
+    are all below CROP_PAPER_FRAC dark — a single stray dark row from a
+    smudge or the page-edge shadow must not move the box.
+    """
+    n = len(frac)
+    idxs = range(n) if from_start else range(n - 1, -1, -1)
+    for i in idxs:
+        if from_start:
+            window = [frac[j] for j in range(i, min(n, i + 3))]
+        else:
+            window = [frac[j] for j in range(max(0, i - 2), i + 1)]
+        if all(f < CROP_PAPER_FRAC for f in window):
+            return i if from_start else (n - 1 - i)
+    return 0
+
+
+def paper_box(gray: np.ndarray) -> dict:
+    """Measure the paper bounding box of a scan as normalized [x0, y0, x1, y1].
+
+    Two passes: column profiles over the full height give left/right, then
+    row profiles restricted to the paper's column range give top/bottom.
+    One pass fails on diary25, where a vertical dark band (the desk left of
+    the paper) makes every full-width row >50% dark and the bottom inset
+    walks to the top of the image. Returns the box plus pixel insets and the
+    paper aspect; the box is the full frame when no bar is present.
+    """
+    small = downscale(gray, CROP_SMALL_MAX)
+    h, w = small.shape[:2]
+    dark = (small < CROP_DARK).astype(np.float32)
+    col_frac = dark.mean(axis=0)
+    left = _edge_inset(col_frac, True)
+    right = _edge_inset(col_frac, False)
+    sub = dark[:, left:w - right] if (w - right) > left else dark
+    row_frac = sub.mean(axis=1)
+    top = _edge_inset(row_frac, True)
+    bottom = _edge_inset(row_frac, False)
+    fw, fh = gray.shape[1] / w, gray.shape[0] / h
+    x0, y0 = round(left * fw), round(top * fh)
+    x1, y1 = round(gray.shape[1] - right * fw), round(gray.shape[0] - bottom * fh)
+    box = [round(x0 / gray.shape[1], 4), round(y0 / gray.shape[0], 4),
+           round(x1 / gray.shape[1], 4), round(y1 / gray.shape[0], 4)]
+    return {
+        "box_norm": box,
+        "box_px": [x0, y0, x1, y1],
+        "inset_px": {"top": round(top * fh), "bottom": round(bottom * fh),
+                     "left": round(left * fw), "right": round(right * fw)},
+        "aspect": round((x1 - x0) / max(1, y1 - y0), 3),
+    }
+
+
+def opening_block_box(page: dict) -> tuple[list | None, int | None]:
+    """Union of the opening block's j.json line boxes, normalized.
+
+    Returns (box, block) where block is the lowest-numbered block with line
+    boxes. Block 0 is the opening block on most pages, but 13 pages carry
+    line boxes only in a later block (their block 0 has no geometry — e.g. a
+    header with no rows), so the opening block is the first block WITH
+    geometry, not hardcoded 0. Returns (None, None) when the page has no
+    `x` rows at all (23 pages: strips and the diary25 pair) — those fall
+    back to the whole paper box. Block geometry lives only in `x`; `B`
+    carries line text, not boxes.
+    """
+    rows = page.get("x") or []
+    if not rows:
+        return None, None
+    first = min(r[0] for r in rows)
+    block_rows = [r for r in rows if r[0] == first]
+    box = [round(min(r[2] for r in block_rows), 4), round(min(r[3] for r in block_rows), 4),
+           round(max(r[4] for r in block_rows), 4), round(max(r[5] for r in block_rows), 4)]
+    return box, first
+
+
+def _pad_box(box, pad_x, pad_y):
+    x0, y0, x1, y1 = box
+    return [max(0.0, x0 - pad_x), max(0.0, y0 - pad_y),
+            min(1.0, x1 + pad_x), min(1.0, y1 + pad_y)]
+
+
+def _intersect(a, b):
+    return [max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])]
+
+
+def _fit_contain_size(w, h, max_w, max_h):
+    s = min(max_w / w, max_h / h)
+    return max(1, round(w * s)), max(1, round(h * s))
+
+
+def cover_image(master: Path, page: dict) -> tuple[Image.Image, dict]:
+    """Derive one page's 4:5 cover (1080x1350) from its p/ master.
+
+    Rule (the plan's step 3, kit.py's render_line/render_page geometry):
+    crop the opening block's line-box union — the lowest-numbered block
+    with line boxes, padded (0.030, 0.020) and clamped to the measured
+    paper box — then contain it on a 1080x1350 paper canvas, upper third
+    (y = 20% of height), centered horizontally. Pages with no line boxes
+    use the whole paper box instead (kit.py render_page rule, centered
+    both ways). The paper canvas is PAPER_RGB,
+    the same paper the kit renders on; no shadow card — the kit's shadow is
+    an export treatment, and the crop tier is a plain derivative the reader
+    or template loads in place of a CSS crop. Never touches the master or
+    j.json (both read-only here).
+    """
+    img = Image.open(master).convert("RGB")
+    w, h = img.size
+    gray = luminance(np.asarray(img).astype(np.float32))
+    paper = paper_box(gray)
+    block, block_no = opening_block_box(page)
+    if block is not None:
+        box = _intersect(_pad_box(block, *COVER_PAD), paper["box_norm"])
+        source = "opening-block"
+    else:
+        box = paper["box_norm"]
+        source = "whole-paper"
+    if box[2] <= box[0] or box[3] <= box[1]:
+        box, source, block_no = paper["box_norm"], "whole-paper", None
+    crop = img.crop((round(box[0] * w), round(box[1] * h),
+                     round(box[2] * w), round(box[3] * h)))
+    max_w, max_h = COVER_W - 2 * COVER_MARGIN, COVER_H - 2 * COVER_MARGIN
+    cw, ch = _fit_contain_size(crop.width, crop.height, max_w, max_h)
+    content = crop.resize((cw, ch), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGB", (COVER_W, COVER_H), PAPER_RGB)
+    x = (COVER_W - cw) // 2
+    # Upper third (kit.py render_line) when the block is short, but clamped
+    # so a tall opening block never runs past the bottom margin: kit.py's
+    # rule assumes line crops, which are short; a full opening block can be
+    # 1206px tall after contain, and y=270 would clip 126px off its bottom
+    # (caught by the diary55a side-by-side, JHW #48 step 6).
+    if source == "opening-block":
+        y = min(round(COVER_H * COVER_TOP_FRAC), COVER_H - COVER_MARGIN - ch)
+    else:
+        y = (COVER_H - ch) // 2
+    canvas.paste(content, (x, y))
+    record = {
+        "source": source,
+        "block": block_no if source == "opening-block" else None,
+        "paper_box_norm": paper["box_norm"],
+        "paper_box_px": paper["box_px"],
+        "cover_box_norm": [round(v, 4) for v in box],
+        "cover_size": [COVER_W, COVER_H],
+    }
+    return canvas, record
+
+
+def crops_manifest_entry(page_id: str, master_rel: str, cover_rel: str, record: dict) -> dict:
+    master_path = ROOT / master_rel
+    cover_path = ROOT / cover_rel
+    return {
+        "master": master_rel,
+        "master_sha256": sha256(master_path),
+        "paper_box_norm": record["paper_box_norm"],
+        "paper_box_px": record["paper_box_px"],
+        "cover": {
+            "file": cover_rel,
+            "sha256": sha256(cover_path),
+            "width": COVER_W,
+            "height": COVER_H,
+            "source": record["source"],
+            "block": record["block"],
+            "cover_box_norm": record["cover_box_norm"],
+        },
+    }
+
+
+def load_crops_manifest() -> dict:
+    if CROPS_MANIFEST.exists():
+        return json.loads(CROPS_MANIFEST.read_text())
+    return {"version": 1, "tool": "tools/image_tiers.py",
+            "tool_version": TOOL_VERSION, "pages": {}}
+
+
+def cmd_crop(args) -> int:
+    """Measure every p/ master and write one 4:5 cover per page (JHW #48)."""
+    import datetime
+    out_dir = Path(args.out_dir)
+    if out_dir.resolve() != (ROOT / CROP_DIR).resolve():
+        raise ValueError(f"crop output must live under {CROP_DIR}")
+    data = json.loads((ROOT / "site/data/j.json").read_text())
+    manifest = load_crops_manifest()
+    manifest["tool_version"] = TOOL_VERSION
+    out_dir_abs = ROOT / out_dir
+    out_dir_abs.mkdir(parents=True, exist_ok=True)
+    for page in data["pages"]:
+        pid = page["id"]
+        master_rel = f"site/img/p/{pid}.jpg"
+        cover_rel = f"{out_dir.as_posix()}/{pid}.jpg"
+        master_path = ROOT / master_rel
+        if not master_path.is_file():
+            print(f"{pid}: SKIP master missing: {master_rel}")
+            continue
+        cover, record = cover_image(master_path, page)
+        cover.save(ROOT / cover_rel, format="JPEG", quality=PARAMS["jpeg_quality"])
+        manifest["pages"][pid] = crops_manifest_entry(pid, master_rel, cover_rel, record)
+        pb = record["paper_box_px"]
+        aspect = round((pb[2] - pb[0]) / max(1, pb[3] - pb[1]), 3)
+        print(f"{pid}: {record['source']} paper_aspect={aspect} cover={cover_rel}")
+    manifest["generated"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    CROPS_MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
+    print(f"wrote {CROPS_MANIFEST} ({len(manifest['pages'])} pages)")
+    return 0
+
+
+def cmd_verify_crops(args) -> int:
+    sys.path.insert(0, str(ROOT / "tools"))
+    from check import verify_crops_manifest
+
+    problems = verify_crops_manifest(ROOT)
+    for p in problems:
+        print(p)
+    print("OK" if not problems else f"{len(problems)} problem(s)")
+    return 1 if problems else 0
+
+
 def cmd_measure(args) -> int:
     img = Image.open(args.image).convert("RGB")
     arr = np.asarray(img).astype(np.float32)
@@ -278,6 +532,11 @@ def main() -> int:
     p.set_defaults(fn=cmd_trial)
     p = sub.add_parser("verify-manifest")
     p.set_defaults(fn=cmd_verify)
+    p = sub.add_parser("crop")
+    p.add_argument("--out-dir", default=CROP_DIR)
+    p.set_defaults(fn=cmd_crop)
+    p = sub.add_parser("verify-crops")
+    p.set_defaults(fn=cmd_verify_crops)
     args = ap.parse_args()
     return args.fn(args)
 

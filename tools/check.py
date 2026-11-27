@@ -78,6 +78,8 @@ def site_references():
         pid = page["id"]
         for tier in ("p", "i", "m"):
             refs.add(f"site/img/{tier}/{pid}.jpg")
+        # JHW #48: one 4:5 cover per page, derived by tools/image_tiers.py.
+        refs.add(f"site/img/crop/{pid}.jpg")
         spread = page.get("sp") or {}
         if spread.get("f"):
             refs.add(f"site/img/s/{spread['f']}.jpg")
@@ -179,6 +181,100 @@ def verify_images_manifest(root: Path) -> list[str]:
     return problems
 
 
+CROPS_MANIFEST = "images-crops.json"
+CROP_W, CROP_H = 1080, 1350
+
+
+def jpeg_size(path: Path):
+    """(width, height) of a JPEG from its SOF marker, stdlib only.
+
+    No Pillow in CI: parse the marker stream up to the first start-of-frame
+    (which precedes the scan data, so no 0xFF00 escapes are met).
+    """
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return None
+    if data[:2] != b"\xff\xd8":
+        return None
+    i = 2
+    while i + 1 < len(data):
+        if data[i] != 0xFF:
+            i += 1
+            continue
+        marker = data[i + 1]
+        if marker in (0xC0, 0xC1, 0xC2):  # SOF0/1/2: precision, height, width
+            if i + 9 > len(data):
+                return None
+            h = int.from_bytes(data[i + 5:i + 7], "big")
+            w = int.from_bytes(data[i + 7:i + 9], "big")
+            return (w, h)
+        if marker in (0xD8, 0xD9) or 0xD0 <= marker <= 0xD7:
+            i += 2
+            continue
+        if i + 4 > len(data):
+            return None
+        length = int.from_bytes(data[i + 2:i + 4], "big")
+        i += 2 + length
+    return None
+
+
+def verify_crops_manifest(root: Path) -> list[str]:
+    """Verify the crop-tier companion manifest (JHW #48).
+
+    Stdlib only, so CI needs no new dependencies. Checks per page: the
+    master exists and matches its recorded hash; the cover file exists,
+    matches its recorded hash, and is 1080x1350 (4:5 within tolerance);
+    the recorded paper box and cover box are sane normalized boxes, and the
+    cover box lies inside the paper box. Absent manifest means no crop tier
+    yet, which is not a problem. Returns a list of problem strings.
+    """
+    problems: list[str] = []
+    path = root / CROPS_MANIFEST
+    if not path.is_file():
+        return problems
+    try:
+        manifest = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as e:
+        return [f"CROPS-MANIFEST unreadable: {e}"]
+    for page_id, entry in sorted((manifest.get("pages") or {}).items()):
+        tag = f"images-crops[{page_id}]"
+        master_rel = entry.get("master", "")
+        master = root / master_rel
+        if not master.is_file():
+            problems.append(f"{tag} master missing: {master_rel}")
+        elif sha256(master) != entry.get("master_sha256"):
+            problems.append(f"{tag} master hash mismatch: {master_rel}")
+        cover = entry.get("cover") or {}
+        cover_rel = cover.get("file", "")
+        cover_path = root / cover_rel
+        if not cover_path.is_file():
+            problems.append(f"{tag} cover missing: {cover_rel}")
+            continue
+        if sha256(cover_path) != cover.get("sha256"):
+            problems.append(f"{tag} cover hash mismatch: {cover_rel}")
+        size = jpeg_size(cover_path)
+        if size is None:
+            problems.append(f"{tag} cover is not a readable JPEG: {cover_rel}")
+        elif size != (CROP_W, CROP_H):
+            problems.append(f"{tag} cover is {size[0]}x{size[1]}, not {CROP_W}x{CROP_H}")
+        elif abs(size[0] / size[1] - 4 / 5) > 0.005:
+            problems.append(f"{tag} cover aspect {size[0]/size[1]:.3f} is not 4:5")
+        for key in ("paper_box_norm",):
+            box = entry.get(key) or []
+            if len(box) != 4 or not (0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1):
+                problems.append(f"{tag} {key} is not a sane normalized box: {box}")
+        cbox = cover.get("cover_box_norm") or []
+        pbox = entry.get("paper_box_norm") or []
+        if len(cbox) == 4 and len(pbox) == 4:
+            if not (cbox[0] >= pbox[0] - 0.001 and cbox[1] >= pbox[1] - 0.001
+                    and cbox[2] <= pbox[2] + 0.001 and cbox[3] <= pbox[3] + 0.001):
+                problems.append(f"{tag} cover box {cbox} escapes paper box {pbox}")
+        if cover.get("source") not in ("opening-block", "whole-paper"):
+            problems.append(f"{tag} unknown cover source: {cover.get('source')!r}")
+    return problems
+
+
 def main() -> int:
     conflicts = record_conflicts()
     if conflicts:
@@ -227,6 +323,12 @@ def main() -> int:
         print(f"IMAGES  {p}")
     problems += len(image_problems)
     print(f"image tiers: {len(image_problems)} problem(s)")
+
+    crop_problems = verify_crops_manifest(ROOT)
+    for p in crop_problems:
+        print(f"CROPS   {p}")
+    problems += len(crop_problems)
+    print(f"crop tier: {len(crop_problems)} problem(s)")
 
     sys.path.insert(0, str(ROOT / "tools"))
     from silent_launch_lint import scan  # no run may make a sound: every browser launch goes through the helper
