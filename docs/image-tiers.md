@@ -74,6 +74,35 @@ suggestion of sample pages "from the etceter4 repo" is not used: those
 originals are not in this repo, and pulling them in would be a new master
 drop, which belongs to the rescan fork above.
 
+## Crop tier (JHW #48)
+
+One 4:5 cover per page, `site/img/crop/<page>.jpg` (1080×1350), recorded in
+`images-crops.json` (a separate manifest from this tier's, so the trial
+entries keep their own verifier). `tools/check.py` verifies the crops
+manifest with the standard library alone: every cover exists, matches its
+recorded hash, and is 1080×1350; the recorded paper box and cover box are
+sane normalized boxes, and the cover box lies inside the paper box.
+
+The rule, generalized from `production/kit/kit.py` (`render_line` /
+`render_page`): measure the paper box first (`paper_box`, two-pass
+border-darkness; see `docs/scan-measurements.md` — black bars exist on
+only diary25/diary25a, the other 121 pages are already tight to the paper),
+then crop the opening block's `j.json` line-box union — padded (0.030,
+0.020), clamped to the paper box — and contain it on a 1080×1350 paper
+canvas, upper third. Pages with no line-box rows (23 of 123) fall back to
+the whole paper box, contained and centered. The frame template's A3
+treatment (`production/kit/templates/frame-4x5.html`) loads the real
+pre-cropped cover instead of the CSS approximation. No carousel exists in
+the site reader yet, so there is nothing in the reader to wire; the covers
+are available under `site/img/crop/` and asserted by `check.py` for the
+reader to use when the carousel lands.
+
+```sh
+python3 tools/image_tiers.py crop          # all 123 pages
+python3 tools/image_tiers.py verify-crops  # same checks CI runs
+python3 tools/check.py                     # full integrity check incl. crops
+```
+
 ## Running it
 
 ```sh
@@ -81,6 +110,8 @@ python3 tools/image_tiers.py measure site/img/p/diary55a.jpg
 python3 tools/image_tiers.py clean site/img/p/diary55a.jpg images/cleaned/diary55a.jpg
 python3 tools/image_tiers.py trial            # the six trial pages
 python3 tools/image_tiers.py verify-manifest  # same checks CI runs
+python3 tools/image_tiers.py crop             # all 123 pages (JHW #48)
+python3 tools/image_tiers.py verify-crops     # same checks CI runs
 python3 tools/check.py                        # full integrity check incl. manifest
 ```
 

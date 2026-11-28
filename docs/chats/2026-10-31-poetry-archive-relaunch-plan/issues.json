@@ -2,7 +2,7 @@
  {
   "nn": "01",
   "file": "01-launch-approach-and-accounts.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 01 · Launch approach and account structure",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 01 \u00b7 Launch approach and account structure",
   "plan": [
    {
     "text": "Settle name, handles, domain",
@@ -31,7 +31,7 @@
  {
   "nn": "02",
   "file": "02-cadence-gruw-accounts.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 02 · Cadence, GRUW and account count",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 02 \u00b7 Cadence, GRUW and account count",
   "plan": [
    {
     "text": "Settle name, handles, domain",
@@ -60,7 +60,7 @@
  {
   "nn": "03",
   "file": "03-gatekeepers-and-reserve.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 03 · Clarifying gatekeepers and the Reserve",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 03 \u00b7 Clarifying gatekeepers and the Reserve",
   "plan": [
    {
     "text": "Keep a small Reserve via a ten-minute sort",
@@ -74,7 +74,7 @@
  {
   "nn": "04",
   "file": "04-press-versus-journals.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 04 · Press versus journal publication",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 04 \u00b7 Press versus journal publication",
   "plan": [
    {
     "text": "Write a short project description in his own words",
@@ -93,7 +93,7 @@
  {
   "nn": "05",
   "file": "05-motivation-discussion.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 05 · Motivation discussion",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 05 \u00b7 Motivation discussion",
   "plan": [],
   "close": true,
   "number": 44
@@ -101,7 +101,7 @@
  {
   "nn": "06",
   "file": "06-social-versus-artifact.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 06 · Social posts versus the artifact",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 06 \u00b7 Social posts versus the artifact",
   "plan": [
    {
     "text": "Fix one consistent post frame; keep process posts quick",
@@ -115,7 +115,7 @@
  {
   "nn": "07",
   "file": "07-launch-week-month-plan.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 07 · Launch day, week and month plan",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 07 \u00b7 Launch day, week and month plan",
   "plan": [
    {
     "text": "Name/handle, poems 1-4, bio, post frame, poem 1 transcription check",
@@ -154,7 +154,7 @@
  {
   "nn": "08",
   "file": "08-collab-and-grid-frame.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 08 · Collab posting and consistent grid frame",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 08 \u00b7 Collab posting and consistent grid frame",
   "plan": [
    {
     "text": "Post poems as Collab with personal account",
@@ -178,12 +178,13 @@
  {
   "nn": "09",
   "file": "09-scan-frame-and-handle.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 09 · Page scan frame and handle forms_verse",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 09 \u00b7 Page scan frame and handle forms_verse",
   "plan": [
    {
     "text": "Crop scans to paper; cover crop for 4:5",
     "who": "Claude suggestion",
-    "done": false
+    "done": true,
+    "delivery": "JHW #48 (loop PR, 2026-11-27): measured all 123 p/ masters (black bars only on diary25/diary25a); one 4:5 cover per page in site/img/crop/ from the opening block (or whole paper where no line boxes exist), recorded in images-crops.json and asserted by tools/check.py; frame-4x5.html A3 loads the real diary1 cover. Handle checks stay the author (item 2, open)."
    },
    {
     "text": "Run say-aloud and availability checks on the handle",
@@ -197,7 +198,7 @@
  {
   "nn": "10",
   "file": "10-handle-intended-meaning.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 10 · Intended meaning of the handle",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 10 \u00b7 Intended meaning of the handle",
   "plan": [
    {
     "text": "Compare spellings; check availability before first post",
@@ -211,7 +212,7 @@
  {
   "nn": "11",
   "file": "11-forms-vs-vers.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 11 · Comparing forms.vs and forms.vers",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 11 \u00b7 Comparing forms.vs and forms.vers",
   "plan": [
    {
     "text": "Check forms.vers and forms.verse availability on platforms and as domains",
@@ -225,7 +226,7 @@
  {
   "nn": "12",
   "file": "12-name-accounts-and-roots.md",
-  "title": "[2026-10-31-poetry-archive-relaunch-plan] 12 · Name accounts, verse.us and word roots",
+  "title": "[2026-10-31-poetry-archive-relaunch-plan] 12 \u00b7 Name accounts, verse.us and word roots",
   "plan": [
    {
     "text": "Choose the name; apply tests; check verse.us availability",
