@@ -760,7 +760,7 @@ function lineCard(id, n, wantCrop) {
     if (l.box) {
       const c = h('div', { class: 'crop', role: 'button', tabindex: '0', 'aria-label': 'Scan of line, open page' });
       c.dataset.box = l.box.join(','); c.dataset.page = p.id;
-      c.append(h('img', { src: p.img, alt: '', loading: 'lazy', draggable: 'false' }));
+      c.append(h('img', { src: p.img, alt: 'Scan of ' + p.id, loading: 'lazy', draggable: 'false' }));
       c.addEventListener('click', ev => { ev.stopPropagation(); openViewer(p.id, l.box); });
       el.append(c);
     } else {
@@ -1324,7 +1324,7 @@ function renderCut() {
     if (l.box) {
       const c = h('div', { class: 'crop', role: 'button', tabindex: '0', 'aria-label': 'Scan of line, open page' });
       c.dataset.box = l.box.join(','); c.dataset.page = p.id;
-      c.append(h('img', { src: p.img, alt: '', loading: 'lazy', draggable: 'false' }));
+      c.append(h('img', { src: p.img, alt: 'Scan of ' + p.id, loading: 'lazy', draggable: 'false' }));
       c.addEventListener('click', ev => { ev.stopPropagation(); openViewer(p.id, l.box); });
       row.append(c);
     }
@@ -2031,7 +2031,7 @@ function doSearch() {
 function renderPageGrid() {
   const g = $('#pagegrid'); if (g.childElementCount) { updatePageGrid(); return; }
   for (const p of S.data.pages) {
-    g.append(h('button', { type: 'button', 'data-p': p.id, onclick: () => goPage(p.id) }, h('img', { src: p.thumb, alt: '', loading: 'lazy' }), h('span', { class: 'pl' }, p.id)));
+    g.append(h('button', { type: 'button', 'data-p': p.id, onclick: () => goPage(p.id) }, h('img', { src: p.thumb, alt: 'Page ' + p.id, loading: 'lazy' }), h('span', { class: 'pl' }, p.id)));
   }
   updatePageGrid();
 }
